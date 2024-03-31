@@ -4,11 +4,14 @@ FROM python:3.9-slim
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the requirements file into the container
-COPY requirements.txt .
+# Install Poetry
+RUN pip install --no-cache-dir poetry
 
-# Install the Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy the poetry.lock and pyproject.toml files
+COPY poetry.lock pyproject.toml ./
+
+# Install dependencies
+RUN poetry install --no-dev --no-root
 
 # Copy the application code into the container
 COPY . .
@@ -17,4 +20,4 @@ COPY . .
 EXPOSE 8000
 
 # Set the command to run the FastAPI application
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["poetry", "run", "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
