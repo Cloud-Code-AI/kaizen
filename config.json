@@ -1,0 +1,5 @@
+{
+    "language_model": {
+        "provider": "litellm"
+    }
+}
