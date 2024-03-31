@@ -1,13 +1,6 @@
-from codecheck.actions import reviews
-from utils import (
-    get_text_from_html_url
-)
-from github_helper.installation import (
-    get_installation_access_token
-)
-from codecheck.actions.reviews import (
-    review_pull_request
-)
+from utils import get_text_from_html_url
+from github_helper.installation import get_installation_access_token
+from codecheck.actions.reviews import review_pull_request
 
 
 def process_pull_request(payload):
@@ -16,7 +9,6 @@ def process_pull_request(payload):
     installation_id = payload["installation"]["id"]
     pl_title = payload["pull_request"]["title"]
     pl_description = payload["pull_request"]["body"]
-
 
     access_token = get_installation_access_token(installation_id)
     diff_text = get_text_from_html_url(diff_url, access_token)
