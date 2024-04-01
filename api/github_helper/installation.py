@@ -1,6 +1,6 @@
-from . import utils
+from api.github_helper import utils
 import requests
-from endpoints import GITHUB_ENDPOINTS
+from api.github_helper.endpoints import GITHUB_ENDPOINTS
 
 
 def get_installations():

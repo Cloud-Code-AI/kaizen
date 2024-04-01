@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request, BackgroundTasks
 from fastapi.responses import JSONResponse
-from github_helper.pull_requests import process_pull_request
+from api.github_helper.pull_requests import process_pull_request
 
 app = FastAPI()
 

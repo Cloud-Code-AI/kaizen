@@ -1,5 +1,5 @@
 from litellm import completion
-from prompts import BASIC_SYSTEM_PROMPT
+from codecheck.llms.prompts import BASIC_SYSTEM_PROMPT
 
 
 def chat_completion(

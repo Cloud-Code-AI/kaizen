@@ -1,6 +1,6 @@
-from helpers import output, parser
-from llms.provider import chat_completion
-from llms.prompts import CODE_REVIEW_PROMPT, CODE_REVIEW_SYSTEM_PROMPT
+from codecheck.helpers import output, parser
+from codecheck.llms.provider import chat_completion
+from codecheck.llms.prompts import CODE_REVIEW_PROMPT, CODE_REVIEW_SYSTEM_PROMPT
 import requests
 
 
