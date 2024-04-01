@@ -1,4 +1,4 @@
-from utils import get_text_from_html_url
+from api.github_helper.utils import get_text_from_html_url
 from api.github_helper.installation import get_installation_access_token
 from codecheck.actions.reviews import review_pull_request
 
