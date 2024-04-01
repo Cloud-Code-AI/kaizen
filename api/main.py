@@ -6,11 +6,11 @@ app = FastAPI()
 
 
 @app.post("/github-webhook")
-async def handle_webhook(request: Request):
+async def handle_webhook(request: Request, background_tasks: BackgroundTasks):
     payload = await request.json()
     event = request.headers.get("X-GitHub-Event")
     if event == "pull_request":
-        BackgroundTasks.create_task(process_pull_request, payload)
+        background_tasks.add_task(process_pull_request, payload)
     else:
         print("Ignored event: ", event)
     return JSONResponse(content={"message": "Webhook received"})
