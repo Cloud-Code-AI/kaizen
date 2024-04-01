@@ -11,7 +11,7 @@ def get_installations():
     return response.json()
 
 
-def get_installation_access_token(installation_id, permissions):
+def get_installation_access_token(installation_id):
     headers = utils.HEADERS
     headers["Authorization"] = f"Bearer {utils.generate_jwt()}"
     url = GITHUB_ENDPOINTS["get_installation_access_token"].format(
