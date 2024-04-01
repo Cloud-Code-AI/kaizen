@@ -21,11 +21,7 @@ def generate_jwt():
     expiration_time = issued_at_time + (7 * 60)  # JWT expires in 15 minutes
 
     # Define the JWT payload
-    payload = {
-        "iat": issued_at_time,
-        "exp": expiration_time,
-        "iss": GITHUB_APP_ID
-    }
+    payload = {"iat": issued_at_time, "exp": expiration_time, "iss": GITHUB_APP_ID}
     with open("GITHUB_APP_KEY.pem", "r") as f:
         # Encode the JWT using the RS256 algorithm
         encoded_jwt = jwt.encode(payload, f.read(), algorithm="RS256")
