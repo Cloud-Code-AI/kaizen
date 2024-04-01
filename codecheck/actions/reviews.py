@@ -2,6 +2,9 @@ from codecheck.helpers import output, parser
 from codecheck.llms.provider import chat_completion
 from codecheck.llms.prompts import CODE_REVIEW_PROMPT, CODE_REVIEW_SYSTEM_PROMPT
 import requests
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def review_pull_request(
@@ -39,4 +42,4 @@ def post_pull_request(url, data, access_token):
         "Accept": "application/vnd.github.v3+json",
     }
     response = requests.post(url, headers=headers, json=data)
-    print("Post Pull request response: ", response.text)
+    logger.info(f"Post Pull request response: {response.text}")

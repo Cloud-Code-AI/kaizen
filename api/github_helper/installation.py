@@ -5,6 +5,7 @@ from api.github_helper.endpoints import GITHUB_ENDPOINTS
 
 def get_installations():
     headers = utils.HEADERS
+    headers["Authorization"] = f"Bearer {utils.generate_jwt()}"
     url = GITHUB_ENDPOINTS["get_installations"]
     response = requests.get(url, headers=headers)
     response.raise_for_status()

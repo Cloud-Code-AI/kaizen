@@ -8,7 +8,7 @@ GITHUB_APP_ID = os.environ.get("GITHUB_APP_ID")
 GITHUB_APP_WEBHOOK_SECRET = os.environ.get("GITHUB_APP_WEBHOOK_SECRET")
 
 
-HEADER = {
+HEADERS = {
     "Authorization": None,
     "Accept": "application/vnd.github.v3+json",
     "X-GitHub-Api-Version": "2022-11-28",
@@ -26,7 +26,7 @@ def generate_jwt():
         "exp": expiration_time,
         "iss": GITHUB_APP_ID
     }
-    with open(".key.pem", "r") as f:
+    with open("GITHUB_APP_KEY.pem", "r") as f:
         # Encode the JWT using the RS256 algorithm
         encoded_jwt = jwt.encode(payload, f.read(), algorithm="RS256")
     return encoded_jwt

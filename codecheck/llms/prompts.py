@@ -51,4 +51,6 @@ Using the provided information, generate a detailed code review that covers the 
 8. **General Feedback**: Provide overall feedback on the code changes, highlighting strengths and areas for improvement.
 
 Your code review should be thorough, constructive, and actionable, helping the developer understand your concerns and recommendations clearly. Point to the code while suggesting changes.
+
+Respond as a json with the feedback in a list; example: {{"review": {{"Testing missing": ["details"], "Security Vulnerability": ["details"]}} }}
 """
