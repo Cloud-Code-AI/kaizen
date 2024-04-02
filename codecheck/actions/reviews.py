@@ -17,7 +17,7 @@ def review_pull_request(
         CODE_DIFF=diff_text,
     )
 
-    logger.debug("Code Review Prompt: ", prompt)
+    logger.info("Code Review Prompt: ", prompt)
 
     resp = chat_completion(
         prompt,
