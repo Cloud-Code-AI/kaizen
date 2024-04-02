@@ -1,6 +1,6 @@
-from codecheck.helpers import output, parser
-from codecheck.llms.provider import chat_completion
-from codecheck.llms.prompts import CODE_REVIEW_PROMPT, CODE_REVIEW_SYSTEM_PROMPT
+from cloudcode.helpers import output, parser
+from cloudcode.llms.provider import chat_completion
+from cloudcode.llms.prompts import CODE_REVIEW_PROMPT, CODE_REVIEW_SYSTEM_PROMPT
 import logging
 
 logger = logging.getLogger(__name__)
