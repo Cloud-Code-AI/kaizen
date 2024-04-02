@@ -1,6 +1,9 @@
 from fastapi import FastAPI, Request, BackgroundTasks
 from fastapi.responses import JSONResponse
-from api.github_helper.pull_requests import process_pull_request
+from api.github_helper.pull_requests import (
+    process_pull_request,
+    ACTIONS_TO_PROCESS_PR
+)
 import logging
 
 logger = logging.getLogger(__name__)
@@ -16,7 +19,7 @@ app = FastAPI()
 async def handle_webhook(request: Request, background_tasks: BackgroundTasks):
     payload = await request.json()
     event = request.headers.get("X-GitHub-Event")
-    if event == "pull_request":
+    if event == "pull_request" and payload["action"] in ACTIONS_TO_PROCESS_PR:
         background_tasks.add_task(process_pull_request, payload)
     else:
         print("Ignored event: ", event)

@@ -1,10 +1,12 @@
 from api.github_helper.utils import get_text_from_html_url
 from api.github_helper.installation import get_installation_access_token
-from codecheck.actions.reviews import review_pull_request
+from cloudcode.actions.reviews import review_pull_request
 import requests
 import logging
 
 logger = logging.getLogger(__name__)
+
+ACTIONS_TO_PROCESS_PR = ["opened", "reopened", "review_requested"]
 
 
 def process_pull_request(payload):
