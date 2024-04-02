@@ -1,5 +1,4 @@
-
-COLLAPSIBLE_TEMPLATE = '''
+COLLAPSIBLE_TEMPLATE = """
 <details>
 <summary>{comment}</summary>
 
@@ -9,7 +8,8 @@ COLLAPSIBLE_TEMPLATE = '''
 ### Confidence
 {confidence}
 </details>
-'''
+"""
+
 
 def json_to_markdown(data):
     markdown_output = "## Code Review Feedback\n\n"
