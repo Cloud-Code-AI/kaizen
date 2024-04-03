@@ -2,6 +2,9 @@ import os
 import jwt
 import time
 import requests
+import logging
+
+logger = logging.getLogger(__name__)
 
 # GitHub App configuration
 GITHUB_APP_ID = os.environ.get("GITHUB_APP_ID")
@@ -31,7 +34,7 @@ def generate_jwt():
 def get_text_from_html_url(url, access_token):
     headers = {
         "Authorization": f"Bearer {access_token}",
-        "Accept": "application/vnd.github.v3+json",
+        "Accept": "application/vnd.github.v3.diff",
     }
     response = requests.get(url, headers=headers)
     return response.text
