@@ -21,7 +21,7 @@ def json_to_markdown(data):
 
     for category, comments in data["review"].items():
         markdown_output += f"### {category}\n\n"
-        logger.info(f"comments: {comments}")
+        logger.debug(f"comments: {comments}")
         if type(comments) is dict:
             ct = COLLAPSIBLE_TEMPLATE.format(
                 comment=comments.get("comment", "NA"),
