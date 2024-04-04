@@ -35,7 +35,7 @@ def get_diff_text(url, access_token):
     headers = {
         "Authorization": f"Bearer {access_token}",
         "Accept": "application/vnd.github.v3.diff",
-        "X-GitHub-Api-Version": "2022-11-28"
+        "X-GitHub-Api-Version": "2022-11-28",
     }
     response = requests.get(url, headers=headers)
     logger.debug(f"Diff API response: {url}, Resp: {response.text}")
