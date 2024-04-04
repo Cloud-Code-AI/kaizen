@@ -2,6 +2,9 @@ import os
 import jwt
 import time
 import requests
+import logging
+
+logger = logging.getLogger(__name__)
 
 # GitHub App configuration
 GITHUB_APP_ID = os.environ.get("GITHUB_APP_ID")
@@ -28,10 +31,12 @@ def generate_jwt():
     return encoded_jwt
 
 
-def get_text_from_html_url(url, access_token):
+def get_diff_text(url, access_token):
     headers = {
         "Authorization": f"Bearer {access_token}",
-        "Accept": "application/vnd.github.v3+json",
+        "Accept": "application/vnd.github.v3.diff",
+        "X-GitHub-Api-Version": "2022-11-28",
     }
     response = requests.get(url, headers=headers)
+    logger.debug(f"Diff API response: {url}, Resp: {response.text}")
     return response.text
