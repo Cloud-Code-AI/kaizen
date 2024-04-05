@@ -55,4 +55,4 @@ CloudCode is released under the [AGPL License](LICENSE).
 
 ## Contact
 
-If you have any questions or need further assistance, please feel free to reach out to us at support@cloudcode.io.
+If you have any questions or need further assistance, please feel free to reach out to us at support@cloudcode.ai.
