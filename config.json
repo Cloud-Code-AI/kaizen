@@ -1,5 +1,8 @@
 {
     "language_model": {
         "provider": "litellm"
+    },
+    "github_app": {
+        "check_signature": false
     }
 }

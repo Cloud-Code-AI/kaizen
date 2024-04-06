@@ -5,6 +5,7 @@ import requests
 import logging
 import hmac
 import hashlib
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -60,3 +61,9 @@ def is_github_signature_valid(headers, body):
 
     mac = hmac.new(github_secret, msg=body, digestmod=hashlib.sha256)
     return hmac.compare_digest(mac.hexdigest(), signature)
+
+
+def get_config():
+    with open("config.json", "r") as f:
+        config_data = json.loads(f.read())
+    return config_data
