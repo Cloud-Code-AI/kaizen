@@ -1,9 +1,7 @@
 from fastapi import FastAPI, Request, BackgroundTasks, HTTPException
 from fastapi.responses import JSONResponse
 from api.github_helper.pull_requests import process_pull_request, ACTIONS_TO_PROCESS_PR
-from api.github_helper.utils import (
-    is_github_signature_valid
-)
+from api.github_helper.utils import is_github_signature_valid
 import logging
 
 logging.basicConfig(
@@ -27,7 +25,7 @@ async def handle_webhook(request: Request, background_tasks: BackgroundTasks):
     if event == "pull_request" and payload["action"] in ACTIONS_TO_PROCESS_PR:
         background_tasks.add_task(process_pull_request, payload)
     else:
-        print("Ignored event: ", event)
+        logger.info(f"Ignored event: {event}")
     return JSONResponse(content={"message": "Webhook received"})
 
 

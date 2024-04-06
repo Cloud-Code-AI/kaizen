@@ -19,20 +19,13 @@ COLLAPSIBLE_TEMPLATE = """
 def json_to_markdown(data):
     markdown_output = "## Code Review Feedback\n\n"
 
-    for category, comments in data["review"].items():
-        markdown_output += f"### {category}\n\n"
-        logger.debug(f"comments: {comments}")
-        if type(comments) is dict:
-            ct = COLLAPSIBLE_TEMPLATE.format(
-                comment=comments.get("comment", "NA"),
-                reasoning=comments.get("reasoning", "NA"),
-                confidence=comments.get("confidence", "NA"),
-            )
-            markdown_output += ct + "\n"
-        else:
-            for comment in comments:
-                markdown_output += f"- {comment}\n"
-        markdown_output += "\n"
+    for review in data["review"]:
+        markdown_output += f"### {review['topic']}\n\n"
+        ct = COLLAPSIBLE_TEMPLATE.format(
+            comment=review.get("comment", "NA"),
+            reasoning=review.get("reasoning", "NA"),
+            confidence=review.get("confidence", "NA"),
+        )
+        markdown_output += ct + "\n"
 
-    # Print the markdown output
     return markdown_output

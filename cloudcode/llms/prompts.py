@@ -17,27 +17,29 @@ TITLE: {PULL_REQUEST_TITLE}
 BODY: {PULL_REQUEST_DESC}
 
 Here is the CODE DIFF
-{CODE_DIFF}
+```{CODE_DIFF}```
 
-Using the provided information, generate a detailed code review that covers the following aspects:
+Using the provided information, generate a detailed code review with feedback organized as a JSON object. Only include sections with relevant feedback, omitting sections without feedback. Follow this structure:
 
-1. **Code Quality**: Evaluate the code changes in terms of readability, maintainability, and adherence to coding standards and best practices.
+{{
+  "review": [
+    {{
+      "topic": "<SECTION_TOPIC>",
+      "comment": "<CONCISE_FEEDBACK>",
+      "confidence": <PERCENTAGE>,
+      "reasoning": "<BRIEF_EXPLANATION>"
+    }},
+    ...
+  ]
+}}
 
-2. **Performance**: Analyze the potential performance impact of the code changes, considering factors such as time complexity, memory usage, and potential bottlenecks.
+Potential section topics:
+- "Code Quality"
+- "Performance" 
+- "Testing"
+- "Documentation"
+- "Potential Issues"
+- "Improvements"
 
-3. **Testing**: Review the presence and adequacy of tests included with the code changes. Suggest additional test cases or areas that require more comprehensive testing.
-
-4. **Documentation**: Evaluate the code documentation, both in terms of inline comments and any relevant external documentation updates.
-
-5. **Potential Issues**: Identify any potential bugs, security vulnerabilities, or other issues that may arise from the code changes.
-
-6. **Improvements**: Suggest improvements or alternative approaches that could enhance the code's efficiency, readability, or maintainability.
-
-
-Your code review should be thorough, constructive, and actionable, helping the developer understand your concerns and recommendations clearly. Point to the code while suggesting changes.
-
-Calculate relevance code based on the comment if it adds value to user.
-
-Respond as a json with the feedback in a list; example: 
-{{"review": {{"Testing missing": {{"comment: "", "confidence": "%", "reasoning": "%"}}, "Security Vulnerability": {{"comment: "", "confidence": "%", "reasoning": "%"}} }} }}
+Keep comments short and concise. Avoid duplicate feedback, merge when necessary.
 """
