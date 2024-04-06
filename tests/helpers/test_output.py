@@ -1,6 +1,4 @@
 import pytest
-from unittest.mock import patch
-from unittest.mock import patch
 import logging
 from cloudcode.helpers.output import COLLAPSIBLE_TEMPLATE, json_to_markdown
 
