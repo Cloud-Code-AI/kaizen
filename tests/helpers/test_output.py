@@ -1,6 +1,6 @@
 import pytest
 import logging
-from cloudcode.helpers.output import COLLAPSIBLE_TEMPLATE, json_to_markdown
+from cloudcode.helpers.output import PR_COLLAPSIBLE_TEMPLATE, create_pr_review_from_json
 
 
 @pytest.fixture
@@ -34,7 +34,7 @@ def test_json_to_markdown(test_data, capfd):
     expected_output = "## Code Review Feedback\n\n"
     expected_output += "### Code Quality\n\n"
     expected_output += (
-        COLLAPSIBLE_TEMPLATE.format(
+        PR_COLLAPSIBLE_TEMPLATE.format(
             comment="The code is well-structured and easy to read.",
             reasoning="The code follows best practices and coding standards.",
             confidence="High",
@@ -43,7 +43,7 @@ def test_json_to_markdown(test_data, capfd):
     )
     expected_output += "### Performance\n\n"
     expected_output += (
-        COLLAPSIBLE_TEMPLATE.format(
+        PR_COLLAPSIBLE_TEMPLATE.format(
             comment="The code could be optimized for better performance.",
             reasoning="There are some inefficient loops and data structures used.",
             confidence="Medium",
@@ -52,11 +52,11 @@ def test_json_to_markdown(test_data, capfd):
     )
     expected_output += "### Security\n\n"
     expected_output += (
-        COLLAPSIBLE_TEMPLATE.format(comment="NA", reasoning="NA", confidence="NA")
+        PR_COLLAPSIBLE_TEMPLATE.format(comment="NA", reasoning="NA", confidence="NA")
         + "\n"
     )
 
-    output = json_to_markdown(test_data)
+    output = create_pr_review_from_json(test_data)
     captured = capfd.readouterr()
     assert output == expected_output
     assert captured.out == ""

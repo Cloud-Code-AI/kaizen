@@ -1,6 +1,11 @@
 from fastapi import FastAPI, Request, BackgroundTasks, HTTPException
 from fastapi.responses import JSONResponse
-from api.github_helper.pull_requests import process_pull_request, ACTIONS_TO_PROCESS_PR
+from api.github_helper.pull_requests import (
+    process_pull_request,
+    ACTIONS_TO_PROCESS_PR,
+    ACTIONS_TO_UPDATE_DESC,
+    process_pr_desc,
+)
 from api.github_helper.utils import is_github_signature_valid
 import logging
 
@@ -22,8 +27,11 @@ async def handle_webhook(request: Request, background_tasks: BackgroundTasks):
     if not is_github_signature_valid(request.headers, body):
         return HTTPException(status_code=404, detail="Invalid Signature")
 
-    if event == "pull_request" and payload["action"] in ACTIONS_TO_PROCESS_PR:
-        background_tasks.add_task(process_pull_request, payload)
+    if event == "pull_request":
+        if payload["action"] in ACTIONS_TO_PROCESS_PR:
+            background_tasks.add_task(process_pull_request, payload)
+        if payload["action"] in ACTIONS_TO_UPDATE_DESC:
+            background_tasks.add_task(process_pr_desc, payload)
     else:
         logger.info(f"Ignored event: {event}")
     return JSONResponse(content={"message": "Webhook received"})

@@ -43,3 +43,26 @@ Potential section topics:
 
 Keep comments short and concise. Avoid duplicate feedback, merge when necessary.
 """
+
+PR_DESCRIPTION_PROMPT = """
+You are a skilled developer reviewing a pull request. To provide a clear and informative description, please consider the following details:
+
+Pull Request Title: {PULL_REQUEST_TITLE}
+Pull Request Description: {PULL_REQUEST_DESC}
+
+Code Diff:
+```{CODE_DIFF}```
+
+Using the provided information, generate a comprehensive description for this pull request. Cover the following points:
+
+1. Summarize the main purpose and scope of the changes.
+2. Highlight any significant modifications, refactoring, or new features introduced.
+3. Explain the motivation or rationale behind the changes.
+4. Address any potential concerns, risks, or breaking changes.
+5. Provide any additional context or recommendations for the reviewers.
+
+Provide output in following format:
+{{"desc": "<PR_DESCRIPTION_IN_MARKDOWN>"}}
+
+Your description should be clear, concise, and tailored to help reviewers understand the pull request's impact and make an informed decision.
+"""
