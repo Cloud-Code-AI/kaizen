@@ -1,5 +1,4 @@
 import pytest
-from unittest.mock import patch, Mock
 import json
 from cloudcode.actions.reviews import CodeReviewer
 from fuzzywuzzy import fuzz
