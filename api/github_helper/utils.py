@@ -3,6 +3,8 @@ import jwt
 import time
 import requests
 import logging
+import hmac
+import hashlib
 
 logger = logging.getLogger(__name__)
 
@@ -40,3 +42,21 @@ def get_diff_text(url, access_token):
     response = requests.get(url, headers=headers)
     logger.debug(f"Diff API response: {url}, Resp: {response.text}")
     return response.text
+
+
+def is_github_signature_valid(headers, body):
+    """
+    Validate the signature of the incoming request against the secret.
+    """
+    github_secret = os.environ.get("GITHUB_APP_WEBHOOK_SECRET", "").encode()
+    signature = headers.get('X-Hub-Signature-256')
+
+    if not signature or not github_secret:
+        return False
+
+    sha_name, signature = signature.split('=')
+    if sha_name != 'sha256':
+        return False
+
+    mac = hmac.new(github_secret, msg=body, digestmod=hashlib.sha256)
+    return hmac.compare_digest(mac.hexdigest(), signature)
