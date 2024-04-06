@@ -42,5 +42,8 @@ class CodeReviewer:
         )
 
         resp = self.provider.chat_completion(prompt)
-        body = output.create_pr_description(parser.extract_json(resp))
+        self.logger.debug(f"PROMPT Generate PR Desc RESP: {resp}")
+        body = output.create_pr_description(
+            parser.extract_json(resp), pull_request_desc
+        )
         return body

@@ -7,6 +7,7 @@ from api.github_helper.pull_requests import (
     process_pr_desc,
 )
 from api.github_helper.utils import is_github_signature_valid
+from api.github_helper.constants import CONFIG_DATA
 import logging
 
 logging.basicConfig(
@@ -23,8 +24,9 @@ async def handle_webhook(request: Request, background_tasks: BackgroundTasks):
     body = await request.body()
     event = request.headers.get("X-GitHub-Event")
     # Check if the Signature is valid
-    # TODO: Make this optional based on user config settings
-    if not is_github_signature_valid(request.headers, body):
+    if CONFIG_DATA["github_app"]["check_signature"] and not is_github_signature_valid(
+        request.headers, body
+    ):
         return HTTPException(status_code=404, detail="Invalid Signature")
 
     if event == "pull_request":
