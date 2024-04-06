@@ -27,7 +27,7 @@ async def handle_webhook(request: Request, background_tasks: BackgroundTasks):
     if event == "pull_request" and payload["action"] in ACTIONS_TO_PROCESS_PR:
         background_tasks.add_task(process_pull_request, payload)
     else:
-        print("Ignored event: ", event)
+        logger.info(f"Ignored event: {event}")
     return JSONResponse(content={"message": "Webhook received"})
 
 
