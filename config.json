@@ -1,6 +1,7 @@
 {
     "language_model": {
-        "provider": "litellm"
+        "provider": "litellm",
+        "enable_observability_logging": true
     },
     "github_app": {
         "check_signature": false

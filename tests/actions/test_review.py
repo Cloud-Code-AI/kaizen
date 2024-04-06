@@ -15,6 +15,7 @@ def test_review_pull_request(valid_review):
         valid_review["input"]["diff"],
         valid_review["input"]["title"],
         valid_review["input"]["description"],
+        user="pytest",
     )
 
     assert fuzz.ratio(result, valid_review["output"]) > 95

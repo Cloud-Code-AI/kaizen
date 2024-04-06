@@ -32,6 +32,7 @@ def process_pull_request(payload):
         diff_text=diff_text,
         pull_request_title=pr_title,
         pull_request_desc=pr_description,
+        user=repo_name,
     )
     post_pull_request(comment_url, review_body, access_token)
 
@@ -54,6 +55,7 @@ def process_pr_desc(payload):
         diff_text=diff_text,
         pull_request_title=pr_title,
         pull_request_desc=pr_description,
+        user=repo_name,
     )
     patch_pr_body(pr_url, desc, access_token)
 

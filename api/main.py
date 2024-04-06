@@ -7,7 +7,7 @@ from api.github_helper.pull_requests import (
     process_pr_desc,
 )
 from api.github_helper.utils import is_github_signature_valid
-from api.github_helper.constants import CONFIG_DATA
+from cloudcode.utils.config import CONFIG_DATA
 import logging
 
 logging.basicConfig(

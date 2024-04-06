@@ -1,4 +1,5 @@
 from cloudcode.helpers import output, parser
+from typing import Optional
 from cloudcode.llms.provider import LLMProvider
 from cloudcode.llms.prompts import (
     CODE_REVIEW_PROMPT,
@@ -14,7 +15,11 @@ class CodeReviewer:
         self.provider = LLMProvider(system_prompt=CODE_REVIEW_SYSTEM_PROMPT)
 
     def review_pull_request(
-        self, diff_text: str, pull_request_title: str, pull_request_desc: str
+        self,
+        diff_text: str,
+        pull_request_title: str,
+        pull_request_desc: str,
+        user: Optional[str] = None,
     ):
         prompt = CODE_REVIEW_PROMPT.format(
             PULL_REQUEST_TITLE=pull_request_title,
@@ -22,7 +27,7 @@ class CodeReviewer:
             CODE_DIFF=diff_text,
         )
 
-        resp = self.provider.chat_completion(prompt)
+        resp = self.provider.chat_completion(prompt, user=user)
 
         body = output.create_pr_review_from_json(parser.extract_json(resp))
 
@@ -30,7 +35,11 @@ class CodeReviewer:
         return body
 
     def generate_pull_request_desc(
-        self, diff_text: str, pull_request_title: str, pull_request_desc: str
+        self,
+        diff_text: str,
+        pull_request_title: str,
+        pull_request_desc: str,
+        user: Optional[str] = None,
     ):
         """
         This method generates a AI powered description for a pull request.
@@ -41,7 +50,7 @@ class CodeReviewer:
             CODE_DIFF=diff_text,
         )
 
-        resp = self.provider.chat_completion(prompt)
+        resp = self.provider.chat_completion(prompt, user=user)
         self.logger.debug(f"PROMPT Generate PR Desc RESP: {resp}")
         body = output.create_pr_description(
             parser.extract_json(resp), pull_request_desc
