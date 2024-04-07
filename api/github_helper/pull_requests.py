@@ -34,6 +34,9 @@ def process_pull_request(payload):
         pull_request_desc=pr_description,
         user=repo_name,
     )
+    access_token = get_installation_access_token(
+        installation_id, PULL_REQUEST_PERMISSION
+    )
     post_pull_request(comment_url, review_body, access_token)
 
 
@@ -56,6 +59,10 @@ def process_pr_desc(payload):
         pull_request_title=pr_title,
         pull_request_desc=pr_description,
         user=repo_name,
+    )
+
+    access_token = get_installation_access_token(
+        installation_id, PULL_REQUEST_PERMISSION
     )
     patch_pr_body(pr_url, desc, access_token)
 
