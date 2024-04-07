@@ -21,7 +21,6 @@ def get_installation_access_token(installation_id, permissions=None):
     body = {}
     if permissions:
         body["permissions"] = permissions
-    print(body, headers)
     response = requests.post(url, headers=headers)
     response.raise_for_status()
     return response.json()["token"]

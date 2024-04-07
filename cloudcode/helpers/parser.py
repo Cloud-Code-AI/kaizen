@@ -8,6 +8,9 @@ def extract_json(text):
 
     # Extract the JSON data from the text
     json_data = text[start_index:end_index]
+    json_data = json_data.replace("\n}", "}")
+    json_data = json_data.replace("\n", "\\n")
+    json_data = json_data.replace("\'", "")
 
     # Parse the JSON data
     parsed_data = json.loads(json_data)
