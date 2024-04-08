@@ -4,6 +4,8 @@
         "enable_observability_logging": true
     },
     "github_app": {
-        "check_signature": false
+        "check_signature": false,
+        "auto_pr_review": true,
+        "edit_pr_desc": true
     }
 }
