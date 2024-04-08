@@ -15,6 +15,7 @@ def extract_json(text):
     json_data = re.sub(r"\s*\\*\n\s*\]\s*\\*\n\s*", "]", json_data)
     json_data = re.sub(r",\s*\\*\n\s*", ",", json_data)
     json_data = re.sub(r'"\s*\\*\n\s*', '"', json_data)
+    json_data = json_data.replace("\n", "\\n")
 
     # Parse the JSON data
     parsed_data = json.loads(json_data)
