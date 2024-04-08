@@ -1,4 +1,5 @@
 import json
+import re
 
 
 def extract_json(text):
@@ -8,9 +9,12 @@ def extract_json(text):
 
     # Extract the JSON data from the text
     json_data = text[start_index:end_index]
-    json_data = json_data.replace("\n}", "}")
-    json_data = json_data.replace("\n", "\\n")
-    json_data = json_data.replace("\'", "")
+    json_data = re.sub(r"\s*\\*\n*\s*{\s*\\*\n*\s*", "{", json_data)
+    json_data = re.sub(r"\s*\\*\n*\s*\[\s*\\*\n*\s*", "[", json_data)
+    json_data = re.sub(r"\s*\\*\n*\s*}\s*\\*\n*\s*", "}", json_data)
+    json_data = re.sub(r"\s*\\*\n\s*\]\s*\\*\n\s*", "]", json_data)
+    json_data = re.sub(r",\s*\\*\n\s*", ",", json_data)
+    json_data = re.sub(r'"\s*\\*\n\s*', '"', json_data)
 
     # Parse the JSON data
     parsed_data = json.loads(json_data)
