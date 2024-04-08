@@ -30,9 +30,15 @@ async def handle_webhook(request: Request, background_tasks: BackgroundTasks):
         return HTTPException(status_code=404, detail="Invalid Signature")
 
     if event == "pull_request":
-        if CONFIG_DATA["github_app"]["auto_pr_review"] or payload["action"] in ACTIONS_TO_PROCESS_PR:
+        if (
+            CONFIG_DATA["github_app"]["auto_pr_review"]
+            or payload["action"] in ACTIONS_TO_PROCESS_PR
+        ):
             background_tasks.add_task(process_pull_request, payload)
-        if CONFIG_DATA["github_app"]["edit_pr_desc"] and payload["action"] in ACTIONS_TO_UPDATE_DESC:
+        if (
+            CONFIG_DATA["github_app"]["edit_pr_desc"]
+            and payload["action"] in ACTIONS_TO_UPDATE_DESC
+        ):
             background_tasks.add_task(process_pr_desc, payload)
     else:
         logger.info(f"Ignored event: {event}")
