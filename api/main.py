@@ -32,7 +32,7 @@ async def handle_webhook(request: Request, background_tasks: BackgroundTasks):
     if event == "pull_request":
         if (
             CONFIG_DATA["github_app"]["auto_pr_review"]
-            or payload["action"] in ACTIONS_TO_PROCESS_PR
+            and payload["action"] in ACTIONS_TO_PROCESS_PR
         ):
             background_tasks.add_task(process_pull_request, payload)
         if (

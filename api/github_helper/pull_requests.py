@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 GITHUB_API_BASE_URL = os.environ["GITHUB_API_BASE_URL"]
 
-ACTIONS_TO_PROCESS_PR = ["review_requested", "ready_for_review"]
+ACTIONS_TO_PROCESS_PR = ["opened", "reopened", "review_requested", "ready_for_review"]
 ACTIONS_TO_UPDATE_DESC = ["opened", "reopened"]
 
 
