@@ -1,7 +1,13 @@
-<p align="left">
-  <a href="https://github.com/Cloud-Code-AI/"><img src="https://img.shields.io/github/stars/Cloud-Code-AI/cloudcode" alt="Github Stars"></a>
-  <a href="https://github.com/Cloud-Code-AI/cloudcode/pulse"><img src="https://img.shields.io/github/commit-activity/w/Cloud-Code-AI/cloudcode" alt="Commits-per-week"></a>
-  <a href="https://opensource.org/license/agpl-v3"><img src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" alt="License: AGPL-3.0"></a>
+<p align="center">
+  <a href="https://github.com/Cloud-Code-AI/">
+    <img src="https://img.shields.io/github/stars/Cloud-Code-AI/cloudcode" alt="Github Stars">
+  </a>
+  <a href="https://github.com/Cloud-Code-AI/cloudcode/pulse">
+    <img src="https://img.shields.io/github/commit-activity/w/Cloud-Code-AI/cloudcode" alt="Commits-per-week">
+  </a>
+  <a href="https://opensource.org/license/agpl-v3">
+    <img src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" alt="License: AGPL-3.0">
+  </a>
 </p>
 
 # CloudCode
@@ -22,28 +28,43 @@ CloudCode generates comprehensive end-to-end tests based on your application's c
 
 CloudCode RAGifies your code repositories, generating relevant context and allowing you to integrate your own Large Language Models (LLMs) or use pre-trained models. This feature enables you to leverage the power of LLMs for various tasks, such as code generation, documentation, and more.
 
+## File Structure
+
+- `api`: Contains the API server used by the GitHub app to process incoming requests and respond.
+- `cloudcode`: Contains the main logic for interaction with LLMs and data processing.
+  - `actions`: Contains classes used to process various different actions like Code Review.
+  - `llms`: Contains LLM integrations.
+- `docs`: Contains Nextra-powered documentation for the project.
+
 ## Getting Started
 
 To get started with CloudCode, follow these steps:
 
 1. Clone the repository:
 
-```bash
-git clone https://github.com/cloudcode/cloudcode.git
-```
+   ```bash
+   git clone https://github.com/cloudcode/cloudcode.git
+   ```
 
 2. Install dependencies:
 
-```bash
-cd cloudcode
-poetry install
+   ```bash
+   cd cloudcode
+   poetry install
+   ```
+
+### Running API Server for GitHub App
+
+CloudCode utilizes a GitHub app to perform actions like PR review and description updates. Here is a quick link to set up your own GitHub App: [docs/pages/github_app.md](docs/pages/github_app.md)
+
+Deploy the API using Docker Compose:
+```
+docker-compose up
 ```
 
-3. Configure your code repository and CI/CD pipeline to integrate with CloudCode.
+You can also configure features by tweaking the config.json file.
 
-4. Customize CloudCode's settings and configurations to suit your project's needs.
-
-5. Run CloudCode and enjoy the benefits of automated code review, test generation, and end-to-end testing.
+**NOTE:** You need to create a `.env` file by copying `.env.example` and also store the PEM file for the GitHub app as `GITHUB_APP_KEY.pem`.
 
 ## Contributing
 
