@@ -1,3 +1,5 @@
+import { useRouter } from 'next/router'
+
 export default {
     logo: (
         <>
@@ -77,6 +79,19 @@ export default {
             </svg>
         </>
     ),
+    useNextSeoProps() {
+        const { asPath } = useRouter()
+        if (asPath !== '/') {
+            return {
+                titleTemplate: '%s'
+            }
+        }
+        else {
+            return {
+                titleTemplate: 'Cloud Code AI Docs'
+            }
+        } 
+    },
     project: {
       link: 'https://github.com/Cloud-Code-AI/cloudcode'
     },
