@@ -1,0 +1,7 @@
+{
+    "clone_repository": "Clone Repository",
+    "install_dependencies": "Install Dependencies",
+    "setup_github_app": "Setup GitHub App",
+    "prepare_configuration": "Prepare Configuration",
+    "deploy_api": "Deploy API"
+}

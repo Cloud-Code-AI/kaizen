@@ -1,0 +1,42 @@
+Follow these steps to set up your GitHub app:
+
+### Registering Your GitHub App
+
+1. **Access Developer Settings:**
+   - Click on your profile photo in the upper-right corner of GitHub.
+   - Go to ```Settings``` and then click on ```Developer settings``` in the left sidebar.
+   <br></br>
+2. **Create a New GitHub App:**
+   - Under ```Developer settings```, select ```GitHub Apps``` and click on ```New GitHub App.```
+   <br></br>
+3. **Provide App Details:**
+   - Enter the following details for your app:
+     - **GitHub App name:** Choose a name for your app.
+     - **Homepage URL:** Specify the URL of your app (e.g., repository URL).
+     - **Webhook URL:** Enter the server URL where webhook requests will be sent.
+     - Optionally, set a **Webhook secret** for request validation.
+     <br></br>
+
+### Configure Webhook and Permissions
+
+1. **Activate Webhook:**
+   - Ensure the "Webhook" toggle is set to ```Active.```
+   <br></br>
+2. **Set Permissions:**
+   - In the sidebar, navigate to ```Permissions & events.```
+   <br></br>
+3. **Define Permissions:**
+   - Under ```Repository permissions```, ```Organization permissions```, and ```Account permissions```, select required permissions such as:
+     - Repository Content
+     - Pull Request
+     - Metadata
+     - Check Runs
+     <br></br>
+
+### Subscribe to Events
+
+1. **Choose Events:**
+   - Under ```Subscribe to Events```, select the webhook events your app needs to receive (e.g., "Pull request" events).
+   <br></br>
+
+By following these steps, your GitHub app will be properly configured with the necessary permissions and event subscriptions for your project.
