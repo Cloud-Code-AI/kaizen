@@ -58,10 +58,11 @@ To get started with CloudCode, follow these steps:
 CloudCode utilizes a GitHub app to perform actions like PR review and description updates. Here is a quick link to set up your own GitHub App: [docs/pages/github_app.md](docs/pages/github_app.md)
 
 Deploy the API using Docker Compose:
-
 ```
 docker-compose up
 ```
+
+You can also configure features by tweaking the config.json file.
 
 **NOTE:** You need to create a `.env` file by copying `.env.example` and also store the PEM file for the GitHub app as `GITHUB_APP_KEY.pem`.
 
