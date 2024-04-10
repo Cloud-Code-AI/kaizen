@@ -1,4 +1,4 @@
-from cloudcode.helpers import output, parser
+from cloudcode.helpers import parser
 from typing import Optional
 from cloudcode.llms.provider import LLMProvider
 from cloudcode.llms.prompts import (
@@ -117,7 +117,7 @@ class UITester:
         """
 
         prompt = UI_MODULES_PROMPT.format(
-             WEB_CONTENT=web_content
+            WEB_CONTENT=web_content
         )
         
         resp = self.provider.chat_completion(prompt, user=user)
@@ -131,18 +131,18 @@ class UITester:
             web_content: str,
             test_description: str,
             user: Optional[str] = None
-        ):
-            """
-            This method generates cypress code for a particular UI test.
-            """
-            prompt = CYPRESS_CODE_PROMPT.format(
-                WEB_CONTENT=web_content,
-                TEST_DESCRIPTION=test_description
-            )
+    ):
+        """
+        This method generates cypress code for a particular UI test.
+        """
+        prompt = CYPRESS_CODE_PROMPT.format(
+            WEB_CONTENT=web_content,
+            TEST_DESCRIPTION=test_description
+        )
             
-            resp = self.provider.chat_completion(prompt, user=user)
+        resp = self.provider.chat_completion(prompt, user=user)
 
-            return resp
+        return resp
 
     def generate_module_tests(
         self,
@@ -161,4 +161,3 @@ class UITester:
                 test["status"] = "Not run"
 
         return ui_tests
-
