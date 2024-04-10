@@ -64,3 +64,29 @@ Code Diff:
 ```{CODE_DIFF}```
 
 """
+# TODO: Rephrase prompt to make it more clear and accurate.
+UI_MODULES_PROMPT = """
+Assign yourself as a quality assurance engineer. Read this code and design comprehensive tests to test the UI
+of this html. Break it down into 5-10 seperate modules and return the output as JSON with the following keys:
+id - serial number to identify
+module_title - title of the identified module
+tests - JSON containing list of tests steps to carry out for that module with keys - id, test_description.
+Share the JSON output ONLY. No other text.
+
+```{WEB_CONTENT}```
+"""
+
+# TODO: Rephrase prompt to make it more clear and accurate.
+UI_TESTS_SYSTEM_PROMPT = """
+As a test case engineer, your task is to write comprehensive test cases for a given user interface. 
+You should review the user interface and identify all possible use cases and edge cases that need to be tested. 
+Your test cases should cover all aspects of the user interface, including functionality, usability, and accessibility.
+"""
+
+# TODO: Rephrase prompt to make it more clear and accurate.
+CYPRESS_CODE_PROMPT = """
+Assign yourself as a quality assurance engineer. Read this code and write cypress code for test -
+{TEST_DESCRIPTION}. Return ONLY the cypress code and strictly no other text.
+
+```{WEB_CONTENT}```
+"""
