@@ -20,6 +20,12 @@ def test_data():
                 "confidence": "Medium",
             },
             {
+                "topic": "Performance",
+                "comment": "The code could be optimized for better performance.",
+                "reasoning": "There are some inefficient loops and data structures used.",
+                "confidence": "Medium",
+            },
+            {
                 "topic": "Security",
                 "comment": "NA",
                 "reasoning": "NA",
@@ -49,6 +55,11 @@ def test_json_to_markdown(test_data, capfd):
             confidence="Medium",
         )
         + "\n"
+        + PR_COLLAPSIBLE_TEMPLATE.format(
+            comment="The code could be optimized for better performance.",
+            reasoning="There are some inefficient loops and data structures used.",
+            confidence="Medium",
+        ) + "\n"
     )
     expected_output += "### Security\n\n"
     expected_output += (
