@@ -7,10 +7,10 @@ PR_COLLAPSIBLE_TEMPLATE = """
 <details>
 <summary>{comment}</summary>
 
-### Reason
+##### Reason
 {reasoning}
 
-### Confidence
+##### Confidence
 {confidence}
 </details>
 """
@@ -23,17 +23,30 @@ DESC_COLLAPSIBLE_TEMPLATE = """
 """
 
 
+def merge_topics(reviews):
+    topics = {}
+    for review in reviews:
+        if review["topic"] in topics:
+            topics[review["topic"]].append(review)
+        else:
+            topics[review["topic"]] = [review]
+    return topics
+
+
 def create_pr_review_from_json(data):
     markdown_output = "## Code Review Feedback\n\n"
 
-    for review in data["review"]:
-        markdown_output += f"### {review['topic']}\n\n"
-        ct = PR_COLLAPSIBLE_TEMPLATE.format(
-            comment=review.get("comment", "NA"),
-            reasoning=review.get("reasoning", "NA"),
-            confidence=review.get("confidence", "NA"),
-        )
-        markdown_output += ct + "\n"
+    topics = merge_topics(data["review"])
+
+    for topic, reviews in topics.items():
+        markdown_output += f"### {topic}\n\n"
+        for review in reviews:
+            ct = PR_COLLAPSIBLE_TEMPLATE.format(
+                comment=review.get("comment", "NA"),
+                reasoning=review.get("reasoning", "NA"),
+                confidence=review.get("confidence", "NA"),
+            )
+            markdown_output += ct + "\n"
 
     return markdown_output
 
