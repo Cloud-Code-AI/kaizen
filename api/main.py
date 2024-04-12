@@ -17,7 +17,6 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
-ui_tester = UITester()
 
 
 @app.post("/github-webhook")
@@ -48,7 +47,8 @@ async def handle_webhook(request: Request, background_tasks: BackgroundTasks):
 
 
 @app.post("/generate-ui-tests")  
-async def generate_ui_tests(request: Request):  
+async def generate_ui_tests(request: Request):
+    ui_tester = UITester()
     data = await request.json()  
     web_url = data.get('web_url')  
     tests = ui_tester.generate_ui_tests(web_url=web_url)  
