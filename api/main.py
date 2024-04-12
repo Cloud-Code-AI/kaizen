@@ -9,6 +9,7 @@ from api.github_helper.pull_requests import (
 from api.github_helper.utils import is_github_signature_valid
 from cloudcode.utils.config import CONFIG_DATA
 import logging
+from cloudcode.actions.ui_tests import UITester
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -43,6 +44,15 @@ async def handle_webhook(request: Request, background_tasks: BackgroundTasks):
     else:
         logger.info(f"Ignored event: {event}")
     return JSONResponse(content={"message": "Webhook received"})
+
+
+@app.post("/generate-ui-tests")  
+async def generate_ui_tests(request: Request):
+    ui_tester = UITester()
+    data = await request.json()  
+    web_url = data.get('web_url')  
+    tests = ui_tester.generate_ui_tests(web_url=web_url)  
+    return JSONResponse(content={"ui_tests": tests}) 
 
 
 @app.get("/")
