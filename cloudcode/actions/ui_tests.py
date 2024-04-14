@@ -13,8 +13,7 @@ class UITester:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
         self.provider = LLMProvider(
-            system_prompt=UI_TESTS_SYSTEM_PROMPT,
-            max_tokens=15000
+            system_prompt=UI_TESTS_SYSTEM_PROMPT
         )
 
     def generate_ui_tests(
@@ -55,8 +54,9 @@ class UITester:
         )
         
         resp = self.provider.chat_completion(prompt, user=user)
+        print("IM Modules: ", resp)
 
-        modules = parser.extract_json(resp)
+        modules = parser.extract_multi_json(resp)
 
         return modules
     
@@ -87,7 +87,9 @@ class UITester:
         This method generates UI testing points for all modules.
         """
         ui_tests = test_modules
-        for module in ui_tests["modules"]:
+        print("Type: ", type(ui_tests))
+        print(ui_tests)
+        for module in ui_tests:
             for test in module["tests"]:
                 test_description = test["test_description"]
                 cypress_code = self.generate_cypress_code(web_content, test_description)
