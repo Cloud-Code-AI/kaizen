@@ -1,7 +1,9 @@
 import logging
-import asyncio
-from pyppeteer import launch
+from playwright.async_api import async_playwright
 from bs4 import BeautifulSoup
+import asyncio
+import nest_asyncio
+import subprocess
 
 logger = logging.getLogger(__name__)
 
@@ -63,16 +65,23 @@ def create_pr_description(data, original_desc):
 
 
 async def get_html(url):
-    browser = await launch()
-    page = await browser.newPage()
-    await page.goto(url, {'waitUntil': 'networkidle2'})
-    html = await page.content()
-    await browser.close()
-    return html
+    async with async_playwright() as p:
+        subprocess.run(['playwright', 'install', '--with-deps'], check=True)
+        browser = await p.chromium.launch(headless=True)
+        page = await browser.new_page()
+        await page.goto(url)
+        html = await page.content()
+        await browser.close()
+        return html
 
 
 def get_web_html(url):
-    html = asyncio.get_event_loop().run_until_complete(get_html(url))
+    nest_asyncio.apply()
+    html = asyncio.run(get_html(url))
     soup = BeautifulSoup(html, 'html.parser')
+
+    for svg in soup.find_all('svg'):  
+        svg.decompose()
+    
     pretty_html = soup.prettify()
     return pretty_html

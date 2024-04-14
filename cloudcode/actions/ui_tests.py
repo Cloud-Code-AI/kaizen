@@ -4,7 +4,7 @@ from cloudcode.llms.provider import LLMProvider
 from cloudcode.llms.prompts import (
     UI_MODULES_PROMPT,
     UI_TESTS_SYSTEM_PROMPT,
-    CYPRESS_CODE_PROMPT
+    PLAYWRIGHT_CODE_PROMPT
 )
 import logging
 
@@ -13,8 +13,7 @@ class UITester:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
         self.provider = LLMProvider(
-            system_prompt=UI_TESTS_SYSTEM_PROMPT,
-            max_tokens=15000
+            system_prompt=UI_TESTS_SYSTEM_PROMPT
         )
 
     def generate_ui_tests(
@@ -26,7 +25,7 @@ class UITester:
         """
         web_content = self.extract_webpage(web_url)
         test_modules = self.identify_modules(web_content)
-        ui_tests = self.generate_module_tests(web_content, test_modules)
+        ui_tests = self.generate_module_tests(web_content, test_modules, web_url)
 
         return ui_tests
 
@@ -56,22 +55,24 @@ class UITester:
         
         resp = self.provider.chat_completion(prompt, user=user)
 
-        modules = parser.extract_json(resp)
+        modules = parser.extract_multi_json(resp)
 
         return modules
     
-    def generate_cypress_code(
+    def generate_playwright_code(
             self,
             web_content: str,
             test_description: str,
+            web_url: str,
             user: Optional[str] = None
     ):
         """
-        This method generates cypress code for a particular UI test.
+        This method generates playwright code for a particular UI test.
         """
-        prompt = CYPRESS_CODE_PROMPT.format(
+        prompt = PLAYWRIGHT_CODE_PROMPT.format(
             WEB_CONTENT=web_content,
-            TEST_DESCRIPTION=test_description
+            TEST_DESCRIPTION=test_description,
+            URL=web_url
         )
             
         resp = self.provider.chat_completion(prompt, user=user)
@@ -81,17 +82,18 @@ class UITester:
     def generate_module_tests(
         self,
         web_content: str,
-        test_modules: dict
+        test_modules: dict,
+        web_url: str
     ):
         """
         This method generates UI testing points for all modules.
         """
         ui_tests = test_modules
-        for module in ui_tests["modules"]:
+        for module in ui_tests:
             for test in module["tests"]:
                 test_description = test["test_description"]
-                cypress_code = self.generate_cypress_code(web_content, test_description)
-                test["code"] = cypress_code
+                playwright_code = self.generate_playwright_code(web_content, test_description, web_url)
+                test["code"] = playwright_code
                 test["status"] = "Not run"
 
         return ui_tests

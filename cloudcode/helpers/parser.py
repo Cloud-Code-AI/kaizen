@@ -20,3 +20,11 @@ def extract_json(text):
     # Parse the JSON data
     parsed_data = json.loads(json_data)
     return parsed_data
+
+
+def extract_multi_json(text):
+    start_index = text.find("[")
+    end_index = text.rfind("]") + 1
+    json_data = text[start_index:end_index]
+    parsed_data = json.loads(json_data)
+    return parsed_data

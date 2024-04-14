@@ -84,9 +84,10 @@ Your test cases should cover all aspects of the user interface, including functi
 """
 
 # TODO: Rephrase prompt to make it more clear and accurate.
-CYPRESS_CODE_PROMPT = """
-Assign yourself as a quality assurance engineer. Read this code and write cypress code for test -
-{TEST_DESCRIPTION}. Return ONLY the cypress code and strictly no other text.
+PLAYWRIGHT_CODE_PROMPT = """
+Assign yourself as a quality assurance engineer. Read this code and write playwright code for test -
+{TEST_DESCRIPTION}. Return ONLY the playwright code and strictly no other text.
 
+URL: {URL}
 ```{WEB_CONTENT}```
 """
