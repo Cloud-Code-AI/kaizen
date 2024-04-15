@@ -1,4 +1,5 @@
 from cloudcode.helpers import output, parser
+from cloudcode.playwright import helper
 from typing import Optional
 from cloudcode.llms.provider import LLMProvider
 from cloudcode.llms.prompts import (
@@ -97,3 +98,16 @@ class UITester:
                 test["status"] = "Not run"
 
         return ui_tests
+    
+    def run_tests(
+        self,
+        test_modules: dict
+    ):
+        """
+        This method runs playwright tests and updates logs and status accordingly.
+        """
+        for module in test_modules:
+            for test in module["tests"]:
+                test["logs"], test["status"] = helper.run_test(test["code"])
+        
+        return test_modules
