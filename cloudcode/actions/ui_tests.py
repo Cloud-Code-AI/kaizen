@@ -8,6 +8,7 @@ from cloudcode.llms.prompts import (
     PLAYWRIGHT_CODE_PROMPT
 )
 import logging
+import subprocess
 
 
 class UITester:
@@ -106,6 +107,7 @@ class UITester:
         """
         This method runs playwright tests and updates logs and status accordingly.
         """
+        subprocess.run(['playwright', 'install', '--with-deps'], check=True)
         test_result = ui_tests
         for module in test_result:
             for test in module["tests"]:

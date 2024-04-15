@@ -1,10 +1,11 @@
 import subprocess
 import json
 import os
+import re
 
 
 def run_test(code):
-    temp_file_path = 'tests/temp.spec.js'
+    temp_file_path = 'cloudcode/playwright/tests/temp.spec.js'
     create_test_spec(code, temp_file_path)
     result_json = run_test_script()
     logs, test_result = extract_result(result_json)
@@ -15,11 +16,19 @@ def run_test(code):
 
 def create_test_spec(code, path):
     with open(path, 'w+') as test_file:
-        test_file.write(code)
+        match = re.search(r'```(?:javascript)?\n(.*)\n```', code, re.DOTALL)
+
+    if match:
+        test_code = match.group(1)
+        with open(path, 'w+') as test_file:
+            test_file.write(test_code)
 
 
 def run_test_script():
-    output = subprocess.run(['npx', 'playwright', 'test'], capture_output=True, text=True)
+    output = subprocess.run(['npx', 'playwright', 'test'],
+                            cwd="cloudcode/playwright",
+                            capture_output=True,
+                            text=True)
     result = json.loads(output.stdout)
     return result
 
