@@ -101,13 +101,14 @@ class UITester:
     
     def run_tests(
         self,
-        test_modules: dict
+        ui_tests: dict
     ):
         """
         This method runs playwright tests and updates logs and status accordingly.
         """
-        for module in test_modules:
+        test_result = ui_tests
+        for module in test_result:
             for test in module["tests"]:
                 test["logs"], test["status"] = helper.run_test(test["code"])
         
-        return test_modules
+        return test_result
