@@ -55,6 +55,15 @@ async def generate_ui_tests(request: Request):
     return JSONResponse(content={"ui_tests": tests}) 
 
 
+@app.post("/run-ui-tests")
+async def run_ui_tests(request: Request):
+    ui_tester = UITester()
+    data = await request.json()
+    ui_tests = data.get('ui_tests')
+    test_result = ui_tester.run_tests(ui_tests)
+    return JSONResponse(content={"test_result": test_result})
+
+
 @app.get("/")
 def github_app_auth():
     return JSONResponse(content={"message": "API is Working!"})
