@@ -59,7 +59,8 @@ def test_json_to_markdown(test_data, capfd):
             comment="The code could be optimized for better performance.",
             reasoning="There are some inefficient loops and data structures used.",
             confidence="Medium",
-        ) + "\n"
+        )
+        + "\n"
     )
     expected_output += "### Security\n\n"
     expected_output += (

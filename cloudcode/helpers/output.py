@@ -66,7 +66,7 @@ def create_pr_description(data, original_desc):
 
 async def get_html(url):
     async with async_playwright() as p:
-        subprocess.run(['playwright', 'install', '--with-deps'], check=True)
+        subprocess.run(["playwright", "install", "--with-deps"], check=True)
         browser = await p.chromium.launch(headless=True)
         page = await browser.new_page()
         await page.goto(url)
@@ -78,10 +78,10 @@ async def get_html(url):
 def get_web_html(url):
     nest_asyncio.apply()
     html = asyncio.run(get_html(url))
-    soup = BeautifulSoup(html, 'html.parser')
+    soup = BeautifulSoup(html, "html.parser")
 
-    for svg in soup.find_all('svg'):  
+    for svg in soup.find_all("svg"):
         svg.decompose()
-    
+
     pretty_html = soup.prettify()
     return pretty_html
