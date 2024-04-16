@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "code-check"
+name = "proctAI"
 version = "0.1.0"
 description = "An intelligent coding companion that accelerates your development workflow by providing efficient assistance, enabling you to craft high-quality code more rapidly."
 authors = ["Saurav Panda <saurav.panda@cloudcode.ai>"]
@@ -16,9 +16,9 @@ litellm = "^1.34.42"
 flake8 = "^7.0.0"
 black = "^24.3.0"
 cryptography = "^42.0.5"
-playwright = "^1.43.0"
 bs4 = "^0.0.2"
 nest-asyncio = "^1.6.0"
+pytest-playwright = "^0.4.4"
 
 
 [build-system]

@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import asyncio
 import nest_asyncio
 import subprocess
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -85,3 +86,15 @@ def get_web_html(url):
 
     pretty_html = soup.prettify()
     return pretty_html
+
+
+def get_parent_folder():
+    return os.getcwd()
+
+
+def create_folder(folder_path):
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+        logger.debug(f"Folder '{folder_path}' created successfully.")
+    else:
+        logger.debug(f"Folder '{folder_path}' already exists.")
