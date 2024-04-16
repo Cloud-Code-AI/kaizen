@@ -1,4 +1,3 @@
-import json
 from cloudcode.generator.ui import UITestGenerator
 
 generator = UITestGenerator()
