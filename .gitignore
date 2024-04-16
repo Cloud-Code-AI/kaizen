@@ -163,3 +163,5 @@ cython_debug/
 *.pem
 node_modules
 .next
+
+.cloudcode
