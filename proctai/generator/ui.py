@@ -1,8 +1,8 @@
-from cloudcode.helpers import output, parser
-from cloudcode.playwright import helper
+from proctai.helpers import output, parser
+from proctai.playwright import helper
 from typing import Optional
-from cloudcode.llms.provider import LLMProvider
-from cloudcode.llms.prompts import (
+from proctai.llms.provider import LLMProvider
+from proctai.llms.prompts import (
     UI_MODULES_PROMPT,
     UI_TESTS_SYSTEM_PROMPT,
     PLAYWRIGHT_CODE_PROMPT,
