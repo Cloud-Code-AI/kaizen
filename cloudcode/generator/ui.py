@@ -9,20 +9,26 @@ from cloudcode.llms.prompts import (
 )
 import logging
 import subprocess
+import os
 
 
-class UITester:
+class UITestGenerator:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
         self.provider = LLMProvider(system_prompt=UI_TESTS_SYSTEM_PROMPT)
 
-    def generate_ui_tests(self, web_url: str):
+    def generate_ui_tests(
+        self,
+        web_url: str,
+        folder_path: Optional[str] = "",
+    ):
         """
         This method generates UI tests with cypress code for a given web URL.
         """
         web_content = self.extract_webpage(web_url)
         test_modules = self.identify_modules(web_content)
         ui_tests = self.generate_module_tests(web_content, test_modules, web_url)
+        self.store_tests_files(ui_tests, folder_path)
 
         return ui_tests
 
@@ -38,13 +44,9 @@ class UITester:
         """
         This method identifies the different UI modules from a webpage.
         """
-
         prompt = UI_MODULES_PROMPT.format(WEB_CONTENT=web_content)
-
         resp = self.provider.chat_completion(prompt, user=user)
-
         modules = parser.extract_multi_json(resp)
-
         return modules
 
     def generate_playwright_code(
@@ -80,6 +82,29 @@ class UITester:
                 test["status"] = "Not run"
 
         return ui_tests
+
+    def store_tests_files(self, json_tests: list, folder_path: str = ""):
+        if not folder_path:
+            folder_path = output.get_parent_folder()
+
+        folder_path = os.path.join(folder_path, ".cloudcode/tests")
+        for module in json_tests:
+            temp_folder_path = os.path.join(folder_path, module["folder_name"])
+            output.create_folder(temp_folder_path)
+            for test in module["tests"]:
+                file_path = os.path.join(
+                    temp_folder_path, "test_" + str(test["id"]) + ".py"
+                )
+                with open(file_path, "w") as f:
+                    cleaned_code = helper.clean_python_code(test["code"])
+                    if not cleaned_code:
+                        self.logger.info(f"Failed to clean code")
+                    else:
+                        cleaned_code = (
+                            f"''' Module Name: {module['module_title']}\n '''\n\n"
+                            + cleaned_code
+                        )
+                        f.write(cleaned_code)
 
     def run_tests(self, ui_tests: dict):
         """

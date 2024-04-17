@@ -14,6 +14,13 @@ def run_test(code):
     return logs, test_result
 
 
+def clean_python_code(code):
+    match = re.search(r"```(?:python)?\n(.*)\n```", code, re.DOTALL)
+    if match:
+        return match.group(1)
+    return None
+
+
 def create_test_spec(code, path):
     with open(path, "w+") as test_file:
         match = re.search(r"```(?:javascript)?\n(.*)\n```", code, re.DOTALL)

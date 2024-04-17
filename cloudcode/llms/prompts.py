@@ -71,8 +71,10 @@ of this html. Break it down into 5-10 seperate modules and return the output as 
 id - serial number to identify
 module_title - title of the identified module
 tests - JSON containing list of tests steps to carry out for that module with keys - id, test_description.
+folder_name - relevant folder name to store tests
 Share the JSON output ONLY. No other text.
 
+CONTENT:
 ```{WEB_CONTENT}```
 """
 
@@ -86,7 +88,7 @@ Your test cases should cover all aspects of the user interface, including functi
 # TODO: Rephrase prompt to make it more clear and accurate.
 PLAYWRIGHT_CODE_PROMPT = """
 Assign yourself as a quality assurance engineer. Read this code and write playwright code for test -
-{TEST_DESCRIPTION}. Return ONLY the playwright code and strictly no other text.
+{TEST_DESCRIPTION}. Return ONLY the playwright code based on python and strictly no other text.
 
 URL: {URL}
 ```{WEB_CONTENT}```
