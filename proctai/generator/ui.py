@@ -1,15 +1,16 @@
+import logging
+import subprocess
+import os
+from typing import Optional
+import json
 from proctai.helpers import output, parser
 from proctai.playwright import helper
-from typing import Optional
 from proctai.llms.provider import LLMProvider
 from proctai.llms.prompts import (
     UI_MODULES_PROMPT,
     UI_TESTS_SYSTEM_PROMPT,
     PLAYWRIGHT_CODE_PROMPT,
 )
-import logging
-import subprocess
-import os
 
 
 class UITestGenerator:
@@ -88,6 +89,8 @@ class UITestGenerator:
             folder_path = output.get_parent_folder()
 
         folder_path = os.path.join(folder_path, ".cloudcode/tests")
+        with open(f'{folder_path}/tests.json', 'w') as f:
+            f.write(json.dumps(json_tests))
         for module in json_tests:
             temp_folder_path = os.path.join(folder_path, module["folder_name"])
             output.create_folder(temp_folder_path)

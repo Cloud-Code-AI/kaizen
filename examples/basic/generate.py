@@ -1,4 +1,4 @@
-from cloudcode.generator.ui import UITestGenerator
+from proctai.generator.ui import UITestGenerator
 
 generator = UITestGenerator()
 

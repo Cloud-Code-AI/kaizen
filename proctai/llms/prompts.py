@@ -72,6 +72,7 @@ id - serial number to identify
 module_title - title of the identified module
 tests - JSON containing list of tests steps to carry out for that module with keys - id, test_description.
 folder_name - relevant folder name to store tests
+importance - level of importance of this test out of ['critical', 'good_to_have', 'non_essential']
 Share the JSON output ONLY. No other text.
 
 CONTENT:
