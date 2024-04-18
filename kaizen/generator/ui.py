@@ -88,7 +88,7 @@ class UITestGenerator:
         if not folder_path:
             folder_path = output.get_parent_folder()
 
-        folder_path = os.path.join(folder_path, ".cloudcode/tests")
+        folder_path = os.path.join(folder_path, ".kaizen/tests")
         with open(f'{folder_path}/tests.json', 'w') as f:
             f.write(json.dumps(json_tests))
         for module in json_tests:
