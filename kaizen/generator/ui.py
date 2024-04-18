@@ -89,14 +89,16 @@ class UITestGenerator:
             folder_path = output.get_parent_folder()
 
         folder_path = os.path.join(folder_path, ".kaizen/tests")
-        with open(f'{folder_path}/tests.json', 'w') as f:
+        output.create_folder(folder_path)
+        with open(f"{folder_path}/tests.json", "w") as f:
             f.write(json.dumps(json_tests))
         for module in json_tests:
             temp_folder_path = os.path.join(folder_path, module["folder_name"])
             output.create_folder(temp_folder_path)
             for test in module["tests"]:
                 file_path = os.path.join(
-                    temp_folder_path, "test_" + str(test["id"]) + ".py"
+                    temp_folder_path,
+                    "test_" + "_".join(test["test_name"].lower().split(" ")) + ".py",
                 )
                 with open(file_path, "w") as f:
                     cleaned_code = helper.clean_python_code(test["code"])
