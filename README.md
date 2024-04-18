@@ -10,19 +10,19 @@
   </a>
 </p>
 
-# CloudCode
+# Kaizen
 
-CloudCode is an open-source project that helps teams ensure quality in their software delivery by providing a suite of tools for code review, test generation, and end-to-end testing. It integrates with your existing code repositories and workflows, allowing you to streamline your software development process.
+Kaizen is an open-source project that helps teams ensure quality in their software delivery by providing a suite of tools for code review, test generation, and end-to-end testing. It integrates with your existing code repositories and workflows, allowing you to streamline your software development process.
 
 ## Features
-
-### Code Review
-
-CloudCode automatically reviews pull requests, summarizing code changes, and providing insightful feedback on potential issues or areas of improvement. It leverages advanced natural language processing techniques to understand the context and implications of the code changes.
 
 ### End-to-End Testing
 
 CloudCode generates comprehensive end-to-end tests based on your application's code and documentation. These tests ensure that your application functions correctly from start to finish, catching regressions and edge cases that may have been overlooked during development.
+
+### Code Review
+
+CloudCode automatically reviews pull requests, summarizing code changes, and providing insightful feedback on potential issues or areas of improvement. It leverages advanced natural language processing techniques to understand the context and implications of the code changes.
 
 ### RAGify
 
@@ -30,8 +30,8 @@ CloudCode RAGifies your code repositories, generating relevant context and allow
 
 ## File Structure
 
-- `api`: Contains the API server used by the GitHub app to process incoming requests and respond.
-- `cloudcode`: Contains the main logic for interaction with LLMs and data processing.
+- `github_app`: Contains the API server used by the GitHub app to process incoming requests and respond.
+- `kaizen`: Contains the main logic for interaction with LLMs and data processing.
   - `actions`: Contains classes used to process various different actions like Code Review.
   - `llms`: Contains LLM integrations.
 - `docs`: Contains Nextra-powered documentation for the project.
@@ -43,15 +43,25 @@ To get started with CloudCode, follow these steps:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/cloudcode/cloudcode.git
+   git clone https://github.com/Cloud-Code-AI/kaizen.git
    ```
 
 2. Install dependencies:
 
    ```bash
-   cd cloudcode
+   cd kaizen
    poetry install
    ```
+
+3. Generate tests for your website:
+
+  First you need to update the url in the `examples/basic/generate.py`.
+  ```bash
+    PYTHONPATH=. poetry run python examples/basic/generate.py
+  ```
+
+  Kaizen will generate all the tests and store them inside `.kaizen/tests/`
+
 
 ### Running API Server for GitHub App
 
