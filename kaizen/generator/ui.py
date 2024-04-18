@@ -3,10 +3,10 @@ import subprocess
 import os
 from typing import Optional
 import json
-from proctai.helpers import output, parser
-from proctai.playwright import helper
-from proctai.llms.provider import LLMProvider
-from proctai.llms.prompts import (
+from kaizen.helpers import output, parser
+from kaizen.playwright import helper
+from kaizen.llms.provider import LLMProvider
+from kaizen.llms.prompts import (
     UI_MODULES_PROMPT,
     UI_TESTS_SYSTEM_PROMPT,
     PLAYWRIGHT_CODE_PROMPT,
