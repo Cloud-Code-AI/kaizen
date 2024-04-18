@@ -1,6 +1,6 @@
 import litellm
-from proctai.llms.prompts import BASIC_SYSTEM_PROMPT
-from proctai.utils.config import CONFIG_DATA
+from kaizen.llms.prompts import BASIC_SYSTEM_PROMPT
+from kaizen.utils.config import CONFIG_DATA
 
 
 class LLMProvider:
