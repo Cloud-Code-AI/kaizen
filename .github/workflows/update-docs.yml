@@ -3,7 +3,7 @@ name: Update Docs on GitHub Pages
 on:
   push:
     branches:
-      - 'main'
+      - '61-build-docs-and-host-on-github-pages'
     paths:
       - 'docs/**'
 
