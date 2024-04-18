@@ -18,15 +18,15 @@ Kaizen is an open-source project that helps teams ensure quality in their softwa
 
 ### End-to-End Testing
 
-CloudCode generates comprehensive end-to-end tests based on your application's code and documentation. These tests ensure that your application functions correctly from start to finish, catching regressions and edge cases that may have been overlooked during development.
+Kaizen generates comprehensive end-to-end tests based on your application's code and documentation. These tests ensure that your application functions correctly from start to finish, catching regressions and edge cases that may have been overlooked during development.
 
 ### Code Review
 
-CloudCode automatically reviews pull requests, summarizing code changes, and providing insightful feedback on potential issues or areas of improvement. It leverages advanced natural language processing techniques to understand the context and implications of the code changes.
+Kaizen automatically reviews pull requests, summarizing code changes, and providing insightful feedback on potential issues or areas of improvement. It leverages advanced natural language processing techniques to understand the context and implications of the code changes.
 
 ### RAGify
 
-CloudCode RAGifies your code repositories, generating relevant context and allowing you to integrate your own Large Language Models (LLMs) or use pre-trained models. This feature enables you to leverage the power of LLMs for various tasks, such as code generation, documentation, and more.
+Kaizen RAGifies your code repositories, generating relevant context and allowing you to integrate your own Large Language Models (LLMs) or use pre-trained models. This feature enables you to leverage the power of LLMs for various tasks, such as code generation, documentation, and more.
 
 ## File Structure
 
@@ -38,7 +38,7 @@ CloudCode RAGifies your code repositories, generating relevant context and allow
 
 ## Getting Started
 
-To get started with CloudCode, follow these steps:
+To get started with Kaizen, follow these steps:
 
 1. Clone the repository:
 
@@ -65,7 +65,7 @@ To get started with CloudCode, follow these steps:
 
 ### Running API Server for GitHub App
 
-CloudCode utilizes a GitHub app to perform actions like PR review and description updates. Here is a quick link to set up your own GitHub App: [docs/pages/github_app.md](docs/pages/github_app.md)
+Kaizen utilizes a GitHub app to perform actions like PR review and description updates. Here is a quick link to set up your own GitHub App: [docs/pages/github_app.md](docs/pages/github_app.md)
 
 Deploy the API using Docker Compose:
 ```
@@ -78,7 +78,7 @@ You can also configure features by tweaking the config.json file.
 
 ## Contributing
 
-We welcome contributions from the community! If you'd like to contribute to CloudCode, please follow these steps:
+We welcome contributions from the community! If you'd like to contribute to Kaizen, please follow these steps:
 
 1. Fork the repository
 2. Create a new branch (`git checkout -b feature/my-feature`)
@@ -88,7 +88,7 @@ We welcome contributions from the community! If you'd like to contribute to Clou
 
 ## License
 
-CloudCode is released under the [AGPL License](LICENSE).
+Kaizen is released under the [AGPL License](LICENSE).
 
 ## Contact
 
