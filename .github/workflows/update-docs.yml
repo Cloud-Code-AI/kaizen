@@ -37,5 +37,5 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@4.1.1
         with:
           branch: gh-pages
-          folder: docs/out
+          folder: out
           token: ${{ secrets.DEPLOY_TOKEN }}
