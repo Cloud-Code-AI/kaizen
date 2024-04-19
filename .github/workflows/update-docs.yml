@@ -12,17 +12,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - run: pwd
-      
       - uses: actions/checkout@v3
 
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
           node-version: 20.x
+        
+      - name: Navigate to docs directory
+        run: cd kaizen/docs
+
+      - run: pwd
 
       - name: Install packages
-        run: npm install
+        run: npm ci
 
       - name: Build project
         run: npm run build
