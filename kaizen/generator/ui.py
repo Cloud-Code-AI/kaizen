@@ -3,8 +3,7 @@ import subprocess
 import os
 from typing import Optional
 import json
-from kaizen.helpers import output, parser
-from kaizen.playwright import helper
+from kaizen.helpers import output, parser, general
 from kaizen.llms.provider import LLMProvider
 from kaizen.llms.prompts import (
     UI_MODULES_PROMPT,
@@ -101,7 +100,7 @@ class UITestGenerator:
                     "test_" + "_".join(test["test_name"].lower().split(" ")) + ".py",
                 )
                 with open(file_path, "w") as f:
-                    cleaned_code = helper.clean_python_code(test["code"])
+                    cleaned_code = general.clean_python_code(test["code"])
                     if not cleaned_code:
                         self.logger.info(f"Failed to clean code")
                     else:
@@ -119,6 +118,6 @@ class UITestGenerator:
         test_result = ui_tests
         for module in test_result:
             for test in module["tests"]:
-                test["logs"], test["status"] = helper.run_test(test["code"])
+                test["logs"], test["status"] = general.run_test(test["code"])
 
         return test_result
