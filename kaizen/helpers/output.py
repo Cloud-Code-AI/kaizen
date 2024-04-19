@@ -1,6 +1,6 @@
 import logging
 from playwright.async_api import async_playwright
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Comment
 import asyncio
 import nest_asyncio
 import subprocess
@@ -83,7 +83,14 @@ def get_web_html(url):
 
     for svg in soup.find_all("svg"):
         svg.decompose()
-
+    
+    # Delete each comment
+    for comment in soup.find_all(text=lambda text: isinstance(text, Comment)):
+        comment.decompose()
+    
+    for style_block in soup.find_all('style'):
+        style_block.decompose()
+    
     pretty_html = soup.prettify()
     return pretty_html
 

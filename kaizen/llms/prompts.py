@@ -17,12 +17,21 @@ Using the provided information, generate a detailed code review with feedback or
     {{
       "topic": "<SECTION_TOPIC>",
       "comment": "<CONCISE_FEEDBACK>",
-      "confidence": <PERCENTAGE>,
+      "confidence": <CONFIDENCE_LEVEL>,
       "reasoning": "<BRIEF_EXPLANATION>"
     }},
     ...
   ]
 }}
+
+Here are the Confidence Levels:
+[
+  "critical",
+  "important",
+  "moderate",
+  "low",
+  "trivial"
+]
 
 Potential section topics:
 - "Code Quality"
@@ -32,7 +41,8 @@ Potential section topics:
 - "Potential Issues"
 - "Improvements"
 
-Keep comments short and concise. Avoid duplicate feedback, merge when necessary.
+Generate all possible feedbacks.
+Keep comments short but make sure it has actionable points pointing to the code or line having the issue. Avoid duplicate feedback, merge when necessary.
 
 INFORMATION:
 Pull Request Title: {PULL_REQUEST_TITLE}
