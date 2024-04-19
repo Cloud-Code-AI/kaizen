@@ -10,52 +10,79 @@
   </a>
 </p>
 
-# CloudCode
+# Kaizen
 
-CloudCode is an open-source project that helps teams ensure quality in their software delivery by providing a suite of tools for code review, test generation, and end-to-end testing. It integrates with your existing code repositories and workflows, allowing you to streamline your software development process.
+Kaizen is an open-source project that helps teams ensure quality in their software delivery by providing a suite of tools for code review, test generation, and end-to-end testing. It integrates with your existing code repositories and workflows, allowing you to streamline your software development process.
 
 ## Features
 
-### Code Review
-
-CloudCode automatically reviews pull requests, summarizing code changes, and providing insightful feedback on potential issues or areas of improvement. It leverages advanced natural language processing techniques to understand the context and implications of the code changes.
-
 ### End-to-End Testing
 
-CloudCode generates comprehensive end-to-end tests based on your application's code and documentation. These tests ensure that your application functions correctly from start to finish, catching regressions and edge cases that may have been overlooked during development.
+Kaizen generates comprehensive end-to-end tests based on your application's code and documentation. These tests ensure that your application functions correctly from start to finish, catching regressions and edge cases that may have been overlooked during development.
 
-### RAGify
+### UI Testing and Review
 
-CloudCode RAGifies your code repositories, generating relevant context and allowing you to integrate your own Large Language Models (LLMs) or use pre-trained models. This feature enables you to leverage the power of LLMs for various tasks, such as code generation, documentation, and more.
+Kaizen can provide teams with helpful reviews for their UI and generate necessary tests to ensure that their website works as expected.
+
+### Code Review
+
+Kaizen automatically reviews pull requests, summarizes code changes and provides insightful feedback on potential issues or areas of improvement. It leverages advanced natural language processing techniques to understand the context and implications of the code changes.
+
 
 ## File Structure
 
-- `api`: Contains the API server used by the GitHub app to process incoming requests and respond.
-- `cloudcode`: Contains the main logic for interaction with LLMs and data processing.
-  - `actions`: Contains classes used to process various different actions like Code Review.
+- `github_app`: Contains the API server used by the GitHub app to process and respond to incoming requests.
+- `kaizen`: Contains the main logic for interaction with LLMs and data processing.
+  - `actors`: Contains classes used to process various different actions like Code Review and Test execution.
+  - `generators`: Contains the main logic for generative use cases like test case generation, description generation, etc.
   - `llms`: Contains LLM integrations.
 - `docs`: Contains Nextra-powered documentation for the project.
+- `examples`: Contains sample code for various use cases.
 
 ## Getting Started
 
-To get started with CloudCode, follow these steps:
+To get started with Kaizen, follow these steps:
 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/cloudcode/cloudcode.git
+   git clone https://github.com/Cloud-Code-AI/kaizen.git
    ```
 
 2. Install dependencies:
 
    ```bash
-   cd cloudcode
+   cd kaizen
    poetry install
    ```
 
+3. Generate tests for your website:
+
+    First, you need to update the URL in the `examples/basic/generate.py`
+    ```bash
+      PYTHONPATH=. poetry run python examples/basic/generate.py
+    ```
+  
+    Kaizen will generate all the tests and store them inside `.kaizen/tests/`
+
+4. Execute tests:
+
+    Once you have generated all the necessary tests, you can run all the tests in two ways:
+    ```bash
+      PYTHONPATH=. poetry run python examples/basic/execute.py
+    ```
+
+    Or using the default pytest module:
+   ```
+     pytest -v .kaizen/tests/
+   ```
+  
+    Kaizen will generate all the tests and store them inside `.kaizen/tests/`
+
+
 ### Running API Server for GitHub App
 
-CloudCode utilizes a GitHub app to perform actions like PR review and description updates. Here is a quick link to set up your own GitHub App: [docs/pages/github_app.md](docs/pages/github_app.md)
+Kaizen utilizes a GitHub app to perform actions like PR review and description updates. Here is a quick link to set up your own GitHub App: [docs/pages/github_app.md](docs/pages/github_app.md)
 
 Deploy the API using Docker Compose:
 ```
@@ -68,7 +95,7 @@ You can also configure features by tweaking the config.json file.
 
 ## Contributing
 
-We welcome contributions from the community! If you'd like to contribute to CloudCode, please follow these steps:
+We welcome contributions from the community! If you'd like to contribute to Kaizen, please follow these steps:
 
 1. Fork the repository
 2. Create a new branch (`git checkout -b feature/my-feature`)
@@ -78,8 +105,8 @@ We welcome contributions from the community! If you'd like to contribute to Clou
 
 ## License
 
-CloudCode is released under the [AGPL License](LICENSE).
+Kaizen is released under the [AGPL License](LICENSE).
 
 ## Contact
 
-If you have any questions or need further assistance, please feel free to reach out to us at support@cloudcode.ai.
+If you have any questions or need further assistance, please feel free to contact us at support@cloudcode.ai.

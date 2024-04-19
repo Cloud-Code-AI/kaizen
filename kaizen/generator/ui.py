@@ -1,15 +1,15 @@
-from cloudcode.helpers import output, parser
-from cloudcode.playwright import helper
+import logging
+import subprocess
+import os
 from typing import Optional
-from cloudcode.llms.provider import LLMProvider
-from cloudcode.llms.prompts import (
+import json
+from kaizen.helpers import output, parser, general
+from kaizen.llms.provider import LLMProvider
+from kaizen.llms.prompts import (
     UI_MODULES_PROMPT,
     UI_TESTS_SYSTEM_PROMPT,
     PLAYWRIGHT_CODE_PROMPT,
 )
-import logging
-import subprocess
-import os
 
 
 class UITestGenerator:
@@ -87,16 +87,20 @@ class UITestGenerator:
         if not folder_path:
             folder_path = output.get_parent_folder()
 
-        folder_path = os.path.join(folder_path, ".cloudcode/tests")
+        folder_path = os.path.join(folder_path, ".kaizen/tests")
+        output.create_folder(folder_path)
+        with open(f"{folder_path}/tests.json", "w") as f:
+            f.write(json.dumps(json_tests))
         for module in json_tests:
             temp_folder_path = os.path.join(folder_path, module["folder_name"])
             output.create_folder(temp_folder_path)
             for test in module["tests"]:
                 file_path = os.path.join(
-                    temp_folder_path, "test_" + str(test["id"]) + ".py"
+                    temp_folder_path,
+                    "test_" + "_".join(test["test_name"].lower().split(" ")) + ".py",
                 )
                 with open(file_path, "w") as f:
-                    cleaned_code = helper.clean_python_code(test["code"])
+                    cleaned_code = general.clean_python_code(test["code"])
                     if not cleaned_code:
                         self.logger.info(f"Failed to clean code")
                     else:
@@ -114,6 +118,6 @@ class UITestGenerator:
         test_result = ui_tests
         for module in test_result:
             for test in module["tests"]:
-                test["logs"], test["status"] = helper.run_test(test["code"])
+                test["logs"], test["status"] = general.run_test(test["code"])
 
         return test_result

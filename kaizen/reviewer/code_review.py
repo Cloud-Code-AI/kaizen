@@ -1,7 +1,7 @@
-from cloudcode.helpers import output, parser
+from kaizen.helpers import output, parser
 from typing import Optional
-from cloudcode.llms.provider import LLMProvider
-from cloudcode.llms.prompts import (
+from kaizen.llms.provider import LLMProvider
+from kaizen.llms.prompts import (
     CODE_REVIEW_PROMPT,
     CODE_REVIEW_SYSTEM_PROMPT,
     PR_DESCRIPTION_PROMPT,

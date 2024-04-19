@@ -1,6 +1,6 @@
 import litellm
-from cloudcode.llms.prompts import BASIC_SYSTEM_PROMPT
-from cloudcode.utils.config import CONFIG_DATA
+from kaizen.llms.prompts import BASIC_SYSTEM_PROMPT
+from kaizen.utils.config import CONFIG_DATA
 
 
 class LLMProvider:

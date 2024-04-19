@@ -1,4 +1,4 @@
-from cloudcode.generator.ui import UITestGenerator
+from kaizen.generator.ui import UITestGenerator
 
 generator = UITestGenerator()
 

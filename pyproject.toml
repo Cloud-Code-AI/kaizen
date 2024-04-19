@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "proctAI"
+name = "kaizen"
 version = "0.1.0"
 description = "An intelligent coding companion that accelerates your development workflow by providing efficient assistance, enabling you to craft high-quality code more rapidly."
 authors = ["Saurav Panda <saurav.panda@cloudcode.ai>"]
@@ -19,6 +19,7 @@ cryptography = "^42.0.5"
 bs4 = "^0.0.2"
 nest-asyncio = "^1.6.0"
 pytest-playwright = "^0.4.4"
+pip = "^24.0"
 
 
 [build-system]
