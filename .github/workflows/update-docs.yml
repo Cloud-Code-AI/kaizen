@@ -19,23 +19,20 @@ jobs:
         with:
           node-version: 20.x
 
-      - name: Install packages
+      - name: Install packages and run build
         run: |
           cd docs
           npm ci
           npm run build
-
-      - name: Build project
-        run: |
-          cd docs
-          npm run build
       
       - name: Add nojekyll file
-        run: touch .out .nojekyll
+        run: |
+          cd docs
+          touch .out .nojekyll
       
       - name: Deploy to GitHub pages
         uses: JamesIves/github-pages-deploy-action@4.1.1
         with:
           branch: gh-pages
-          folder: out
+          folder: docs/out
           token: ${{ secrets.DEPLOY_TOKEN }}
