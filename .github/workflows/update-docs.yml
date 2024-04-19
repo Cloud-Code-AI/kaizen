@@ -20,7 +20,7 @@ jobs:
           node-version: 20.x
         
       - name: Navigate to docs directory
-        run: cd kaizen/docs
+        run: cd ../docs
 
       - run: pwd
 
