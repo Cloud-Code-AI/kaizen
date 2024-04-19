@@ -1,0 +1,41 @@
+name: Update Docs on GitHub Pages
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'docs/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      NEXT_PUBLIC_BASE_PATH: /kaizen
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20.x
+
+      - name: Install packages and run build
+        run: |
+          cd docs
+          npm ci
+          npm run build
+      
+      - name: Add nojekyll file
+        run: |
+          cd docs
+          touch ./out/.nojekyll
+      
+      - name: Deploy to GitHub pages
+        uses: JamesIves/github-pages-deploy-action@4.1.1
+        with:
+          branch: gh-pages
+          folder: docs/out
+          token: ${{ secrets.DEPLOY_TOKEN }}
