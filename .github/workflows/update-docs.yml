@@ -40,3 +40,4 @@ jobs:
         with:
           branch: gh-pages
           folder: docs/out
+          token: ${{ secrets.DEPLOY_TOKEN }}
