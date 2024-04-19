@@ -31,7 +31,7 @@ jobs:
       - name: Add nojekyll file
         run: |
           cd docs
-          touch .out .nojekyll
+          touch ./out/.nojekyll
       
       - name: Deploy to GitHub pages
         uses: JamesIves/github-pages-deploy-action@4.1.1
