@@ -19,6 +19,12 @@ jobs:
         with:
           node-version: 20.x
         
+      - run: pwd
+      - run: ls
+      - run: cd ..
+      - run: ls
+      - run: pwd
+
       - name: Navigate to docs directory
         run: cd ../docs
 
