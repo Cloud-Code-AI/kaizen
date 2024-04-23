@@ -26,4 +26,4 @@ COPY . .
 EXPOSE 8000
 
 # Set the command to run the FastAPI application
-CMD ["poetry", "run", "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["poetry", "run", "uvicorn", "github_app.main:app", "--host", "0.0.0.0", "--port", "8000"]
