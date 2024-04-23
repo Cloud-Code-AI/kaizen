@@ -1,6 +1,6 @@
 import pytest
 import logging
-from cloudcode.helpers.output import PR_COLLAPSIBLE_TEMPLATE, create_pr_review_from_json
+from kaizen.helpers.output import PR_COLLAPSIBLE_TEMPLATE, create_pr_review_from_json
 
 
 @pytest.fixture

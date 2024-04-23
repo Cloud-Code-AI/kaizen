@@ -1,13 +1,13 @@
 from fastapi import FastAPI, Request, BackgroundTasks, HTTPException
 from fastapi.responses import JSONResponse
-from api.github_helper.pull_requests import (
+from github_app.github_helper.pull_requests import (
     process_pull_request,
     ACTIONS_TO_PROCESS_PR,
     ACTIONS_TO_UPDATE_DESC,
     process_pr_desc,
 )
-from api.github_helper.utils import is_github_signature_valid
-from cloudcode.utils.config import CONFIG_DATA
+from github_app.github_helper.utils import is_github_signature_valid
+from kaizen.utils.config import CONFIG_DATA
 import logging
 
 # from cloudcode.generator.ui import UITester
