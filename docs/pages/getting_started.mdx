@@ -7,3 +7,43 @@ Utilize our cloud-hosted, scalable application at [https://beta.cloudcode.ai](ht
 Deploy your own instance of the open-source Cloud Code project by following the installation instructions provided in our documentation. Follow the steps outlined in the [installation guide](self_hosting_guide) to set up Cloud Code AI on your infrastructure.
 
 Choose the option that best fits your needs and start accelerating your software development with Cloud Code AI today!
+
+## Getting Started
+
+To get started with Kaizen, follow these steps:
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/Cloud-Code-AI/kaizen.git
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   cd kaizen
+   poetry install
+   ```
+
+3. Generate tests for your website:
+
+    First, you need to update the URL in the `examples/basic/generate.py`
+    ```bash
+      PYTHONPATH=. poetry run python examples/basic/generate.py
+    ```
+  
+    Kaizen will generate all the tests and store them inside `.kaizen/tests/`
+
+4. Execute tests:
+
+    Once you have generated all the necessary tests, you can run all the tests in two ways:
+    ```bash
+      PYTHONPATH=. poetry run python examples/basic/execute.py
+    ```
+
+    Or using the default pytest module:
+   ```
+     pytest -v .kaizen/tests/
+   ```
+  
+    Kaizen will generate all the tests and store them inside `.kaizen/tests/`
