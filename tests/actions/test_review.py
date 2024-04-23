@@ -1,6 +1,6 @@
 import pytest
 import json
-from cloudcode.actions.reviews import CodeReviewer
+from kaizen.actions.reviews import CodeReviewer
 from fuzzywuzzy import fuzz
 
 with open("tests/data/actions/valid_review.json") as f:

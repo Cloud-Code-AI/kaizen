@@ -1,10 +1,10 @@
 import requests
 import logging
 import os
-from api.github_helper.utils import get_diff_text
-from api.github_helper.installation import get_installation_access_token
-from api.github_helper.permissions import PULL_REQUEST_PERMISSION
-from cloudcode.reviewer.code_review import CodeReviewer
+from github_app.github_helper.utils import get_diff_text
+from github_app.github_helper.installation import get_installation_access_token
+from github_app.github_helper.permissions import PULL_REQUEST_PERMISSION
+from kaizen.reviewer.code_review import CodeReviewer
 
 
 logger = logging.getLogger(__name__)
