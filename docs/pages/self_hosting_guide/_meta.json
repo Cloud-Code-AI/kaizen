@@ -3,5 +3,7 @@
     "install_dependencies": "Install Dependencies",
     "setup_github_app": "Setup GitHub App",
     "prepare_configuration": "Prepare Configuration",
-    "deploy_api": "Deploy API"
+    "deploy_api": "Deploy API",
+    "generating_tests": "Generating Tests",
+    "executing_tests": "Executing Tests"
 }
