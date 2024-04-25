@@ -1,0 +1,15 @@
+Once you have generated all the necessary tests, you can run all the tests in two ways:
+
+1. Run the following command to execute the tests.
+ ```bash copy
+    PYTHONPATH=. poetry run python examples/basic/execute.py
+```
+
+OR
+
+2. Use the default pytest module to execute all tests.
+```bash copy
+    pytest -v .kaizen/tests/
+```
+  
+ Kaizen will generate all the tests and store them inside `.kaizen/tests/`
