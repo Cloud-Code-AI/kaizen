@@ -85,7 +85,7 @@ def get_web_html(url):
     
     # Delete each comment
     for comment in soup.find_all(text=lambda text: isinstance(text, Comment)):
-        comment.decompose()
+        comment.extract()
     
     for style_block in soup.find_all('style'):
         style_block.decompose()
