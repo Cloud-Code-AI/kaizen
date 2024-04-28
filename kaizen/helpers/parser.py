@@ -1,6 +1,12 @@
 import json
 import re
 
+EXCLUDED_FILETYPES = [
+    "json",
+    "css",
+    "xml"
+]
+
 
 def extract_json(text):
     # Find the start and end positions of the JSON data
