@@ -42,6 +42,7 @@ Potential section topics:
 - "Improvements"
 
 Generate all possible feedbacks.
+For each piece of feedback, clearly reference the specific file(s) and line number(s) of code being addressed. Use markdown code blocks to quote relevant snippets of code when necessary.
 Keep comments short but make sure it has actionable points pointing to the code or line having the issue. Avoid duplicate feedback, merge when necessary.
 
 INFORMATION:
@@ -88,6 +89,7 @@ Potential section topics:
 - "Improvements"
 
 Generate all possible feedbacks.
+For each piece of feedback, clearly reference the specific file(s) and line number(s) of code being addressed. Use markdown code blocks to quote relevant snippets of code when necessary.
 Keep comments short but make sure it has actionable points pointing to the code or line having the issue. Avoid duplicate feedback, merge when necessary.
 
 INFORMATION:

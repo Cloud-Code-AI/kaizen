@@ -59,7 +59,7 @@ def create_pr_review_from_json(reviews):
 
 def create_pr_description(data, original_desc):
     markdown_output = data["desc"]
-    markdown_output += "\n\n -- Generated with love by Kaizen"
+    markdown_output += "\n\n> ✨ Generated with love by Kaizen ❤️"
     markdown_output += "\n\n" + DESC_COLLAPSIBLE_TEMPLATE.format(desc=original_desc)
     return markdown_output
 
