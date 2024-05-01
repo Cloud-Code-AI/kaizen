@@ -1,5 +1,4 @@
 import logging
-import subprocess
 import os
 from typing import Optional
 import json
@@ -114,10 +113,4 @@ class UITestGenerator:
         """
         This method runs playwright tests and updates logs and status accordingly.
         """
-        subprocess.run(["playwright", "install", "--with-deps"], check=True)
-        test_result = ui_tests
-        for module in test_result:
-            for test in module["tests"]:
-                test["logs"], test["status"] = general.run_test(test["code"])
-
-        return test_result
+        pass
