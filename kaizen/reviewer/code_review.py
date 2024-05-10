@@ -23,7 +23,7 @@ class CodeReviewer:
         pull_request_files: List[Dict],
         user: Optional[str] = None,
     ):
-        
+
         # If diff_text is smaller than 70% of model token
         prompt = CODE_REVIEW_PROMPT.format(
             PULL_REQUEST_TITLE=pull_request_title,
@@ -43,7 +43,7 @@ class CodeReviewer:
             for file in pull_request_files:
                 patch_details = file["patch"]
                 filename = file["filename"]
-                if filename.split('.')[-1] not in parser.EXCLUDED_FILETYPES:
+                if filename.split(".")[-1] not in parser.EXCLUDED_FILETYPES:
                     prompt = FILE_CODE_REVIEW_PROMPT.format(
                         PULL_REQUEST_TITLE=pull_request_title,
                         PULL_REQUEST_DESC=pull_request_desc,
