@@ -40,8 +40,19 @@ class LLMProvider:
         )
         return response["choices"][0]["message"]["content"]
 
-    def is_inside_token_limit(self, PROMPT, percetage=0.7):
+    def is_inside_token_limit(self, PROMPT, percentage=0.7):
         messages = [{"user": "role", "content": PROMPT}]
-        if litellm.token_counter(model=self.model, messages=messages) > litellm.get_max_tokens(self.model) * percetage:
+        if (
+            litellm.token_counter(model=self.model, messages=messages)
+            > litellm.get_max_tokens(self.model) * percentage
+        ):
             return False
         return True
+
+    def available_tokens(self, message, percentage=0.8):
+        return litellm.get_max_tokens(self.model) * percentage - litellm.token_counter(
+            self.model, message
+        )
+
+    def get_token_count(self, message):
+        return litellm.token_counter(self.model, message)

@@ -82,14 +82,14 @@ def get_web_html(url):
 
     for svg in soup.find_all("svg"):
         svg.decompose()
-    
+
     # Delete each comment
     for comment in soup.find_all(text=lambda text: isinstance(text, Comment)):
         comment.extract()
-    
-    for style_block in soup.find_all('style'):
+
+    for style_block in soup.find_all("style"):
         style_block.decompose()
-    
+
     pretty_html = soup.prettify()
     return pretty_html
 

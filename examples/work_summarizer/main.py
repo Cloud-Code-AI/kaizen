@@ -1,65 +1,56 @@
-# from kaizen.reviewer.work_summarizer import WorkSummarizer
+from kaizen.reviewer.work_summarizer import WorkSummaryGenerator
 import requests
-import json
 from datetime import datetime, timedelta, timezone
 
-# Replace with the owner and repository name
-OWNER = 'Cloud-Code-AI'
-REPO_NAME = 'kaizen'
+# GitHub repository information
+GITHUB_OWNER = "Cloud-Code-AI"
+GITHUB_REPO_NAME = "kaizen"
 
-# Get the current date and calculate the date 5 days ago
-today = datetime.now(timezone.utc).date()
-week_ago = today - timedelta(days=14)
+# Get the current date and calculate the date 14 days ago
+current_date = datetime.now(timezone.utc).date()
+since_date = current_date - timedelta(days=14)
 
-# Convert the dates to ISO format
-since = week_ago.isoformat()
+# Convert the date to ISO format
+since_date_iso = since_date.isoformat()
 
 # GitHub API endpoint for getting commits
-url = f"https://api.github.com/repos/{OWNER}/{REPO_NAME}/commits"
+commits_url = f"https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO_NAME}/commits"
 
 # Add query parameters for the since date
-params = {
-    'since': since
-}
+params = {"since": since_date_iso}
 
 # Make the API request
-response = requests.get(url, params=params)
+commits_response = requests.get(commits_url, params=params)
 
 # Check if the request was successful
-if response.status_code != 200:
-    # Parse the JSON data
-    print("ERROR: Couldnt get github commits")
+if commits_response.status_code != 200:
+    print("ERROR: Could not get GitHub commits")
+    exit(1)
 
-commits = response.json()
+commits = commits_response.json()
 
-# print(commits[0])
+# Get the SHA hashes of the first and last commits
+first_commit_sha = commits[0]["sha"]
+last_commit_sha = commits[-1]["sha"]
 
-# Get the SHA hashes of the two commits
-commit1_sha = commits[0]["sha"]
-commit2_sha = commits[-1]["sha"]
+headers = {"Accept": "application/vnd.github.v3+json"}
 
-headers = {
-    # "Authorization": f"token {access_token}",
-    "Accept": "application/vnd.github.v3+json"
-}
-# print(json.dumps(commits))
+# Get the diff between the first and last commits
+diff_url = f"https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO_NAME}/compare/{last_commit_sha}...{first_commit_sha}"
+diff_response = requests.get(diff_url, headers=headers)
+diff_data = diff_response.json()
 
-# Get the diff between the two commits
-diff_url = f"https://api.github.com/repos/{OWNER}/{REPO_NAME}/compare/{commit2_sha}...{commit1_sha}"
-response = requests.get(diff_url, headers=headers)
-diff_data = response.json()
-
-print(diff_url)
-# Print the diff
+# Extract file diffs
 file_diffs = []
-for file in diff_data["files"]:
-    if "patch" in file:
+for file_dict in diff_data["files"]:
+    if "patch" in file_dict:
         file_diffs.append(
             {
-                "file": file['filename'],
-                "patch": file["patch"],
-                "status": file["status"]
+                "file": file_dict["filename"],
+                "patch": file_dict["patch"],
+                "status": file_dict["status"],
             }
         )
 
-print(f"Diff Files: {json.dumps(file_diffs)}")
+work_summary_generator = WorkSummaryGenerator()
+print(work_summary_generator.generate_work_summaries(diff_file_data=file_diffs))
