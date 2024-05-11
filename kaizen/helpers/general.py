@@ -5,13 +5,10 @@ import re
 
 
 def run_test(code):
-    temp_file_path = "cloudcode/playwright/tests/temp.spec.js"
-    create_test_spec(code, temp_file_path)
-    result_json = run_test_script()
-    logs, test_result = extract_result(result_json)
-    delete_test_spec(temp_file_path)
 
-    return logs, test_result
+    # TODO: Update logic for pytest runner
+    
+    pass
 
 
 def clean_python_code(code):
