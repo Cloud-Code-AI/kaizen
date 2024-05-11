@@ -5,6 +5,9 @@ description = "An intelligent coding companion that accelerates your development
 authors = ["Saurav Panda <saurav.panda@cloudcode.ai>"]
 license = "Apache2.0"
 readme = "README.md"
+packages = [
+    { include = "kaizen" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.8.1"
