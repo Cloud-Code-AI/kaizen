@@ -1,10 +1,27 @@
 import json
 import os
+from pathlib import Path
 
 
 def get_config():
-    with open("config.json", "r") as f:
-        config_data = json.loads(f.read())
+    # Get the directory of the calling function
+    caller_dir = Path(os.path.dirname(os.path.abspath(__file__)))
+    config_file = f"{caller_dir}/config.json"
+    if Path(config_file).is_file():
+        with open(config_file, "r") as f:
+            config_data = json.loads(f.read())
+    else:
+        config_data = {
+            "language_model": {
+                "provider": "litellm",
+                "enable_observability_logging": False
+            },
+            "github_app": {
+                "check_signature": False,
+                "auto_pr_review": False,
+                "edit_pr_desc": False
+            }
+        }
     return config_data
 
 

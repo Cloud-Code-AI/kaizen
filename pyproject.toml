@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kaizen-cloudcode"
-version = "0.1.1"
+version = "0.1.2"
 description = "An intelligent coding companion that accelerates your development workflow by providing efficient assistance, enabling you to craft high-quality code more rapidly."
 authors = ["Saurav Panda <saurav.panda@cloudcode.ai>"]
 license = "Apache2.0"
@@ -23,6 +23,7 @@ bs4 = "^0.0.2"
 nest-asyncio = "^1.6.0"
 pytest-playwright = "^0.4.4"
 pip = "^24.0"
+fuzzywuzzy = "^0.18.0"
 
 
 [build-system]
