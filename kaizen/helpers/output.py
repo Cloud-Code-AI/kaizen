@@ -6,7 +6,7 @@ import nest_asyncio
 import subprocess
 import os
 import json
-import general
+from kaizen.helpers import general
 
 logger = logging.getLogger(__name__)
 
