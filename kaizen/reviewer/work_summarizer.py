@@ -20,6 +20,7 @@ class WorkSummaryGenerator:
         available_tokens = self.provider.available_tokens(WORK_SUMMARY_PROMPT)
         summaries = []
         combined_diff_data = ""
+        total_usage = None
         for file_dict in diff_file_data:
             temp_prompt = combined_diff_data
             temp_prompt += f"""\n---->\nFile Name: {file_dict["file"]}\nPatch: {file_dict["patch"]}\n Status: {file_dict["status"]}"""
@@ -29,12 +30,18 @@ class WorkSummaryGenerator:
 
             # Process the prompt
             prompt = WORK_SUMMARY_PROMPT.format(PATCH_DATA=combined_diff_data)
-            response = self.provider.chat_completion(prompt, user=user)
+            response, usage = self.provider.chat_completion(prompt, user=user)
             summaries.append(response)
             combined_diff_data = ""
+            if total_usage != None:
+                total_usage = {
+                    key: total_usage[key] + usage[key] for key in total_usage
+                }
+            else:
+                total_usage = usage
 
         if len(summaries) > 1:
             # TODO Merge summaries
             pass
 
-        return summaries[0]
+        return {"summary": summaries[0], "usage": total_usage}

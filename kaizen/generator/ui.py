@@ -25,9 +25,9 @@ class UITestGenerator:
         """
         web_content = self.extract_webpage(web_url)
         test_modules = self.identify_modules(web_content)
-        ui_tests = self.generate_module_tests(web_content, test_modules, web_url)
+        ui_tests, usage = self.generate_module_tests(web_content, test_modules["modules"], web_url)
         self.store_tests_files(ui_tests, folder_path)
-
+        total_usage = self.provider.update_usage(usage, test_modules["usage"])
         return ui_tests
 
     def extract_webpage(self, web_url: str):
@@ -43,9 +43,9 @@ class UITestGenerator:
         This method identifies the different UI modules from a webpage.
         """
         prompt = UI_MODULES_PROMPT.format(WEB_CONTENT=web_content)
-        resp = self.provider.chat_completion(prompt, user=user)
+        resp, usage = self.provider.chat_completion(prompt, user=user)
         modules = parser.extract_multi_json(resp)
-        return modules
+        return {"modules": modules, "usage": usage}
 
     def generate_playwright_code(
         self,
@@ -61,28 +61,30 @@ class UITestGenerator:
             WEB_CONTENT=web_content, TEST_DESCRIPTION=test_description, URL=web_url
         )
 
-        resp = self.provider.chat_completion(prompt, user=user)
+        resp, usage = self.provider.chat_completion(prompt, user=user)
 
-        return resp
+        return {"code": resp, "usage": usage}
 
     def generate_module_tests(self, web_content: str, test_modules: dict, web_url: str):
         """
         This method generates UI testing points for all modules.
         """
         ui_tests = test_modules
+        total_usage = None
         for module in ui_tests:
             for test in module["tests"]:
                 test_description = test["test_description"]
                 playwright_code = self.generate_playwright_code(
                     web_content, test_description, web_url
                 )
-                test["code"] = playwright_code
+                test["code"] = playwright_code["code"]
                 test["status"] = "Not run"
+                total_usage = self.provider.update_usage(total_usage, playwright_code["usage"])
 
-        return ui_tests
+        return ui_tests, total_usage
 
     def store_tests_files(self, json_tests: list, folder_path: str = ""):
-        
+
         if not folder_path:
             folder_path = output.get_parent_folder()
 

@@ -14,13 +14,13 @@ def get_config():
         config_data = {
             "language_model": {
                 "provider": "litellm",
-                "enable_observability_logging": False
+                "enable_observability_logging": False,
             },
             "github_app": {
                 "check_signature": False,
                 "auto_pr_review": False,
-                "edit_pr_desc": False
-            }
+                "edit_pr_desc": False,
+            },
         }
     return config_data
 
