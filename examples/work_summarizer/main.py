@@ -53,4 +53,6 @@ for file_dict in diff_data["files"]:
         )
 
 work_summary_generator = WorkSummaryGenerator()
-print(work_summary_generator.generate_work_summaries(diff_file_data=file_diffs))
+print(
+    work_summary_generator.generate_work_summaries(diff_file_data=file_diffs)["summary"]
+)

@@ -30,12 +30,13 @@ class CodeReviewer:
             PULL_REQUEST_DESC=pull_request_desc,
             CODE_DIFF=diff_text,
         )
-
+        total_usage = None
         if self.provider.is_inside_token_limit(PROMPT=prompt):
             self.logger.debug("Processing Directly from Diff")
-            resp = self.provider.chat_completion(prompt, user=user)
+            resp, usage = self.provider.chat_completion(prompt, user=user)
             review_json = parser.extract_json(resp)
             reviews = review_json["review"]
+            total_usage = self.provider.update_usage(total_usage, usage)
         else:
             self.logger.debug("Processing Based on files")
             # We recurrsively get feedback for files and then get basic summary
@@ -49,13 +50,15 @@ class CodeReviewer:
                         PULL_REQUEST_DESC=pull_request_desc,
                         FILE_PATCH=patch_details,
                     )
-                    resp = self.provider.chat_completion(prompt, user=user)
+                    resp, usage = self.provider.chat_completion(prompt, user=user)
+                    total_usage = self.provider.update_usage(total_usage, usage)
                     review_json = parser.extract_json(resp)
                     reviews.extend(review_json["review"])
         body = output.create_pr_review_from_json(reviews)
         self.logger.debug(f"Generated Review:\n {body}")
         # Share the review on pull request
-        return body
+
+        return {"review": body, "usage": total_usage}
 
     def generate_pull_request_desc(
         self,
@@ -73,9 +76,12 @@ class CodeReviewer:
             CODE_DIFF=diff_text,
         )
 
-        resp = self.provider.chat_completion(prompt, user=user)
+        # TODO: split the diff if alot of files and contents.
+        resp, usage = self.provider.chat_completion(prompt, user=user)
+        total_usage = None
         self.logger.debug(f"PROMPT Generate PR Desc RESP: {resp}")
         body = output.create_pr_description(
             parser.extract_json(resp), pull_request_desc
         )
-        return body
+        total_usage = self.provider.update_usage(total_usage, usage)
+        return {"desc": body, "usage": total_usage}

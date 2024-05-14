@@ -40,7 +40,7 @@ def process_pull_request(payload):
         pull_request_desc=pr_description,
         pull_request_files=pr_files,
         user=repo_name,
-    )
+    )["body"]
     post_pull_request(comment_url, review_body, installation_id)
 
 
@@ -63,7 +63,7 @@ def process_pr_desc(payload):
         pull_request_title=pr_title,
         pull_request_desc=pr_description,
         user=repo_name,
-    )
+    )["desc"]
     patch_pr_body(pr_url, desc, installation_id)
 
 

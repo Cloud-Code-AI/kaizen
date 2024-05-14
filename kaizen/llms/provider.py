@@ -38,7 +38,7 @@ class LLMProvider:
             temperature=self.temperature,
             user=user,
         )
-        return response["choices"][0]["message"]["content"]
+        return response["choices"][0]["message"]["content"], response["usage"]
 
     def is_inside_token_limit(self, PROMPT, percentage=0.7):
         messages = [{"user": "role", "content": PROMPT}]
@@ -56,3 +56,12 @@ class LLMProvider:
 
     def get_token_count(self, message):
         return litellm.token_counter(self.model, message)
+
+    def update_usage(self, total_usage, current_usage):
+        if total_usage is not None:
+            total_usage = {
+                key: total_usage[key] + current_usage[key] for key in total_usage
+            }
+        else:
+            total_usage = current_usage
+        return total_usage

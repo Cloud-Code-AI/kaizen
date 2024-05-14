@@ -68,7 +68,7 @@ def test_json_to_markdown(test_data, capfd):
         + "\n"
     )
 
-    output = create_pr_review_from_json(test_data)
+    output = create_pr_review_from_json(test_data["review"])
     captured = capfd.readouterr()
     assert output == expected_output
     assert captured.out == ""
