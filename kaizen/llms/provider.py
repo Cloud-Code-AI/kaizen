@@ -58,7 +58,7 @@ class LLMProvider:
         return litellm.token_counter(self.model, message)
 
     def update_usage(self, total_usage, current_usage):
-        if total_usage != None:
+        if total_usage is not None:
             total_usage = {
                 key: total_usage[key] + current_usage[key] for key in total_usage
             }

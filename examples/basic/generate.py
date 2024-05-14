@@ -4,7 +4,7 @@ generator = UITestGenerator()
 
 WEBPAGE_URL = "https://cloudcode.ai"
 
-tests = generator.generate_ui_tests(WEBPAGE_URL)
+tests, _ = generator.generate_ui_tests(WEBPAGE_URL)
 
 # print("Generated Tests: ", json.dumps(tests))
 

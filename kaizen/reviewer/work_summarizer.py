@@ -33,12 +33,7 @@ class WorkSummaryGenerator:
             response, usage = self.provider.chat_completion(prompt, user=user)
             summaries.append(response)
             combined_diff_data = ""
-            if total_usage != None:
-                total_usage = {
-                    key: total_usage[key] + usage[key] for key in total_usage
-                }
-            else:
-                total_usage = usage
+            total_usage = self.provider.update_usage(total_usage, usage)
 
         if len(summaries) > 1:
             # TODO Merge summaries

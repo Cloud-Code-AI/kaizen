@@ -57,7 +57,7 @@ class CodeReviewer:
         body = output.create_pr_review_from_json(reviews)
         self.logger.debug(f"Generated Review:\n {body}")
         # Share the review on pull request
-        
+
         return {"review": body, "usage": total_usage}
 
     def generate_pull_request_desc(

@@ -25,10 +25,12 @@ class UITestGenerator:
         """
         web_content = self.extract_webpage(web_url)
         test_modules = self.identify_modules(web_content)
-        ui_tests, usage = self.generate_module_tests(web_content, test_modules["modules"], web_url)
+        ui_tests, usage = self.generate_module_tests(
+            web_content, test_modules["modules"], web_url
+        )
         self.store_tests_files(ui_tests, folder_path)
         total_usage = self.provider.update_usage(usage, test_modules["usage"])
-        return ui_tests
+        return ui_tests, total_usage
 
     def extract_webpage(self, web_url: str):
         """
@@ -79,7 +81,9 @@ class UITestGenerator:
                 )
                 test["code"] = playwright_code["code"]
                 test["status"] = "Not run"
-                total_usage = self.provider.update_usage(total_usage, playwright_code["usage"])
+                total_usage = self.provider.update_usage(
+                    total_usage, playwright_code["usage"]
+                )
 
         return ui_tests, total_usage
 
