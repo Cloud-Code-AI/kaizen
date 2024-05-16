@@ -65,3 +65,8 @@ class LLMProvider:
         else:
             total_usage = current_usage
         return total_usage
+
+    def get_usage_cost(self, total_usage):
+        return litellm.cost_per_token(
+            self.model, total_usage["prompt_tokens"], total_usage["completion_tokens"]
+        )
