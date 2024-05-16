@@ -5,7 +5,7 @@ from kaizen.utils.config import CONFIG_DATA
 
 class LLMProvider:
     DEFAULT_MODEL = "gpt-3.5-turbo-1106"
-    DEFAULT_MAX_TOKENS = 1000
+    DEFAULT_MAX_TOKENS = 2000
     DEFAULT_TEMPERATURE = 0
 
     def __init__(
@@ -63,7 +63,9 @@ class LLMProvider:
                 key: total_usage[key] + current_usage[key] for key in total_usage
             }
         else:
-            total_usage = current_usage
+            total_usage = {
+                key[0]: current_usage[key[0]] for key in current_usage
+            }
         return total_usage
 
     def get_usage_cost(self, total_usage):
