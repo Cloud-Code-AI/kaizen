@@ -8,6 +8,21 @@ from kaizen.llms.prompts import (
     FILE_CODE_REVIEW_PROMPT,
 )
 import logging
+from dataclasses import dataclass
+
+
+@dataclass
+class ReviewOutput:
+    review: str
+    usage: dict
+    cost: dict
+
+
+@dataclass
+class DescOutput:
+    desc: str
+    usage: dict
+    cost: dict
 
 
 class CodeReviewer:
@@ -54,11 +69,18 @@ class CodeReviewer:
                     total_usage = self.provider.update_usage(total_usage, usage)
                     review_json = parser.extract_json(resp)
                     reviews.extend(review_json["review"])
-        body = output.create_pr_review_from_json(reviews)
-        self.logger.debug(f"Generated Review:\n {body}")
+        review = output.create_pr_review_from_json(reviews)
+        self.logger.debug(f"Generated Review:\n {review}")
         # Share the review on pull request
+        prompt_cost, completion_cost = self.provider.get_usage_cost(
+            total_usage=total_usage
+        )
 
-        return {"review": body, "usage": total_usage}
+        return ReviewOutput(
+            review=review,
+            usage=total_usage,
+            cost={"prompt_cost": prompt_cost, "completion_cost": completion_cost},
+        )
 
     def generate_pull_request_desc(
         self,
@@ -84,4 +106,11 @@ class CodeReviewer:
             parser.extract_json(resp), pull_request_desc
         )
         total_usage = self.provider.update_usage(total_usage, usage)
-        return {"desc": body, "usage": total_usage}
+        prompt_cost, completion_cost = self.provider.get_usage_cost(
+            total_usage=total_usage
+        )
+        return DescOutput(
+            desc=body,
+            usage=total_usage,
+            cost={"prompt_cost": prompt_cost, "completion_cost": completion_cost},
+        )

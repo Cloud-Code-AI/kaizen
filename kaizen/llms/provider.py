@@ -63,9 +63,7 @@ class LLMProvider:
                 key: total_usage[key] + current_usage[key] for key in total_usage
             }
         else:
-            total_usage = {
-                key[0]: current_usage[key[0]] for key in current_usage
-            }
+            total_usage = {key[0]: current_usage[key[0]] for key in current_usage}
         return total_usage
 
     def get_usage_cost(self, total_usage):
