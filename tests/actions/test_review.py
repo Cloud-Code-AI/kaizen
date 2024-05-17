@@ -19,4 +19,4 @@ def test_review_pull_request(valid_review):
         user="pytest",
     )
 
-    assert fuzz.ratio(result, valid_review["output"]) > 95
+    assert fuzz.ratio(result.review, valid_review["output"]) > 95
