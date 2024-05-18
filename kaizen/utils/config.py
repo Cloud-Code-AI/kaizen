@@ -39,7 +39,6 @@ class ConfigData:
     def get_github_app_config(self):
         return self.config_data["github_app"]
 
-
     def validate_config_settings(self):
         "Make sure relvant enviorment variables are set"
         if self.config_data.get("github_app", {}).get("check_signature", False):
@@ -49,7 +48,9 @@ class ConfigData:
                 )
 
         if self.config_data.get("language_model", {}).get("provider", {}) == "litellm":
-            if self.config_data.get("language_model", {}).get("enable_observability_logging", False):
+            if self.config_data.get("language_model", {}).get(
+                "enable_observability_logging", False
+            ):
                 if not os.environ.get("SUPABASE_URL"):
                     raise EnvironmentError(
                         "The environment variable 'SUPABASE_URL' is not set."

@@ -13,7 +13,7 @@ class LLMProvider:
         system_prompt=BASIC_SYSTEM_PROMPT,
         model=DEFAULT_MODEL,
         max_tokens=DEFAULT_MAX_TOKENS,
-        temperature=DEFAULT_TEMPERATURE
+        temperature=DEFAULT_TEMPERATURE,
     ):
         self.system_prompt = system_prompt
         self.model = model
