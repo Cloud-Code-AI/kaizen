@@ -7,7 +7,7 @@ from github_app.github_helper.pull_requests import (
     process_pr_desc,
 )
 from github_app.github_helper.utils import is_github_signature_valid
-from kaizen.utils.config import CONFIG_DATA
+from kaizen.utils.config import ConfigData
 import logging
 
 # from cloudcode.generator.ui import UITester
@@ -26,6 +26,7 @@ async def handle_webhook(request: Request, background_tasks: BackgroundTasks):
     body = await request.body()
     event = request.headers.get("X-GitHub-Event")
     # Check if the Signature is valid
+    CONFIG_DATA = ConfigData()
     if CONFIG_DATA["github_app"]["check_signature"] and not is_github_signature_valid(
         request.headers, body
     ):

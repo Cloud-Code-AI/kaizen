@@ -1,6 +1,6 @@
 import litellm
 from kaizen.llms.prompts import BASIC_SYSTEM_PROMPT
-from kaizen.utils.config import CONFIG_DATA
+from kaizen.utils.config import ConfigData
 
 
 class LLMProvider:
@@ -13,12 +13,14 @@ class LLMProvider:
         system_prompt=BASIC_SYSTEM_PROMPT,
         model=DEFAULT_MODEL,
         max_tokens=DEFAULT_MAX_TOKENS,
-        temperature=DEFAULT_TEMPERATURE,
+        temperature=DEFAULT_TEMPERATURE
     ):
         self.system_prompt = system_prompt
         self.model = model
         self.max_tokens = max_tokens
         self.temperature = temperature
+        CONFIG_DATA = ConfigData()
+        self.config = CONFIG_DATA
         if CONFIG_DATA.get("language_model", {}).get(
             "enable_observability_logging", False
         ):
