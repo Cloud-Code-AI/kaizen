@@ -125,7 +125,7 @@ Code Diff:
 # TODO: Rephrase prompt to make it more clear and accurate.
 UI_MODULES_PROMPT = """
 Assign yourself as a quality assurance engineer. Read this code and design comprehensive tests to test the UI
-of this html. Break it down into 5-10 seperate modules and return the output as JSON with the following keys:
+of this html. Break it down into 5-10 separate modules and return the output as JSON with the following keys:
 id - serial number to identify
 module_title - title of the identified module
 tests - JSON containing list of tests steps to carry out for that module with keys - id, test_description, test_name.
