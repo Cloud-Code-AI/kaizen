@@ -21,7 +21,7 @@ class LLMProvider:
         self.temperature = temperature
         CONFIG_DATA = ConfigData()
         self.config = CONFIG_DATA.get_config_data()
-        if CONFIG_DATA.get("language_model", {}).get(
+        if self.config.get("language_model", {}).get(
             "enable_observability_logging", False
         ):
             # set callbacks
