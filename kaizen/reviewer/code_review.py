@@ -15,6 +15,7 @@ from dataclasses import dataclass
 class ReviewOutput:
     review: str
     usage: dict
+    model_name: str
     cost: dict
 
 
@@ -22,6 +23,7 @@ class ReviewOutput:
 class DescOutput:
     desc: str
     usage: dict
+    model_name: str
     cost: dict
 
 
@@ -79,6 +81,7 @@ class CodeReviewer:
         return ReviewOutput(
             review=review,
             usage=total_usage,
+            model_name=self.provider.model,
             cost={"prompt_cost": prompt_cost, "completion_cost": completion_cost},
         )
 
@@ -112,5 +115,6 @@ class CodeReviewer:
         return DescOutput(
             desc=body,
             usage=total_usage,
+            model_name=self.provider.model,
             cost={"prompt_cost": prompt_cost, "completion_cost": completion_cost},
         )
