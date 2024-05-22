@@ -43,18 +43,13 @@ Kaizen automatically reviews pull requests, summarizes code changes and provides
 
 To get started with Kaizen, follow these steps:
 
-1. Clone the repository:
+1. Install Kaizen package:
 
-   ```bash
-   git clone https://github.com/Cloud-Code-AI/kaizen.git
-   ```
+    ```bash
+      pip install kaizen-cloudcode
+    ```
 
-2. Install dependencies:
-
-   ```bash
-   cd kaizen
-   poetry install
-   ```
+2. Copy the example code from `examples/basic`
 
 3. Generate tests for your website:
 
