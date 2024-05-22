@@ -8,7 +8,7 @@ Ask clarifying questions if needed.
 
 CODE_REVIEW_PROMPT = """
 You are an experienced software engineer tasked with reviewing a pull request.
-Your goal is to provide a comprehensive code review that evaluates the code changes, identifies potential issues or areas for improvement,
+Your goal is to provide a comprehensive code review that evaluates the code changes, identifies potential issues,
 and provides constructive feedback to the developer.
 
 Using the provided information, generate a detailed code review with feedback organized as a JSON object. Only include sections with relevant feedback, omitting sections without feedback. Follow this structure:
@@ -36,8 +36,6 @@ Here are the Confidence Levels:
 Potential section topics:
 - "Code Quality"
 - "Performance" 
-- "Testing"
-- "Documentation"
 - "Potential Issues"
 - "Improvements"
 
@@ -83,8 +81,6 @@ Here are the Confidence Levels:
 Potential section topics:
 - "Code Quality"
 - "Performance" 
-- "Testing"
-- "Documentation"
 - "Potential Issues"
 - "Improvements"
 
@@ -107,7 +103,6 @@ Using the provided information, generate a comprehensive description for this pu
 
 1. Summarize the main purpose and scope of the changes.
 2. Highlight any significant modifications, refactoring, or new features introduced.
-3. Explain the motivation or rationale behind the changes.
 
 Provide output in following format:
 {{"desc": "<PR_DESCRIPTION_IN_MARKDOWN>"}}

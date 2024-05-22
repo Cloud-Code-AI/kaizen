@@ -13,13 +13,7 @@ logger = logging.getLogger(__name__)
 
 PR_COLLAPSIBLE_TEMPLATE = """
 <details>
-<summary>{comment}</summary>
-
-##### Reason
-{reasoning}
-
-##### Confidence
-{confidence}
+<summary>[{confidence}] -> {reasoning}</summary>
 </details>
 """
 
