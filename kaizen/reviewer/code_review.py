@@ -59,9 +59,9 @@ class CodeReviewer:
             # We recurrsively get feedback for files and then get basic summary
             reviews = []
             for file in pull_request_files:
-                patch_details = file["patch"]
-                filename = file["filename"]
-                if filename.split(".")[-1] not in parser.EXCLUDED_FILETYPES:
+                patch_details = file.get("patch")
+                filename = file.get("filename", "")
+                if filename.split(".")[-1] not in parser.EXCLUDED_FILETYPES and patch_details is not None:
                     prompt = FILE_CODE_REVIEW_PROMPT.format(
                         PULL_REQUEST_TITLE=pull_request_title,
                         PULL_REQUEST_DESC=pull_request_desc,
