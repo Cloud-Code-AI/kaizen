@@ -14,7 +14,9 @@ logger = logging.getLogger(__name__)
 PR_COLLAPSIBLE_TEMPLATE = """
 <details>
 <summary>[{confidence}] -> {reasoning}</summary>
+{file_name} | {start_line} - {end_line}
 </details>
+
 """
 
 DESC_COLLAPSIBLE_TEMPLATE = """
@@ -22,6 +24,7 @@ DESC_COLLAPSIBLE_TEMPLATE = """
 <summary>Original Description</summary>
 {desc}
 </details>
+
 """
 
 
@@ -47,6 +50,9 @@ def create_pr_review_from_json(reviews):
                 comment=review.get("comment", "NA"),
                 reasoning=review.get("reasoning", "NA"),
                 confidence=review.get("confidence", "NA"),
+                start_line=review.get("start_line", "NA"),
+                end_line=review.get("end_line", "NA"),
+                file_name=review.get("file_name", "NA"),
             )
             markdown_output += ct + "\n"
 

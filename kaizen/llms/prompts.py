@@ -18,7 +18,10 @@ Using the provided information, generate a detailed code review with feedback or
       "topic": "<SECTION_TOPIC>",
       "comment": "<CONCISE_FEEDBACK>",
       "confidence": <CONFIDENCE_LEVEL>,
-      "reasoning": "<BRIEF_EXPLANATION>"
+      "reasoning": "<BRIEF_EXPLANATION>",
+      "start_line": "<CODE_START_LINE_INTEGER>",
+      "end_line": "<CODE_END_LINE_INTEGER>",
+      "file_name": "<CODE_FILE_NAME>",
     }},
     ...
   ]
@@ -40,7 +43,7 @@ Potential section topics:
 - "Improvements"
 
 Generate all possible feedbacks.
-For each piece of feedback, clearly reference the specific file(s) and line number(s) of code being addressed. Use markdown code blocks to quote relevant snippets of code when necessary.
+For each piece of feedback, clearly reference the specific file(s) and line number(s) of code being addressed for each comment. Use markdown code blocks to quote relevant snippets of code when necessary.
 Keep comments short but make sure it has actionable points pointing to the code or line having the issue. Avoid duplicate feedback, merge when necessary.
 
 INFORMATION:
@@ -63,7 +66,10 @@ Using the provided information, generate a detailed code review with feedback or
       "topic": "<SECTION_TOPIC>",
       "comment": "<CONCISE_FEEDBACK>",
       "confidence": <CONFIDENCE_LEVEL>,
-      "reasoning": "<BRIEF_EXPLANATION>"
+      "reasoning": "<BRIEF_EXPLANATION>",
+      "start_line": "<CODE_START_LINE_INTEGER>",
+      "end_line": "<CODE_END_LINE_INTEGER>",
+      "file_name": "<CODE_FILE_NAME>",
     }},
     ...
   ]
@@ -85,7 +91,7 @@ Potential section topics:
 - "Improvements"
 
 Generate all possible feedbacks.
-For each piece of feedback, clearly reference the specific file(s) and line number(s) of code being addressed. Use markdown code blocks to quote relevant snippets of code when necessary.
+For each piece of feedback, clearly reference the specific file(s) and line number(s) of code being addressed for each comment. Use markdown code blocks to quote relevant snippets of code when necessary.
 Keep comments short but make sure it has actionable points pointing to the code or line having the issue. Avoid duplicate feedback, merge when necessary.
 
 INFORMATION:
