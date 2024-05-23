@@ -39,7 +39,7 @@ def merge_topics(reviews):
 
 
 def create_pr_review_from_json(reviews):
-    markdown_output = "## Code Review Feedback\n\n"
+    markdown_output = "## Code Review\n\n"
 
     topics = merge_topics(reviews)
 
