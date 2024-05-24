@@ -13,7 +13,7 @@ from dataclasses import dataclass
 
 @dataclass
 class ReviewOutput:
-    review: str
+    topics: dict
     usage: dict
     model_name: str
     cost: dict
@@ -32,6 +32,19 @@ class CodeReviewer:
         self.logger = logging.getLogger(__name__)
         self.provider = LLMProvider(system_prompt=CODE_REVIEW_SYSTEM_PROMPT)
 
+    def is_code_review_prompt_within_limit(
+        self,
+        diff_text: str,
+        pull_request_title: str,
+        pull_request_desc: str,
+    ) -> bool:
+        prompt = CODE_REVIEW_PROMPT.format(
+            PULL_REQUEST_TITLE=pull_request_title,
+            PULL_REQUEST_DESC=pull_request_desc,
+            CODE_DIFF=diff_text,
+        )
+        return self.provider.is_inside_token_limit(PROMPT=prompt)
+
     def review_pull_request(
         self,
         diff_text: str,
@@ -39,7 +52,7 @@ class CodeReviewer:
         pull_request_desc: str,
         pull_request_files: List[Dict],
         user: Optional[str] = None,
-    ):
+    ) -> ReviewOutput:
 
         # If diff_text is smaller than 70% of model token
         prompt = CODE_REVIEW_PROMPT.format(
@@ -52,7 +65,7 @@ class CodeReviewer:
             self.logger.debug("Processing Directly from Diff")
             resp, usage = self.provider.chat_completion(prompt, user=user)
             review_json = parser.extract_json(resp)
-            reviews = review_json["review"]
+            reviews = [review_json["review"]]
             total_usage = self.provider.update_usage(total_usage, usage)
         else:
             self.logger.debug("Processing Based on files")
@@ -61,7 +74,10 @@ class CodeReviewer:
             for file in pull_request_files:
                 patch_details = file.get("patch")
                 filename = file.get("filename", "")
-                if filename.split(".")[-1] not in parser.EXCLUDED_FILETYPES and patch_details is not None:
+                if (
+                    filename.split(".")[-1] not in parser.EXCLUDED_FILETYPES
+                    and patch_details is not None
+                ):
                     prompt = FILE_CODE_REVIEW_PROMPT.format(
                         PULL_REQUEST_TITLE=pull_request_title,
                         PULL_REQUEST_DESC=pull_request_desc,
@@ -71,17 +87,17 @@ class CodeReviewer:
                     total_usage = self.provider.update_usage(total_usage, usage)
                     review_json = parser.extract_json(resp)
                     reviews.extend(review_json["review"])
-        review = output.create_pr_review_from_json(reviews)
-        self.logger.debug(f"Generated Review:\n {review}")
+
+        topics = self.merge_topics(reviews=reviews)
         # Share the review on pull request
         prompt_cost, completion_cost = self.provider.get_usage_cost(
             total_usage=total_usage
         )
 
         return ReviewOutput(
-            review=review,
             usage=total_usage,
             model_name=self.provider.model,
+            topics=topics,
             cost={"prompt_cost": prompt_cost, "completion_cost": completion_cost},
         )
 
@@ -118,3 +134,30 @@ class CodeReviewer:
             model_name=self.provider.model,
             cost={"prompt_cost": prompt_cost, "completion_cost": completion_cost},
         )
+
+    def merge_topics(self, reviews):
+        topics = {}
+        for review in reviews:
+            if review["topic"] in topics:
+                topics[review["topic"]].append(review)
+            else:
+                topics[review["topic"]] = [review]
+        return topics
+
+    def create_pr_review_text(self, topics):
+        markdown_output = "## Code Review\n\n"
+
+        for topic, reviews in topics.items():
+            markdown_output += f"### {topic}\n\n"
+            for review in reviews:
+                ct = output.PR_COLLAPSIBLE_TEMPLATE.format(
+                    comment=review.get("comment", "NA"),
+                    reasoning=review.get("reasoning", "NA"),
+                    confidence=review.get("confidence", "NA"),
+                    start_line=review.get("start_line", "NA"),
+                    end_line=review.get("end_line", "NA"),
+                    file_name=review.get("file_name", "NA"),
+                )
+                markdown_output += ct + "\n"
+
+        return markdown_output

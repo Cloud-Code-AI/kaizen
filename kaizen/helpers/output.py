@@ -28,37 +28,6 @@ DESC_COLLAPSIBLE_TEMPLATE = """
 """
 
 
-def merge_topics(reviews):
-    topics = {}
-    for review in reviews:
-        if review["topic"] in topics:
-            topics[review["topic"]].append(review)
-        else:
-            topics[review["topic"]] = [review]
-    return topics
-
-
-def create_pr_review_from_json(reviews):
-    markdown_output = "## Code Review\n\n"
-
-    topics = merge_topics(reviews)
-
-    for topic, reviews in topics.items():
-        markdown_output += f"### {topic}\n\n"
-        for review in reviews:
-            ct = PR_COLLAPSIBLE_TEMPLATE.format(
-                comment=review.get("comment", "NA"),
-                reasoning=review.get("reasoning", "NA"),
-                confidence=review.get("confidence", "NA"),
-                start_line=review.get("start_line", "NA"),
-                end_line=review.get("end_line", "NA"),
-                file_name=review.get("file_name", "NA"),
-            )
-            markdown_output += ct + "\n"
-
-    return markdown_output
-
-
 def create_pr_description(data, original_desc):
     markdown_output = data["desc"]
     markdown_output += "\n\n> ✨ Generated with love by Kaizen ❤️"
