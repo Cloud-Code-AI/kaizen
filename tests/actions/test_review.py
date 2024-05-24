@@ -1,8 +1,7 @@
 import pytest
 import json
 from kaizen.reviewer.code_review import CodeReviewer
-from fuzzywuzzy import fuzz
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 from kaizen.llms.provider import LLMProvider
 from kaizen.llms.prompts import CODE_REVIEW_PROMPT
 

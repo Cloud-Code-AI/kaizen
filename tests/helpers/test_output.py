@@ -1,7 +1,4 @@
 import pytest
-import logging
-from kaizen.helpers.output import PR_COLLAPSIBLE_TEMPLATE
-from kaizen.reviewer.code_review import CodeReviewer
 
 
 @pytest.fixture
