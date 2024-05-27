@@ -8,17 +8,15 @@ Ask clarifying questions if needed.
 
 CODE_REVIEW_PROMPT = """
 You are an experienced software engineer tasked with reviewing a pull request.
-Your goal is to provide a comprehensive code review that evaluates the code changes, identifies potential issues,
-and provides constructive feedback to the developer.
+Your goal is to provide a concise and actionable code review that evaluates the code changes, identifies potential issues, and provides constructive feedback to the developer.
 
-Using the provided information, generate a detailed code review with feedback organized as a JSON object. Only include sections with relevant feedback, omitting sections without feedback. Follow this structure:
+Using the provided information, generate a code review with feedback organized as a JSON object. Only include sections with relevant feedback, omitting sections without feedback. Follow this structure:
 {{
   "review": [
     {{
       "topic": "<SECTION_TOPIC>",
-      "comment": "<CONCISE_FEEDBACK>",
+      "comment": "<CONCISE_ACTIONABLE_FEEDBACK>",
       "confidence": <CONFIDENCE_LEVEL>,
-      "reasoning": "<BRIEF_EXPLANATION>",
       "start_line": "<CODE_START_LINE_INTEGER>",
       "end_line": "<CODE_END_LINE_INTEGER>",
       "file_name": "<CODE_FILE_NAME>",
@@ -42,9 +40,12 @@ Potential section topics:
 - "Potential Issues"
 - "Improvements"
 
-Generate all possible feedbacks.
+Generate all relevant and actionable feedback.
 For each piece of feedback, clearly reference the specific file(s) and line number(s) of code being addressed for each comment. Use markdown code blocks to quote relevant snippets of code when necessary.
-Keep comments short but make sure it has actionable points pointing to the code or line having the issue. Avoid duplicate feedback, merge when necessary.
+Keep comments concise but make sure they have actionable points pointing to the code or line having the issue. Avoid duplicate feedback, merge when necessary.
+
+If there is no feedback, return an empty JSON object: {{"review": []}}
+
 
 INFORMATION:
 Pull Request Title: {PULL_REQUEST_TITLE}
@@ -56,17 +57,15 @@ Code Diff:
 
 FILE_CODE_REVIEW_PROMPT = """
 You are an experienced software engineer tasked with reviewing a pull request.
-Your goal is to provide a comprehensive code review that evaluates the code changes, identifies potential issues or areas for improvement,
-and provides constructive feedback to the developer.
+Your goal is to provide a concise and actionable code review that evaluates the code changes, identifies potential issues, and provides constructive feedback to the developer.
 
-Using the provided information, generate a detailed code review with feedback organized as a JSON object. Only include sections with relevant feedback, omitting sections without feedback. Follow this structure:
+Using the provided information, generate a code review with feedback organized as a JSON object. Only include sections with relevant feedback, omitting sections without feedback. Follow this structure:
 {{
   "review": [
     {{
       "topic": "<SECTION_TOPIC>",
-      "comment": "<CONCISE_FEEDBACK>",
+      "comment": "<CONCISE_ACTIONABLE_FEEDBACK>",
       "confidence": <CONFIDENCE_LEVEL>,
-      "reasoning": "<BRIEF_EXPLANATION>",
       "start_line": "<CODE_START_LINE_INTEGER>",
       "end_line": "<CODE_END_LINE_INTEGER>",
       "file_name": "<CODE_FILE_NAME>",
@@ -90,9 +89,12 @@ Potential section topics:
 - "Potential Issues"
 - "Improvements"
 
-Generate all possible feedbacks.
+Generate all relevant and actionable feedback.
 For each piece of feedback, clearly reference the specific file(s) and line number(s) of code being addressed for each comment. Use markdown code blocks to quote relevant snippets of code when necessary.
-Keep comments short but make sure it has actionable points pointing to the code or line having the issue. Avoid duplicate feedback, merge when necessary.
+Keep comments concise but make sure they have actionable points pointing to the code or line having the issue. Avoid duplicate feedback, merge when necessary.
+
+If there is no feedback, return an empty JSON object: {{"review": []}}
+
 
 INFORMATION:
 Pull Request Title: {PULL_REQUEST_TITLE}
