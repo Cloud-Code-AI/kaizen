@@ -1,8 +1,12 @@
 {
     "language_model": {
         "provider": "litellm",
-        "model": "gpt-3.5-turbo-1106",
-        "enable_observability_logging": true
+        "enable_observability_logging": true,
+        "model": {
+            "name": "azure/gpt4-o",
+            "input_token_cost": 0.000005,
+            "output_token_cost": 0.000015
+        }
     },
     "github_app": {
         "check_signature": false,
