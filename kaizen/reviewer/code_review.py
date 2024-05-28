@@ -65,7 +65,7 @@ class CodeReviewer:
             self.logger.debug("Processing Directly from Diff")
             resp, usage = self.provider.chat_completion(prompt, user=user)
             review_json = parser.extract_json(resp)
-            reviews = [review_json["review"]]
+            reviews = review_json["review"]
             total_usage = self.provider.update_usage(total_usage, usage)
         else:
             self.logger.debug("Processing Based on files")
