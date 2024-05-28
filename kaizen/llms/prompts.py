@@ -16,7 +16,8 @@ Using the provided information, generate a code review with feedback organized a
     {{
       "topic": "<SECTION_TOPIC>",
       "comment": "<CONCISE_ACTIONABLE_FEEDBACK>",
-      "confidence": <CONFIDENCE_LEVEL>,
+      "confidence": "<CONFIDENCE_LEVEL>",
+      "solution": "<SOLUTION_TO_THE_COMMENT>",
       "start_line": "<CODE_START_LINE_INTEGER>",
       "end_line": "<CODE_END_LINE_INTEGER>",
       "file_name": "<CODE_FILE_NAME>",
@@ -40,7 +41,7 @@ Potential section topics:
 - "Potential Issues"
 - "Improvements"
 
-Generate all relevant and actionable feedback.
+Generate all relevant and actionable feedback. Avoid duplicate feedbacks for same line, try to merge them.
 For each piece of feedback, clearly reference the specific file(s) and line number(s) of code being addressed for each comment. Use markdown code blocks to quote relevant snippets of code when necessary.
 Keep comments concise but make sure they have actionable points pointing to the code or line having the issue. Avoid duplicate feedback, merge when necessary.
 
@@ -65,7 +66,8 @@ Using the provided information, generate a code review with feedback organized a
     {{
       "topic": "<SECTION_TOPIC>",
       "comment": "<CONCISE_ACTIONABLE_FEEDBACK>",
-      "confidence": <CONFIDENCE_LEVEL>,
+      "confidence": "<CONFIDENCE_LEVEL>",
+      "solution": "<SOLUTION_TO_THE_COMMENT>",
       "start_line": "<CODE_START_LINE_INTEGER>",
       "end_line": "<CODE_END_LINE_INTEGER>",
       "file_name": "<CODE_FILE_NAME>",
@@ -89,7 +91,7 @@ Potential section topics:
 - "Potential Issues"
 - "Improvements"
 
-Generate all relevant and actionable feedback.
+Generate all relevant and actionable feedback. Avoid duplicate feedbacks for same line, try to merge them.
 For each piece of feedback, clearly reference the specific file(s) and line number(s) of code being addressed for each comment. Use markdown code blocks to quote relevant snippets of code when necessary.
 Keep comments concise but make sure they have actionable points pointing to the code or line having the issue. Avoid duplicate feedback, merge when necessary.
 

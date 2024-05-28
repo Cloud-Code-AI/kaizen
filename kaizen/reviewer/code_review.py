@@ -153,6 +153,7 @@ class CodeReviewer:
                 ct = output.PR_COLLAPSIBLE_TEMPLATE.format(
                     comment=review.get("comment", "NA"),
                     reasoning=review.get("reasoning", "NA"),
+                    solution=review.get("solution", "NA"),
                     confidence=review.get("confidence", "NA"),
                     start_line=review.get("start_line", "NA"),
                     end_line=review.get("end_line", "NA"),
