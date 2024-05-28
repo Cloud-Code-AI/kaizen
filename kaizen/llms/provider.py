@@ -15,8 +15,7 @@ class LLMProvider:
         max_tokens=DEFAULT_MAX_TOKENS,
         temperature=DEFAULT_TEMPERATURE,
     ):
-        CONFIG_DATA = ConfigData()
-        self.config = CONFIG_DATA.get_config_data()
+        self.config = ConfigData().get_config_data()
         self.system_prompt = system_prompt
         self.model = model
         self.max_tokens = max_tokens
