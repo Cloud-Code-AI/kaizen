@@ -1,6 +1,7 @@
 {
     "language_model": {
         "provider": "litellm",
+        "model": "gpt-3.5-turbo-1106",
         "enable_observability_logging": true
     },
     "github_app": {

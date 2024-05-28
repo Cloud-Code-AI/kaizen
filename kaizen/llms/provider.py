@@ -15,12 +15,11 @@ class LLMProvider:
         max_tokens=DEFAULT_MAX_TOKENS,
         temperature=DEFAULT_TEMPERATURE,
     ):
+        self.config = ConfigData().get_config_data()
         self.system_prompt = system_prompt
         self.model = model
         self.max_tokens = max_tokens
         self.temperature = temperature
-        CONFIG_DATA = ConfigData()
-        self.config = CONFIG_DATA.get_config_data()
         if self.config.get("language_model", {}).get(
             "enable_observability_logging", False
         ):
@@ -33,6 +32,9 @@ class LLMProvider:
             {"role": "system", "content": self.system_prompt},
             {"role": "user", "content": prompt},
         ]
+        if "model" in self.config.get("language_model", {}):
+            self.model = self.config["language_model"]["model"]
+
         response = litellm.completion(
             model=self.model,
             messages=messages,
