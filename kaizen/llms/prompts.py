@@ -26,7 +26,7 @@ Using the provided information, generate a code review with feedback organized a
   ]
 }}
 
-Here are the Confidence Levels:
+Here are the Confidence Levels based on severity of the issue:
 [
   "critical",
   "important",
@@ -76,7 +76,7 @@ Using the provided information, generate a code review with feedback organized a
   ]
 }}
 
-Here are the Confidence Levels:
+Here are the Confidence Levels based on severity of the issue:
 [
   "critical",
   "important",
