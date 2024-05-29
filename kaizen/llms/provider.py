@@ -17,7 +17,7 @@ class LLMProvider:
         max_tokens=DEFAULT_MAX_TOKENS,
         temperature=DEFAULT_TEMPERATURE,
         input_token_cost=DEFAULT_INPUT_TOKEN_COST,
-        output_token_cost=DEFAULT_OUTPUT_TOKEN_COST
+        output_token_cost=DEFAULT_OUTPUT_TOKEN_COST,
     ):
         self.config = ConfigData().get_config_data()
         self.system_prompt = system_prompt
@@ -40,8 +40,12 @@ class LLMProvider:
         ]
         if "model" in self.config.get("language_model", {}):
             self.model = self.config["language_model"]["model"]["name"]
-            self.input_token_cost = self.config["language_model"]["model"]["input_token_cost"]
-            self.output_token_cost = self.config["language_model"]["model"]["output_token_cost"]
+            self.input_token_cost = self.config["language_model"]["model"][
+                "input_token_cost"
+            ]
+            self.output_token_cost = self.config["language_model"]["model"][
+                "output_token_cost"
+            ]
 
         response = litellm.completion(
             model=self.model,
@@ -50,7 +54,7 @@ class LLMProvider:
             temperature=self.temperature,
             user=user,
             input_cost_per_token=self.input_token_cost,
-            output_cost_per_token=self.output_token_cost
+            output_cost_per_token=self.output_token_cost,
         )
         return response["choices"][0]["message"]["content"], response["usage"]
 
