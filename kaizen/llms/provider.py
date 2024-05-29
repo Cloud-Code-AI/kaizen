@@ -74,7 +74,7 @@ class LLMProvider:
         )
 
     def get_token_count(self, message):
-        return litellm.token_counter(self.model, message)
+        return litellm.token_counter(model=self.model, text=message)
 
     def update_usage(self, total_usage, current_usage):
         if total_usage is not None:
