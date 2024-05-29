@@ -13,8 +13,10 @@ logger = logging.getLogger(__name__)
 
 PR_COLLAPSIBLE_TEMPLATE = """
 <details>
-<summary>[{confidence}] -> {comment}</summary>
-**Fix:** {solution}
+<summary>[{confidence}] -> {comment} | \n
+**Potential Solution:**: {solution}</summary>
+
+
 {file_name} | {start_line} - {end_line}
 </details>
 
