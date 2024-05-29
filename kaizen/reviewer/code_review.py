@@ -165,7 +165,13 @@ class CodeReviewer:
                     )
                     markdown_output += ct + "\n"
         if high_ranked_issues > 0:
-            markdown_output = "❗ This review needs attention. 🚨" + markdown_output
+            markdown_output = (
+                "❗ This review needs attention. 🚨\n\nHere are some feedback:\n\n"
+                + markdown_output
+            )
         else:
-            markdown_output = "✅ This is a good review! 👍\n\n" + markdown_output
+            markdown_output = (
+                "✅ This is a good review! 👍\n\nHere are some feedback:\n\n"
+                + markdown_output
+            )
         return markdown_title + markdown_output
