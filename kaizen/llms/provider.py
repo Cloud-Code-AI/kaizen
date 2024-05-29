@@ -70,7 +70,7 @@ class LLMProvider:
 
     def available_tokens(self, message, percentage=0.8):
         return litellm.get_max_tokens(self.model) * percentage - litellm.token_counter(
-            self.model, message
+            model=self.model, text=message
         )
 
     def get_token_count(self, message):
