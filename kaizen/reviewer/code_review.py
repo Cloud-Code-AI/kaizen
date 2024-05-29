@@ -164,8 +164,9 @@ class CodeReviewer:
                         file_name=review.get("file_name", "NA"),
                     )
                     markdown_output += ct + "\n"
+
         if high_ranked_issues > 0:
-            status_msg = "❗ This review needs attention. 🚨\n\n"
+            status_msg = "❗ Attention Required: This PR has potential issues. 🚨\n\n"
         else:
-            status_msg = "✅ This is a good review! 👍\n\n"
-        return markdown_title + status_msg  + markdown_output
+            status_msg = "✅ All Clear: This PR is ready to merge! 👍\n\n"
+        return markdown_title + status_msg + markdown_output
