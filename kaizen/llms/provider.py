@@ -5,27 +5,19 @@ from kaizen.utils.config import ConfigData
 
 class LLMProvider:
     DEFAULT_MODEL = "gpt-3.5-turbo-1106"
-    DEFAULT_MAX_TOKENS = 2000
-    DEFAULT_INPUT_TOKEN_COST = 0.0000005
-    DEFAULT_OUTPUT_TOKEN_COST = 0.0000015
+    DEFAULT_MAX_TOKENS = 4000
     DEFAULT_TEMPERATURE = 0
+    DEFAULT_MODEL_CONFIG = {"model": DEFAULT_MODEL}
 
     def __init__(
-        self,
-        system_prompt=BASIC_SYSTEM_PROMPT,
-        model=DEFAULT_MODEL,
-        max_tokens=DEFAULT_MAX_TOKENS,
-        temperature=DEFAULT_TEMPERATURE,
-        input_token_cost=DEFAULT_INPUT_TOKEN_COST,
-        output_token_cost=DEFAULT_OUTPUT_TOKEN_COST,
+        self, system_prompt=BASIC_SYSTEM_PROMPT, model_config=DEFAULT_MODEL_CONFIG
     ):
         self.config = ConfigData().get_config_data()
         self.system_prompt = system_prompt
-        self.model = model
-        self.input_token_cost = input_token_cost
-        self.output_token_cost = output_token_cost
-        self.max_tokens = max_tokens
-        self.temperature = temperature
+        self.model_config = model_config
+        if "default_model_config" in self.config.get("language_model", {}):
+            self.model_config = self.config["language_model"]["default_model_config"]
+        self.model = self.model_config["model"]
         if self.config.get("language_model", {}).get(
             "enable_observability_logging", False
         ):
@@ -38,23 +30,9 @@ class LLMProvider:
             {"role": "system", "content": self.system_prompt},
             {"role": "user", "content": prompt},
         ]
-        if "model" in self.config.get("language_model", {}):
-            self.model = self.config["language_model"]["model"]["name"]
-            self.input_token_cost = self.config["language_model"]["model"][
-                "input_token_cost"
-            ]
-            self.output_token_cost = self.config["language_model"]["model"][
-                "output_token_cost"
-            ]
 
         response = litellm.completion(
-            model=self.model,
-            messages=messages,
-            max_tokens=self.max_tokens,
-            temperature=self.temperature,
-            user=user,
-            input_cost_per_token=self.input_token_cost,
-            output_cost_per_token=self.output_token_cost,
+            messages=messages, user=user, **self.model_config
         )
         return response["choices"][0]["message"]["content"], response["usage"]
 
