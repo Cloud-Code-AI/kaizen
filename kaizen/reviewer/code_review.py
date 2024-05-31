@@ -166,7 +166,7 @@ class CodeReviewer:
                     markdown_output += ct + "\n"
 
         if high_ranked_issues > 0:
-            status_msg = "❗ Attention Required: This PR has potential issues. 🚨\n\n"
+            status_msg = "❗ **Attention Required:** This PR has potential issues. 🚨\n\n"
         else:
-            status_msg = "✅ All Clear: This PR is ready to merge! 👍\n\n"
+            status_msg = "✅ **All Clear:** This PR is ready to merge! 👍\n\n"
         return markdown_title + status_msg + markdown_output
