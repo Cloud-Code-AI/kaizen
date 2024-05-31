@@ -31,9 +31,7 @@ class LLMProvider:
             {"role": "user", "content": prompt},
         ]
 
-        response = litellm.completion(
-            messages=messages, user=user, **self.model_config
-        )
+        response = litellm.completion(messages=messages, user=user, **self.model_config)
         return response["choices"][0]["message"]["content"], response["usage"]
 
     def is_inside_token_limit(self, PROMPT, percentage=0.7):
