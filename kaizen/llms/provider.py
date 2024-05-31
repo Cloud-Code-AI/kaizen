@@ -45,6 +45,16 @@ class LLMProvider:
         return True
 
     def available_tokens(self, message, percentage=0.8):
+        """
+        Calculate the number of tokens available for a single request after accounting for the tokens consumed by the prompt.
+
+        Args:
+            message (str): The input message for which tokens are being calculated.
+            percentage (float, optional): The percentage of total tokens to be considered available. Defaults to 0.8.
+
+        Returns:
+            int: The number of tokens available for a single request.
+        """
         return litellm.get_max_tokens(self.model) * percentage - litellm.token_counter(
             model=self.model, text=message
         )
@@ -53,6 +63,43 @@ class LLMProvider:
         return litellm.token_counter(model=self.model, text=message)
 
     def update_usage(self, total_usage, current_usage):
+        """
+        Update the total usage with the current usage values.
+
+        This function updates the `total_usage` dictionary by adding the values from the
+        `current_usage` dictionary. If `total_usage` is None, it initializes `total_usage` with
+        the values from `current_usage`.
+
+        Args:
+            total_usage (dict or None): The dictionary containing the cumulative usage information.
+                If None, it will be initialized with the values from `current_usage`.
+            current_usage (dict): A dictionary containing the current usage information with keys
+                corresponding to those in `total_usage`.
+
+        Returns:
+            dict: The updated total usage dictionary with the values from `current_usage` added
+            to the corresponding keys in `total_usage`.
+
+        Example:
+            total_usage = {
+                "prompt_tokens": 150,
+                "completion_tokens": 250
+            }
+            current_usage = {
+                "prompt_tokens": 100,
+                "completion_tokens": 200
+            }
+            updated_usage = instance.update_usage(total_usage, current_usage)
+            print(updated_usage)
+            # Output: {"prompt_tokens": 250, "completion_tokens": 450}
+
+            # If total_usage is None
+            total_usage = None
+            updated_usage = instance.update_usage(total_usage, current_usage)
+            print(updated_usage)
+            # Output: {"prompt_tokens": 100, "completion_tokens": 200}
+        """
+
         if total_usage is not None:
             total_usage = {
                 key: total_usage[key] + current_usage[key] for key in total_usage
@@ -62,6 +109,25 @@ class LLMProvider:
         return total_usage
 
     def get_usage_cost(self, total_usage):
+        """
+        Calculate the cost of usage based on the number of tokens used in the prompt and completion.
+
+        Args:
+            total_usage (dict): A dictionary containing the usage information with the following keys:
+                - "prompt_tokens" (int): The number of tokens used in the prompt.
+                - "completion_tokens" (int): The number of tokens used in the completion.
+
+        Returns:
+            float: The total cost of the usage based on the model's cost per token.
+
+        Example:
+            total_usage = {
+                "prompt_tokens": 100,
+                "completion_tokens": 200
+            }
+            cost = instance.get_usage_cost(total_usage)
+            print(cost)  # Output will depend on the model's cost per token.
+        """
         return litellm.cost_per_token(
             self.model, total_usage["prompt_tokens"], total_usage["completion_tokens"]
         )
