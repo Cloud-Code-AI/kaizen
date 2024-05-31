@@ -5,6 +5,9 @@
   <a href="https://github.com/Cloud-Code-AI/cloudcode/pulse">
     <img src="https://img.shields.io/github/commit-activity/w/Cloud-Code-AI/cloudcode" alt="Commits-per-week">
   </a>
+    <a href="https://discord.gg/W33Hh5yWpj">
+    <img src="https://img.shields.io/discord/1156434217966764033.svg?style=social&logo=discord" alt="Discord">
+    </a>
   <a href="https://opensource.org/license/agpl-v3">
     <img src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" alt="License: AGPL-3.0">
   </a>
