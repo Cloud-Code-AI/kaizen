@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 from kaizen.llms.provider import LLMProvider
 
 
@@ -33,7 +33,8 @@ def test_chat_completion(mock_completion, llm_provider):
         "usage": {"prompt_tokens": 10, "completion_tokens": 10},
     }
     response, usage = llm_provider.chat_completion("test prompt")
-    assert response != None
+    assert response is not None
+    assert usage is not None
 
 
 @patch("kaizen.llms.provider.litellm.token_counter")
