@@ -15,28 +15,30 @@
 
 # Kaizen
 
-Kaizen is an open-source project that helps teams ensure quality in their software delivery by providing a suite of tools for code review, test generation, and end-to-end testing. It integrates with your existing code repositories and workflows, allowing you to streamline your software development process.
+Kaizen is an open-source project that helps teams ensure quality in their software delivery by providing an AI-powered suite of tools for code review, test generation, and end-to-end testing. It seamlessly integrates with your existing code repositories and workflows, allowing you to streamline your software development process and catch bugs early.
+
+[![Book a Demo](https://img.shields.io/badge/Book%20a%20Demo-Book%20Now-brightgreen)](https://www.cloudcode.ai/book-a-demo.html) [![Join the Waitlist](https://img.shields.io/badge/Join%20the%20Waitlist-Sign%20Up-blue)](https://cloudcode.ai/#cta)
+
 
 ## Features
 
 ### End-to-End Testing
 
-Kaizen generates comprehensive end-to-end tests based on your application's code and documentation. These tests ensure that your application functions correctly from start to finish, catching regressions and edge cases that may have been overlooked during development.
+Kaizen leverages advanced AI techniques to generate comprehensive end-to-end tests based on your application's code and documentation. These tests ensure that your application functions correctly from start to finish, catching regressions and edge cases that may have been overlooked during development.
 
 ### UI Testing and Review
 
-Kaizen can provide teams with helpful reviews for their UI and generate necessary tests to ensure that their website works as expected.
+Kaizen provides teams with insightful reviews for their UI components and automatically generates necessary tests to ensure that their website works as expected, reducing the risk of visual and functional regressions.
 
 ### Code Review
 
-Kaizen automatically reviews pull requests, summarizes code changes and provides insightful feedback on potential issues or areas of improvement. It leverages advanced natural language processing techniques to understand the context and implications of the code changes.
-
+Kaizen automatically reviews pull requests, summarizes code changes, and provides insightful feedback on potential issues or areas of improvement. It leverages advanced natural language processing techniques to understand the context and implications of the code changes, helping developers write better, more maintainable code.
 
 ## File Structure
 
 - `github_app`: Contains the API server used by the GitHub app to process and respond to incoming requests.
 - `kaizen`: Contains the main logic for interaction with LLMs and data processing.
-  - `actors`: Contains classes used to process various different actions like Code Review and Test execution.
+  - `actors`: Contains classes used to process various actions like Code Review and Test execution.
   - `generators`: Contains the main logic for generative use cases like test case generation, description generation, etc.
   - `llms`: Contains LLM integrations.
 - `docs`: Contains Nextra-powered documentation for the project.
@@ -46,48 +48,48 @@ Kaizen automatically reviews pull requests, summarizes code changes and provides
 
 To get started with Kaizen, follow these steps:
 
-1. Install Kaizen package:
+1. Install the Kaizen package:
 
-    ```bash
-      pip install kaizen-cloudcode
-    ```
+```
+pip install kaizen-cloudcode
+```
 
-2. Copy the example code from `examples/basic`
-
+2. Copy the example code from `examples/basic`.
 3. Generate tests for your website:
+   First, you need to update the URL in the `examples/basic/generate.py`.
 
-    First, you need to update the URL in the `examples/basic/generate.py`
-    ```bash
-      PYTHONPATH=. poetry run python examples/basic/generate.py
-    ```
-  
-    Kaizen will generate all the tests and store them inside `.kaizen/tests/`
+```
+PYTHONPATH=. poetry run python examples/basic/generate.py
+```
+
+Kaizen will generate all the tests and store them inside `.kaizen/tests/`.
 
 4. Execute tests:
+   Once you have generated all the necessary tests, you can run all the tests in two of the following ways:
 
-    Once you have generated all the necessary tests, you can run all the tests in two ways:
-    ```bash
-      PYTHONPATH=. poetry run python examples/basic/execute.py
-    ```
+```
+PYTHONPATH=. poetry run python examples/basic/execute.py
+```
 
-    Or using the default pytest module:
-   ```
-     pytest -v .kaizen/tests/
-   ```
-  
-    Kaizen will generate all the tests and store them inside `.kaizen/tests/`
+Or using the default pytest module:
 
+```
+pytest -v .kaizen/tests/
+```
 
-### Running API Server for GitHub App
+Kaizen will execute the generated tests and provide detailed reports.
 
-Kaizen utilizes a GitHub app to perform actions like PR review and description updates. Here is a quick link to set up your own GitHub App: [docs/pages/github_app.md](docs/pages/github_app.md)
+## Running API Server for GitHub App
+
+Kaizen utilizes a GitHub app to perform actions like PR review and description updates. Here's a quick link to set up your own GitHub App: [docs/pages/github_app.md](docs/pages/github_app.md)
 
 Deploy the API using Docker Compose:
+
 ```
 docker-compose up
 ```
 
-You can also configure features by tweaking the config.json file.
+You can also configure features by tweaking the `config.json` file.
 
 **NOTE:** You need to create a `.env` file by copying `.env.example` and also store the PEM file for the GitHub app as `GITHUB_APP_KEY.pem`.
 
@@ -103,7 +105,7 @@ We welcome contributions from the community! If you'd like to contribute to Kaiz
 
 ## License
 
-Kaizen is released under the [AGPL License](LICENSE).
+Kaizen is released under the AGPL License.
 
 ## Contact
 
