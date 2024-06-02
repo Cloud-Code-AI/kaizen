@@ -74,7 +74,7 @@ PYTHONPATH=. poetry run python examples/basic/execute.py
 Or using the default pytest module:
 
 ```
-pytest -v .kaizen/tests/
+pytest -v .kaizen/ui-tests/
 ```
 
 Kaizen will execute the generated tests and provide detailed reports.
