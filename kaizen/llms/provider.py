@@ -17,6 +17,10 @@ class LLMProvider:
         self.model_config = model_config
         if "default_model_config" in self.config.get("language_model", {}):
             self.model_config = self.config["language_model"]["default_model_config"]
+        
+        if "models" in self.config.get("language_model"):
+            self.models = self.config["language_model"]["models"]
+
         self.model = self.model_config["model"]
         if self.config.get("language_model", {}).get(
             "enable_observability_logging", False
@@ -25,13 +29,15 @@ class LLMProvider:
             litellm.success_callback = ["supabase"]
             litellm.failure_callback = ["supabase"]
 
-    def chat_completion(self, prompt, user: str = None):
+    def chat_completion(self, prompt, user: str = None, custom_model=None):
         messages = [
             {"role": "system", "content": self.system_prompt},
             {"role": "user", "content": prompt},
         ]
+        if not custom_model:
+            custom_model = self.model_config
 
-        response = litellm.completion(messages=messages, user=user, **self.model_config)
+        response = litellm.completion(messages=messages, user=user, **custom_model)
         return response["choices"][0]["message"]["content"], response["usage"]
 
     def is_inside_token_limit(self, PROMPT, percentage=0.7):

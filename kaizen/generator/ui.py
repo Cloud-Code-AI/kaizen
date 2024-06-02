@@ -14,6 +14,11 @@ class UITestGenerator:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
         self.provider = LLMProvider(system_prompt=UI_TESTS_SYSTEM_PROMPT)
+        self.custom_model = None
+        if self.provider.models and "best" in self.provider.models:
+            self.custom_model = self.provider.models["best"]
+            if "type" in self.custom_model:
+                del self.custom_model["type"]
 
     def generate_ui_tests(
         self,
@@ -45,7 +50,7 @@ class UITestGenerator:
         This method identifies the different UI modules from a webpage.
         """
         prompt = UI_MODULES_PROMPT.format(WEB_CONTENT=web_content)
-        resp, usage = self.provider.chat_completion(prompt, user=user)
+        resp, usage = self.provider.chat_completion(prompt, user=user, custom_model=self.custom_model)
         modules = parser.extract_multi_json(resp)
         return {"modules": modules, "usage": usage}
 
@@ -63,7 +68,7 @@ class UITestGenerator:
             WEB_CONTENT=web_content, TEST_DESCRIPTION=test_description, URL=web_url
         )
 
-        resp, usage = self.provider.chat_completion(prompt, user=user)
+        resp, usage = self.provider.chat_completion(prompt, user=user, custom_model=self.custom_model)
 
         return {"code": resp, "usage": usage}
 
@@ -92,7 +97,7 @@ class UITestGenerator:
         if not folder_path:
             folder_path = output.get_parent_folder()
 
-        folder_path = os.path.join(folder_path, ".kaizen/tests")
+        folder_path = os.path.join(folder_path, ".kaizen/ui-tests")
         output.create_folder(folder_path)
         output.create_test_files(json_tests, folder_path)
 
