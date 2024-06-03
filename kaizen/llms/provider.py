@@ -17,7 +17,7 @@ class LLMProvider:
         self.model_config = model_config
         if "default_model_config" in self.config.get("language_model", {}):
             self.model_config = self.config["language_model"]["default_model_config"]
-        
+
         if "models" in self.config.get("language_model"):
             self.models = self.config["language_model"]["models"]
 

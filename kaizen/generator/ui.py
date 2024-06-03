@@ -50,7 +50,9 @@ class UITestGenerator:
         This method identifies the different UI modules from a webpage.
         """
         prompt = UI_MODULES_PROMPT.format(WEB_CONTENT=web_content)
-        resp, usage = self.provider.chat_completion(prompt, user=user, custom_model=self.custom_model)
+        resp, usage = self.provider.chat_completion(
+            prompt, user=user, custom_model=self.custom_model
+        )
         modules = parser.extract_multi_json(resp)
         return {"modules": modules, "usage": usage}
 
@@ -68,7 +70,9 @@ class UITestGenerator:
             WEB_CONTENT=web_content, TEST_DESCRIPTION=test_description, URL=web_url
         )
 
-        resp, usage = self.provider.chat_completion(prompt, user=user, custom_model=self.custom_model)
+        resp, usage = self.provider.chat_completion(
+            prompt, user=user, custom_model=self.custom_model
+        )
 
         return {"code": resp, "usage": usage}
 
