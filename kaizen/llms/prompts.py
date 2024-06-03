@@ -107,16 +107,36 @@ File PATCH:
 """
 
 PR_DESCRIPTION_PROMPT = """
-You are a skilled developer reviewing a pull request.
-Using the provided information, generate a concise description for this pull request, covering:
+You are a skilled developer reviewing a pull request. Your task is to generate a concise and well-formatted description that summarizes the main purpose, scope of changes, significant modifications, refactoring, or new features introduced in the pull request.
 
-Main purpose and scope of changes
-Significant modifications, refactoring, or new features
+Please provide the output in the following format:
 
-Provide output in the format:
-{{"desc": "<PR_DESCRIPTION_IN_MARKDOWN>"}}
-Keep the description clear and tailored to help reviewers understand the pull request's impact, but avoid unnecessary details.
-INFORMATION:
+{{
+  "desc": "
+### Summary
+
+<Brief one-line summary of the pull request>
+
+### Details
+
+<Detailed multi-line description in markdown format>
+- List of key changes
+- New features
+- Refactoring details
+- ...
+  "
+}}
+
+When generating the description, keep the following in mind:
+
+- Make the summary concise and clear, highlighting the main purpose of the pull request.
+- Use markdown formatting in the detailed description for better readability.
+- Organize the details into relevant sections or bullet points.
+- Focus on covering the most significant aspects of the changes.
+- Avoid unnecessary details or repetition of information already present in the pull request title or description.
+
+The provided information includes:
+
 Pull Request Title: {PULL_REQUEST_TITLE}
 Pull Request Description: {PULL_REQUEST_DESC}
 Code Diff:
