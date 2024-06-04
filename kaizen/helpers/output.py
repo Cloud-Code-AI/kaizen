@@ -100,7 +100,9 @@ def create_test_files(json_tests, folder_path):
                     logger.info(f"Failed to clean code")
                 else:
                     cleaned_code = (
-                        f"''' Module Name: {module['module_title']}\n '''\n\n"
+                        f"'''Importance: {module['importance']}\
+                            \nModule Name: {module['module_title']}\
+                            \nDescription: {test['test_description']}\n'''\n\n"
                         + cleaned_code
                     )
                     f.write(cleaned_code)
