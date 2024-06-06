@@ -21,7 +21,9 @@ print(f"\nUI tests generated in {elapsed_time:.2f} seconds.")
 
 
 for test in tests:
-    print(f'#### ======== Module Title: {test["module_title"]} || Importance: {test["importance"]} ========== ####')
+    print(
+        f'#### ======== Module Title: {test["module_title"]} || Importance: {test["importance"]} ========== ####'
+    )
     for t in test["tests"]:
         print(f'Desc: {t["test_description"]}')
         print(f'Code: \n{t["code"]}')
