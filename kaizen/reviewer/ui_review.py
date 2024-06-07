@@ -1,4 +1,4 @@
-from typing import Optional, List, Dict
+from typing import Optional, Dict
 from kaizen.llms.provider import LLMProvider
 from kaizen.llms.prompts import (
     UI_REVIEWER_PROMPT,
