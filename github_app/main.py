@@ -26,7 +26,7 @@ async def handle_webhook(request: Request, background_tasks: BackgroundTasks):
     body = await request.body()
     event = request.headers.get("X-GitHub-Event")
     # Check if the Signature is valid
-    CONFIG_DATA = ConfigData()
+    CONFIG_DATA = ConfigData().get_config_data()
     if CONFIG_DATA["github_app"]["check_signature"] and not is_github_signature_valid(
         request.headers, body
     ):
@@ -46,24 +46,6 @@ async def handle_webhook(request: Request, background_tasks: BackgroundTasks):
     else:
         logger.info(f"Ignored event: {event}")
     return JSONResponse(content={"message": "Webhook received"})
-
-
-# @app.post("/generate-ui-tests")
-# async def generate_ui_tests(request: Request):
-#     ui_tester = UITester()
-#     data = await request.json()
-#     web_url = data.get('web_url')
-#     tests = ui_tester.generate_ui_tests(web_url=web_url)
-#     return JSONResponse(content={"ui_tests": tests})
-
-
-# @app.post("/run-ui-tests")
-# async def run_ui_tests(request: Request):
-#     ui_tester = UITester()
-#     data = await request.json()
-#     ui_tests = data.get('ui_tests')
-#     test_result = ui_tester.run_tests(ui_tests)
-#     return JSONResponse(content={"test_result": test_result})
 
 
 @app.get("/")
