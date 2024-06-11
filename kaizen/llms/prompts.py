@@ -21,6 +21,7 @@ Using the provided information, generate a code review with feedback organized a
       "start_line": "<CODE_START_LINE_INTEGER>",
       "end_line": "<CODE_END_LINE_INTEGER>",
       "file_name": "<CODE_FILE_NAME>",
+      "request_for_change": "<NEEDS_UPDATE_IN_TRUE_OR_FALSE>"
     }},
     ...
   ]
@@ -71,6 +72,7 @@ Using the provided information, generate a code review with feedback organized a
       "start_line": "<CODE_START_LINE_INTEGER>",
       "end_line": "<CODE_END_LINE_INTEGER>",
       "file_name": "<CODE_FILE_NAME>",
+      "request_for_change": "<NEEDS_UPDATE_IN_TRUE_OR_FALSE>"
     }},
     ...
   ]
