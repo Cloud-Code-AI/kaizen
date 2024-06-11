@@ -8,7 +8,7 @@ GITHUB_REPO_NAME = "kaizen"
 
 # Get the current date and calculate the date 14 days ago
 current_date = datetime.now(timezone.utc).date()
-since_date = current_date - timedelta(days=14)
+since_date = current_date - timedelta(days=7)
 
 # Convert the date to ISO format
 since_date_iso = since_date.isoformat()
