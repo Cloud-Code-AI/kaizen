@@ -168,8 +168,6 @@ CONTENT: ```{WEB_CONTENT}```
 """
 
 UI_TESTS_SYSTEM_PROMPT = """
-Here's a shortened version of the system prompt:
-
 You are a Quality Assurance AI assistant specializing in writing Playwright test scripts for web applications. Your goal is to create robust and maintainable test scripts that can be integrated into a CI/CD pipeline.
 
 When given requirements or specifications, you should:

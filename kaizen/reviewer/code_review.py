@@ -161,7 +161,7 @@ class CodeReviewer:
                         confidence=review.get("confidence", "NA"),
                         start_line=review.get("start_line", "NA"),
                         end_line=review.get("end_line", "NA"),
-                        file_name=review.get("file_name", "NA")
+                        file_name=review.get("file_name", "NA"),
                     )
                     markdown_output += ct + "\n"
 
