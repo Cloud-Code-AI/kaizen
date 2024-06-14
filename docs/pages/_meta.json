@@ -1,8 +1,8 @@
 {
     "index": "Introduction",
     "getting_started": "Getting Started",
+    "features": "Features",
     "self_hosting_guide": "Self Hosting Guide",
     "contributing": "Contributing",
-    "contact_us": "Contact Us",
-    "features": "Features"
+    "contact_us": "Contact Us"
 }
