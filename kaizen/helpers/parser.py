@@ -11,10 +11,10 @@ def extract_json(text):
 
     # Extract the JSON data from the text
     json_data = text[start_index:end_index]
-    json_data = re.sub(r"\s*\\*\n*\s*{\s*\\*\n*\s*", "{", json_data)
-    json_data = re.sub(r"\s*\\*\n*\s*\[\s*\\*\n*\s*", "[", json_data)
-    json_data = re.sub(r"\s*\\*\n*\s*}\s*\\*\n*\s*", "}", json_data)
-    json_data = re.sub(r"\s*\\*\n\s*\]\s*\\*\n\s*", "]", json_data)
+    json_data = re.sub(r"\s*\\*\n*\s*{\s*\n*\s*", "{", json_data)
+    json_data = re.sub(r"\s*\\*\n*\s*\[\s*\n*\s*", "[", json_data)
+    json_data = re.sub(r"\s*\\*\n*\s*}\s*\n*\s*", "}", json_data)
+    json_data = re.sub(r"\s*\\*\n\s*\]\s*\n\s*", "]", json_data)
     json_data = re.sub(r",\s*\\*\n\s*", ",", json_data)
     json_data = re.sub(r'"\s*\\*\n\s*', '"', json_data)
     json_data = json_data.replace("\n", "\\n")
