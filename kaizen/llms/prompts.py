@@ -111,7 +111,7 @@ File PATCH:
 PR_DESCRIPTION_PROMPT = """
 You are a skilled developer reviewing a pull request. Your task is to generate a concise and well-formatted description that summarizes the main purpose, scope of changes, significant modifications, refactoring, or new features introduced in the pull request.
 
-Please provide the output in the following format:
+Please provide the output in the following JSON format:
 
 {{
   "desc": "
@@ -136,6 +136,8 @@ When generating the description, keep the following in mind:
 - Organize the details into relevant sections or bullet points.
 - Focus on covering the most significant aspects of the changes.
 - Avoid unnecessary details or repetition of information already present in the pull request title or description.
+
+Make sure the output is in valid JSON format.
 
 The provided information includes:
 
