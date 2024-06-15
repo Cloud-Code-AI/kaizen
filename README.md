@@ -11,6 +11,10 @@
   <a href="https://opensource.org/license/agpl-v3">
     <img src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" alt="License: AGPL-3.0">
   </a>
+  <a href="https://hub.docker.com/r/cloudcodeai/kaizen-app">
+    <img src="https://img.shields.io/docker/pulls/cloudcodeai/kaizen-app.svg?style=flat-square" alt="License: AGPL-3.0">
+  </a>
+
 </p>
 
 # Kaizen
@@ -82,6 +86,8 @@ Kaizen will execute the generated tests and provide detailed reports.
 ## Running API Server for GitHub App
 
 Kaizen utilizes a GitHub app to perform actions like PR review and description updates. Here's a quick link to set up your own GitHub App: [docs/pages/github_app.md](docs/pages/github_app.md)
+
+You can find the docker image [here](https://hub.docker.com/r/cloudcodeai/kaizen-app)
 
 Deploy the API using Docker Compose:
 
