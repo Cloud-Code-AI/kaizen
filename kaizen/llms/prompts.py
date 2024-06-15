@@ -148,6 +148,13 @@ Code Diff:
 
 """
 
+MERGE_PR_DESCRIPTION_PROMPT = """
+Given all the PR description below as json, merge them and create a single PR Description.
+
+Here is the information:
+{DESCS}
+"""
+
 UI_MODULES_PROMPT = """
 Assign yourself as a quality assurance engineer. 
 Read this code and design comprehensive tests to test the UI of this HTML. 
