@@ -4,8 +4,8 @@ const withNextra = require('nextra')({
   })
    
   module.exports = withNextra({
-    basePath: process.env.NEXT_PUBLIC_BASE_PATH,
-    assetPrefix: process.env.NEXT_PUBLIC_BASE_PATH,
+    basePath: '/kaizen/docs/',
+    assetPrefix: '/kaizen/docs/',
     images: {
       unoptimized: true
     },
