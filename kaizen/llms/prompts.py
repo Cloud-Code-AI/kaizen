@@ -151,6 +151,23 @@ Code Diff:
 MERGE_PR_DESCRIPTION_PROMPT = """
 Given all the PR description below as json, merge them and create a single PR Description.
 
+Make sure the output is in JSON format as shown:
+{{
+  "desc": "
+### Summary
+
+<Brief one-line summary of the pull request>
+
+### Details
+
+<Detailed multi-line description in markdown format>
+- List of key changes
+- New features
+- Refactoring details
+- ...
+  "
+}}
+
 Here is the information:
 {DESCS}
 """

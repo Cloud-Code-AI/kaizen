@@ -145,9 +145,9 @@ class CodeReviewer:
                     resp, usage = self.provider.chat_completion(prompt, user=user)
                     total_usage = self.provider.update_usage(total_usage, usage)
                     desc_json = parser.extract_json(resp)
-                    descs.extend(desc_json["desc"])
+                    descs.append(desc_json["desc"])
 
-            prompt = MERGE_PR_DESCRIPTION_PROMPT.format(json.dumps(descs))
+            prompt = MERGE_PR_DESCRIPTION_PROMPT.format(DESCS=json.dumps(descs))
             resp, usage = self.provider.chat_completion(prompt, user=user)
             total_usage = self.provider.update_usage(total_usage, usage)
             desc = parser.extract_json(resp)["desc"]

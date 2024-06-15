@@ -27,9 +27,12 @@ def generate_jwt():
 
     # Define the JWT payload
     payload = {"iat": issued_at_time, "exp": expiration_time, "iss": GITHUB_APP_ID}
-    with open("GITHUB_APP_KEY.pem", "r") as f:
+    file_path = os.environ.get("GITHUB_APP_PEM_PATH", "GITHUB_APP_KEY.pem")
+    logger.info(f"filepath: {file_path}")
+    with open(file_path, "r") as f:
         # Encode the JWT using the RS256 algorithm
         encoded_jwt = jwt.encode(payload, f.read(), algorithm="RS256")
+        logger.info(f"f.read(): {f.read()}")
     return encoded_jwt
 
 
