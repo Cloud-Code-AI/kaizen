@@ -1,6 +1,6 @@
 from typing import Optional, List, Dict
 from kaizen.llms.provider import LLMProvider
-from kaizen.llms.prompts.work_summary import (
+from kaizen.llms.prompts.work_summary_prompts import (
     WORK_SUMMARY_PROMPT,
     WORK_SUMMARY_SYSTEM_PROMPT,
 )
