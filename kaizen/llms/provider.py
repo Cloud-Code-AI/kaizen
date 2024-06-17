@@ -1,5 +1,5 @@
 import litellm
-from kaizen.llms.prompts import BASIC_SYSTEM_PROMPT
+from kaizen.llms.prompts.general import BASIC_SYSTEM_PROMPT
 from kaizen.utils.config import ConfigData
 
 

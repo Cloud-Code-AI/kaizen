@@ -1,6 +1,6 @@
 from typing import Optional, Dict
 from kaizen.llms.provider import LLMProvider
-from kaizen.llms.prompts import (
+from kaizen.llms.prompts.ui_reviewer import (
     UI_REVIEWER_PROMPT,
     UI_REVIEWER_SYSTEM_PROMPT,
 )
