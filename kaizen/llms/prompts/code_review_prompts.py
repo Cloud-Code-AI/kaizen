@@ -41,6 +41,8 @@ Potential section topics:
 - "Potential Issues"
 - "Improvements"
 
+For "request_for_change", only make it true when topic is part of "Improvements" or "Potential Issues" or something which you think needs attention of the developer.
+
 Generate all relevant and actionable feedback. Avoid duplicate feedbacks for same line, try to merge them.
 For each piece of feedback, clearly reference the specific file(s) and line number(s) of code being addressed for each comment. Use markdown code blocks to quote relevant snippets of code when necessary.
 Keep comments concise but make sure they have actionable points pointing to the code or line having the issue. Avoid duplicate feedback, merge when necessary.
@@ -91,6 +93,8 @@ Potential section topics:
 - "Performance" 
 - "Potential Issues"
 - "Improvements"
+
+For "request_for_change", only make it true when topic is part of "Improvements" or "Potential Issues" or something which you think needs attention of the developer.
 
 Generate all relevant and actionable feedback. Avoid duplicate feedbacks for same line, try to merge them.
 For each piece of feedback, clearly reference the specific file(s) and line number(s) of code being addressed for each comment. Use markdown code blocks to quote relevant snippets of code when necessary.
