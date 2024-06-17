@@ -14,10 +14,12 @@ def ui_tests(url):
     """Run ui test generation"""
     UITestGenerator().generate_ui_tests(url)
 
+
 @cli.group()
 def reviewer():
     """reviewer command group"""
     pass
+
 
 @reviewer.command()
 @click.argument("github_url", required=True)
