@@ -17,8 +17,9 @@ PR_COLLAPSIBLE_TEMPLATE = """
 </strong> Potential Solution:</strong> \n\n{solution}
 \n
 <blockquote>  
-    <p><code>{file_name} | {start_line} - {end_line}</code></p>  
-  </blockquote>  
+    <p><code>{file_name} | {start_line} - {end_line}</code></p>
+    <p>request_for_change: {request_for_change}</p>  
+</blockquote>  
 </details> \n
 
 """

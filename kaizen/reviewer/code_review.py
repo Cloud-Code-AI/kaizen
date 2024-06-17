@@ -1,7 +1,7 @@
 from typing import Optional, List, Dict
 from kaizen.helpers import output, parser
 from kaizen.llms.provider import LLMProvider
-from kaizen.llms.prompts.code_review import (
+from kaizen.llms.prompts.code_review_prompts import (
     CODE_REVIEW_PROMPT,
     CODE_REVIEW_SYSTEM_PROMPT,
     PR_DESCRIPTION_PROMPT,
@@ -189,6 +189,7 @@ class CodeReviewer:
                         start_line=review.get("start_line", "NA"),
                         end_line=review.get("end_line", "NA"),
                         file_name=review.get("file_name", "NA"),
+                        request_for_change=review.get('request_for_change', 'NA')
                     )
                     markdown_output += ct + "\n"
 
