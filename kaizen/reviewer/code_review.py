@@ -189,7 +189,7 @@ class CodeReviewer:
                         start_line=review.get("start_line", "NA"),
                         end_line=review.get("end_line", "NA"),
                         file_name=review.get("file_name", "NA"),
-                        request_for_change=review.get('request_for_change', 'NA')
+                        request_for_change=review.get("request_for_change", "NA"),
                     )
                     markdown_output += ct + "\n"
 
