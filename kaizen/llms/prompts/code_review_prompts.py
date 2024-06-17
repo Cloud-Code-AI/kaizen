@@ -147,6 +147,40 @@ Code Diff:
 
 """
 
+PR_FILE_DESCRIPTION_PROMPT = """
+You are a skilled developer reviewing a pull request. Your task is to generate a concise and well-formatted description that summarizes the main purpose, scope of changes, significant modifications, refactoring, or new features introduced in the pull request.
+
+Please provide the output in the following JSON format:
+
+{{
+  "desc": "
+<Detailed multi-line description in markdown format>
+- List of key changes
+- New features
+- Refactoring details
+- ...
+  "
+}}
+
+When generating the description, keep the following in mind:
+
+- Make the summary concise and clear, highlighting the main purpose of the pull request.
+- Use markdown formatting in the detailed description for better readability.
+- Organize the details into relevant sections or bullet points.
+- Focus on covering the most significant aspects of the changes.
+- Avoid unnecessary details or repetition of information already present in the pull request title or description.
+
+Make sure the output is in valid JSON format.
+
+The provided information includes:
+
+Pull Request Title: {PULL_REQUEST_TITLE}
+Pull Request Description: {PULL_REQUEST_DESC}
+Code Diff:
+{CODE_DIFF}
+
+"""
+
 MERGE_PR_DESCRIPTION_PROMPT = """
 Given all the PR description below as json, merge them and create a single PR Description.
 

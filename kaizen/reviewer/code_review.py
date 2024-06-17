@@ -7,6 +7,7 @@ from kaizen.llms.prompts.code_review_prompts import (
     PR_DESCRIPTION_PROMPT,
     FILE_CODE_REVIEW_PROMPT,
     MERGE_PR_DESCRIPTION_PROMPT,
+    PR_FILE_DESCRIPTION_PROMPT,
 )
 import logging
 import json
@@ -85,6 +86,9 @@ class CodeReviewer:
                         PULL_REQUEST_DESC=pull_request_desc,
                         FILE_PATCH=patch_details,
                     )
+                    if self.provider.is_inside_token_limit(PROMPT=prompt):
+                        # TODO: Chunk this big files and process them
+                        continue
                     resp, usage = self.provider.chat_completion(prompt, user=user)
                     total_usage = self.provider.update_usage(total_usage, usage)
                     review_json = parser.extract_json(resp)
@@ -137,11 +141,14 @@ class CodeReviewer:
                     filename.split(".")[-1] not in parser.EXCLUDED_FILETYPES
                     and patch_details is not None
                 ):
-                    prompt = PR_DESCRIPTION_PROMPT.format(
+                    prompt = PR_FILE_DESCRIPTION_PROMPT.format(
                         PULL_REQUEST_TITLE=pull_request_title,
                         PULL_REQUEST_DESC=pull_request_desc,
                         CODE_DIFF=patch_details,
                     )
+                    if self.provider.is_inside_token_limit(PROMPT=prompt):
+                        # TODO: Chunk this big files and process them
+                        continue
                     resp, usage = self.provider.chat_completion(prompt, user=user)
                     total_usage = self.provider.update_usage(total_usage, usage)
                     desc_json = parser.extract_json(resp)
