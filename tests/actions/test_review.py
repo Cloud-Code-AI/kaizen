@@ -3,7 +3,7 @@ import json
 from kaizen.reviewer.code_review import CodeReviewer
 from unittest.mock import Mock
 from kaizen.llms.provider import LLMProvider
-from kaizen.llms.prompts import CODE_REVIEW_PROMPT
+from kaizen.llms.prompts.code_review_prompts import CODE_REVIEW_PROMPT
 
 with open("tests/data/actions/valid_review.json") as f:
     data = json.load(f)

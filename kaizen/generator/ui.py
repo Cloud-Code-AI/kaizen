@@ -3,7 +3,7 @@ import os
 from typing import Optional
 from kaizen.helpers import output, parser
 from kaizen.llms.provider import LLMProvider
-from kaizen.llms.prompts import (
+from kaizen.llms.prompts.ui_tests_prompts import (
     UI_MODULES_PROMPT,
     UI_TESTS_SYSTEM_PROMPT,
     PLAYWRIGHT_CODE_PROMPT,
