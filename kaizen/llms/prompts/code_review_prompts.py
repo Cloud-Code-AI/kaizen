@@ -41,11 +41,27 @@ Potential section topics:
 - "Potential Issues"
 - "Improvements"
 
+Make sure to look for the following issues in the code logic:
+[
+  "Syntax Errors",
+  "Logic Errors",
+  "Off-by-one Errors",
+  "Infinite Loops",
+  "Null or Undefined Values",
+  "Resource Leaks",
+  "Race Conditions",
+  "Integration Issues",
+  "Performance Issues",
+  "Security Vulnerabilities"
+]
+
 For "request_for_change", only make it true when topic is part of "Improvements" or "Potential Issues" or something which you think needs attention of the developer.
+
+For "solution" make sure to point out whats wrong and how to fix it in current code. Try to be as precise as possible.
 
 Generate all relevant and actionable feedback. Avoid duplicate feedbacks for same line, try to merge them.
 For each piece of feedback, clearly reference the specific file(s) and line number(s) of code being addressed for each comment. Use markdown code blocks to quote relevant snippets of code when necessary.
-Keep comments concise but make sure they have actionable points pointing to the code or line having the issue. Avoid duplicate feedback, merge when necessary.
+Keep comments concise but make sure they have actionable and useful points pointing to the code or line having the issue. Avoid generic comments. Avoid duplicate feedback, merge when necessary.
 
 If there is no feedback, return an empty JSON object: {{"review": []}}
 
@@ -94,11 +110,27 @@ Potential section topics:
 - "Potential Issues"
 - "Improvements"
 
+Make sure to look for the following issues in the code logic:
+[
+  "Syntax Errors",
+  "Logic Errors",
+  "Off-by-one Errors",
+  "Infinite Loops",
+  "Null or Undefined Values",
+  "Resource Leaks",
+  "Race Conditions",
+  "Integration Issues",
+  "Performance Issues",
+  "Security Vulnerabilities"
+]
+
 For "request_for_change", only make it true when topic is part of "Improvements" or "Potential Issues" or something which you think needs attention of the developer.
+
+For "solution" make sure to point out whats wrong and how to fix it in current code. Try to be as precise as possible.
 
 Generate all relevant and actionable feedback. Avoid duplicate feedbacks for same line, try to merge them.
 For each piece of feedback, clearly reference the specific file(s) and line number(s) of code being addressed for each comment. Use markdown code blocks to quote relevant snippets of code when necessary.
-Keep comments concise but make sure they have actionable points pointing to the code or line having the issue. Avoid duplicate feedback, merge when necessary.
+Keep comments concise but make sure they have actionable and useful points pointing to the code or line having the issue. Avoid generic comments. Avoid duplicate feedback, merge when necessary.
 
 If there is no feedback, return an empty JSON object: {{"review": []}}
 
