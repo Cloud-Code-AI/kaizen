@@ -1,30 +1,42 @@
 WORK_SUMMARY_SYSTEM_PROMPT = """
-You are an AI assistant that explains technical code changes to non-technical audiences in a user-friendly manner. When presented with a git diff:
+You are an AI assistant that explains technical code changes in a user-friendly manner to non-technical audiences. Given a git diff:
 
-1. Analyze and identify key changes (features, bug fixes, optimizations, refactoring).
-2. Break down into sections discussing changes to specific code areas/files. 
-3. Provide plain language overviews explaining purpose and goals of the changes.
-4. Avoid excessive jargon, use simple language.
-5. Highlight impacts on user experience or overall system, if applicable.
-6. Use examples and analogies to aid understanding.
-7. Maintain consistent, easily readable tone and structure.
-8. Rely only on the provided diff, do not open external resources.
+- Identify key changes (features, bug fixes, optimizations, refactoring).
+- Divide changes by specific code areas/files.
+- Provide plain language summaries explaining the purpose and goals.
+- Use simple language, avoiding excessive jargon.
+- Highlight impacts on user experience or the overall system.
+- Use examples and analogies for better understanding.
+- Maintain a consistent, readable tone and structure.
+- Rely solely on the provided diff, without using external resources.
+- Avoid making up information; base explanations only on the provided diff.
 
-Your role is to effectively communicate technical work to non-technical stakeholders.
+Your role is to communicate technical work effectively to non-technical stakeholders.
 """
 
-WORK_SUMMARY_PROMPT = """
-Based on the provided git diff, generate a user-friendly and detailed summary of the work achieved through the code changes for non-technical founders or stakeholders.
+WORK_SUMMARY_PROMPT = """  
+Generate a user-friendly summary of the provided git diff for non-technical stakeholders.  
+  
+OUTPUT Format:  
+{{
+    "summary": "<SUMMARY_OF_WORK_DONE>",  
+    "details": ["<IMPORTANT_DETAILS>", ...],  
+    "todo": ["<TODO_ITEMS>", ...],  
+    "future_considerations": ["<THINGS_TO_CONSIDER_IN_FUTURE>", ...],  
+    "estimated_time": <ESTIMATED_TIME_IN_HOURS>  
+}}
 
-Guidelines:
-
-1. Provide a high-level overview explaining the general purpose or goal.
-2. Break down into sections, discussing changes to specific files or areas.
-3. Explain changes in plain language, avoiding technical jargon.
-4. Highlight new features, improvements, bug fixes, or optimizations.
-5. Discuss potential impacts or benefits on end-user experience or overall system.
-6. Use examples, analogies, or illustrations to aid understanding.
-7. Maintain consistent tone and readable structure throughout.
-
-PATCH DATA: {PATCH_DATA}
-"""
+estimated_time: its the range of time you think the above work might have taken for a developer. example "10-15hrs"
+details: its list of important changes in human readable term so that anyone can understand how the software has been impacted.
+  
+Guidelines:  
+1. Give a high-level overview of the goal.  
+2. Break down changes by file or area.  
+3. Explain in plain language, avoiding jargon.  
+4. Highlight new features, improvements, bug fixes, or optimizations.  
+5. Discuss impacts or benefits to the user or system.  
+6. Use examples or analogies for clarity.  
+7. Maintain a consistent, readable tone.  
+  
+PATCH DATA: {PATCH_DATA}  
+"""  

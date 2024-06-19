@@ -1,5 +1,6 @@
 from typing import Optional, List, Dict
 from kaizen.llms.provider import LLMProvider
+from kaizen.helpers import parser
 from kaizen.llms.prompts.work_summary_prompts import (
     WORK_SUMMARY_PROMPT,
     WORK_SUMMARY_SYSTEM_PROMPT,
@@ -35,14 +36,14 @@ class WorkSummaryGenerator:
             prompt = WORK_SUMMARY_PROMPT.format(PATCH_DATA=combined_diff_data)
             response, usage = self.provider.chat_completion(prompt, user=user)
             total_usage = self.provider.update_usage(total_usage, usage)
-            summaries.append(response)
+            summaries.append(parser.extract_json(response))
             combined_diff_data = ""
 
         if combined_diff_data != "":
             # process the remaining file diff pending
             prompt = WORK_SUMMARY_PROMPT.format(PATCH_DATA=combined_diff_data)
             response, usage = self.provider.chat_completion(prompt, user=user)
-            summaries.append(response)
+            summaries.append(parser.extract_json(response))
             combined_diff_data = ""
             total_usage = self.provider.update_usage(total_usage, usage)
 
