@@ -22,7 +22,10 @@ class WorkSummaryGenerator:
         summaries = []
         # Try to merge the files untill LLM can process the response
         combined_diff_data = ""
-        total_usage = None
+        total_usage = {
+            "prompt_tokens": 0,
+            "completion_tokens": 0
+        }
         for file_dict in diff_file_data:
             temp_prompt = combined_diff_data
             temp_prompt += f"""\n---->\nFile Name: {file_dict["file"]}\nPatch: {file_dict["patch"]}\n Status: {file_dict["status"]}"""
