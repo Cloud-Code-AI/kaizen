@@ -7,8 +7,13 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.8.1"
-kaizen-cloudcode = {path = "..", develop = true}
 click = "^8.1.3"
+
+[tool.poetry.group.dev.dependencies]
+kaizen-cloudcode = {path = "..", develop = true, optional = true}
+
+[tool.poetry.group.prod.dependencies]
+kaizen-cloudcode = "^0.2.5"
 
 [tool.poetry.scripts]
 kaizen-cli = "kaizen_cli.cli:cli"

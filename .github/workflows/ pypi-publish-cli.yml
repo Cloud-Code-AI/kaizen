@@ -23,6 +23,7 @@ jobs:
 
       - name: Build and publish
         run: |
+          poetry install --with prod --no-dev
           poetry build
           poetry publish --username __token__ --password ${{ secrets.PYPI_API_TOKEN }}
         working-directory: ./cli
