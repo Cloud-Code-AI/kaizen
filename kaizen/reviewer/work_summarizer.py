@@ -24,7 +24,8 @@ class WorkSummaryGenerator:
         combined_diff_data = ""
         total_usage = {
             "prompt_tokens": 0,
-            "completion_tokens": 0
+            "completion_tokens": 0,
+            "total_tokens": 0
         }
         for file_dict in diff_file_data:
             temp_prompt = combined_diff_data
