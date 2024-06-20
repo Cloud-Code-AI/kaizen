@@ -21,7 +21,7 @@
 
 Kaizen is an open-source project that helps teams ensure quality in their software delivery by providing an AI-powered suite of tools for code review, test generation, and end-to-end testing. It seamlessly integrates with your existing code repositories and workflows, allowing you to streamline your software development process and catch bugs early.
 
-[![Book a Demo](https://img.shields.io/badge/Book%20a%20Demo-Book%20Now-brightgreen)](https://www.cloudcode.ai/book-a-demo.html) [![Join the Waitlist](https://img.shields.io/badge/Join%20the%20Waitlist-Sign%20Up-blue)](https://cloudcode.ai/#cta)
+[![Book a Demo](https://img.shields.io/badge/Book%20a%20Demo-Book%20Now-brightgreen)](https://www.cloudcode.ai/book-a-demo.html) [![Join the Waitlist](https://img.shields.io/badge/Join%20the%20Waitlist-Sign%20Up-blue)](https://cloudcode.ai/#cta) [![Install Kaizen App](https://img.shields.io/badge/Install%20Kaizen%20App)](https://github.com/apps/kaizen-bot)
 
 
 ## Features
