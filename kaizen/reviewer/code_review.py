@@ -65,7 +65,8 @@ class CodeReviewer:
         )
         total_usage = {
             "prompt_tokens": 0,
-            "completion_tokens": 0
+            "completion_tokens": 0,
+            "total_tokens": 0
         }
         if self.provider.is_inside_token_limit(PROMPT=prompt):
             self.logger.debug("Processing Directly from Diff")
@@ -129,7 +130,8 @@ class CodeReviewer:
 
         total_usage = {
             "prompt_tokens": 0,
-            "completion_tokens": 0
+            "completion_tokens": 0,
+            "total_tokens": 0
         }
         if self.provider.is_inside_token_limit(PROMPT=prompt):
             self.logger.debug("Processing Directly from Diff")
