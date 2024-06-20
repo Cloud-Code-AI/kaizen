@@ -1,5 +1,5 @@
 -- Enable vector extension
-CREATE EXTENSION vector;
+CREATE EXTENSION IF NOT EXISTS vector;
 
 -- Table to store repository information
 CREATE TABLE repositories (
@@ -46,17 +46,17 @@ CREATE TABLE snippet_summaries (
     summary_quality_score FLOAT
 );
 
--- Node level data for RAG
+-- Node level data for AST
 CREATE TABLE ast_nodes (
     node_id SERIAL PRIMARY KEY,
     file_id INTEGER NOT NULL REFERENCES files(file_id),
     node_type TEXT NOT NULL,
-    start_line INTEGER,
-    end_line INTEGER,
-    -- Additional common node properties
+    start_line INTEGER NOT NULL,
+    end_line INTEGER NOT NULL
+    -- Add other common node properties here
 );
 
--- Node level data for RAG
+-- Table to store node properties
 CREATE TABLE node_properties (
     property_id SERIAL PRIMARY KEY,
     node_id INTEGER NOT NULL REFERENCES ast_nodes(node_id),
@@ -64,7 +64,7 @@ CREATE TABLE node_properties (
     property_value TEXT NOT NULL
 );
 
--- Node level data for RAG
+-- Table to store node relationships
 CREATE TABLE node_relationships (
     relationship_id SERIAL PRIMARY KEY,
     parent_node_id INTEGER NOT NULL REFERENCES ast_nodes(node_id),
