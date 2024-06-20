@@ -1,7 +1,7 @@
 import json
 import re
 
-EXCLUDED_FILETYPES = ["json", "css", "xml"]
+EXCLUDED_FILETYPES = ["json"]
 
 
 def extract_json(text):
