@@ -135,7 +135,7 @@ class CodeReviewer:
             self.logger.debug("Processing Directly from Diff")
             resp, usage = self.provider.chat_completion(prompt, user=user)
             total_usage = self.provider.update_usage(total_usage, usage)
-            json_data = parser.extract_json_with_llm_retry(
+            json_data, total_usage = parser.extract_json_with_llm_retry(
                 self.provider, resp, total_usage
             )
             desc = json_data["desc"]
