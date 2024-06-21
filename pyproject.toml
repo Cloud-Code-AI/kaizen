@@ -10,7 +10,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8.1"
+python = "^3.9.0"
 requests = "^2.31.0"
 pyjwt = "^2.8.0"
 uvicorn = "^0.29.0"
@@ -29,6 +29,8 @@ llama-index-llms-openai = "^0.1.22"
 llama-index-embeddings-openai = "^0.1.10"
 llama-index-readers-file = "^0.1.25"
 llama-index-vector-stores-postgres = "^0.1.11"
+sqlalchemy = "^2.0.31"
+esprima = "^4.0.1"
 
 
 [build-system]
