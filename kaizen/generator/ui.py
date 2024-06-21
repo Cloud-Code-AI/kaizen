@@ -81,11 +81,7 @@ class UITestGenerator:
         This method generates UI testing points for all modules.
         """
         ui_tests = test_modules
-        total_usage = {
-            "prompt_tokens": 0,
-            "completion_tokens": 0,
-            "total_tokens": 0
-        }
+        total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
         for module in ui_tests:
             for test in module["tests"]:
                 test_description = test["test_description"]

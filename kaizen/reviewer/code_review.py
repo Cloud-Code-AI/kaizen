@@ -63,15 +63,13 @@ class CodeReviewer:
             PULL_REQUEST_DESC=pull_request_desc,
             CODE_DIFF=diff_text,
         )
-        total_usage = {
-            "prompt_tokens": 0,
-            "completion_tokens": 0,
-            "total_tokens": 0
-        }
+        total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
         if self.provider.is_inside_token_limit(PROMPT=prompt):
             self.logger.debug("Processing Directly from Diff")
             resp, usage = self.provider.chat_completion(prompt, user=user)
-            review_json, total_usage = parser.extract_json_with_llm_retry(self.provider, resp, total_usage)
+            review_json, total_usage = parser.extract_json_with_llm_retry(
+                self.provider, resp, total_usage
+            )
             reviews = review_json["review"]
             total_usage = self.provider.update_usage(total_usage, usage)
         else:
@@ -90,12 +88,16 @@ class CodeReviewer:
                         PULL_REQUEST_DESC=pull_request_desc,
                         FILE_PATCH=patch_details,
                     )
-                    if not self.provider.is_inside_token_limit(PROMPT=prompt, percentage=85):
+                    if not self.provider.is_inside_token_limit(
+                        PROMPT=prompt, percentage=85
+                    ):
                         # TODO: Chunk this big files and process them
                         continue
                     resp, usage = self.provider.chat_completion(prompt, user=user)
                     total_usage = self.provider.update_usage(total_usage, usage)
-                    review_json, total_usage = parser.extract_json_with_llm_retry(self.provider, resp, total_usage)
+                    review_json, total_usage = parser.extract_json_with_llm_retry(
+                        self.provider, resp, total_usage
+                    )
                     reviews.extend(review_json["review"])
 
         topics = self.merge_topics(reviews=reviews)
@@ -128,16 +130,14 @@ class CodeReviewer:
             CODE_DIFF=diff_text,
         )
 
-        total_usage = {
-            "prompt_tokens": 0,
-            "completion_tokens": 0,
-            "total_tokens": 0
-        }
+        total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
         if self.provider.is_inside_token_limit(PROMPT=prompt):
             self.logger.debug("Processing Directly from Diff")
             resp, usage = self.provider.chat_completion(prompt, user=user)
             total_usage = self.provider.update_usage(total_usage, usage)
-            json_data = parser.extract_json_with_llm_retry(self.provider, resp, total_usage)
+            json_data = parser.extract_json_with_llm_retry(
+                self.provider, resp, total_usage
+            )
             desc = json_data["desc"]
         else:
             self.logger.debug("Processing Based on files")
@@ -160,13 +160,17 @@ class CodeReviewer:
                         continue
                     resp, usage = self.provider.chat_completion(prompt, user=user)
                     total_usage = self.provider.update_usage(total_usage, usage)
-                    desc_json, total_usage = parser.extract_json_with_llm_retry(self.provider, resp, total_usage)
+                    desc_json, total_usage = parser.extract_json_with_llm_retry(
+                        self.provider, resp, total_usage
+                    )
                     descs.append(desc_json["desc"])
 
             prompt = MERGE_PR_DESCRIPTION_PROMPT.format(DESCS=json.dumps(descs))
             resp, usage = self.provider.chat_completion(prompt, user=user)
             total_usage = self.provider.update_usage(total_usage, usage)
-            resp, total_usage = parser.extract_json_with_llm_retry(self.provider, resp, total_usage)
+            resp, total_usage = parser.extract_json_with_llm_retry(
+                self.provider, resp, total_usage
+            )
             desc = resp["desc"]
         body = output.create_pr_description(desc, pull_request_desc)
         prompt_cost, completion_cost = self.provider.get_usage_cost(
