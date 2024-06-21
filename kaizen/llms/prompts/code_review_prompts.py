@@ -19,7 +19,7 @@ Using the provided information, generate a code review with feedback organized a
       "solution": "<SOLUTION_TO_THE_COMMENT>",
       "start_line": "<CODE_START_LINE_INTEGER>",
       "end_line": "<CODE_END_LINE_INTEGER>",
-      "file_name": "<CODE_FILE_NAME>",
+      "file_name": "<ABSOLUTE_CODE_FILE_PATH>",
       "request_for_change": "<NEEDS_UPDATE_IN_TRUE_OR_FALSE>"
     }},
     ...
@@ -88,7 +88,7 @@ Using the provided information, generate a code review with feedback organized a
       "solution": "<SOLUTION_TO_THE_COMMENT>",
       "start_line": "<CODE_START_LINE_INTEGER>",
       "end_line": "<CODE_END_LINE_INTEGER>",
-      "file_name": "<CODE_FILE_NAME>",
+      "file_name": "<ABSOLUTE_CODE_FILE_PATH>",
       "request_for_change": "<NEEDS_UPDATE_IN_TRUE_OR_FALSE>"
     }},
     ...
