@@ -14,7 +14,7 @@ services:
       - github_app_pem
   
   postgres:
-    image: postgres
+    image: postgres:16-bullseye
     env_file:
       - .env
     volumes:

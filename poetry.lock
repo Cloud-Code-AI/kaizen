@@ -619,6 +619,19 @@ files = [
 ]
 
 [[package]]
+name = "escodegen"
+version = "1.0.11"
+description = "ECMAScript code generator"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "escodegen-1.0.11-py3-none-any.whl", hash = "sha256:2e46fbbef86faf175165c8ebaa2207b1ee5624918ee9e1daf67fa247d2dbb074"},
+]
+
+[package.dependencies]
+esutils = "*"
+
+[[package]]
 name = "esprima"
 version = "4.0.1"
 description = "ECMAScript parsing infrastructure for multipurpose analysis in Python"
@@ -626,6 +639,16 @@ optional = false
 python-versions = "*"
 files = [
     {file = "esprima-4.0.1.tar.gz", hash = "sha256:08db1a876d3c2910db9cfaeb83108193af5411fc3a3a66ebefacd390d21323ee"},
+]
+
+[[package]]
+name = "esutils"
+version = "1.0.1"
+description = "utility box for ECMAScript language tools. Partial translation of esutils"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "esutils-1.0.1-py3-none-any.whl", hash = "sha256:0be6999a42cd99aebfd4ceabb84efad1ede9789f6c8f393fd873a472d46cc86b"},
 ]
 
 [[package]]
@@ -3106,4 +3129,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9.0"
-content-hash = "ae48ad92dd29010b4726a1f7925a3728ae9a34ecdbcd1daac12034ac32f3c0ca"
+content-hash = "27a73a66a7f9b6dbdf4dfe56a5e5c2409edc833a97def321b304d6b171997d9c"

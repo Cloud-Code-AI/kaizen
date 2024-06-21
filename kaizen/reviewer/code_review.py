@@ -63,11 +63,7 @@ class CodeReviewer:
             PULL_REQUEST_DESC=pull_request_desc,
             CODE_DIFF=diff_text,
         )
-        total_usage = {
-            "prompt_tokens": 0,
-            "completion_tokens": 0,
-            "total_tokens": 0
-        }
+        total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
         if self.provider.is_inside_token_limit(PROMPT=prompt):
             self.logger.debug("Processing Directly from Diff")
             resp, usage = self.provider.chat_completion(prompt, user=user)
@@ -90,7 +86,9 @@ class CodeReviewer:
                         PULL_REQUEST_DESC=pull_request_desc,
                         FILE_PATCH=patch_details,
                     )
-                    if self.provider.is_inside_token_limit(PROMPT=prompt, percentage=85):
+                    if self.provider.is_inside_token_limit(
+                        PROMPT=prompt, percentage=85
+                    ):
                         # TODO: Chunk this big files and process them
                         continue
                     resp, usage = self.provider.chat_completion(prompt, user=user)
@@ -128,11 +126,7 @@ class CodeReviewer:
             CODE_DIFF=diff_text,
         )
 
-        total_usage = {
-            "prompt_tokens": 0,
-            "completion_tokens": 0,
-            "total_tokens": 0
-        }
+        total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
         if self.provider.is_inside_token_limit(PROMPT=prompt):
             self.logger.debug("Processing Directly from Diff")
             resp, usage = self.provider.chat_completion(prompt, user=user)
