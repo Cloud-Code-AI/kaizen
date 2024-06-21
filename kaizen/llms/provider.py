@@ -1,5 +1,5 @@
 import litellm
-from kaizen.llms.prompts import BASIC_SYSTEM_PROMPT
+from kaizen.llms.prompts.general_prompts import BASIC_SYSTEM_PROMPT
 from kaizen.utils.config import ConfigData
 
 
@@ -20,6 +20,8 @@ class LLMProvider:
 
         if "models" in self.config.get("language_model"):
             self.models = self.config["language_model"]["models"]
+        else:
+            self.models = {}
 
         self.model = self.model_config["model"]
         if self.config.get("language_model", {}).get(

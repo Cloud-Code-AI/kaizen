@@ -17,8 +17,9 @@ PR_COLLAPSIBLE_TEMPLATE = """
 </strong> Potential Solution:</strong> \n\n{solution}
 \n
 <blockquote>  
-    <p><code>{file_name} | {start_line} - {end_line}</code></p>  
-  </blockquote>  
+    <p><code>{file_name} | {start_line} - {end_line}</code></p>
+    <p>request_for_change: {request_for_change}</p>  
+</blockquote>  
 </details> \n
 
 """
@@ -32,8 +33,8 @@ DESC_COLLAPSIBLE_TEMPLATE = """
 """
 
 
-def create_pr_description(data, original_desc):
-    markdown_output = data["desc"]
+def create_pr_description(desc, original_desc):
+    markdown_output = desc
     markdown_output += "\n\n> ✨ Generated with love by Kaizen ❤️"
     markdown_output += "\n\n" + DESC_COLLAPSIBLE_TEMPLATE.format(desc=original_desc)
     return markdown_output
