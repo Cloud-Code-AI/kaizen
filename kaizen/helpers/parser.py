@@ -28,7 +28,8 @@ def extract_json_with_llm_retry(provider, text, total_usage):
     try:
         json_data = extract_json(text)
         return json_data, total_usage
-    except:
+    except Exception as e:
+        print(f"Error parsing json: {e}")
         prompt = f"Help me fix this json data: {text}"
         resp, usage = provider.chat_completion(prompt)
         total_usage = provider.update_usage(total_usage, usage)
