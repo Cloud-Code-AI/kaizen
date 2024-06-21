@@ -11,13 +11,17 @@
   <a href="https://opensource.org/license/agpl-v3">
     <img src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" alt="License: AGPL-3.0">
   </a>
+  <a href="https://hub.docker.com/r/cloudcodeai/kaizen-app">
+    <img src="https://img.shields.io/docker/pulls/cloudcodeai/kaizen-app.svg?style=flat-square" alt="License: AGPL-3.0">
+  </a>
+
 </p>
 
 # Kaizen
 
 Kaizen is an open-source project that helps teams ensure quality in their software delivery by providing an AI-powered suite of tools for code review, test generation, and end-to-end testing. It seamlessly integrates with your existing code repositories and workflows, allowing you to streamline your software development process and catch bugs early.
 
-[![Book a Demo](https://img.shields.io/badge/Book%20a%20Demo-Book%20Now-brightgreen)](https://www.cloudcode.ai/book-a-demo.html) [![Join the Waitlist](https://img.shields.io/badge/Join%20the%20Waitlist-Sign%20Up-blue)](https://cloudcode.ai/#cta)
+[![Book a Demo](https://img.shields.io/badge/Book%20a%20Demo-Book%20Now-brightgreen)](https://www.cloudcode.ai/book-a-demo.html) [![Join the Waitlist](https://img.shields.io/badge/Join%20the%20Waitlist-Sign%20Up-blue)](https://cloudcode.ai/#cta) [![Install Kaizen App](https://img.shields.io/badge/Get%20Kaizen%20App-Install-8A2BE2)](https://github.com/apps/kaizen-bot)
 
 
 ## Features
@@ -82,6 +86,8 @@ Kaizen will execute the generated tests and provide detailed reports.
 ## Running API Server for GitHub App
 
 Kaizen utilizes a GitHub app to perform actions like PR review and description updates. Here's a quick link to set up your own GitHub App: [docs/pages/github_app.md](docs/pages/github_app.md)
+
+You can find the docker image [here](https://hub.docker.com/r/cloudcodeai/kaizen-app)
 
 Deploy the API using Docker Compose:
 

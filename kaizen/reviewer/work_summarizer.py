@@ -1,6 +1,7 @@
 from typing import Optional, List, Dict
 from kaizen.llms.provider import LLMProvider
-from kaizen.llms.prompts import (
+from kaizen.helpers import parser
+from kaizen.llms.prompts.work_summary_prompts import (
     WORK_SUMMARY_PROMPT,
     WORK_SUMMARY_SYSTEM_PROMPT,
 )
@@ -21,7 +22,11 @@ class WorkSummaryGenerator:
         summaries = []
         # Try to merge the files untill LLM can process the response
         combined_diff_data = ""
-        total_usage = None
+        total_usage = {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "total_tokens": 0
+        }
         for file_dict in diff_file_data:
             temp_prompt = combined_diff_data
             temp_prompt += f"""\n---->\nFile Name: {file_dict["file"]}\nPatch: {file_dict["patch"]}\n Status: {file_dict["status"]}"""
@@ -35,14 +40,14 @@ class WorkSummaryGenerator:
             prompt = WORK_SUMMARY_PROMPT.format(PATCH_DATA=combined_diff_data)
             response, usage = self.provider.chat_completion(prompt, user=user)
             total_usage = self.provider.update_usage(total_usage, usage)
-            summaries.append(response)
+            summaries.append(parser.extract_json(response))
             combined_diff_data = ""
 
         if combined_diff_data != "":
             # process the remaining file diff pending
             prompt = WORK_SUMMARY_PROMPT.format(PATCH_DATA=combined_diff_data)
             response, usage = self.provider.chat_completion(prompt, user=user)
-            summaries.append(response)
+            summaries.append(parser.extract_json(response))
             combined_diff_data = ""
             total_usage = self.provider.update_usage(total_usage, usage)
 

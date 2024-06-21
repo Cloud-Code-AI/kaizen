@@ -1,13 +1,16 @@
-from kaizen.helpers import output, parser
 from typing import Optional, List, Dict
+from kaizen.helpers import output, parser
 from kaizen.llms.provider import LLMProvider
-from kaizen.llms.prompts import (
+from kaizen.llms.prompts.code_review_prompts import (
     CODE_REVIEW_PROMPT,
     CODE_REVIEW_SYSTEM_PROMPT,
     PR_DESCRIPTION_PROMPT,
     FILE_CODE_REVIEW_PROMPT,
+    MERGE_PR_DESCRIPTION_PROMPT,
+    PR_FILE_DESCRIPTION_PROMPT,
 )
 import logging
+import json
 from dataclasses import dataclass
 
 
@@ -60,7 +63,11 @@ class CodeReviewer:
             PULL_REQUEST_DESC=pull_request_desc,
             CODE_DIFF=diff_text,
         )
-        total_usage = None
+        total_usage = {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "total_tokens": 0
+        }
         if self.provider.is_inside_token_limit(PROMPT=prompt):
             self.logger.debug("Processing Directly from Diff")
             resp, usage = self.provider.chat_completion(prompt, user=user)
@@ -83,6 +90,9 @@ class CodeReviewer:
                         PULL_REQUEST_DESC=pull_request_desc,
                         FILE_PATCH=patch_details,
                     )
+                    if self.provider.is_inside_token_limit(PROMPT=prompt, percentage=85):
+                        # TODO: Chunk this big files and process them
+                        continue
                     resp, usage = self.provider.chat_completion(prompt, user=user)
                     total_usage = self.provider.update_usage(total_usage, usage)
                     review_json = parser.extract_json(resp)
@@ -106,6 +116,7 @@ class CodeReviewer:
         diff_text: str,
         pull_request_title: str,
         pull_request_desc: str,
+        pull_request_files: List[Dict],
         user: Optional[str] = None,
     ):
         """
@@ -117,14 +128,45 @@ class CodeReviewer:
             CODE_DIFF=diff_text,
         )
 
-        # TODO: split the diff if alot of files and contents.
-        resp, usage = self.provider.chat_completion(prompt, user=user)
-        total_usage = None
-        self.logger.debug(f"PROMPT Generate PR Desc RESP: {resp}")
-        body = output.create_pr_description(
-            parser.extract_json(resp), pull_request_desc
-        )
-        total_usage = self.provider.update_usage(total_usage, usage)
+        total_usage = {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "total_tokens": 0
+        }
+        if self.provider.is_inside_token_limit(PROMPT=prompt):
+            self.logger.debug("Processing Directly from Diff")
+            resp, usage = self.provider.chat_completion(prompt, user=user)
+            total_usage = self.provider.update_usage(total_usage, usage)
+            desc = parser.extract_json(resp)["desc"]
+        else:
+            self.logger.debug("Processing Based on files")
+            # We recurrsively get feedback for files and then get basic summary
+            descs = []
+            for file in pull_request_files:
+                patch_details = file.get("patch")
+                filename = file.get("filename", "")
+                if (
+                    filename.split(".")[-1] not in parser.EXCLUDED_FILETYPES
+                    and patch_details is not None
+                ):
+                    prompt = PR_FILE_DESCRIPTION_PROMPT.format(
+                        PULL_REQUEST_TITLE=pull_request_title,
+                        PULL_REQUEST_DESC=pull_request_desc,
+                        CODE_DIFF=patch_details,
+                    )
+                    if self.provider.is_inside_token_limit(PROMPT=prompt):
+                        # TODO: Chunk this big files and process them
+                        continue
+                    resp, usage = self.provider.chat_completion(prompt, user=user)
+                    total_usage = self.provider.update_usage(total_usage, usage)
+                    desc_json = parser.extract_json(resp)
+                    descs.append(desc_json["desc"])
+
+            prompt = MERGE_PR_DESCRIPTION_PROMPT.format(DESCS=json.dumps(descs))
+            resp, usage = self.provider.chat_completion(prompt, user=user)
+            total_usage = self.provider.update_usage(total_usage, usage)
+            desc = parser.extract_json(resp)["desc"]
+        body = output.create_pr_description(desc, pull_request_desc)
         prompt_cost, completion_cost = self.provider.get_usage_cost(
             total_usage=total_usage
         )
@@ -162,6 +204,7 @@ class CodeReviewer:
                         start_line=review.get("start_line", "NA"),
                         end_line=review.get("end_line", "NA"),
                         file_name=review.get("file_name", "NA"),
+                        request_for_change=review.get("request_for_change", "NA"),
                     )
                     markdown_output += ct + "\n"
 

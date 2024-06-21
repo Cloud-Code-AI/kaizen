@@ -3,7 +3,7 @@ import os
 from typing import Optional
 from kaizen.helpers import output, parser
 from kaizen.llms.provider import LLMProvider
-from kaizen.llms.prompts import (
+from kaizen.llms.prompts.ui_tests_prompts import (
     UI_MODULES_PROMPT,
     UI_TESTS_SYSTEM_PROMPT,
     PLAYWRIGHT_CODE_PROMPT,
@@ -81,7 +81,11 @@ class UITestGenerator:
         This method generates UI testing points for all modules.
         """
         ui_tests = test_modules
-        total_usage = None
+        total_usage = {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "total_tokens": 0
+        }
         for module in ui_tests:
             for test in module["tests"]:
                 test_description = test["test_description"]

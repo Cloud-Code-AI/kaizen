@@ -1,0 +1,29 @@
+name: Publish to PyPI
+
+on:
+  push:
+    tags:
+      - "*"
+  workflow_dispatch: # This line adds manual trigger support
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install poetry
+        run: pip install poetry
+
+      - name: Build and publish
+        run: |
+          poetry install --with prod --no-dev
+          poetry build
+          poetry publish --username __token__ --password ${{ secrets.PYPI_API_TOKEN_CLI }}
+        working-directory: ./cli

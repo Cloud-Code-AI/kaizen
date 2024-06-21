@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "kaizen-cli"
+version = "0.1.0"
+description = ""
+authors = ["Saurav Panda <sgp65@cornell.edu>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8.1"
+click = "^8.1.3"
+
+[tool.poetry.group.dev.dependencies]
+kaizen-cloudcode = {path = "..", develop = true, optional = true}
+
+[tool.poetry.group.prod.dependencies]
+kaizen-cloudcode = "^0.2.5"
+
+[tool.poetry.scripts]
+kaizen-cli = "kaizen_cli.cli:cli"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

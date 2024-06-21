@@ -75,6 +75,7 @@ def process_pr_desc(payload):
     repo_name = payload["repository"]["full_name"]
     pull_number = payload["pull_request"]["number"]
     diff_url = GITHUB_API_BASE_URL + f"/repos/{repo_name}/pulls/{pull_number}.diff"
+    pr_files_url = GITHUB_API_BASE_URL + f"/repos/{repo_name}/pulls/{pull_number}/files"
     installation_id = payload["installation"]["id"]
     pr_title = payload["pull_request"]["title"]
     pr_description = payload["pull_request"]["body"]
@@ -82,12 +83,17 @@ def process_pr_desc(payload):
     access_token = get_installation_access_token(
         installation_id, PULL_REQUEST_PERMISSION
     )
+
+    # Get PR Files
+    pr_files = get_pr_files(pr_files_url, installation_id)
+
     diff_text = get_diff_text(diff_url, access_token)
     reviewer = CodeReviewer()
     description = reviewer.generate_pull_request_desc(
         diff_text=diff_text,
         pull_request_title=pr_title,
         pull_request_desc=pr_description,
+        pull_request_files=pr_files,
         user=repo_name,
     )
     patch_pr_body(pr_url, description.desc, installation_id)
