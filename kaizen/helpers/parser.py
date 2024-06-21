@@ -25,16 +25,19 @@ def extract_json(text):
 
 
 def extract_json_with_llm_retry(provider, text, total_usage):
-    try:
-        json_data = extract_json(text)
-        return json_data, total_usage
-    except Exception as e:
-        print(f"Error parsing json: {e}")
-        prompt = f"Help me fix this json data: {text}"
-        resp, usage = provider.chat_completion(prompt)
-        total_usage = provider.update_usage(total_usage, usage)
-        json_data = extract_json(resp)
-        return json_data, total_usage
+    # TODO: Update this functionality
+    # try:
+    #     json_data = extract_json(text)
+    #     return json_data, total_usage
+    # except Exception as e:
+    #     print(f"Error parsing json: {e}")
+    #     prompt = f"Help me fix this json data: {text}"
+    #     resp, usage = provider.chat_completion(prompt)
+    #     total_usage = provider.update_usage(total_usage, usage)
+    #     json_data = extract_json(resp)
+    #     return json_data, total_usage
+    json_data = extract_json(text)
+    return json_data, total_usage
 
 
 def extract_multi_json(text):
