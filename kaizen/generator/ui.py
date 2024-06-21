@@ -7,6 +7,7 @@ from kaizen.llms.prompts.ui_tests_prompts import (
     UI_MODULES_PROMPT,
     UI_TESTS_SYSTEM_PROMPT,
     PLAYWRIGHT_CODE_PROMPT,
+    PLAYWRIGHT_CODE_PLAN_PROMPT,
 )
 
 
@@ -66,15 +67,24 @@ class UITestGenerator:
         """
         This method generates playwright code for a particular UI test.
         """
-        prompt = PLAYWRIGHT_CODE_PROMPT.format(
+        total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+        # First generate a plan for code
+        prompt = PLAYWRIGHT_CODE_PLAN_PROMPT.format(
             WEB_CONTENT=web_content, TEST_DESCRIPTION=test_description, URL=web_url
         )
-
-        resp, usage = self.provider.chat_completion(
+        plan, usage = self.provider.chat_completion(
             prompt, user=user, custom_model=self.custom_model
         )
+        total_usage = self.provider.update_usage(total_usage, usage)
 
-        return {"code": resp, "usage": usage}
+        # Next generate the code based on plan
+        code_prompt = PLAYWRIGHT_CODE_PROMPT.format(PLAN_TEXT=plan)
+        code, usage = self.provider.chat_completion(
+            code_prompt, user=user, custom_model=self.custom_model
+        )
+        total_usage = self.provider.update_usage(total_usage, usage)
+
+        return {"code": code, "usage": total_usage}
 
     def generate_module_tests(self, web_content: str, test_modules: dict, web_url: str):
         """
