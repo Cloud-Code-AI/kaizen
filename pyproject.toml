@@ -24,6 +24,11 @@ nest-asyncio = "^1.6.0"
 pytest-playwright = "^0.4.4"
 pip = "^24.0"
 fuzzywuzzy = "^0.18.0"
+llama-index-core = "^0.10.47"
+llama-index-llms-openai = "^0.1.22"
+llama-index-embeddings-openai = "^0.1.10"
+llama-index-readers-file = "^0.1.25"
+llama-index-vector-stores-postgres = "^0.1.11"
 
 
 [build-system]

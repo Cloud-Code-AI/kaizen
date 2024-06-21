@@ -12,7 +12,17 @@ services:
     restart: always
     secrets:
       - github_app_pem
+  
+  postgres:
+    image: postgres
+    env_file:
+      - .env
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
 
 secrets:
   github_app_pem:
     file: ./GITHUB_APP_NIGHTLY.pem
+
