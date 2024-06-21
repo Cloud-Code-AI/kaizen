@@ -206,7 +206,7 @@ When generating the description, keep the following in mind:
 - Focus on covering the most significant aspects of the changes.
 - Avoid unnecessary details or repetition of information already present in the pull request title or description.
 
-Make sure the output is in valid JSON format.
+Make sure the output is in valid JSON format. Dont ask any questions.
 
 The provided information includes:
 
@@ -218,6 +218,7 @@ Code Diff:
 """
 
 MERGE_PR_DESCRIPTION_PROMPT = """
+You are a skilled developer reviewing a pull request. Your task is to generate a concise and well-formatted description that summarizes the main purpose, scope of changes, significant modifications, refactoring, or new features introduced in the pull request.
 Given all the PR description below as json, merge them and create a single PR Description.
 
 Make sure the output is in JSON format as shown:
@@ -236,6 +237,8 @@ Make sure the output is in JSON format as shown:
 - ...
   "
 }}
+
+Make sure the output is in valid JSON format. Dont ask any questions.
 
 Here is the information:
 {DESCS}
