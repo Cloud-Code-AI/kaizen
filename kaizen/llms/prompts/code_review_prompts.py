@@ -201,7 +201,6 @@ Provide the output in the following JSON format:
 - List of key changes
 - New features
 - Refactoring details
-- ...
   "
 }
 
@@ -259,4 +258,63 @@ Analyze the provided PR descriptions thoroughly and generate a unified, comprehe
 
 Here is the information:
 {DESCS}
+"""
+
+PR_DESC_EVALUATION_PROMPT = """
+Please evaluate the accuracy and completeness of your previous responses in this conversation.
+Identify any potential errors or areas for improvement.
+
+Respond the JSON output as:
+{
+  "desc": "
+### Summary
+
+<Brief one-line summary encompassing the overall purpose of the pull request>
+
+### Details
+
+<Detailed multi-line description in markdown format>
+- Consolidated list of key changes
+- Aggregated new features
+- Combined refactoring details
+- Other significant aspects from all descriptions
+  "
+}
+
+"""
+
+
+PR_REVIEW_EVALUATION_PROMPT = """
+Please evaluate the accuracy and completeness of your previous responses in this conversation.
+Fix any potential errors or areas for improvement.
+
+Generate a code review with feedback organized as a JSON object, including only sections with relevant feedback and omitting sections without feedback. Use the following structure:
+{{
+  "review": [
+    {{
+      "topic": "<SECTION_TOPIC>",
+      "comment": "<CONSICE_COMMENT_ON_WHATS_THE_ISSUE>",
+      "confidence": "<CONFIDENCE_LEVEL>",
+      "reason": "<YOUR_REASON_FOR_COMMENTING_THIS_ISSUE>"
+      "solution": "<SOLUTION_TO_THE_COMMENT>",
+      "start_line": "<CODE_START_LINE_INTEGER>",
+      "end_line": "<CODE_END_LINE_INTEGER>",
+      "file_name": "<ABSOLUTE_CODE_FILE_PATH>",
+      "request_for_change": "<NEEDS_UPDATE_IN_TRUE_OR_FALSE>"
+    }},
+    ...
+  ]
+}}
+
+For "file_name" make sure to give the whole path so that developers can know exactly which file has issue.
+
+Confidence Levels based on severity of the issue:
+[
+  "critical",
+  "important",
+  "moderate",
+  "low",
+  "trivial"
+]
+
 """

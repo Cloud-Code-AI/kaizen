@@ -31,11 +31,13 @@ class LLMProvider:
             litellm.success_callback = ["supabase"]
             litellm.failure_callback = ["supabase"]
 
-    def chat_completion(self, prompt, user: str = None, custom_model=None):
-        messages = [
-            {"role": "system", "content": self.system_prompt},
-            {"role": "user", "content": prompt},
-        ]
+    def chat_completion(self, prompt, user: str = None, custom_model=None, messages=None):
+        
+        if not messages:
+            messages = [
+                {"role": "system", "content": self.system_prompt},
+                {"role": "user", "content": prompt},
+            ]
         if not custom_model:
             custom_model = self.model_config
 
