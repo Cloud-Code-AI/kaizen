@@ -147,7 +147,7 @@ As a skilled developer reviewing a pull request, generate a concise and well-for
 
 Provide the output in the following JSON format:
 
-{
+{{
   "desc": "
 ### Summary
 
@@ -159,9 +159,8 @@ Provide the output in the following JSON format:
 - List of key changes
 - New features
 - Refactoring details
-- ...
   "
-}
+}}
 
 When generating the description:
 
@@ -189,7 +188,7 @@ As a skilled developer reviewing a pull request, generate a concise and well-for
 
 Provide the output in the following JSON format:
 
-{
+{{
   "desc": "
 ### Summary
 
@@ -202,7 +201,7 @@ Provide the output in the following JSON format:
 - New features
 - Refactoring details
   "
-}
+}}
 
 When generating the description:
 
@@ -229,7 +228,7 @@ As a skilled developer reviewing a pull request, generate a concise and well-for
 
 Using the provided PR descriptions in JSON format, create a merged PR Description in the following JSON format:
 
-{
+{{
   "desc": "
 ### Summary
 
@@ -243,7 +242,7 @@ Using the provided PR descriptions in JSON format, create a merged PR Descriptio
 - Combined refactoring details
 - Other significant aspects from all descriptions
   "
-}
+}}
 
 When generating the merged description:
 
@@ -265,7 +264,7 @@ Please evaluate the accuracy and completeness of your previous responses in this
 Identify any potential errors or areas for improvement.
 
 Respond the JSON output as:
-{
+{{
   "desc": "
 ### Summary
 
@@ -279,7 +278,7 @@ Respond the JSON output as:
 - Combined refactoring details
 - Other significant aspects from all descriptions
   "
-}
+}}
 
 """
 
