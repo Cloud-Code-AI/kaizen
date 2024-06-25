@@ -12,15 +12,27 @@ DEFAULT_CONFIG = {"region": "us-east-1", "output": "json", "timeout": 60}
 def load_config():
     config = DEFAULT_CONFIG.copy()  # Start with default config
     if os.path.exists(CONFIG_FILE):
-        with open(CONFIG_FILE, "r") as f:
-            user_config = json.load(f)
-        config.update(user_config)  # Override defaults with user config
+        try:
+            with open(CONFIG_FILE, "r") as f:
+                user_config = json.load(f)
+            config.update(user_config)  # Override defaults with user config
+        except json.JSONDecodeError:
+            click.echo(
+                f"Warning: Config file {CONFIG_FILE} is not valid JSON. Using default configuration."
+            )
+        except IOError as e:
+            click.echo(
+                f"Warning: Unable to read config file {CONFIG_FILE}. Using default configuration. Error: {e}"
+            )
     return config
 
 
 def save_config(config):
-    with open(CONFIG_FILE, "w") as f:
-        json.dump(config, f, indent=2)
+    try:
+        with open(CONFIG_FILE, "w") as f:
+            json.dump(config, f, indent=2)
+    except IOError as e:
+        click.echo(f"Error: Unable to save config file {CONFIG_FILE}. Error: {e}")
 
 
 @click.group()
