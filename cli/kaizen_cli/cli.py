@@ -17,10 +17,15 @@ def load_config():
                 user_config = json.load(f)
             config.update(user_config)  # Override defaults with user config
         except json.JSONDecodeError:
-            click.echo(f"Warning: Config file {CONFIG_FILE} is not valid JSON. Using default configuration.")
+            click.echo(
+                f"Warning: Config file {CONFIG_FILE} is not valid JSON. Using default configuration."
+            )
         except IOError as e:
-            click.echo(f"Warning: Unable to read config file {CONFIG_FILE}. Using default configuration. Error: {e}")
+            click.echo(
+                f"Warning: Unable to read config file {CONFIG_FILE}. Using default configuration. Error: {e}"
+            )
     return config
+
 
 def save_config(config):
     try:
@@ -28,7 +33,6 @@ def save_config(config):
             json.dump(config, f, indent=2)
     except IOError as e:
         click.echo(f"Error: Unable to save config file {CONFIG_FILE}. Error: {e}")
-
 
 
 @click.group()
