@@ -9,6 +9,7 @@ from kaizen.llms.prompts.code_review_prompts import (
     MERGE_PR_DESCRIPTION_PROMPT,
     PR_FILE_DESCRIPTION_PROMPT,
     PR_DESC_EVALUATION_PROMPT,
+    PR_REVIEW_EVALUATION_PROMPT
 )
 import logging
 import json
@@ -74,7 +75,7 @@ class CodeReviewer:
                 {"role": "system", "content": self.provider.system_prompt},
                 {"role": "user", "content": prompt},
                 {"role": "assistant", "content": resp},
-                {"role": "user", "content": PR_DESC_EVALUATION_PROMPT},
+                {"role": "user", "content": PR_REVIEW_EVALUATION_PROMPT},
             ]
             resp, usage = self.provider.chat_completion(
                 prompt, user=user, messages=messages
@@ -111,7 +112,7 @@ class CodeReviewer:
                         {"role": "system", "content": self.provider.system_prompt},
                         {"role": "user", "content": prompt},
                         {"role": "assistant", "content": resp},
-                        {"role": "user", "content": PR_DESC_EVALUATION_PROMPT},
+                        {"role": "user", "content": PR_REVIEW_EVALUATION_PROMPT},
                     ]
                     resp, usage = self.provider.chat_completion(
                         prompt, user=user, messages=messages
