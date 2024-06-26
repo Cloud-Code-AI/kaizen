@@ -61,8 +61,8 @@ class WorkSummaryGenerator:
         user: Optional[str] = None,
     ) -> str:
         prompt = TWITTER_POST_PROMPT.format(SUMMARY=summary)
-        response, _ = self.provider.chat_completion(prompt, user=user)
-        return parser.extract_markdown_content(response)
+        response, total_usage = self.provider.chat_completion(prompt, user=user)
+        return parser.extract_markdown_content(response), total_usage
 
     def generate_linkedin_post(
         self,
@@ -70,5 +70,5 @@ class WorkSummaryGenerator:
         user: Optional[str] = None,
     ) -> str:
         prompt = LINKEDIN_POST_PROMPT.format(SUMMARY=summary)
-        response, _ = self.provider.chat_completion(prompt, user=user)
-        return parser.extract_markdown_content(response)
+        response, total_usage = self.provider.chat_completion(prompt, user=user)
+        return parser.extract_markdown_content(response), total_usage
