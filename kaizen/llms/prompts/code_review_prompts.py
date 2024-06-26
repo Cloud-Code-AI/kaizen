@@ -16,14 +16,16 @@ Generate a code review with feedback organized as a JSON object, including only 
       "solution": "<SOLUTION_TO_THE_COMMENT>",
       "start_line": "<CODE_START_LINE_INTEGER>",
       "end_line": "<CODE_END_LINE_INTEGER>",
-      "file_name": "<ABSOLUTE_CODE_FILE_PATH>",
-      "request_for_change": "<NEEDS_UPDATE_IN_TRUE_OR_FALSE>"
+      "file_name": "<FULL_FILE_PATH>",
+      "request_for_change": "<NEEDS_UPDATE_IN_TRUE_OR_FALSE>",
+      "severity_level": <INTEGER_FROM_1_TO_10>
     }},
     ...
   ]
 }}
 
 For "file_name" make sure to give the whole path so that developers can know exactly which file has issue.
+For "severity_level" score in range of 1 to 10, 1 being not severe and 10 being critical.
 
 Confidence Levels based on severity of the issue:
 [
@@ -86,14 +88,16 @@ Generate a code review with feedback organized as a JSON object, including only 
       "solution": "<SOLUTION_TO_THE_COMMENT>",
       "start_line": "<CODE_START_LINE_INTEGER>",
       "end_line": "<CODE_END_LINE_INTEGER>",
-      "file_name": "<ABSOLUTE_CODE_FILE_PATH>",
-      "request_for_change": "<NEEDS_UPDATE_IN_TRUE_OR_FALSE>"
+      "file_name": "<FULL_FILE_PATH>",
+      "request_for_change": "<NEEDS_UPDATE_IN_TRUE_OR_FALSE>",
+      "severity_level": <INTEGER_FROM_1_TO_10>
     }},
     ...
   ]
 }}
 
 For "file_name" make sure to give the whole path so that developers can know exactly which file has issue.
+For "severity_level" score in range of 1 to 10, 1 being not severe and 10 being critical.
 
 Confidence Levels based on severity of the issue:
 [

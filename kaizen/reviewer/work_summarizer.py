@@ -4,6 +4,8 @@ from kaizen.helpers import parser
 from kaizen.llms.prompts.work_summary_prompts import (
     WORK_SUMMARY_PROMPT,
     WORK_SUMMARY_SYSTEM_PROMPT,
+    TWITTER_POST_PROMPT,
+    LINKEDIN_POST_PROMPT,
 )
 import logging
 
@@ -52,3 +54,21 @@ class WorkSummaryGenerator:
             pass
 
         return {"summary": summaries[0], "usage": total_usage}
+
+    def generate_twitter_post(
+        self,
+        summary: Dict,
+        user: Optional[str] = None,
+    ) -> str:
+        prompt = TWITTER_POST_PROMPT.format(SUMMARY=summary)
+        response, _ = self.provider.chat_completion(prompt, user=user)
+        return parser.extract_markdown_content(response)
+
+    def generate_linkedin_post(
+        self,
+        summary: Dict,
+        user: Optional[str] = None,
+    ) -> str:
+        prompt = LINKEDIN_POST_PROMPT.format(SUMMARY=summary)
+        response, _ = self.provider.chat_completion(prompt, user=user)
+        return parser.extract_markdown_content(response)

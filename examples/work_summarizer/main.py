@@ -53,6 +53,15 @@ for file_dict in diff_data["files"]:
         )
 
 work_summary_generator = WorkSummaryGenerator()
-print(
-    work_summary_generator.generate_work_summaries(diff_file_data=file_diffs)["summary"]
+result = work_summary_generator.generate_work_summaries(file_diffs, user="oss_example")
+summary = result["summary"]
+
+twitter_post = work_summary_generator.generate_twitter_post(summary, user="oss_example")
+linkedin_post = work_summary_generator.generate_linkedin_post(
+    summary, user="oss_example"
 )
+
+print(f" Work Summary: \n {summary}\n")
+
+print(f" Twitter Post: \n {twitter_post}\n")
+print(f" LinkedIn Post: \n {linkedin_post}\n")
