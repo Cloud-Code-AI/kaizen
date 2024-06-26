@@ -9,7 +9,7 @@ from kaizen.llms.prompts.code_review_prompts import (
     MERGE_PR_DESCRIPTION_PROMPT,
     PR_FILE_DESCRIPTION_PROMPT,
     PR_DESC_EVALUATION_PROMPT,
-    PR_REVIEW_EVALUATION_PROMPT
+    PR_REVIEW_EVALUATION_PROMPT,
 )
 import logging
 import json
@@ -57,7 +57,7 @@ class CodeReviewer:
         pull_request_desc: str,
         pull_request_files: List[Dict],
         user: Optional[str] = None,
-        reeval_response: Optional[bool] = False
+        reeval_response: Optional[bool] = False,
     ) -> ReviewOutput:
 
         # If diff_text is smaller than 70% of model token
@@ -142,7 +142,7 @@ class CodeReviewer:
         pull_request_desc: str,
         pull_request_files: List[Dict],
         user: Optional[str] = None,
-        reeval_response: Optional[bool] = False
+        reeval_response: Optional[bool] = False,
     ):
         """
         This method generates a AI powered description for a pull request.
