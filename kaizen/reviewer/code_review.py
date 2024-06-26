@@ -57,6 +57,7 @@ class CodeReviewer:
         pull_request_desc: str,
         pull_request_files: List[Dict],
         user: Optional[str] = None,
+        reeval_response: Optional[bool] = False
     ) -> ReviewOutput:
 
         # If diff_text is smaller than 70% of model token
@@ -70,16 +71,17 @@ class CodeReviewer:
             self.logger.debug("Processing Directly from Diff")
             resp, usage = self.provider.chat_completion(prompt, user=user)
             total_usage = self.provider.update_usage(total_usage, usage)
-            # Review the response
-            messages = [
-                {"role": "system", "content": self.provider.system_prompt},
-                {"role": "user", "content": prompt},
-                {"role": "assistant", "content": resp},
-                {"role": "user", "content": PR_REVIEW_EVALUATION_PROMPT},
-            ]
-            resp, usage = self.provider.chat_completion(
-                prompt, user=user, messages=messages
-            )
+            if reeval_response:
+                # Review the response
+                messages = [
+                    {"role": "system", "content": self.provider.system_prompt},
+                    {"role": "user", "content": prompt},
+                    {"role": "assistant", "content": resp},
+                    {"role": "user", "content": PR_REVIEW_EVALUATION_PROMPT},
+                ]
+                resp, usage = self.provider.chat_completion(
+                    prompt, user=user, messages=messages
+                )
             review_json = parser.extract_json(resp)
             reviews = review_json["review"]
             total_usage = self.provider.update_usage(total_usage, usage)
@@ -106,17 +108,17 @@ class CodeReviewer:
                         continue
                     resp, usage = self.provider.chat_completion(prompt, user=user)
                     total_usage = self.provider.update_usage(total_usage, usage)
-                    total_usage = self.provider.update_usage(total_usage, usage)
-                    # Review the response
-                    messages = [
-                        {"role": "system", "content": self.provider.system_prompt},
-                        {"role": "user", "content": prompt},
-                        {"role": "assistant", "content": resp},
-                        {"role": "user", "content": PR_REVIEW_EVALUATION_PROMPT},
-                    ]
-                    resp, usage = self.provider.chat_completion(
-                        prompt, user=user, messages=messages
-                    )
+                    if reeval_response:
+                        # Review the response
+                        messages = [
+                            {"role": "system", "content": self.provider.system_prompt},
+                            {"role": "user", "content": prompt},
+                            {"role": "assistant", "content": resp},
+                            {"role": "user", "content": PR_REVIEW_EVALUATION_PROMPT},
+                        ]
+                        resp, usage = self.provider.chat_completion(
+                            prompt, user=user, messages=messages
+                        )
                     review_json = parser.extract_json(resp)
                     reviews.extend(review_json["review"])
 
@@ -140,6 +142,7 @@ class CodeReviewer:
         pull_request_desc: str,
         pull_request_files: List[Dict],
         user: Optional[str] = None,
+        reeval_response: Optional[bool] = False
     ):
         """
         This method generates a AI powered description for a pull request.
@@ -155,17 +158,18 @@ class CodeReviewer:
             self.logger.debug("Processing Directly from Diff")
             resp, usage = self.provider.chat_completion(prompt, user=user)
             total_usage = self.provider.update_usage(total_usage, usage)
-            # Review the response
-            messages = [
-                {"role": "system", "content": self.provider.system_prompt},
-                {"role": "user", "content": prompt},
-                {"role": "assistant", "content": resp},
-                {"role": "user", "content": PR_DESC_EVALUATION_PROMPT},
-            ]
-            resp, usage = self.provider.chat_completion(
-                prompt, user=user, messages=messages
-            )
-            total_usage = self.provider.update_usage(total_usage, usage)
+            if reeval_response:
+                # Review the response
+                messages = [
+                    {"role": "system", "content": self.provider.system_prompt},
+                    {"role": "user", "content": prompt},
+                    {"role": "assistant", "content": resp},
+                    {"role": "user", "content": PR_DESC_EVALUATION_PROMPT},
+                ]
+                resp, usage = self.provider.chat_completion(
+                    prompt, user=user, messages=messages
+                )
+                total_usage = self.provider.update_usage(total_usage, usage)
             desc = parser.extract_json(resp)["desc"]
         else:
             self.logger.debug("Processing Based on files")
@@ -188,17 +192,18 @@ class CodeReviewer:
                         continue
                     resp, usage = self.provider.chat_completion(prompt, user=user)
                     total_usage = self.provider.update_usage(total_usage, usage)
-                    # Review the response
-                    messages = [
-                        {"role": "system", "content": self.provider.system_prompt},
-                        {"role": "user", "content": prompt},
-                        {"role": "assistant", "content": resp},
-                        {"role": "user", "content": PR_DESC_EVALUATION_PROMPT},
-                    ]
-                    resp, usage = self.provider.chat_completion(
-                        prompt, user=user, messages=messages
-                    )
-                    total_usage = self.provider.update_usage(total_usage, usage)
+                    if reeval_response:
+                        # Review the response
+                        messages = [
+                            {"role": "system", "content": self.provider.system_prompt},
+                            {"role": "user", "content": prompt},
+                            {"role": "assistant", "content": resp},
+                            {"role": "user", "content": PR_DESC_EVALUATION_PROMPT},
+                        ]
+                        resp, usage = self.provider.chat_completion(
+                            prompt, user=user, messages=messages
+                        )
+                        total_usage = self.provider.update_usage(total_usage, usage)
                     desc_json = parser.extract_json(resp)
                     descs.append(desc_json["desc"])
 
