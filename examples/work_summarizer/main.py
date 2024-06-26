@@ -57,7 +57,9 @@ result = work_summary_generator.generate_work_summaries(file_diffs, user="oss_ex
 summary = result["summary"]
 
 twitter_post = work_summary_generator.generate_twitter_post(summary, user="oss_example")
-linkedin_post = work_summary_generator.generate_linkedin_post(summary, user="oss_example")
+linkedin_post = work_summary_generator.generate_linkedin_post(
+    summary, user="oss_example"
+)
 
 print(f" Work Summary: \n {summary}\n")
 
