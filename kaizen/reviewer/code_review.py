@@ -8,6 +8,8 @@ from kaizen.llms.prompts.code_review_prompts import (
     FILE_CODE_REVIEW_PROMPT,
     MERGE_PR_DESCRIPTION_PROMPT,
     PR_FILE_DESCRIPTION_PROMPT,
+    PR_DESC_EVALUATION_PROMPT,
+    PR_REVIEW_EVALUATION_PROMPT,
 )
 import logging
 import json
@@ -55,6 +57,7 @@ class CodeReviewer:
         pull_request_desc: str,
         pull_request_files: List[Dict],
         user: Optional[str] = None,
+        reeval_response: Optional[bool] = False,
     ) -> ReviewOutput:
 
         # If diff_text is smaller than 70% of model token
@@ -67,6 +70,18 @@ class CodeReviewer:
         if self.provider.is_inside_token_limit(PROMPT=prompt):
             self.logger.debug("Processing Directly from Diff")
             resp, usage = self.provider.chat_completion(prompt, user=user)
+            total_usage = self.provider.update_usage(total_usage, usage)
+            if reeval_response:
+                # Review the response
+                messages = [
+                    {"role": "system", "content": self.provider.system_prompt},
+                    {"role": "user", "content": prompt},
+                    {"role": "assistant", "content": resp},
+                    {"role": "user", "content": PR_REVIEW_EVALUATION_PROMPT},
+                ]
+                resp, usage = self.provider.chat_completion(
+                    prompt, user=user, messages=messages
+                )
             review_json = parser.extract_json(resp)
             reviews = review_json["review"]
             total_usage = self.provider.update_usage(total_usage, usage)
@@ -86,13 +101,25 @@ class CodeReviewer:
                         PULL_REQUEST_DESC=pull_request_desc,
                         FILE_PATCH=patch_details,
                     )
-                    if self.provider.is_inside_token_limit(
+
+                    if not self.provider.is_inside_token_limit(
                         PROMPT=prompt, percentage=85
                     ):
                         # TODO: Chunk this big files and process them
                         continue
                     resp, usage = self.provider.chat_completion(prompt, user=user)
                     total_usage = self.provider.update_usage(total_usage, usage)
+                    if reeval_response:
+                        # Review the response
+                        messages = [
+                            {"role": "system", "content": self.provider.system_prompt},
+                            {"role": "user", "content": prompt},
+                            {"role": "assistant", "content": resp},
+                            {"role": "user", "content": PR_REVIEW_EVALUATION_PROMPT},
+                        ]
+                        resp, usage = self.provider.chat_completion(
+                            prompt, user=user, messages=messages
+                        )
                     review_json = parser.extract_json(resp)
                     reviews.extend(review_json["review"])
 
@@ -116,6 +143,7 @@ class CodeReviewer:
         pull_request_desc: str,
         pull_request_files: List[Dict],
         user: Optional[str] = None,
+        reeval_response: Optional[bool] = False,
     ):
         """
         This method generates a AI powered description for a pull request.
@@ -131,6 +159,18 @@ class CodeReviewer:
             self.logger.debug("Processing Directly from Diff")
             resp, usage = self.provider.chat_completion(prompt, user=user)
             total_usage = self.provider.update_usage(total_usage, usage)
+            if reeval_response:
+                # Review the response
+                messages = [
+                    {"role": "system", "content": self.provider.system_prompt},
+                    {"role": "user", "content": prompt},
+                    {"role": "assistant", "content": resp},
+                    {"role": "user", "content": PR_DESC_EVALUATION_PROMPT},
+                ]
+                resp, usage = self.provider.chat_completion(
+                    prompt, user=user, messages=messages
+                )
+                total_usage = self.provider.update_usage(total_usage, usage)
             desc = parser.extract_json(resp)["desc"]
         else:
             self.logger.debug("Processing Based on files")
@@ -148,11 +188,23 @@ class CodeReviewer:
                         PULL_REQUEST_DESC=pull_request_desc,
                         CODE_DIFF=patch_details,
                     )
-                    if self.provider.is_inside_token_limit(PROMPT=prompt):
+                    if not self.provider.is_inside_token_limit(PROMPT=prompt):
                         # TODO: Chunk this big files and process them
                         continue
                     resp, usage = self.provider.chat_completion(prompt, user=user)
                     total_usage = self.provider.update_usage(total_usage, usage)
+                    if reeval_response:
+                        # Review the response
+                        messages = [
+                            {"role": "system", "content": self.provider.system_prompt},
+                            {"role": "user", "content": prompt},
+                            {"role": "assistant", "content": resp},
+                            {"role": "user", "content": PR_DESC_EVALUATION_PROMPT},
+                        ]
+                        resp, usage = self.provider.chat_completion(
+                            prompt, user=user, messages=messages
+                        )
+                        total_usage = self.provider.update_usage(total_usage, usage)
                     desc_json = parser.extract_json(resp)
                     descs.append(desc_json["desc"])
 

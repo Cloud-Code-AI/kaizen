@@ -37,11 +37,16 @@ Prioritize code quality, maintainability, and adherence to best practices in tes
 Remember, you cannot open URLs or links directly. Ask the human to provide relevant text or image content if needed.
 """
 
-PLAYWRIGHT_CODE_PROMPT = """
-Read this code and write Playwright code in Python for the following test - {TEST_DESCRIPTION}. 
-Return ONLY the Playwright code in Python and strictly no other text.
-
+PLAYWRIGHT_CODE_PLAN_PROMPT = """
+Generate a step by step plan to write Playwright code in Python for the following test - {TEST_DESCRIPTION}. 
+Here are some other info. make sure all the necessary items are covered in the plan.
 URL: {URL}
 Content: 
 ```{WEB_CONTENT}```
+"""
+
+PLAYWRIGHT_CODE_PROMPT = """
+Based on this plan, generate playwright code running in headless mode. 
+Content: 
+```{PLAN_TEXT}```
 """

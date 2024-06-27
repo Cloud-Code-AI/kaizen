@@ -40,3 +40,27 @@ Guidelines:
   
 PATCH DATA: {PATCH_DATA}  
 """
+
+TWITTER_POST_PROMPT = """
+Given the following work summary, create a concise and engaging Twitter post (max 280 characters) that highlights the key changes or improvements. Format the post as markdown, enclosed in triple backticks:
+
+Summary:
+{SUMMARY}
+
+Twitter Post:
+```
+<Your Twitter post here>
+```
+"""
+
+LINKEDIN_POST_PROMPT = """
+Based on the following work summary, create a professional LinkedIn post that describes the recent updates or improvements. The post should be more detailed than a Twitter post but still concise and engaging. Format the post as markdown, enclosed in triple backticks:
+
+Summary:
+{SUMMARY}
+
+LinkedIn Post:
+```
+<Your LinkedIn post here>
+```
+"""
