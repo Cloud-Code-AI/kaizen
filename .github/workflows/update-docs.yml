@@ -1,4 +1,4 @@
-name: Update Docs on GitHub Pages
+name: Update Docs on GitHub Pages and S3
 
 on:
   push:
@@ -49,4 +49,6 @@ jobs:
         
       - name: Copy files to specific path
         run: |          
-          cp -R docs/out/* ${{ secrets.S3_BUCKET_PATH }}/
+          aws s3 cp docs/out ${{ secrets.S3_BUCKET_PATH }}/ --recursive
+
+
