@@ -5,5 +5,6 @@
     "prepare_configuration": "Prepare Configuration",
     "deploy_api": "Deploy API",
     "generating_tests": "Generating Tests",
-    "executing_tests": "Executing Tests"
+    "executing_tests": "Executing Tests",
+    "using_azure_openai_with_kaizen": "Using Azure OpenAI with Kaizen"
 }
