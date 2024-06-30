@@ -5,7 +5,9 @@ from github_app.github_helper.utils import get_diff_text
 from github_app.github_helper.installation import get_installation_access_token
 from github_app.github_helper.permissions import PULL_REQUEST_PERMISSION
 from kaizen.reviewer.code_review import CodeReviewer
-
+from kaizen.generator.pr_description import PRDescriptionGenerator
+from kaizen.helpers.output import create_pr_review_text
+from kaizen.llms.provider import LLMProvider
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +45,7 @@ def process_pull_request(payload):
     # Get PR Files
     pr_files = get_pr_files(pr_files_url, installation_id)
 
-    reviewer = CodeReviewer()
+    reviewer = CodeReviewer(llm_provider=LLMProvider())
     review_data = reviewer.review_pull_request(
         diff_text=diff_text,
         pull_request_title=pr_title,
@@ -52,7 +54,7 @@ def process_pull_request(payload):
         user=repo_name,
     )
     topics = clean_keys(review_data.topics, "important")
-    review_desc = reviewer.create_pr_review_text(topics)
+    review_desc = create_pr_review_text(topics)
     comments, topics = create_review_comments(topics)
 
     post_pull_request(comment_url, review_desc, installation_id)
@@ -88,8 +90,8 @@ def process_pr_desc(payload):
     pr_files = get_pr_files(pr_files_url, installation_id)
 
     diff_text = get_diff_text(diff_url, access_token)
-    reviewer = CodeReviewer()
-    description = reviewer.generate_pull_request_desc(
+    desc_generator = PRDescriptionGenerator(llm_provider=LLMProvider())
+    description = desc_generator.generate_pull_request_desc(
         diff_text=diff_text,
         pull_request_title=pr_title,
         pull_request_desc=pr_description,

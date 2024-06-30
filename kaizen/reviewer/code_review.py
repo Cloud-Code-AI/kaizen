@@ -1,41 +1,27 @@
-from typing import Optional, List, Dict
-from kaizen.helpers import output, parser
+from typing import Optional, List, Dict, Generator
+from dataclasses import dataclass
+import logging
+from kaizen.helpers import parser
 from kaizen.llms.provider import LLMProvider
 from kaizen.llms.prompts.code_review_prompts import (
     CODE_REVIEW_PROMPT,
-    CODE_REVIEW_SYSTEM_PROMPT,
-    PR_DESCRIPTION_PROMPT,
     FILE_CODE_REVIEW_PROMPT,
-    MERGE_PR_DESCRIPTION_PROMPT,
-    PR_FILE_DESCRIPTION_PROMPT,
-    PR_DESC_EVALUATION_PROMPT,
     PR_REVIEW_EVALUATION_PROMPT,
 )
-import logging
-import json
-from dataclasses import dataclass
 
 
 @dataclass
 class ReviewOutput:
-    topics: dict
-    usage: dict
+    topics: Dict[str, List[Dict]]
+    usage: Dict[str, int]
     model_name: str
-    cost: dict
-
-
-@dataclass
-class DescOutput:
-    desc: str
-    usage: dict
-    model_name: str
-    cost: dict
+    cost: Dict[str, float]
 
 
 class CodeReviewer:
-    def __init__(self):
+    def __init__(self, llm_provider: LLMProvider):
         self.logger = logging.getLogger(__name__)
-        self.provider = LLMProvider(system_prompt=CODE_REVIEW_SYSTEM_PROMPT)
+        self.provider = llm_provider
 
     def is_code_review_prompt_within_limit(
         self,
@@ -57,73 +43,30 @@ class CodeReviewer:
         pull_request_desc: str,
         pull_request_files: List[Dict],
         user: Optional[str] = None,
-        reeval_response: Optional[bool] = False,
+        reeval_response: bool = False,
     ) -> ReviewOutput:
-
-        # If diff_text is smaller than 70% of model token
         prompt = CODE_REVIEW_PROMPT.format(
             PULL_REQUEST_TITLE=pull_request_title,
             PULL_REQUEST_DESC=pull_request_desc,
             CODE_DIFF=diff_text,
         )
         total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
-        if self.provider.is_inside_token_limit(PROMPT=prompt):
-            self.logger.debug("Processing Directly from Diff")
-            resp, usage = self.provider.chat_completion(prompt, user=user)
-            total_usage = self.provider.update_usage(total_usage, usage)
-            if reeval_response:
-                # Review the response
-                messages = [
-                    {"role": "system", "content": self.provider.system_prompt},
-                    {"role": "user", "content": prompt},
-                    {"role": "assistant", "content": resp},
-                    {"role": "user", "content": PR_REVIEW_EVALUATION_PROMPT},
-                ]
-                resp, usage = self.provider.chat_completion(
-                    prompt, user=user, messages=messages
-                )
-            review_json = parser.extract_json(resp)
-            reviews = review_json["review"]
-            total_usage = self.provider.update_usage(total_usage, usage)
-        else:
-            self.logger.debug("Processing Based on files")
-            # We recurrsively get feedback for files and then get basic summary
-            reviews = []
-            for file in pull_request_files:
-                patch_details = file.get("patch")
-                filename = file.get("filename", "")
-                if (
-                    filename.split(".")[-1] not in parser.EXCLUDED_FILETYPES
-                    and patch_details is not None
-                ):
-                    prompt = FILE_CODE_REVIEW_PROMPT.format(
-                        PULL_REQUEST_TITLE=pull_request_title,
-                        PULL_REQUEST_DESC=pull_request_desc,
-                        FILE_PATCH=patch_details,
-                    )
-                    if not self.provider.is_inside_token_limit(
-                        PROMPT=prompt, percentage=85
-                    ):
-                        # TODO: Chunk this big files and process them
-                        continue
-                    resp, usage = self.provider.chat_completion(prompt, user=user)
-                    total_usage = self.provider.update_usage(total_usage, usage)
-                    if reeval_response:
-                        # Review the response
-                        messages = [
-                            {"role": "system", "content": self.provider.system_prompt},
-                            {"role": "user", "content": prompt},
-                            {"role": "assistant", "content": resp},
-                            {"role": "user", "content": PR_REVIEW_EVALUATION_PROMPT},
-                        ]
-                        resp, usage = self.provider.chat_completion(
-                            prompt, user=user, messages=messages
-                        )
-                    review_json = parser.extract_json(resp)
-                    reviews.extend(review_json["review"])
 
-        topics = self.merge_topics(reviews=reviews)
-        # Share the review on pull request
+        if self.provider.is_inside_token_limit(PROMPT=prompt):
+            reviews = self._process_full_diff(
+                prompt, user, reeval_response, total_usage
+            )
+        else:
+            reviews = self._process_files(
+                pull_request_files,
+                pull_request_title,
+                pull_request_desc,
+                user,
+                reeval_response,
+                total_usage,
+            )
+
+        topics = self._merge_topics(reviews)
         prompt_cost, completion_cost = self.provider.get_usage_cost(
             total_usage=total_usage
         )
@@ -135,128 +78,137 @@ class CodeReviewer:
             cost={"prompt_cost": prompt_cost, "completion_cost": completion_cost},
         )
 
-    def generate_pull_request_desc(
+    def _process_full_diff(
         self,
-        diff_text: str,
+        prompt: str,
+        user: Optional[str],
+        reeval_response: bool,
+        total_usage: Dict[str, int],
+    ) -> List[Dict]:
+        self.logger.debug("Processing directly from diff")
+        resp, usage = self.provider.chat_completion(prompt, user=user)
+        total_usage = self.provider.update_usage(total_usage, usage)
+
+        if reeval_response:
+            resp = self._reevaluate_response(prompt, resp, user, total_usage)
+
+        review_json = parser.extract_json(resp)
+        return review_json["review"]
+
+    def _process_files(
+        self,
+        pull_request_files: List[Dict],
         pull_request_title: str,
         pull_request_desc: str,
+        user: Optional[str],
+        reeval_response: bool,
+        total_usage: Dict[str, int],
+    ) -> List[Dict]:
+        self.logger.debug("Processing based on files")
+        reviews = []
+        for file_review in self._process_files_generator(
+            pull_request_files,
+            pull_request_title,
+            pull_request_desc,
+            user,
+            reeval_response,
+            total_usage,
+        ):
+            reviews.extend(file_review)
+        return reviews
+
+    def _process_files_generator(
+        self,
         pull_request_files: List[Dict],
-        user: Optional[str] = None,
-        reeval_response: Optional[bool] = False,
-    ):
-        """
-        This method generates a AI powered description for a pull request.
-        """
-        prompt = PR_DESCRIPTION_PROMPT.format(
+        pull_request_title: str,
+        pull_request_desc: str,
+        user: Optional[str],
+        reeval_response: bool,
+        total_usage: Dict[str, int],
+    ) -> Generator[List[Dict], None, None]:
+        combined_diff_data = ""
+        available_tokens = self.provider.available_tokens(FILE_CODE_REVIEW_PROMPT)
+
+        for file in pull_request_files:
+            patch_details = file.get("patch")
+            filename = file.get("filename", "")
+
+            if (
+                filename.split(".")[-1] not in parser.EXCLUDED_FILETYPES
+                and patch_details is not None
+            ):
+                temp_prompt = (
+                    combined_diff_data
+                    + f"\n---->\nFile Name: {filename}\nPatch Details: {patch_details}"
+                )
+
+                if available_tokens - self.provider.get_token_count(temp_prompt) > 0:
+                    combined_diff_data = temp_prompt
+                    continue
+
+                yield self._process_file_chunk(
+                    combined_diff_data,
+                    pull_request_title,
+                    pull_request_desc,
+                    user,
+                    reeval_response,
+                    total_usage,
+                )
+                combined_diff_data = (
+                    f"\n---->\nFile Name: {filename}\nPatch Details: {patch_details}"
+                )
+
+        if combined_diff_data:
+            yield self._process_file_chunk(
+                combined_diff_data,
+                pull_request_title,
+                pull_request_desc,
+                user,
+                reeval_response,
+                total_usage,
+            )
+
+    def _process_file_chunk(
+        self,
+        diff_data: str,
+        pull_request_title: str,
+        pull_request_desc: str,
+        user: Optional[str],
+        reeval_response: bool,
+        total_usage: Dict[str, int],
+    ) -> List[Dict]:
+        prompt = FILE_CODE_REVIEW_PROMPT.format(
             PULL_REQUEST_TITLE=pull_request_title,
             PULL_REQUEST_DESC=pull_request_desc,
-            CODE_DIFF=diff_text,
+            FILE_PATCH=diff_data,
         )
+        resp, usage = self.provider.chat_completion(prompt, user=user)
+        total_usage = self.provider.update_usage(total_usage, usage)
 
-        total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
-        if self.provider.is_inside_token_limit(PROMPT=prompt):
-            self.logger.debug("Processing Directly from Diff")
-            resp, usage = self.provider.chat_completion(prompt, user=user)
-            total_usage = self.provider.update_usage(total_usage, usage)
-            if reeval_response:
-                # Review the response
-                messages = [
-                    {"role": "system", "content": self.provider.system_prompt},
-                    {"role": "user", "content": prompt},
-                    {"role": "assistant", "content": resp},
-                    {"role": "user", "content": PR_DESC_EVALUATION_PROMPT},
-                ]
-                resp, usage = self.provider.chat_completion(
-                    prompt, user=user, messages=messages
-                )
-                total_usage = self.provider.update_usage(total_usage, usage)
-            desc = parser.extract_json(resp)["desc"]
-        else:
-            self.logger.debug("Processing Based on files")
-            # We recurrsively get feedback for files and then get basic summary
-            descs = []
-            for file in pull_request_files:
-                patch_details = file.get("patch")
-                filename = file.get("filename", "")
-                if (
-                    filename.split(".")[-1] not in parser.EXCLUDED_FILETYPES
-                    and patch_details is not None
-                ):
-                    prompt = PR_FILE_DESCRIPTION_PROMPT.format(
-                        PULL_REQUEST_TITLE=pull_request_title,
-                        PULL_REQUEST_DESC=pull_request_desc,
-                        CODE_DIFF=patch_details,
-                    )
-                    if not self.provider.is_inside_token_limit(PROMPT=prompt):
-                        # TODO: Chunk this big files and process them
-                        continue
-                    resp, usage = self.provider.chat_completion(prompt, user=user)
-                    total_usage = self.provider.update_usage(total_usage, usage)
-                    if reeval_response:
-                        # Review the response
-                        messages = [
-                            {"role": "system", "content": self.provider.system_prompt},
-                            {"role": "user", "content": prompt},
-                            {"role": "assistant", "content": resp},
-                            {"role": "user", "content": PR_DESC_EVALUATION_PROMPT},
-                        ]
-                        resp, usage = self.provider.chat_completion(
-                            prompt, user=user, messages=messages
-                        )
-                        total_usage = self.provider.update_usage(total_usage, usage)
-                    desc_json = parser.extract_json(resp)
-                    descs.append(desc_json["desc"])
+        if reeval_response:
+            resp = self._reevaluate_response(prompt, resp, user, total_usage)
 
-            prompt = MERGE_PR_DESCRIPTION_PROMPT.format(DESCS=json.dumps(descs))
-            resp, usage = self.provider.chat_completion(prompt, user=user)
-            total_usage = self.provider.update_usage(total_usage, usage)
-            desc = parser.extract_json(resp)["desc"]
-        body = output.create_pr_description(desc, pull_request_desc)
-        prompt_cost, completion_cost = self.provider.get_usage_cost(
-            total_usage=total_usage
+        review_json = parser.extract_json(resp)
+        return review_json["review"]
+
+    def _reevaluate_response(
+        self, prompt: str, resp: str, user: Optional[str], total_usage: Dict[str, int]
+    ) -> str:
+        messages = [
+            {"role": "system", "content": self.provider.system_prompt},
+            {"role": "user", "content": prompt},
+            {"role": "assistant", "content": resp},
+            {"role": "user", "content": PR_REVIEW_EVALUATION_PROMPT},
+        ]
+        resp, usage = self.provider.chat_completion(
+            prompt, user=user, messages=messages
         )
-        return DescOutput(
-            desc=body,
-            usage=total_usage,
-            model_name=self.provider.model,
-            cost={"prompt_cost": prompt_cost, "completion_cost": completion_cost},
-        )
+        total_usage = self.provider.update_usage(total_usage, usage)
+        return resp
 
-    def merge_topics(self, reviews):
+    @staticmethod
+    def _merge_topics(reviews: List[Dict]) -> Dict[str, List[Dict]]:
         topics = {}
         for review in reviews:
-            if review["topic"] in topics:
-                topics[review["topic"]].append(review)
-            else:
-                topics[review["topic"]] = [review]
+            topics.setdefault(review["topic"], []).append(review)
         return topics
-
-    def create_pr_review_text(self, topics):
-        markdown_title = "## Code Review\n\n"
-        markdown_output = ""
-        high_ranked_issues = 0
-        for topic, reviews in topics.items():
-            if len(reviews) > 0:
-                markdown_output += f"### {topic}\n\n"
-                for review in reviews:
-                    if review.get("confidence", "") == "critical":
-                        high_ranked_issues += 1
-                    ct = output.PR_COLLAPSIBLE_TEMPLATE.format(
-                        comment=review.get("comment", "NA"),
-                        reasoning=review.get("reasoning", "NA"),
-                        solution=review.get("solution", "NA"),
-                        confidence=review.get("confidence", "NA"),
-                        start_line=review.get("start_line", "NA"),
-                        end_line=review.get("end_line", "NA"),
-                        file_name=review.get("file_name", "NA"),
-                        request_for_change=review.get("request_for_change", "NA"),
-                    )
-                    markdown_output += ct + "\n"
-
-        if high_ranked_issues > 0:
-            status_msg = (
-                "❗ **Attention Required:** This PR has potential issues. 🚨\n\n"
-            )
-        else:
-            status_msg = "✅ **All Clear:** This PR is ready to merge! 👍\n\n"
-        return markdown_title + status_msg + markdown_output
