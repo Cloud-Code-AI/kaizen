@@ -7,6 +7,7 @@ import subprocess
 import os
 import json
 from kaizen.helpers import general
+from typing import List, Dict
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +18,7 @@ PR_COLLAPSIBLE_TEMPLATE = """
 </strong> Potential Solution:</strong> \n\n{solution}
 \n
 <blockquote>  
-    <p><code>{file_name} | {start_line} - {end_line}</code></p>
+    <p><code>{file_name} | {position}</code></p>
     <p>request_for_change: {request_for_change}</p>  
 </blockquote>  
 </details> \n
@@ -107,3 +108,34 @@ def create_test_files(json_tests, folder_path):
                         + cleaned_code
                     )
                     f.write(cleaned_code)
+
+
+def create_pr_review_text(topics: Dict[str, List[Dict]]) -> str:
+    markdown_title = "## Code Review\n\n"
+    markdown_output = ""
+    high_ranked_issues = 0
+
+    for topic, reviews in topics.items():
+        if reviews:
+            markdown_output += f"### {topic}\n\n"
+            for review in reviews:
+                if review.get("confidence", "") == "critical":
+                    high_ranked_issues += 1
+                ct = PR_COLLAPSIBLE_TEMPLATE.format(
+                    comment=review.get("comment", "NA"),
+                    reasoning=review.get("reasoning", "NA"),
+                    solution=review.get("solution", "NA"),
+                    confidence=review.get("confidence", "NA"),
+                    position=review.get("position", "NA"),
+                    end_line=review.get("end_line", "NA"),
+                    file_name=review.get("file_name", "NA"),
+                    request_for_change=review.get("request_for_change", "NA"),
+                )
+                markdown_output += ct + "\n"
+
+    status_msg = (
+        "❗ **Attention Required:** This PR has potential issues. 🚨\n\n"
+        if high_ranked_issues > 0
+        else "✅ **All Clear:** This PR is ready to merge! 👍\n\n"
+    )
+    return markdown_title + status_msg + markdown_output

@@ -14,16 +14,18 @@ Generate a code review with feedback organized as a JSON object, including only 
       "confidence": "<CONFIDENCE_LEVEL>",
       "reason": "<YOUR_REASON_FOR_COMMENTING_THIS_ISSUE>"
       "solution": "<SOLUTION_TO_THE_COMMENT>",
-      "start_line": "<CODE_START_LINE_INTEGER>",
-      "end_line": "<CODE_END_LINE_INTEGER>",
+      "position": "<POSITION_OF_CODE_LINE_RELATIVE_TO_PATCH>",
+      "side": "<LEFT_OR_RIGHT>",
       "file_name": "<FULL_FILE_PATH>",
-      "request_for_change": "<NEEDS_UPDATE_IN_TRUE_OR_FALSE>",
+      "sentiment": "<COMMENT_SENTIMENT_POSITIVE_NEGATIVE_OR_NEUTRAL>",
       "severity_level": <INTEGER_FROM_1_TO_10>
     }},
     ...
   ]
 }}
 
+For "position", This is the line number in the diff where the comment should be placed. We count from the start of the diff chunk, including the unchanged lines.
+For "side", provide the side as LEFT or RIGHT based on deleted or added lines respectively. Need this for github review comment.
 For "file_name" make sure to give the whole path so that developers can know exactly which file has issue.
 For "severity_level" score in range of 1 to 10, 1 being not severe and 10 being critical.
 
@@ -86,16 +88,17 @@ Generate a code review with feedback organized as a JSON object, including only 
       "confidence": "<CONFIDENCE_LEVEL>",
       "reason": "<YOUR_REASON_FOR_COMMENTING_THIS_ISSUE>"
       "solution": "<SOLUTION_TO_THE_COMMENT>",
-      "start_line": "<CODE_START_LINE_INTEGER>",
-      "end_line": "<CODE_END_LINE_INTEGER>",
+      "position": "<POSITION_OF_CODE_LINE_RELATIVE_TO_PATCH>",
+      "side": "<LEFT_OR_RIGHT>",
       "file_name": "<FULL_FILE_PATH>",
-      "request_for_change": "<NEEDS_UPDATE_IN_TRUE_OR_FALSE>",
+      "sentiment": "<COMMENT_SENTIMENT_POSITIVE_NEGATIVE_OR_NEUTRAL>",
       "severity_level": <INTEGER_FROM_1_TO_10>
     }},
     ...
   ]
 }}
 
+For "position", This is the line number in the diff where the comment should be placed. We count from the start of the diff chunk, including the unchanged lines.For "side", provide the side as LEFT or RIGHT based on deleted or added lines respectively. Need this for github review comment.
 For "file_name" make sure to give the whole path so that developers can know exactly which file has issue.
 For "severity_level" score in range of 1 to 10, 1 being not severe and 10 being critical.
 

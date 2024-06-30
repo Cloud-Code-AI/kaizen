@@ -10,11 +10,15 @@ class LLMProvider:
     DEFAULT_MODEL_CONFIG = {"model": DEFAULT_MODEL}
 
     def __init__(
-        self, system_prompt=BASIC_SYSTEM_PROMPT, model_config=DEFAULT_MODEL_CONFIG
+        self,
+        system_prompt=BASIC_SYSTEM_PROMPT,
+        model_config=DEFAULT_MODEL_CONFIG,
+        default_temperature=0.3,
     ):
         self.config = ConfigData().get_config_data()
         self.system_prompt = system_prompt
         self.model_config = model_config
+        self.default_temperature = default_temperature
         if "default_model_config" in self.config.get("language_model", {}):
             self.model_config = self.config["language_model"]["default_model_config"]
 
@@ -42,11 +46,13 @@ class LLMProvider:
             ]
         if not custom_model:
             custom_model = self.model_config
+        if "temperature" not in custom_model:
+            custom_model["temperature"] = self.default_temperature
 
         response = litellm.completion(messages=messages, user=user, **custom_model)
         return response["choices"][0]["message"]["content"], response["usage"]
 
-    def is_inside_token_limit(self, PROMPT, percentage=0.7):
+    def is_inside_token_limit(self, PROMPT, percentage=0.8):
         # TODO: Also include system prompt
         messages = [{"user": "role", "content": PROMPT}]
         if (
