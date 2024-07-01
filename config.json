@@ -2,7 +2,7 @@
     "language_model": {
         "provider": "litellm",
         "enable_observability_logging": true,
-        "redis_enabled": false,
+        "redis_enabled": true,
         "models": [
             {
                 "model_name": "default",
