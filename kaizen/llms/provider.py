@@ -1,7 +1,9 @@
 import litellm
+import os
 from kaizen.llms.prompts.general_prompts import BASIC_SYSTEM_PROMPT
 from kaizen.utils.config import ConfigData
-
+from litellm import Router
+import asyncio
 
 class LLMProvider:
     DEFAULT_MODEL = "gpt-3.5-turbo-1106"
@@ -19,13 +21,25 @@ class LLMProvider:
         self.system_prompt = system_prompt
         self.model_config = model_config
         self.default_temperature = default_temperature
-        if "default_model_config" in self.config.get("language_model", {}):
-            self.model_config = self.config["language_model"]["default_model_config"]
 
         if "models" in self.config.get("language_model"):
             self.models = self.config["language_model"]["models"]
         else:
-            self.models = {}
+            self.models = [
+                {"model_name": "default", "litellm_params": self.model_config}
+            ]
+
+        if self.config.get("language_model", {}).get("redis_enabled", False):
+            # TODO: Add check for redis server creds if redis enabled
+            self.provider = Router(
+                model_list=self.models,
+                redis_host=os.environ["REDIS_HOST"],
+                redis_port=os.environ["REDIS_PORT"],
+                routing_strategy="usage-based-routing-v2",
+                allowed_fails=1,
+            )
+        else:
+            self.provider = Router(model_list=self.models, allowed_fails=1)
 
         self.model = self.model_config["model"]
         if self.config.get("language_model", {}).get(
@@ -34,22 +48,31 @@ class LLMProvider:
             # set callbacks
             litellm.success_callback = ["supabase"]
             litellm.failure_callback = ["supabase"]
+    
+    async def router_acompletion(self, messages, user, custom_model):
+        response = await self.provider.acompletion(
+            messages=messages,
+            user=user,
+            **custom_model
+        )
+        print(response)
+        return response
 
     def chat_completion(
-        self, prompt, user: str = None, custom_model=None, messages=None
+        self, prompt, user: str = None, model="default", custom_model=None, messages=None
     ):
-
         if not messages:
             messages = [
                 {"role": "system", "content": self.system_prompt},
                 {"role": "user", "content": prompt},
             ]
         if not custom_model:
-            custom_model = self.model_config
+            custom_model = {"model": "default"}
         if "temperature" not in custom_model:
             custom_model["temperature"] = self.default_temperature
 
-        response = litellm.completion(messages=messages, user=user, **custom_model)
+        loop = asyncio.get_event_loop()
+        response = loop.run_until_complete(self.router_acompletion(messages, user, custom_model))
         return response["choices"][0]["message"]["content"], response["usage"]
 
     def is_inside_token_limit(self, PROMPT, percentage=0.8):
