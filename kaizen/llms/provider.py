@@ -111,8 +111,11 @@ class LLMProvider:
         return response["choices"][0]["message"]["content"], response["usage"]
 
     def is_inside_token_limit(self, PROMPT: str, percentage: float = 0.8) -> bool:
-        # TODO: Also include system prompt
-        messages = [{"user": "role", "content": PROMPT}]
+        # Include system prompt in token calculation
+        messages = [
+            {"role": "system", "content": self.system_prompt},
+            {"role": "user", "content": PROMPT}
+        ]
         token_count = litellm.token_counter(model=self.model, messages=messages)
         max_tokens = litellm.get_max_tokens(self.model)
         return token_count <= max_tokens * percentage
