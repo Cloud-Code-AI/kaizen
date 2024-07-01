@@ -62,10 +62,7 @@ def test_available_tokens(mock_get_max_tokens, mock_token_counter, llm_provider)
     mock_token_counter.return_value = 100
     mock_get_max_tokens.return_value = 150
     assert llm_provider.available_tokens("test message") == 20
-
-
 @patch("kaizen.llms.provider.litellm.token_counter")
 def test_get_token_count(mock_token_counter, llm_provider):
     mock_token_counter.return_value = 50
     assert llm_provider.get_token_count("test message") == 50
-
