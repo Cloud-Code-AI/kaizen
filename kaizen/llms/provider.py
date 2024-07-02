@@ -103,10 +103,8 @@ class LLMProvider:
         if "temperature" not in custom_model:
             custom_model["temperature"] = self.default_temperature
 
-        # TODO: Add better way to manage this async calls
-        loop = asyncio.get_event_loop()
-        response = loop.run_until_complete(
-            self.router_acompletion(messages, user, custom_model)
+        response = self.provider.completion(
+            messages=messages, user=user, **custom_model
         )
         return response["choices"][0]["message"]["content"], response["usage"]
 
