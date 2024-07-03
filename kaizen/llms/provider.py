@@ -29,6 +29,7 @@ class LLMProvider:
         self._validate_config()
         self._setup_provider()
         self._setup_observability()
+        self._register_unkown_models()
 
     def _validate_config(self) -> None:
         if "language_model" not in self.config:
@@ -77,6 +78,15 @@ class LLMProvider:
         if self.config["language_model"].get("enable_observability_logging", False):
             litellm.success_callback = ["supabase"]
             litellm.failure_callback = ["supabase"]
+    
+    def _register_unkown_models(self) -> None:
+        for model_data in self.models:
+            model_info = model_data.get("model_info", {})
+            if "litellm_provider" in model_info:
+                # Register this model
+                litellm.register_model(
+                    {model_data["model_name"]: model_info}
+                )
 
     async def router_acompletion(self, messages, user, custom_model):
         response = await self.provider.acompletion(
@@ -98,7 +108,7 @@ class LLMProvider:
                 {"role": "user", "content": prompt},
             ]
         if not custom_model:
-            custom_model = {"model": "default"}
+            custom_model = {"model": model}
         if "temperature" not in custom_model:
             custom_model["temperature"] = self.default_temperature
 
@@ -117,13 +127,17 @@ class LLMProvider:
         max_tokens = litellm.get_max_tokens(self.model)
         return token_count <= max_tokens * percentage
 
-    def available_tokens(self, message: str, percentage: float = 0.8) -> int:
-        max_tokens = litellm.get_max_tokens(self.model)
-        used_tokens = litellm.token_counter(model=self.model, text=message)
+    def available_tokens(self, message: str, percentage: float = 0.8, model: str = None) -> int:
+        if not model:
+            model = self.model
+        max_tokens = litellm.get_max_tokens(model)
+        used_tokens = litellm.token_counter(model=model, text=message)
         return int(max_tokens * percentage) - used_tokens
 
-    def get_token_count(self, message: str) -> int:
-        return litellm.token_counter(model=self.model, text=message)
+    def get_token_count(self, message: str, model: str = None) -> int:
+        if not model:
+            model = self.model
+        return litellm.token_counter(model=model, text=message)
 
     def update_usage(
         self, total_usage: Optional[Dict[str, int]], current_usage: Dict[str, int]
@@ -132,7 +146,9 @@ class LLMProvider:
             return {key: total_usage[key] + current_usage[key] for key in total_usage}
         return {key: current_usage[key] for key in current_usage}
 
-    def get_usage_cost(self, total_usage: Dict[str, int]) -> float:
+    def get_usage_cost(self, total_usage: Dict[str, int], model: str = None) -> float:
+        if not model:
+            model = self.model
         return litellm.cost_per_token(
-            self.model, total_usage["prompt_tokens"], total_usage["completion_tokens"]
+            model, total_usage["prompt_tokens"], total_usage["completion_tokens"]
         )
