@@ -10,9 +10,7 @@
                     "model": "gpt-3.5-turbo-1106",
                     "input_cost_per_token": 0.0000005,
                     "output_cost_per_token": 0.0000015
-                },
-                "tpm": 100000,
-                "rpm": 1000
+                }
             },
             {
                 "model_name": "best",
@@ -20,9 +18,24 @@
                     "model": "gpt-4o",
                     "input_cost_per_token": 0.000005,
                     "output_cost_per_token": 0.000015
+                }
+            },
+            {
+                "model_name": "CUSTOM_MODEL",
+                "litellm_params": {
+                    "model": "azure_ai/MODEL_NAME",
+                    "api_key": "os.environ/CUSTOM_API_KEY",
+                    "api_base": "os.environ/CUSTOM_API_BASE"
                 },
-                "tpm": 100000,
-                "rpm": 10000
+                "model_info": {
+                    "max_tokens": 4096,
+                    "input_cost_per_token": 0.000015,
+                    "output_cost_per_token": 0.000015,
+                    "max_input_tokens": 128000,
+                    "max_output_tokens": 4096,
+                    "litellm_provider": "openai",
+                    "mode": "chat"
+                }
             }
         ]
     },
