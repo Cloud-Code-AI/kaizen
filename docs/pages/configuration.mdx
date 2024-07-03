@@ -1,0 +1,189 @@
+# Configuration Guide
+
+This document explains the structure and options available in the `config.json` file, which is used to configure our project.
+
+## Overview
+
+The `config.json` file is divided into two main sections:
+
+1. `language_model`: Configures the AI language model settings.
+2. `github_app`: Configures the GitHub app integration settings.
+
+You need to store this in the root folder from where you call the kaizen module.
+
+## Language Model Configuration
+
+The `language_model` section contains the following fields:
+
+### General Settings
+
+- `provider`: Specifies the provider for the language model (e.g., "litellm").
+- `enable_observability_logging`: Boolean flag to enable or disable observability logging.
+- `redis_enabled`: Boolean flag to enable or disable Redis. Used for load balancing multiple models.
+
+Sample Config `config.json`:
+```json
+{
+    "language_model": {
+        "provider": "litellm",
+        "enable_observability_logging": true,
+        "redis_enabled": true,
+        "models": [
+            {
+                "model_name": "default",
+                "litellm_params": {
+                    "model": "gpt-3.5-turbo-1106",
+                    "input_cost_per_token": 0.0000005,
+                    "output_cost_per_token": 0.0000015
+                }
+            },
+            {
+                "model_name": "best",
+                "litellm_params": {
+                    "model": "gpt-4o",
+                    "input_cost_per_token": 0.000005,
+                    "output_cost_per_token": 0.000015
+                }
+            },
+            {
+                "model_name": "CUSTOM_MODEL",
+                "litellm_params": {
+                    "model": "azure_ai/MODEL_NAME",
+                    "api_key": "os.environ/CUSTOM_API_KEY",
+                    "api_base": "os.environ/CUSTOM_API_BASE"
+                },
+                "model_info": {
+                    "max_tokens": 4096,
+                    "input_cost_per_token": 0.000015,
+                    "output_cost_per_token": 0.000015,
+                    "max_input_tokens": 128000,
+                    "max_output_tokens": 4096,
+                    "litellm_provider": "openai",
+                    "mode": "chat"
+                }
+            }
+        ]
+    },
+    "github_app": {
+        "check_signature": false,
+        "auto_pr_review": true,
+        "edit_pr_desc": true,
+        "process_on_push": true,
+        "auto_unit_test_generation": false
+    }
+}
+```
+
+### Models
+
+The `models` array contains configurations for various language models. Each model configuration has the following structure:
+
+```json
+{
+  "model_name": "string",
+  "litellm_params": {
+    "model": "string",
+    "input_cost_per_token": number,
+    "output_cost_per_token": number
+  },
+  "model_info": { // Optional
+    // Additional model information
+  }
+}
+```
+
+Key components:
+
+- `model_name`: A custom identifier you assign to the model. You can have multiple configurations with the same `model_name`, which is useful for routing purposes.
+
+- `litellm_params.model`: The official model identifier used by the provider. For example, Azure's GPT-4 might be referenced as `azure/gpt-4o`.
+
+- `litellm_params.input_cost_per_token` and `litellm_params.output_cost_per_token`: Specify the cost per token for input and output respectively.
+
+- `model_info`: An optional object for additional model-specific information.
+
+This flexible structure allows you to define and manage multiple model configurations, including different versions or providers for the same model type.
+
+#### Default Model
+
+```json
+{
+  "model_name": "default",
+  "litellm_params": {
+    "model": "gpt-3.5-turbo-1106",
+    "input_cost_per_token": 0.0000005,
+    "output_cost_per_token": 0.0000015
+  }
+}
+```
+
+This configuration sets up the default model, which is a GPT-3.5 Turbo variant.
+
+#### Best Model
+
+```json
+{
+  "model_name": "best",
+  "litellm_params": {
+    "model": "gpt-4o",
+    "input_cost_per_token": 0.000005,
+    "output_cost_per_token": 0.000015
+  }
+}
+```
+
+This configuration sets up the "best" model, which is a GPT-4 variant.
+
+#### Custom Model
+
+```json
+{
+  "model_name": "CUSTOM_MODEL",
+  "litellm_params": {
+    "model": "azure_ai/MODEL_NAME",
+    "api_key": "os.environ/CUSTOM_API_KEY",
+    "api_base": "os.environ/CUSTOM_API_BASE"
+  },
+  "model_info": {
+    "max_tokens": 4096,
+    "input_cost_per_token": 0.000015,
+    "output_cost_per_token": 0.000015,
+    "max_input_tokens": 128000,
+    "max_output_tokens": 4096,
+    "litellm_provider": "openai",
+    "mode": "chat"
+  }
+}
+```
+
+This configuration sets up a custom model. The `CUSTOM_API_KEY` and `CUSTOM_API_BASE` are retrieved from environment variables.
+
+## GitHub App Configuration
+
+The `github_app` section configures the behavior of the GitHub app integration:
+
+```json
+{
+  "check_signature": false,
+  "auto_pr_review": true,
+  "edit_pr_desc": true,
+  "process_on_push": true,
+  "auto_unit_test_generation": false
+}
+```
+
+- `check_signature`: Boolean flag to enable or disable signature checking.
+- `auto_pr_review`: Boolean flag to enable or disable automatic PR reviews.
+- `edit_pr_desc`: Boolean flag to allow editing of PR descriptions.
+- `process_on_push`: Boolean flag to enable processing on push events.
+- `auto_unit_test_generation`: Boolean flag to enable automatic unit test generation.
+
+## Customizing the Configuration
+
+To customize the configuration:
+
+1. Copy the `config.json` file to your project root.
+2. Modify the values according to your needs.
+3. Ensure that any referenced environment variables (e.g., `CUSTOM_API_KEY`) are properly set in your environment.
+
+Remember to restart your application after making changes to the configuration file for the changes to take effect.
