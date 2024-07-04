@@ -40,7 +40,7 @@ class PRDescriptionGenerator:
             PULL_REQUEST_DESC=pull_request_desc,
             CODE_DIFF=diff_text,
         )
-
+        # TODO: User providers default usage
         total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
 
         if self.provider.is_inside_token_limit(PROMPT=prompt):
