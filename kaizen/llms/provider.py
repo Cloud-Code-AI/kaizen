@@ -6,6 +6,11 @@ from kaizen.utils.config import ConfigData
 from litellm import Router
 import logging
 
+LOGLEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()
+logging.basicConfig(
+    level=LOGLEVEL, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+
 
 class LLMProvider:
     DEFAULT_MODEL = "gpt-3.5-turbo-1106"
@@ -13,6 +18,7 @@ class LLMProvider:
     DEFAULT_TEMPERATURE = 0
     DEFAULT_MODEL_CONFIG = {"model": DEFAULT_MODEL}
     DEFAULT_MODEL_NAME = "default"
+    DEFAULT_USAGE = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
 
     def __init__(
         self,
@@ -24,7 +30,9 @@ class LLMProvider:
         self.system_prompt = system_prompt
         self.model_config = model_config
         self.default_temperature = default_temperature
-        self.logger = logging.getLogger(__name__)
+        self.logger = logging.getLogger(
+            __name__,
+        )
 
         self._validate_config()
         self._setup_provider()
@@ -78,15 +86,13 @@ class LLMProvider:
         if self.config["language_model"].get("enable_observability_logging", False):
             litellm.success_callback = ["supabase"]
             litellm.failure_callback = ["supabase"]
-    
+
     def _register_unkown_models(self) -> None:
         for model_data in self.models:
             model_info = model_data.get("model_info", {})
             if "litellm_provider" in model_info:
                 # Register this model
-                litellm.register_model(
-                    {model_data["model_name"]: model_info}
-                )
+                litellm.register_model({model_data["model_name"]: model_info})
 
     async def router_acompletion(self, messages, user, custom_model):
         response = await self.provider.acompletion(
@@ -127,7 +133,9 @@ class LLMProvider:
         max_tokens = litellm.get_max_tokens(self.model)
         return token_count <= max_tokens * percentage
 
-    def available_tokens(self, message: str, percentage: float = 0.8, model: str = None) -> int:
+    def available_tokens(
+        self, message: str, percentage: float = 0.8, model: str = None
+    ) -> int:
         if not model:
             model = self.model
         max_tokens = litellm.get_max_tokens(model)
