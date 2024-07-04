@@ -8,7 +8,6 @@ from kaizen.llms.prompts.unit_tests_prompts import (
     UNIT_TEST_PROMPT,
     REVIEW_UNIT_TEST_PROMPT,
 )
-import json
 
 
 class UnitTestGenerator:
