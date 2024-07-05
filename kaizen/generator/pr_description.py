@@ -10,6 +10,7 @@ from kaizen.llms.prompts.code_review_prompts import (
     MERGE_PR_DESCRIPTION_PROMPT,
     PR_FILE_DESCRIPTION_PROMPT,
     PR_DESC_EVALUATION_PROMPT,
+    CODE_REVIEW_SYSTEM_PROMPT
 )
 
 
@@ -25,6 +26,7 @@ class PRDescriptionGenerator:
     def __init__(self, llm_provider: LLMProvider):
         self.logger = logging.getLogger(__name__)
         self.provider = llm_provider
+        self.provider.system_prompt = CODE_REVIEW_SYSTEM_PROMPT
 
     def generate_pull_request_desc(
         self,

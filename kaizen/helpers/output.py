@@ -14,12 +14,13 @@ logger = logging.getLogger(__name__)
 
 PR_COLLAPSIBLE_TEMPLATE = """
 <details>
-<summary><strong>[{confidence}]<strong> -> {comment}</summary> \n
+<summary> --> {comment}</summary> \n
 </strong> Potential Solution:</strong> \n\n{solution}
 \n
 <blockquote>  
-    <p><code>{file_name} | {position}</code></p>
-    <p>request_for_change: {request_for_change}</p>  
+    <p><code>{file_name} | {start_line} - {end_line}</code></p>
+    <p>reason_for_request: {reason}</p>
+    <p>level: [{confidence}] , severity: [{severity}]</p>
 </blockquote>  
 </details> \n
 
@@ -121,17 +122,17 @@ def create_pr_review_text(topics: Dict[str, List[Dict]]) -> str:
         if reviews:
             markdown_output += f"### {topic}\n\n"
             for review in reviews:
-                if review.get("confidence", "") == "critical":
+                if review.get("confidence", "") == "critical" and review.get("severity_level", 0) > 8:
                     high_ranked_issues += 1
                 ct = PR_COLLAPSIBLE_TEMPLATE.format(
                     comment=review.get("comment", "NA"),
-                    reasoning=review.get("reasoning", "NA"),
+                    reason=review.get("reason", "NA"),
                     solution=review.get("solution", "NA"),
                     confidence=review.get("confidence", "NA"),
-                    position=review.get("position", "NA"),
+                    start_line=review.get("start_line", "NA"),
                     end_line=review.get("end_line", "NA"),
                     file_name=review.get("file_name", "NA"),
-                    request_for_change=review.get("request_for_change", "NA"),
+                    severity=review.get("severity_level", "NA")
                 )
                 markdown_output += ct + "\n"
 

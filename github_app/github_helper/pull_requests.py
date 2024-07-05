@@ -171,7 +171,8 @@ def post_pull_request_comments(url, review, installation_id):
         "comments": [
             {
                 "path": review["file_name"],
-                "position": review["start_line"],
+                "start_line": review["start_line"],
+                "line": review["end_line"],
                 "body": review["comment"],
             }
         ],

@@ -7,6 +7,7 @@ from kaizen.llms.prompts.code_review_prompts import (
     CODE_REVIEW_PROMPT,
     FILE_CODE_REVIEW_PROMPT,
     PR_REVIEW_EVALUATION_PROMPT,
+    CODE_REVIEW_SYSTEM_PROMPT
 )
 
 
@@ -22,6 +23,7 @@ class CodeReviewer:
     def __init__(self, llm_provider: LLMProvider):
         self.logger = logging.getLogger(__name__)
         self.provider = llm_provider
+        self.provider.system_prompt = CODE_REVIEW_SYSTEM_PROMPT
 
     def is_code_review_prompt_within_limit(
         self,
