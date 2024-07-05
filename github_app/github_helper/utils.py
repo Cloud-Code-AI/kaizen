@@ -20,6 +20,10 @@ HEADERS = {
 }
 
 
+def is_successful_status(status_code):
+    return 200 <= status_code < 300
+
+
 def generate_jwt():
     # Define the time the JWT was issued and its expiration time
     issued_at_time = int(time.time())
@@ -38,13 +42,38 @@ def generate_jwt():
 
 def get_diff_text(url, access_token):
     headers = {
-        "Authorization": f"Bearer {access_token}",
         "Accept": "application/vnd.github.v3.diff",
         "X-GitHub-Api-Version": "2022-11-28",
     }
+    if access_token:
+        headers["Authorization"] = f"Bearer {access_token}"
+
     response = requests.get(url, headers=headers)
-    logger.debug(f"Diff API response: {url}, Resp: {response.text}")
+    if not is_successful_status(response.status_code):
+        logger.error(
+            f"Unable to fetch PR diff with error: {response.status_code} url: {url}"
+        )
+        print(response.text)
+        return None
     return response.text
+
+
+def get_pr_files(url, access_token):
+    headers = {
+        "Accept": "application/vnd.github.v3+json",
+    }
+    if access_token:
+        headers["Authorization"] = f"Bearer {access_token}"
+
+    response = requests.get(url, headers=headers)
+    print(response.text)
+    if not is_successful_status(response.status_code):
+        logger.error(
+            f"Unable to fetch PR files with error: {response.status_code} url: {url}"
+        )
+        print(response.text)
+        return None
+    return response.json()
 
 
 def is_github_signature_valid(headers, body):

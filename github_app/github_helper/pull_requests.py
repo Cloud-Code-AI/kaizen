@@ -1,7 +1,7 @@
 import requests
 import logging
 import os
-from github_app.github_helper.utils import get_diff_text
+from github_app.github_helper.utils import get_diff_text, get_pr_files
 from github_app.github_helper.installation import get_installation_access_token
 from github_app.github_helper.permissions import PULL_REQUEST_PERMISSION
 from kaizen.reviewer.code_review import CodeReviewer
@@ -43,7 +43,7 @@ def process_pull_request(payload):
     diff_text = get_diff_text(diff_url, access_token)
 
     # Get PR Files
-    pr_files = get_pr_files(pr_files_url, installation_id)
+    pr_files = get_pr_files(pr_files_url, access_token)
 
     reviewer = CodeReviewer(llm_provider=LLMProvider())
     review_data = reviewer.review_pull_request(
@@ -147,19 +147,6 @@ def clean_keys(topics, min_confidence=None):
                 rev.append(review)
         new_topics[topic] = rev
     return new_topics
-
-
-def get_pr_files(url, installation_id):
-    access_token = get_installation_access_token(
-        installation_id, PULL_REQUEST_PERMISSION
-    )
-    headers = {
-        "Authorization": f"Bearer {access_token}",
-        "Accept": "application/vnd.github.v3+json",
-    }
-
-    response = requests.get(url, headers=headers)
-    return response.json()
 
 
 def post_pull_request_comments(url, review, installation_id):
