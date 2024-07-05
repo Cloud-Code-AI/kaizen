@@ -2,8 +2,6 @@
 Module Name: Smarter Code, Safer Software Section                            
 Description: Verify if the content about 'Smarter Code, Safer Software' is visible and correctly positioned
 """
-
-import pytest
 from playwright.sync_api import sync_playwright
 
 

@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch, AsyncMock
 from kaizen.helpers.output import get_web_html
-from bs4 import BeautifulSoup, Comment
+from bs4 import BeautifulSoup
 import asyncio
 
 
