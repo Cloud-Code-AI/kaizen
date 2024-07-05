@@ -122,7 +122,10 @@ def create_pr_review_text(topics: Dict[str, List[Dict]]) -> str:
         if reviews:
             markdown_output += f"### {topic}\n\n"
             for review in reviews:
-                if review.get("confidence", "") == "critical" and review.get("severity_level", 0) > 8:
+                if (
+                    review.get("confidence", "") == "critical"
+                    and review.get("severity_level", 0) > 8
+                ):
                     high_ranked_issues += 1
                 ct = PR_COLLAPSIBLE_TEMPLATE.format(
                     comment=review.get("comment", "NA"),
@@ -132,7 +135,7 @@ def create_pr_review_text(topics: Dict[str, List[Dict]]) -> str:
                     start_line=review.get("start_line", "NA"),
                     end_line=review.get("end_line", "NA"),
                     file_name=review.get("file_name", "NA"),
-                    severity=review.get("severity_level", "NA")
+                    severity=review.get("severity_level", "NA"),
                 )
                 markdown_output += ct + "\n"
 
