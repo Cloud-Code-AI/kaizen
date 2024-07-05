@@ -76,6 +76,8 @@ def get_parent_folder():
 
 
 def create_folder(folder_path):
+    if not folder_path:
+        raise ValueError(f"Folder path cannot be empty")
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
         logger.debug(f"Folder '{folder_path}' created successfully.")
