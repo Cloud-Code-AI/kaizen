@@ -7,7 +7,7 @@ from kaizen.llms.prompts.code_review_prompts import (
     CODE_REVIEW_PROMPT,
     FILE_CODE_REVIEW_PROMPT,
     PR_REVIEW_EVALUATION_PROMPT,
-    CODE_REVIEW_SYSTEM_PROMPT
+    CODE_REVIEW_SYSTEM_PROMPT,
 )
 
 
@@ -53,6 +53,8 @@ class CodeReviewer:
             CODE_DIFF=diff_text,
         )
         total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+        if not diff_text and not pull_request_files:
+            raise Exception("Both diff_text and pull_request_files are empty!")
 
         if self.provider.is_inside_token_limit(PROMPT=prompt):
             reviews = self._process_full_diff(

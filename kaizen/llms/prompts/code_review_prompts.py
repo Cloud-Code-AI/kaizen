@@ -14,6 +14,7 @@ Generate a code review with feedback organized as a JSON object, including only 
       "confidence": "<CONFIDENCE_LEVEL>",
       "reason": "<YOUR_REASON_FOR_COMMENTING_THIS_ISSUE>"
       "solution": "<SOLUTION_TO_THE_COMMENT>",
+      "fixed_code": "<FIXED_CODE>",
       "start_line": "<CODE_START_LINE_INTEGER>",
       "end_line": "<CODE_END_LINE_INTEGER>",
       "side": "<LEFT_OR_RIGHT>",
@@ -26,6 +27,7 @@ Generate a code review with feedback organized as a JSON object, including only 
 }}
 
 For "solution", create a solution comment with actual code fix shown as markdown.
+For "fixed_code", generated the fixed code script to replace the commented line.
 For "start_line", The line of the blob in the pull request diff that the comment applies to.
 For "side", provide the side as LEFT or RIGHT based on deleted or added lines respectively. Need this for github review comment.
 For "file_name" make sure to give the whole path so that developers can know exactly which file has issue.
@@ -86,6 +88,7 @@ Generate a code review with feedback organized as a JSON object, including only 
       "confidence": "<CONFIDENCE_LEVEL>",
       "reason": "<YOUR_REASON_FOR_COMMENTING_THIS_ISSUE>"
       "solution": "<SOLUTION_TO_THE_COMMENT>",
+      "fixed_code": "<FIXED_CODE>",
       "start_line": "<CODE_START_LINE_INTEGER>",
       "end_line": "<CODE_END_LINE_INTEGER>",
       "side": "<LEFT_OR_RIGHT>",
@@ -98,6 +101,7 @@ Generate a code review with feedback organized as a JSON object, including only 
 }}
 
 For "solution", create a solution comment with actual code fix shown as markdown.
+For "fixed_code", generated the fixed code script to replace the commented line.
 For "start_line", The line of the blob in the pull request diff that the comment applies to.
 For "side", provide the side as LEFT or RIGHT based on deleted or added lines respectively. Need this for github review comment.
 For "file_name" make sure to give the whole path so that developers can know exactly which file has issue.
