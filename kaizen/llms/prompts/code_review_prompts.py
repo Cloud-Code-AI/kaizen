@@ -14,7 +14,8 @@ Generate a code review with feedback organized as a JSON object, including only 
       "confidence": "<CONFIDENCE_LEVEL>",
       "reason": "<YOUR_REASON_FOR_COMMENTING_THIS_ISSUE>"
       "solution": "<SOLUTION_TO_THE_COMMENT>",
-      "position": "<POSITION_OF_CODE_LINE_RELATIVE_TO_PATCH>",
+      "start_line": "<CODE_START_LINE_INTEGER>",
+      "end_line": "<CODE_END_LINE_INTEGER>",
       "side": "<LEFT_OR_RIGHT>",
       "file_name": "<FULL_FILE_PATH>",
       "sentiment": "<COMMENT_SENTIMENT_POSITIVE_NEGATIVE_OR_NEUTRAL>",
@@ -24,7 +25,8 @@ Generate a code review with feedback organized as a JSON object, including only 
   ]
 }}
 
-For "position", This is the line number in the diff where the comment should be placed. We count from the start of the diff chunk, including the unchanged lines.
+For "solution", create a solution comment with actual code fix shown as markdown.
+For "start_line", The line of the blob in the pull request diff that the comment applies to.
 For "side", provide the side as LEFT or RIGHT based on deleted or added lines respectively. Need this for github review comment.
 For "file_name" make sure to give the whole path so that developers can know exactly which file has issue.
 For "severity_level" score in range of 1 to 10, 1 being not severe and 10 being critical.
@@ -58,10 +60,6 @@ Examine the code logic for the following issues:
   "Security Vulnerabilities"
 ]
 
-Set "request_for_change" to true for topics under "Improvements" or "Potential Issues" or any issue requiring the developer's attention.
-
-For "solution", precisely identify the problem and provide a specific fix for the current code.
-
 Generate all relevant and actionable feedback. Merge duplicate feedbacks for the same line. For each piece of feedback, reference the specific file(s) and line number(s) of code being addressed. Use markdown code blocks to quote relevant code snippets when necessary.
 
 Ensure comments are concise yet contain actionable and useful points directly related to the code or line with the issue. Avoid generic comments and duplicate feedback.
@@ -88,7 +86,8 @@ Generate a code review with feedback organized as a JSON object, including only 
       "confidence": "<CONFIDENCE_LEVEL>",
       "reason": "<YOUR_REASON_FOR_COMMENTING_THIS_ISSUE>"
       "solution": "<SOLUTION_TO_THE_COMMENT>",
-      "position": "<POSITION_OF_CODE_LINE_RELATIVE_TO_PATCH>",
+      "start_line": "<CODE_START_LINE_INTEGER>",
+      "end_line": "<CODE_END_LINE_INTEGER>",
       "side": "<LEFT_OR_RIGHT>",
       "file_name": "<FULL_FILE_PATH>",
       "sentiment": "<COMMENT_SENTIMENT_POSITIVE_NEGATIVE_OR_NEUTRAL>",
@@ -98,7 +97,9 @@ Generate a code review with feedback organized as a JSON object, including only 
   ]
 }}
 
-For "position", This is the line number in the diff where the comment should be placed. We count from the start of the diff chunk, including the unchanged lines.For "side", provide the side as LEFT or RIGHT based on deleted or added lines respectively. Need this for github review comment.
+For "solution", create a solution comment with actual code fix shown as markdown.
+For "start_line", The line of the blob in the pull request diff that the comment applies to.
+For "side", provide the side as LEFT or RIGHT based on deleted or added lines respectively. Need this for github review comment.
 For "file_name" make sure to give the whole path so that developers can know exactly which file has issue.
 For "severity_level" score in range of 1 to 10, 1 being not severe and 10 being critical.
 
@@ -131,9 +132,6 @@ Examine the code logic for the following issues:
   "Security Vulnerabilities"
 ]
 
-Set "request_for_change" to true for topics under "Improvements" or "Potential Issues" or any issue requiring the developer's attention.
-
-For "solution", precisely identify the problem and provide a specific fix for the current code.
 
 Generate all relevant and actionable feedback. Merge duplicate feedbacks for the same line. For each piece of feedback, reference the specific file(s) and line number(s) of code being addressed. Use markdown code blocks to quote relevant code snippets when necessary.
 
