@@ -79,14 +79,12 @@ class PRDescriptionGenerator:
         total_usage: Dict[str, int],
     ) -> str:
         self.logger.debug("Processing directly from diff")
-        resp, usage = self.provider.chat_completion(prompt, user=user)
+        resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
         total_usage = self.provider.update_usage(total_usage, usage)
 
         if reeval_response:
             resp = self._reevaluate_response(prompt, resp, user, total_usage)
-
-        desc_json = parser.extract_json(resp)
-        return desc_json["desc"]
+        return resp["desc"]
 
     def _process_files(
         self,
@@ -117,21 +115,18 @@ class PRDescriptionGenerator:
                 if not self.provider.is_inside_token_limit(PROMPT=prompt):
                     continue
 
-                resp, usage = self.provider.chat_completion(prompt, user=user)
+                resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
                 total_usage = self.provider.update_usage(total_usage, usage)
 
                 if reeval_response:
                     resp = self._reevaluate_response(prompt, resp, user, total_usage)
-
-                desc_json = parser.extract_json(resp)
-                descs.append(desc_json["desc"])
+                descs.append(resp["desc"])
 
         prompt = MERGE_PR_DESCRIPTION_PROMPT.format(DESCS=json.dumps(descs))
-        resp, usage = self.provider.chat_completion(prompt, user=user)
+        resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
         total_usage = self.provider.update_usage(total_usage, usage)
 
-        desc_json = parser.extract_json(resp)
-        return desc_json["desc"]
+        return resp["desc"]
 
     def _reevaluate_response(
         self, prompt: str, resp: str, user: Optional[str], total_usage: Dict[str, int]

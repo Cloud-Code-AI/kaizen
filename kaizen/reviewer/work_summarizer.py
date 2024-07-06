@@ -36,16 +36,16 @@ class WorkSummaryGenerator:
 
             # Process the prompt
             prompt = WORK_SUMMARY_PROMPT.format(PATCH_DATA=combined_diff_data)
-            response, usage = self.provider.chat_completion(prompt, user=user)
+            response, usage = self.provider.chat_completion_with_json(prompt, user=user)
             total_usage = self.provider.update_usage(total_usage, usage)
-            summaries.append(parser.extract_json(response))
+            summaries.append(response)
             combined_diff_data = ""
 
         if combined_diff_data != "":
             # process the remaining file diff pending
             prompt = WORK_SUMMARY_PROMPT.format(PATCH_DATA=combined_diff_data)
-            response, usage = self.provider.chat_completion(prompt, user=user)
-            summaries.append(parser.extract_json(response))
+            response, usage = self.provider.chat_completion_with_json(prompt, user=user)
+            summaries.append(response)
             combined_diff_data = ""
             total_usage = self.provider.update_usage(total_usage, usage)
 
