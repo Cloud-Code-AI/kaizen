@@ -15,6 +15,7 @@ Kaizen is an open-source AI-powered suite for code review, test generation, and 
 ## Features
 
 - **End-to-End Testing**: AI-generated comprehensive tests based on your application's code and documentation.
+- **Unit Test Generation**: Supports unit test generation for python. Adding more language support like typescript and react!
 - **UI Testing and Review**: Insightful reviews for UI components with automatic test generation.
 - **Code Review**: Automated pull request reviews with code change summaries and improvement suggestions.
 
