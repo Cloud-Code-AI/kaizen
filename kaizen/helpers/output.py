@@ -138,7 +138,6 @@ def create_pr_review_text(topics: Dict[str, List[Dict]]) -> str:
                     severity=review.get("severity_level", "NA"),
                 )
                 markdown_output += ct + "\n"
-
     status_msg = (
         "❗ **Attention Required:** This PR has potential issues. 🚨\n\n"
         if high_ranked_issues > 0
