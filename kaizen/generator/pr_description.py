@@ -80,6 +80,7 @@ class PRDescriptionGenerator:
     ) -> str:
         self.logger.debug("Processing directly from diff")
         resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
+        print(resp, usage)
         total_usage = self.provider.update_usage(total_usage, usage)
 
         if reeval_response:
