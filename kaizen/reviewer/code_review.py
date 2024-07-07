@@ -24,6 +24,11 @@ class CodeReviewer:
         self.logger = logging.getLogger(__name__)
         self.provider = llm_provider
         self.provider.system_prompt = CODE_REVIEW_SYSTEM_PROMPT
+        self.total_usage = {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "total_tokens": 0,
+        }
 
     def is_code_review_prompt_within_limit(
         self,
@@ -170,8 +175,7 @@ class CodeReviewer:
         pull_request_title: str,
         pull_request_desc: str,
         user: Optional[str],
-        reeval_response: bool,
-        total_usage: Dict[str, int],
+        reeval_response: bool
     ) -> List[Dict]:
         prompt = FILE_CODE_REVIEW_PROMPT.format(
             PULL_REQUEST_TITLE=pull_request_title,

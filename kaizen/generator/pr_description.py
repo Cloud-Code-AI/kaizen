@@ -27,6 +27,11 @@ class PRDescriptionGenerator:
         self.logger = logging.getLogger(__name__)
         self.provider = llm_provider
         self.provider.system_prompt = CODE_REVIEW_SYSTEM_PROMPT
+        self.total_usage = {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "total_tokens": 0,
+        }
 
     def generate_pull_request_desc(
         self,
@@ -42,13 +47,11 @@ class PRDescriptionGenerator:
             PULL_REQUEST_DESC=pull_request_desc,
             CODE_DIFF=diff_text,
         )
-        # TODO: User providers default usage
-        total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
         if not diff_text and not pull_request_files:
             raise Exception("Both diff_text and pull_request_files are empty!")
 
         if self.provider.is_inside_token_limit(PROMPT=prompt):
-            desc = self._process_full_diff(prompt, user, reeval_response, total_usage)
+            desc = self._process_full_diff(prompt, user, reeval_response)
         else:
             desc = self._process_files(
                 pull_request_files,
@@ -56,17 +59,16 @@ class PRDescriptionGenerator:
                 pull_request_desc,
                 user,
                 reeval_response,
-                total_usage,
             )
 
         body = output.create_pr_description(desc, pull_request_desc)
         prompt_cost, completion_cost = self.provider.get_usage_cost(
-            total_usage=total_usage
+            total_usage=self.total_usage
         )
 
         return DescOutput(
             desc=body,
-            usage=total_usage,
+            usage=self.total_usage,
             model_name=self.provider.model,
             cost={"prompt_cost": prompt_cost, "completion_cost": completion_cost},
         )
@@ -76,15 +78,13 @@ class PRDescriptionGenerator:
         prompt: str,
         user: Optional[str],
         reeval_response: bool,
-        total_usage: Dict[str, int],
     ) -> str:
         self.logger.debug("Processing directly from diff")
         resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
-        print(resp, usage)
-        total_usage = self.provider.update_usage(total_usage, usage)
+        self.total_usage = self.provider.update_usage(self.total_usage, usage)
 
         if reeval_response:
-            resp = self._reevaluate_response(prompt, resp, user, total_usage)
+            resp = self._reevaluate_response(prompt, resp, user)
         return resp["desc"]
 
     def _process_files(
@@ -94,7 +94,6 @@ class PRDescriptionGenerator:
         pull_request_desc: str,
         user: Optional[str],
         reeval_response: bool,
-        total_usage: Dict[str, int],
     ) -> str:
         self.logger.debug("Processing based on files")
         descs = []
@@ -117,21 +116,19 @@ class PRDescriptionGenerator:
                     continue
 
                 resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
-                total_usage = self.provider.update_usage(total_usage, usage)
+                self.total_usage = self.provider.update_usage(self.total_usage, usage)
 
                 if reeval_response:
-                    resp = self._reevaluate_response(prompt, resp, user, total_usage)
+                    resp = self._reevaluate_response(prompt, resp, user)
                 descs.append(resp["desc"])
 
         prompt = MERGE_PR_DESCRIPTION_PROMPT.format(DESCS=json.dumps(descs))
         resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
-        total_usage = self.provider.update_usage(total_usage, usage)
+        self.total_usage = self.provider.update_usage(self.total_usage, usage)
 
         return resp["desc"]
 
-    def _reevaluate_response(
-        self, prompt: str, resp: str, user: Optional[str], total_usage: Dict[str, int]
-    ) -> str:
+    def _reevaluate_response(self, prompt: str, resp: str, user: Optional[str]) -> str:
         messages = [
             {"role": "system", "content": self.provider.system_prompt},
             {"role": "user", "content": prompt},
@@ -141,5 +138,5 @@ class PRDescriptionGenerator:
         resp, usage = self.provider.chat_completion(
             prompt, user=user, messages=messages
         )
-        total_usage = self.provider.update_usage(total_usage, usage)
+        self.total_usage = self.provider.update_usage(self.total_usage, usage)
         return resp

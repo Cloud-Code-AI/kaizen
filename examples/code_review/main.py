@@ -36,6 +36,13 @@ comments, topics = create_review_comments(topics)
 print(f"Raw Topics: \n {json.dumps(topics, indent=2)}\n")
 print(f"GENERATED REVIEW: \n {review_desc}")
 print(f"\nComment and topics: \n {comments}, \n{topics}")
-print("---------------Generate desc-------------")
-
 print(review_data)
+print("---------------Generate desc-------------")
+desc_data = pr_desc.generate_pull_request_desc(
+    diff_text=diff_text,
+    pull_request_title=pr_title,
+    pull_request_desc="",
+    pull_request_files=pr_files,
+    user="kaizen/example",
+)
+print(desc_data)
