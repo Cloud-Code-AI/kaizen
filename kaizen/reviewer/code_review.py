@@ -52,14 +52,16 @@ class CodeReviewer:
             PULL_REQUEST_DESC=pull_request_desc,
             CODE_DIFF=diff_text,
         )
-        self.total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+        self.total_usage = {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "total_tokens": 0,
+        }
         if not diff_text and not pull_request_files:
             raise Exception("Both diff_text and pull_request_files are empty!")
 
         if self.provider.is_inside_token_limit(PROMPT=prompt):
-            reviews= self._process_full_diff(
-                prompt, user, reeval_response
-            )
+            reviews = self._process_full_diff(prompt, user, reeval_response)
         else:
             reviews = self._process_files(
                 pull_request_files,
@@ -90,7 +92,6 @@ class CodeReviewer:
         self.logger.debug("Processing directly from diff")
         resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
         self.total_usage = self.provider.update_usage(self.total_usage, usage)
-        print("resp", resp, usage, self.total_usage)
         if reeval_response:
             resp = self._reevaluate_response(prompt, resp, user)
         return resp["review"]
@@ -185,9 +186,7 @@ class CodeReviewer:
 
         return resp["review"]
 
-    def _reevaluate_response(
-        self, prompt: str, resp: str, user: Optional[str]
-    ) -> str:
+    def _reevaluate_response(self, prompt: str, resp: str, user: Optional[str]) -> str:
         messages = [
             {"role": "system", "content": self.provider.system_prompt},
             {"role": "user", "content": prompt},
