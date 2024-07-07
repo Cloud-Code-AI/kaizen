@@ -24,6 +24,7 @@ class CodeReviewer:
         self.logger = logging.getLogger(__name__)
         self.provider = llm_provider
         self.provider.system_prompt = CODE_REVIEW_SYSTEM_PROMPT
+        self.total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
 
     def is_code_review_prompt_within_limit(
         self,

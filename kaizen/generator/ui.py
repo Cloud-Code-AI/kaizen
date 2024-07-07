@@ -16,6 +16,7 @@ class UITestGenerator:
         self.logger = logging.getLogger(__name__)
         self.provider = LLMProvider(system_prompt=UI_TESTS_SYSTEM_PROMPT)
         self.custom_model = None
+        self.total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
         if self.provider.models and "best" in self.provider.models:
             self.custom_model = self.provider.models["best"]
             if "type" in self.custom_model:
@@ -35,8 +36,8 @@ class UITestGenerator:
             web_content, test_modules["modules"], web_url
         )
         self.store_tests_files(ui_tests, folder_path)
-        total_usage = self.provider.update_usage(usage, test_modules["usage"])
-        return ui_tests, total_usage
+        self.total_usage = self.provider.update_usage(usage, test_modules["usage"])
+        return ui_tests, self.total_usage
 
     def extract_webpage(self, web_url: str):
         """
@@ -67,7 +68,7 @@ class UITestGenerator:
         """
         This method generates playwright code for a particular UI test.
         """
-        total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+        code_gen_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
         # First generate a plan for code
         prompt = PLAYWRIGHT_CODE_PLAN_PROMPT.format(
             WEB_CONTENT=web_content, TEST_DESCRIPTION=test_description, URL=web_url
@@ -75,23 +76,23 @@ class UITestGenerator:
         plan, usage = self.provider.chat_completion(
             prompt, user=user, custom_model=self.custom_model
         )
-        total_usage = self.provider.update_usage(total_usage, usage)
+        code_gen_usage = self.provider.update_usage(code_gen_usage, usage)
 
         # Next generate the code based on plan
         code_prompt = PLAYWRIGHT_CODE_PROMPT.format(PLAN_TEXT=plan)
         code, usage = self.provider.chat_completion(
             code_prompt, user=user, custom_model=self.custom_model
         )
-        total_usage = self.provider.update_usage(total_usage, usage)
+        code_gen_usage = self.provider.update_usage(code_gen_usage, usage)
 
-        return {"code": code, "usage": total_usage}
+        return {"code": code, "usage": code_gen_usage}
 
     def generate_module_tests(self, web_content: str, test_modules: dict, web_url: str):
         """
         This method generates UI testing points for all modules.
         """
         ui_tests = test_modules
-        total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+        self.total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
         for module in ui_tests:
             for test in module["tests"]:
                 test_description = test["test_description"]
@@ -100,11 +101,11 @@ class UITestGenerator:
                 )
                 test["code"] = playwright_code["code"]
                 test["status"] = "Not run"
-                total_usage = self.provider.update_usage(
-                    total_usage, playwright_code["usage"]
+                self.total_usage = self.provider.update_usage(
+                    self.total_usage, playwright_code["usage"]
                 )
 
-        return ui_tests, total_usage
+        return ui_tests, self.total_usage
 
     def store_tests_files(self, json_tests: list, folder_path: str = ""):
 
