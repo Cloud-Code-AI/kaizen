@@ -27,7 +27,11 @@ class PRDescriptionGenerator:
         self.logger = logging.getLogger(__name__)
         self.provider = llm_provider
         self.provider.system_prompt = CODE_REVIEW_SYSTEM_PROMPT
-        self.total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+        self.total_usage = {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "total_tokens": 0,
+        }
 
     def generate_pull_request_desc(
         self,
@@ -54,7 +58,7 @@ class PRDescriptionGenerator:
                 pull_request_title,
                 pull_request_desc,
                 user,
-                reeval_response
+                reeval_response,
             )
 
         body = output.create_pr_description(desc, pull_request_desc)
@@ -124,9 +128,7 @@ class PRDescriptionGenerator:
 
         return resp["desc"]
 
-    def _reevaluate_response(
-        self, prompt: str, resp: str, user: Optional[str]
-    ) -> str:
+    def _reevaluate_response(self, prompt: str, resp: str, user: Optional[str]) -> str:
         messages = [
             {"role": "system", "content": self.provider.system_prompt},
             {"role": "user", "content": prompt},

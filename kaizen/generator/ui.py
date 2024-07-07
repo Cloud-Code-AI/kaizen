@@ -16,7 +16,11 @@ class UITestGenerator:
         self.logger = logging.getLogger(__name__)
         self.provider = LLMProvider(system_prompt=UI_TESTS_SYSTEM_PROMPT)
         self.custom_model = None
-        self.total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+        self.total_usage = {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "total_tokens": 0,
+        }
         if self.provider.models and "best" in self.provider.models:
             self.custom_model = self.provider.models["best"]
             if "type" in self.custom_model:
@@ -92,7 +96,11 @@ class UITestGenerator:
         This method generates UI testing points for all modules.
         """
         ui_tests = test_modules
-        self.total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+        self.total_usage = {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "total_tokens": 0,
+        }
         for module in ui_tests:
             for test in module["tests"]:
                 test_description = test["test_description"]

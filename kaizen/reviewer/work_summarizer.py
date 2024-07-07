@@ -14,7 +14,11 @@ class WorkSummaryGenerator:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
         self.provider = LLMProvider(system_prompt=WORK_SUMMARY_SYSTEM_PROMPT)
-        self.total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+        self.total_usage = {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "total_tokens": 0,
+        }
 
     def generate_work_summaries(
         self,

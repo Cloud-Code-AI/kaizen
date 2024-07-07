@@ -13,7 +13,11 @@ from kaizen.llms.prompts.unit_tests_prompts import (
 class UnitTestGenerator:
     def __init__(self):
         self.output_folder = "./.kaizen/unit_test/"
-        self.total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+        self.total_usage = {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "total_tokens": 0,
+        }
         self.supported_languages = {
             "py": "PythonParser",
             "js": "JavaScriptParser",
