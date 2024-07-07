@@ -175,8 +175,7 @@ class CodeReviewer:
         pull_request_title: str,
         pull_request_desc: str,
         user: Optional[str],
-        reeval_response: bool,
-        total_usage: Dict[str, int],
+        reeval_response: bool
     ) -> List[Dict]:
         prompt = FILE_CODE_REVIEW_PROMPT.format(
             PULL_REQUEST_TITLE=pull_request_title,
