@@ -27,13 +27,13 @@ class LLMProvider:
         system_prompt: str = BASIC_SYSTEM_PROMPT,
         model_config: Dict[str, Any] = DEFAULT_MODEL_CONFIG,
         default_temperature: float = 0.3,
-        callback_obj="supabase"
+        callback_obj="supabase",
     ):
         self.config = ConfigData().get_config_data()
         self.system_prompt = system_prompt
         self.model_config = model_config
         self.default_temperature = default_temperature
-        self.callback_obj="supabase"
+        self.callback_obj = "supabase"
         self.logger = logging.getLogger(
             __name__,
         )
