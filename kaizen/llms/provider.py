@@ -27,11 +27,13 @@ class LLMProvider:
         system_prompt: str = BASIC_SYSTEM_PROMPT,
         model_config: Dict[str, Any] = DEFAULT_MODEL_CONFIG,
         default_temperature: float = 0.3,
+        callback_obj="supabase"
     ):
         self.config = ConfigData().get_config_data()
         self.system_prompt = system_prompt
         self.model_config = model_config
         self.default_temperature = default_temperature
+        self.callback_obj="supabase"
         self.logger = logging.getLogger(
             __name__,
         )
@@ -86,8 +88,8 @@ class LLMProvider:
 
     def _setup_observability(self) -> None:
         if self.config["language_model"].get("enable_observability_logging", False):
-            litellm.success_callback = ["supabase"]
-            litellm.failure_callback = ["supabase"]
+            litellm.success_callback = [self.callback_obj]
+            litellm.failure_callback = [self.callback_obj]
 
     def _register_unkown_models(self) -> None:
         for model_data in self.models:
