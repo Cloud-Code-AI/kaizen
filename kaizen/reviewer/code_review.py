@@ -52,13 +52,13 @@ class CodeReviewer:
             PULL_REQUEST_DESC=pull_request_desc,
             CODE_DIFF=diff_text,
         )
-        total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+        self.total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
         if not diff_text and not pull_request_files:
             raise Exception("Both diff_text and pull_request_files are empty!")
 
         if self.provider.is_inside_token_limit(PROMPT=prompt):
-            reviews = self._process_full_diff(
-                prompt, user, reeval_response, total_usage
+            reviews= self._process_full_diff(
+                prompt, user, reeval_response
             )
         else:
             reviews = self._process_files(
@@ -67,16 +67,15 @@ class CodeReviewer:
                 pull_request_desc,
                 user,
                 reeval_response,
-                total_usage,
             )
 
         topics = self._merge_topics(reviews)
         prompt_cost, completion_cost = self.provider.get_usage_cost(
-            total_usage=total_usage
+            total_usage=self.total_usage
         )
 
         return ReviewOutput(
-            usage=total_usage,
+            usage=self.total_usage,
             model_name=self.provider.model,
             topics=topics,
             cost={"prompt_cost": prompt_cost, "completion_cost": completion_cost},
@@ -87,14 +86,13 @@ class CodeReviewer:
         prompt: str,
         user: Optional[str],
         reeval_response: bool,
-        total_usage: Dict[str, int],
     ) -> List[Dict]:
         self.logger.debug("Processing directly from diff")
         resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
-        total_usage = self.provider.update_usage(total_usage, usage)
-
+        self.total_usage = self.provider.update_usage(self.total_usage, usage)
+        print("resp", resp, usage, self.total_usage)
         if reeval_response:
-            resp = self._reevaluate_response(prompt, resp, user, total_usage)
+            resp = self._reevaluate_response(prompt, resp, user)
         return resp["review"]
 
     def _process_files(
@@ -104,7 +102,6 @@ class CodeReviewer:
         pull_request_desc: str,
         user: Optional[str],
         reeval_response: bool,
-        total_usage: Dict[str, int],
     ) -> List[Dict]:
         self.logger.debug("Processing based on files")
         reviews = []
@@ -114,7 +111,6 @@ class CodeReviewer:
             pull_request_desc,
             user,
             reeval_response,
-            total_usage,
         ):
             reviews.extend(file_review)
         return reviews
@@ -126,7 +122,6 @@ class CodeReviewer:
         pull_request_desc: str,
         user: Optional[str],
         reeval_response: bool,
-        total_usage: Dict[str, int],
     ) -> Generator[List[Dict], None, None]:
         combined_diff_data = ""
         available_tokens = self.provider.available_tokens(FILE_CODE_REVIEW_PROMPT)
@@ -154,7 +149,6 @@ class CodeReviewer:
                     pull_request_desc,
                     user,
                     reeval_response,
-                    total_usage,
                 )
                 combined_diff_data = (
                     f"\n---->\nFile Name: {filename}\nPatch Details: {patch_details}"
@@ -167,7 +161,6 @@ class CodeReviewer:
                 pull_request_desc,
                 user,
                 reeval_response,
-                total_usage,
             )
 
     def _process_file_chunk(
@@ -185,15 +178,15 @@ class CodeReviewer:
             FILE_PATCH=diff_data,
         )
         resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
-        total_usage = self.provider.update_usage(total_usage, usage)
+        self.total_usage = self.provider.update_usage(self.total_usage, usage)
 
         if reeval_response:
-            resp = self._reevaluate_response(prompt, resp, user, total_usage)
+            resp = self._reevaluate_response(prompt, resp, user)
 
         return resp["review"]
 
     def _reevaluate_response(
-        self, prompt: str, resp: str, user: Optional[str], total_usage: Dict[str, int]
+        self, prompt: str, resp: str, user: Optional[str]
     ) -> str:
         messages = [
             {"role": "system", "content": self.provider.system_prompt},
@@ -204,7 +197,7 @@ class CodeReviewer:
         resp, usage = self.provider.chat_completion(
             prompt, user=user, messages=messages
         )
-        total_usage = self.provider.update_usage(total_usage, usage)
+        self.total_usage = self.provider.update_usage(self.total_usage, usage)
         return resp
 
     @staticmethod

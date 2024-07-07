@@ -38,4 +38,4 @@ print(f"GENERATED REVIEW: \n {review_desc}")
 print(f"\nComment and topics: \n {comments}, \n{topics}")
 print("---------------Generate desc-------------")
 
-print(review_desc)
+print(review_data)
