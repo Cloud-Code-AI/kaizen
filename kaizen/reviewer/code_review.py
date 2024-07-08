@@ -65,7 +65,7 @@ class CodeReviewer:
         if not diff_text and not pull_request_files:
             raise Exception("Both diff_text and pull_request_files are empty!")
 
-        if self.provider.is_inside_token_limit(PROMPT=prompt):
+        if diff_text and self.provider.is_inside_token_limit(PROMPT=prompt):
             reviews = self._process_full_diff(prompt, user, reeval_response)
         else:
             reviews = self._process_files(
