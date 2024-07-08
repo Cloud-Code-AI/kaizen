@@ -27,8 +27,9 @@ Generate a code review with feedback organized as a JSON object, including only 
 }}
 
 For "solution", create a solution comment with actual code fix shown as markdown.
-For "fixed_code", generated the fixed code script to replace the commented line.
-For "start_line", The line of the blob in the pull request diff that the comment applies to.
+For "fixed_code", generated the fixed code script to replace the commented line. make sure you replace the exact changes code between start_line and end_line.
+For "start_line", The line of the blob in the pull request diff that the comment applies to. Make sure "fixed_code" starts from this line.
+For "end_line", this is the end line of the blob where pull request applies. Make sure the "fixed_code" ends at this line.
 For "side", provide the side as LEFT or RIGHT based on deleted or added lines respectively. Need this for github review comment.
 For "file_name" make sure to give the whole path so that developers can know exactly which file has issue.
 For "severity_level" score in range of 1 to 10, 1 being not severe and 10 being critical.
@@ -62,9 +63,11 @@ Examine the code logic for the following issues:
   "Security Vulnerabilities"
 ]
 
-Generate all relevant and actionable feedback. Merge duplicate feedbacks for the same line. For each piece of feedback, reference the specific file(s) and line number(s) of code being addressed. Use markdown code blocks to quote relevant code snippets when necessary.
 
-Ensure comments are concise yet contain actionable and useful points directly related to the code or line with the issue. Avoid generic comments and duplicate feedback.
+Generate all relevant and actionable feedback. Merge duplicate feedbacks for the same line. For each piece of feedback, reference the specific file(s) and line number(s) of code being addressed. 
+Use markdown code blocks to quote relevant code snippets when necessary.
+
+Ensure comments are concise yet contain actionable and useful points directly related to the code or line with the issue. Avoid generic comments.
 
 If no feedback is necessary, return an empty JSON object: {{"review": []}}
 
@@ -101,8 +104,9 @@ Generate a code review with feedback organized as a JSON object, including only 
 }}
 
 For "solution", create a solution comment with actual code fix shown as markdown.
-For "fixed_code", generated the fixed code script to replace the commented line.
-For "start_line", The line of the blob in the pull request diff that the comment applies to.
+For "fixed_code", generated the fixed code script to replace the commented line. make sure you replace the exact changes code between start_line and end_line.
+For "start_line", The line of the blob in the pull request diff that the comment applies to. Make sure "fixed_code" starts from this line.
+For "end_line", this is the end line of the blob where pull request applies. Make sure the "fixed_code" ends at this line.
 For "side", provide the side as LEFT or RIGHT based on deleted or added lines respectively. Need this for github review comment.
 For "file_name" make sure to give the whole path so that developers can know exactly which file has issue.
 For "severity_level" score in range of 1 to 10, 1 being not severe and 10 being critical.
@@ -137,9 +141,10 @@ Examine the code logic for the following issues:
 ]
 
 
-Generate all relevant and actionable feedback. Merge duplicate feedbacks for the same line. For each piece of feedback, reference the specific file(s) and line number(s) of code being addressed. Use markdown code blocks to quote relevant code snippets when necessary.
+Generate all relevant and actionable feedback. Merge duplicate feedbacks for the same line. For each piece of feedback, reference the specific file(s) and line number(s) of code being addressed. 
+Use markdown code blocks to quote relevant code snippets when necessary.
 
-Ensure comments are concise yet contain actionable and useful points directly related to the code or line with the issue. Avoid generic comments and duplicate feedback.
+Ensure comments are concise yet contain actionable and useful points directly related to the code or line with the issue. Avoid generic comments.
 
 If no feedback is necessary, return an empty JSON object: {{"review": []}}
 

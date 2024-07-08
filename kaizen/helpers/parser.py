@@ -37,3 +37,10 @@ def extract_markdown_content(text: str) -> str:
     if match:
         return match.group(1).strip()
     return ""
+
+
+def extract_code_from_markdown(text: str) -> str:
+    match = re.search(r"```([\s\S]*?)```", text)
+    if match:
+        return match.group(1).strip()
+    return text

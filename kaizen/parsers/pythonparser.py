@@ -1,4 +1,6 @@
 import ast
+import black
+from kaizen.helpers.parser import extract_code_from_markdown
 
 
 class PythonParser:
@@ -35,3 +37,7 @@ class PythonParser:
                 "args": [arg.arg for arg in node.args.args if arg.arg != "self"],
                 "source": ast.get_source_segment(self.source, node),
             }
+
+    def format_python_markdown_snippet(self, code_snippet):
+        code_snippet = extract_code_from_markdown(code_snippet)
+        return black.format_str(code_snippet, mode=black.Mode())
