@@ -28,7 +28,6 @@ review_data = reviewer.review_pull_request(
     user="kaizen/example",
 )
 
-pr_desc = PRDescriptionGenerator(llm_provider=LLMProvider())
 topics = clean_keys(review_data.topics, "important")
 review_desc = create_pr_review_text(topics)
 comments, topics = create_review_comments(topics)
@@ -38,8 +37,9 @@ print(f"GENERATED REVIEW: \n {review_desc}")
 print(f"\nComment and topics: \n {comments}, \n{topics}")
 print(review_data)
 print("---------------Generate desc-------------")
+pr_desc = PRDescriptionGenerator(llm_provider=LLMProvider())
 desc_data = pr_desc.generate_pull_request_desc(
-    diff_text=diff_text,
+    diff_text=None,
     pull_request_title=pr_title,
     pull_request_desc="",
     pull_request_files=pr_files,

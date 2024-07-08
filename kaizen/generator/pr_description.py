@@ -1,4 +1,4 @@
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Generator
 import logging
 from dataclasses import dataclass
 import json
@@ -50,7 +50,7 @@ class PRDescriptionGenerator:
         if not diff_text and not pull_request_files:
             raise Exception("Both diff_text and pull_request_files are empty!")
 
-        if self.provider.is_inside_token_limit(PROMPT=prompt):
+        if diff_text and self.provider.is_inside_token_limit(PROMPT=prompt):
             desc = self._process_full_diff(prompt, user, reeval_response)
         else:
             desc = self._process_files(
@@ -94,9 +94,40 @@ class PRDescriptionGenerator:
         pull_request_desc: str,
         user: Optional[str],
         reeval_response: bool,
-    ) -> str:
+    ) -> List[Dict]:
         self.logger.debug("Processing based on files")
-        descs = []
+        file_descs = []
+        for file_review in self._process_files_generator(
+            pull_request_files,
+            pull_request_title,
+            pull_request_desc,
+            user,
+            reeval_response,
+        ):
+            file_descs.extend(file_descs)
+
+        prompt = MERGE_PR_DESCRIPTION_PROMPT.format(DESCS=json.dumps(file_descs))
+        resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
+        self.total_usage = self.provider.update_usage(self.total_usage, usage)
+
+        return resp["desc"]
+
+    def _process_files_generator(
+        self,
+        pull_request_files: List[Dict],
+        pull_request_title: str,
+        pull_request_desc: str,
+        user: Optional[str],
+        reeval_response: bool,
+    ) -> Generator[List[Dict], None, None]:
+        combined_diff_data = ""
+        available_tokens = self.provider.available_tokens(
+            PR_FILE_DESCRIPTION_PROMPT.format(
+                PULL_REQUEST_TITLE=pull_request_title,
+                PULL_REQUEST_DESC=pull_request_desc,
+                CODE_DIFF="",
+            )
+        )
 
         for file in pull_request_files:
             patch_details = file.get("patch")
@@ -106,25 +137,53 @@ class PRDescriptionGenerator:
                 filename.split(".")[-1] not in parser.EXCLUDED_FILETYPES
                 and patch_details is not None
             ):
-                prompt = PR_FILE_DESCRIPTION_PROMPT.format(
-                    PULL_REQUEST_TITLE=pull_request_title,
-                    PULL_REQUEST_DESC=pull_request_desc,
-                    CODE_DIFF=patch_details,
+                temp_prompt = (
+                    combined_diff_data
+                    + f"\n---->\nFile Name: {filename}\nPatch Details: \n{patch_details}"
                 )
 
-                if not self.provider.is_inside_token_limit(PROMPT=prompt):
+                if available_tokens - self.provider.get_token_count(temp_prompt) > 0:
+                    combined_diff_data = temp_prompt
                     continue
 
-                resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
-                self.total_usage = self.provider.update_usage(self.total_usage, usage)
+                yield self._process_file_chunk(
+                    combined_diff_data,
+                    pull_request_title,
+                    pull_request_desc,
+                    user,
+                    reeval_response,
+                )
+                combined_diff_data = (
+                    f"\n---->\nFile Name: {filename}\nPatch Details: {patch_details}"
+                )
 
-                if reeval_response:
-                    resp = self._reevaluate_response(prompt, resp, user)
-                descs.append(resp["desc"])
+        if combined_diff_data:
+            yield self._process_file_chunk(
+                combined_diff_data,
+                pull_request_title,
+                pull_request_desc,
+                user,
+                reeval_response,
+            )
 
-        prompt = MERGE_PR_DESCRIPTION_PROMPT.format(DESCS=json.dumps(descs))
+    def _process_file_chunk(
+        self,
+        diff_data: str,
+        pull_request_title: str,
+        pull_request_desc: str,
+        user: Optional[str],
+        reeval_response: bool,
+    ) -> List[Dict]:
+        prompt = PR_FILE_DESCRIPTION_PROMPT.format(
+            PULL_REQUEST_TITLE=pull_request_title,
+            PULL_REQUEST_DESC=pull_request_desc,
+            CODE_DIFF=diff_data,
+        )
         resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
         self.total_usage = self.provider.update_usage(self.total_usage, usage)
+
+        if reeval_response:
+            resp = self._reevaluate_response(prompt, resp, user)
 
         return resp["desc"]
 
