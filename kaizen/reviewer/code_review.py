@@ -177,6 +177,8 @@ class CodeReviewer:
         user: Optional[str],
         reeval_response: bool,
     ) -> List[Dict]:
+        if not diff_data:
+            return []
         prompt = FILE_CODE_REVIEW_PROMPT.format(
             PULL_REQUEST_TITLE=pull_request_title,
             PULL_REQUEST_DESC=pull_request_desc,
