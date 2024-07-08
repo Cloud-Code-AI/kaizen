@@ -104,7 +104,7 @@ class PRDescriptionGenerator:
             user,
             reeval_response,
         ):
-            file_descs.extend(file_descs)
+            file_descs.extend(file_review)
 
         prompt = MERGE_PR_DESCRIPTION_PROMPT.format(DESCS=json.dumps(file_descs))
         resp, usage = self.provider.chat_completion_with_json(prompt, user=user)

@@ -28,11 +28,22 @@ Generate a code review with feedback organized as a JSON object, including only 
 
 For "solution", create a solution comment with actual code fix shown as markdown.
 For "fixed_code", generated the fixed code script to replace the commented line. make sure you replace the exact changes code between start_line and end_line.
-For "start_line", The line of the blob in the pull request diff that the comment applies to. Make sure "fixed_code" starts from this line.
-For "end_line", this is the end line of the blob where pull request applies. Make sure the "fixed_code" ends at this line.
+For "start_line", The first line of the code in that the comment applies to. Make sure "fixed_code" starts from this line.
+For "end_line", this is the last line of the code that the comment applies to. Make sure the "fixed_code" ends at this line.
 For "side", provide the side as LEFT or RIGHT based on deleted or added lines respectively. Need this for github review comment.
 For "file_name" make sure to give the whole path so that developers can know exactly which file has issue.
 For "severity_level" score in range of 1 to 10, 1 being not severe and 10 being critical.
+
+Process the given patch data. Identify lines beginning with '+' (excluding the file header line starting with '+++') as additions.
+Make sure the "fixed_code" applied to addition lines only.
+
+When generating the description:
+
+- Create a concise and clear summary highlighting the main purpose of the pull request.
+- Use markdown formatting in the detailed description for better readability.
+- Organize the details into relevant sections or bullet points.
+- Focus on the most significant aspects of the changes.
+- Avoid repeating information already present in the pull request ti
 
 Confidence Levels based on severity of the issue:
 [
@@ -75,7 +86,7 @@ INFORMATION:
 Pull Request Title: {PULL_REQUEST_TITLE}
 Pull Request Description: {PULL_REQUEST_DESC}
 
-Code Diff:
+PATCH DATA:
 ```{CODE_DIFF}```
 """
 
@@ -100,16 +111,40 @@ Generate a code review with feedback organized as a JSON object, including only 
       "severity_level": <INTEGER_FROM_1_TO_10>
     }},
     ...
-  ]
+  ],
+    "desc": "
+### Summary
+
+<Brief one-line summary of the pull request>
+
+### Details
+
+<Detailed multi-line description in markdown format>
+- List of key changes
+- New features
+- Refactoring details
+  "
 }}
 
 For "solution", create a solution comment with actual code fix shown as markdown.
 For "fixed_code", generated the fixed code script to replace the commented line. make sure you replace the exact changes code between start_line and end_line.
-For "start_line", The line of the blob in the pull request diff that the comment applies to. Make sure "fixed_code" starts from this line.
-For "end_line", this is the end line of the blob where pull request applies. Make sure the "fixed_code" ends at this line.
+For "start_line", The first line of the code in that the comment applies to. Make sure "fixed_code" starts from this line.
+For "end_line", this is the last line of the code that the comment applies to. Make sure the "fixed_code" ends at this line.
 For "side", provide the side as LEFT or RIGHT based on deleted or added lines respectively. Need this for github review comment.
 For "file_name" make sure to give the whole path so that developers can know exactly which file has issue.
 For "severity_level" score in range of 1 to 10, 1 being not severe and 10 being critical.
+
+Process the given patch data. Identify lines beginning with '+' (excluding the file header line starting with '+++') as additions
+Make sure the "fixed_code" applied to addition lines only.
+
+When generating the description:
+
+- Create a concise and clear summary highlighting the main purpose of the pull request.
+- Use markdown formatting in the detailed description for better readability.
+- Organize the details into relevant sections or bullet points.
+- Focus on the most significant aspects of the changes.
+- Avoid repeating information already present in the pull request title or description.
+- Ensure the output is in valid JSON format.
 
 Confidence Levels based on severity of the issue:
 [
@@ -189,7 +224,7 @@ Based on the provided information:
 
 Pull Request Title: {PULL_REQUEST_TITLE}
 Pull Request Description: {PULL_REQUEST_DESC}
-Code Diff:
+Patch Data:
 {CODE_DIFF}
 
 Analyze the information thoroughly and generate a comprehensive summary and detailed description.
@@ -230,7 +265,7 @@ Based on the provided information:
 
 Pull Request Title: {PULL_REQUEST_TITLE}
 Pull Request Description: {PULL_REQUEST_DESC}
-Code Diff:
+Patch Data:
 {CODE_DIFF}
 
 Analyze the information thoroughly and generate a comprehensive summary and detailed description.
