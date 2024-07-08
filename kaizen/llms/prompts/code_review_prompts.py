@@ -13,7 +13,7 @@ Generate a code review with feedback organized as a JSON object, including only 
       "comment": "<CONSICE_COMMENT_ON_WHATS_THE_ISSUE>",
       "confidence": "<CONFIDENCE_LEVEL>",
       "reason": "<YOUR_REASON_FOR_COMMENTING_THIS_ISSUE>"
-      "solution": "<SOLUTION_TO_THE_COMMENT>",
+      "solution": "<HIGH_LEVEL_SOLUTION>",
       "fixed_code": "<FIXED_CODE>",
       "start_line": "<CODE_START_LINE_INTEGER>",
       "end_line": "<CODE_END_LINE_INTEGER>",
@@ -26,7 +26,7 @@ Generate a code review with feedback organized as a JSON object, including only 
   ]
 }}
 
-For "solution", create a solution comment with actual code fix shown as markdown.
+For "solution", create a solution comment with high level solution to this issue.
 For "fixed_code", generated the fixed code script to replace the commented line. make sure you replace the exact changes code between start_line and end_line.
 For "start_line", The first line of the code in that the comment applies to. Make sure "fixed_code" starts from this line.
 For "end_line", this is the last line of the code that the comment applies to. Make sure the "fixed_code" ends at this line.
@@ -101,7 +101,7 @@ Generate a code review with feedback organized as a JSON object, including only 
       "comment": "<CONSICE_COMMENT_ON_WHATS_THE_ISSUE>",
       "confidence": "<CONFIDENCE_LEVEL>",
       "reason": "<YOUR_REASON_FOR_COMMENTING_THIS_ISSUE>"
-      "solution": "<SOLUTION_TO_THE_COMMENT>",
+      "solution": "<HIGH_LEVEL_SOLUTION>",
       "fixed_code": "<FIXED_CODE>",
       "start_line": "<CODE_START_LINE_INTEGER>",
       "end_line": "<CODE_END_LINE_INTEGER>",
@@ -126,7 +126,7 @@ Generate a code review with feedback organized as a JSON object, including only 
   "
 }}
 
-For "solution", create a solution comment with actual code fix shown as markdown.
+For "solution", create a solution comment with high level solution to this issue.
 For "fixed_code", generated the fixed code script to replace the commented line. make sure you replace the exact changes code between start_line and end_line.
 For "start_line", The first line of the code in that the comment applies to. Make sure "fixed_code" starts from this line.
 For "end_line", this is the last line of the code that the comment applies to. Make sure the "fixed_code" ends at this line.
