@@ -1,28 +1,7 @@
-# License
 
-This software is licensed under multiple licenses:
+### The MIT License (MIT)
 
-## 1. Commercial License for "ee/" Directory
-
-All content residing under any "ee/" directory of this repository, if such 
-directory exists, requires a commercial license. 
-
-To obtain a commercial license for the contents of the "ee/" directory, 
-please contact: team@cloudcode.ai
-
-## 2. Third Party Components
-
-All third party components incorporated into this software are licensed under 
-the original license provided by the owner of the applicable component.
-
-## 3. MIT License
-
-All content outside of the above mentioned directories or restrictions is 
-available under the MIT License, as follows:
-
-# MIT License
-
-Copyright (c) 2024 Cloud Code AI Inc
+Copyright (c) 2024 **Cloud Code AI Inc**
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
