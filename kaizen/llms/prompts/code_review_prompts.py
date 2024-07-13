@@ -3,97 +3,9 @@ As a senior software developer reviewing code submissions, provide thorough, con
 """
 
 CODE_REVIEW_PROMPT = """
-As an experienced software engineer reviewing a pull request, provide a concise and actionable code review that evaluates the code changes, identifies potential issues, and offers constructive feedback to the developer.
+As an experienced software engineer, provide a concise, actionable code review for the given pull request. Evaluate code changes, identify potential issues, and offer constructive feedback.
 
-Generate a code review with feedback organized as a JSON object, including only sections with relevant feedback and omitting sections without feedback. Use the following structure:
-{{
-  "review": [
-    {{
-      "topic": "<SECTION_TOPIC>",
-      "comment": "<CONSICE_COMMENT_ON_WHATS_THE_ISSUE>",
-      "confidence": "<CONFIDENCE_LEVEL>",
-      "reason": "<YOUR_REASON_FOR_COMMENTING_THIS_ISSUE>"
-      "solution": "<HIGH_LEVEL_SOLUTION>",
-      "fixed_code": "<FIXED_CODE>",
-      "start_line": "<CODE_START_LINE_INTEGER>",
-      "end_line": "<CODE_END_LINE_INTEGER>",
-      "side": "<LEFT_OR_RIGHT>",
-      "file_name": "<FULL_FILE_PATH>",
-      "sentiment": "<COMMENT_SENTIMENT_POSITIVE_NEGATIVE_OR_NEUTRAL>",
-      "severity_level": <INTEGER_FROM_1_TO_10>
-    }},
-    ...
-  ]
-}}
-
-For "solution", create a solution comment with high level solution to this issue.
-For "fixed_code", generated the fixed code script to replace the commented line. make sure you replace the exact changes code between start_line and end_line.
-For "start_line", The first line of the code in that the comment applies to. Make sure "fixed_code" starts from this line.
-For "end_line", this is the last line of the code that the comment applies to. Make sure the "fixed_code" ends at this line.
-For "side", provide the side as LEFT or RIGHT based on deleted or added lines respectively. Need this for github review comment.
-For "file_name" make sure to give the whole path so that developers can know exactly which file has issue.
-For "severity_level" score in range of 1 to 10, 1 being not severe and 10 being critical.
-
-Process the given patch data. Identify lines beginning with '+' (excluding the file header line starting with '+++') as additions.
-Make sure the "fixed_code" applied to addition lines only.
-
-When generating the description:
-
-- Create a concise and clear summary highlighting the main purpose of the pull request.
-- Use markdown formatting in the detailed description for better readability.
-- Organize the details into relevant sections or bullet points.
-- Focus on the most significant aspects of the changes.
-- Avoid repeating information already present in the pull request ti
-
-Confidence Levels based on severity of the issue:
-[
-  "critical",
-  "important",
-  "moderate",
-  "low",
-  "trivial"
-]
-
-Potential section topics:
-- "Code Quality"
-- "Performance" 
-- "Potential Issues"
-- "Improvements"
-
-Examine the code logic for the following issues:
-[
-  "Syntax Errors",
-  "Logic Errors",
-  "Off-by-one Errors",
-  "Infinite Loops",
-  "Null or Undefined Values",
-  "Resource Leaks",
-  "Race Conditions",
-  "Integration Issues",
-  "Performance Issues",
-  "Security Vulnerabilities"
-]
-
-
-Generate all relevant and actionable feedback. Merge duplicate feedbacks for the same line. For each piece of feedback, reference the specific file(s) and line number(s) of code being addressed. 
-Use markdown code blocks to quote relevant code snippets when necessary.
-
-Ensure comments are concise yet contain actionable and useful points directly related to the code or line with the issue. Avoid generic comments.
-
-If no feedback is necessary, return an empty JSON object: {{"review": []}}
-
-INFORMATION:
-Pull Request Title: {PULL_REQUEST_TITLE}
-Pull Request Description: {PULL_REQUEST_DESC}
-
-PATCH DATA:
-```{CODE_DIFF}```
-"""
-
-FILE_CODE_REVIEW_PROMPT = """
-As an experienced software engineer reviewing a pull request, provide a concise and actionable code review that evaluates the code changes, identifies potential issues, and offers constructive feedback to the developer.
-
-Generate a code review with feedback organized as a JSON object, including only sections with relevant feedback and omitting sections without feedback. Use the following structure:
+Generate a JSON object with the following structure, including only sections with relevant feedback:
 {{
   "review": [
     {{
@@ -112,78 +24,153 @@ Generate a code review with feedback organized as a JSON object, including only 
     }},
     ...
   ],
-    "desc": "
-### Summary
-
+  "desc": "
+  ### Summary
 <Brief one-line summary of the pull request>
-
 ### Details
-
 <Detailed multi-line description in markdown format>
 - List of key changes
 - New features
 - Refactoring details
   "
-}}
+  }}
 
-For "solution", create a solution comment with high level solution to this issue.
-For "fixed_code", generated the fixed code script to replace the commented line. make sure you replace the exact changes code between start_line and end_line.
-For "start_line", The first line of the code in that the comment applies to. Make sure "fixed_code" starts from this line.
-For "end_line", this is the last line of the code that the comment applies to. Make sure the "fixed_code" ends at this line.
-For "side", provide the side as LEFT or RIGHT based on deleted or added lines respectively. Need this for github review comment.
-For "file_name" make sure to give the whole path so that developers can know exactly which file has issue.
-For "severity_level" score in range of 1 to 10, 1 being not severe and 10 being critical.
+Field Guidelines:
+- "solution": Provide a high-level solution to the identified issue.
+- "fixed_code": Generate corrected code to replace the commented lines, ensuring changes are between start_line and end_line.
+- "start_line": The actual line number in the new file where the change begins. For added lines, this is the line number of the first '+' line in the chunk.
+- "end_line": The actual line number in the new file where the change ends. For added lines, this is the line number of the last '+' line in the chunk.
+- "side": Use "LEFT" for deleted lines, "RIGHT" for added lines (for GitHub review comments).
+- "file_name": Include the full file path for precise issue location.
+- "severity_level": Score from 1 (least severe) to 10 (most critical).
 
-Process the given patch data. Identify lines beginning with '+' (excluding the file header line starting with '+++') as additions
-Make sure the "fixed_code" applied to addition lines only.
-
-When generating the description:
-
-- Create a concise and clear summary highlighting the main purpose of the pull request.
-- Use markdown formatting in the detailed description for better readability.
-- Organize the details into relevant sections or bullet points.
-- Focus on the most significant aspects of the changes.
-- Avoid repeating information already present in the pull request title or description.
-- Ensure the output is in valid JSON format.
-
-Confidence Levels based on severity of the issue:
-[
-  "critical",
-  "important",
-  "moderate",
-  "low",
-  "trivial"
-]
-
-Potential section topics:
-- "Code Quality"
-- "Performance" 
-- "Potential Issues"
-- "Improvements"
-
-Examine the code logic for the following issues:
-[
-  "Syntax Errors",
-  "Logic Errors",
-  "Off-by-one Errors",
-  "Infinite Loops",
-  "Null or Undefined Values",
-  "Resource Leaks",
-  "Race Conditions",
-  "Integration Issues",
-  "Performance Issues",
-  "Security Vulnerabilities"
-]
+Patch Data Processing:
+Reading git patch data involves understanding several key elements. The patch starts with file information, indicating which files are being modified.
+Chunk headers, beginning with "@@", show the affected line numbers in both old and new versions of the file. 
+Content changes are marked with '-' for deletions and '+' for additions, while unchanged lines serve as context. 
+A single file may have multiple chunks, each starting with a new "@@" header. When calculating line numbers, it's crucial to account for all previous additions and deletions in the file.
 
 
-Generate all relevant and actionable feedback. Merge duplicate feedbacks for the same line. For each piece of feedback, reference the specific file(s) and line number(s) of code being addressed. 
-Use markdown code blocks to quote relevant code snippets when necessary.
+When analyzing this patch:
+1. Note that there are changes in two different files.
+2. The first file has two separate chunks of changes.
+3. Line numbers in the second chunk of the first file are affected by the additions in the first chunk.
+4. The second file has one chunk of changes, including both additions and a deletion.
 
-Ensure comments are concise yet contain actionable and useful points directly related to the code or line with the issue. Avoid generic comments.
+Always calculate the actual line numbers in the new version of each file, accounting for all additions and deletions in previous chunks.
 
-If no feedback is necessary, return an empty JSON object: {{"review": []}}
+Patch Data Processing:
+- Identify lines starting with '+' as additions (exclude file header lines starting with '+++').
+
+Confidence Levels: ["critical", "important", "moderate", "low", "trivial"]
+
+Potential Topics:
+- Code Quality
+- Performance
+- Potential Issues
+- Improvements
+
+Key Areas to Examine:
+- Syntax Errors
+- Logic Errors
+- Off-by-one Errors
+- Infinite Loops
+- Null/Undefined Values
+- Resource Leaks
+- Race Conditions
+- Integration Issues
+- Performance Issues
+- Security Vulnerabilities
+
+
+Provide actionable feedback, referencing specific files and line numbers. Use markdown code blocks for relevant snippets. Merge duplicate feedback for the same line. Ensure comments are concise yet useful.
+
+If no feedback is necessary, return: {{"review": []}}
 
 INFORMATION:
+
+Pull Request Title: {PULL_REQUEST_TITLE}
+Pull Request Description: {PULL_REQUEST_DESC}
+
+PATCH DATA:
+```{CODE_DIFF}```
+"""
+
+FILE_CODE_REVIEW_PROMPT = """
+As an experienced software engineer, provide a concise, actionable code review for the given pull request. Evaluate code changes, identify potential issues, and offer constructive feedback.
+
+Generate a JSON object with the following structure, including only sections with relevant feedback:
+{{
+  "review": [
+    {{
+      "topic": "<SECTION_TOPIC>",
+      "comment": "<CONSICE_COMMENT_ON_WHATS_THE_ISSUE>",
+      "confidence": "<CONFIDENCE_LEVEL>",
+      "reason": "<YOUR_REASON_FOR_COMMENTING_THIS_ISSUE>"
+      "solution": "<HIGH_LEVEL_SOLUTION>",
+      "fixed_code": "<FIXED_CODE>",
+      "start_line": "<CODE_START_LINE_INTEGER>",
+      "end_line": "<CODE_END_LINE_INTEGER>",
+      "side": "<LEFT_OR_RIGHT>",
+      "file_name": "<FULL_FILE_PATH>",
+      "sentiment": "<COMMENT_SENTIMENT_POSITIVE_NEGATIVE_OR_NEUTRAL>",
+      "severity_level": <INTEGER_FROM_1_TO_10>
+    }},
+    ...
+  ]
+  }}
+
+Field Guidelines:
+- "solution": Provide a high-level solution to the identified issue.
+- "fixed_code": Generate corrected code to replace the commented lines, ensuring changes are between start_line and end_line.
+- "start_line": The actual line number in the new file where the change begins. For added lines, this is the line number of the first '+' line in the chunk.
+- "end_line": The actual line number in the new file where the change ends. For added lines, this is the line number of the last '+' line in the chunk.
+- "side": Use "LEFT" for deleted lines, "RIGHT" for added lines (for GitHub review comments).
+- "file_name": Include the full file path for precise issue location.
+- "severity_level": Score from 1 (least severe) to 10 (most critical).
+
+Patch Data Processing:
+Reading git patch data involves understanding several key elements. The patch starts with file information, indicating which files are being modified.
+Chunk headers, beginning with "@@", show the affected line numbers in both old and new versions of the file. 
+Content changes are marked with '-' for deletions and '+' for additions, while unchanged lines serve as context. 
+A single file may have multiple chunks, each starting with a new "@@" header. When calculating line numbers, it's crucial to account for all previous additions and deletions in the file.
+
+
+When analyzing this patch:
+1. Note that there are changes in two different files.
+2. The first file has two separate chunks of changes.
+3. Line numbers in the second chunk of the first file are affected by the additions in the first chunk.
+4. The second file has one chunk of changes, including both additions and a deletion.
+
+Always calculate the actual line numbers in the new version of each file, accounting for all additions and deletions in previous chunks.
+
+Confidence Levels: ["critical", "important", "moderate", "low", "trivial"]
+
+Potential Topics:
+- Code Quality
+- Performance
+- Potential Issues
+- Improvements
+
+Key Areas to Examine:
+- Syntax Errors
+- Logic Errors
+- Off-by-one Errors
+- Infinite Loops
+- Null/Undefined Values
+- Resource Leaks
+- Race Conditions
+- Integration Issues
+- Performance Issues
+- Security Vulnerabilities
+
+
+Provide actionable feedback, referencing specific files and line numbers. Use markdown code blocks for relevant snippets. Merge duplicate feedback for the same line. Ensure comments are concise yet useful.
+
+If no feedback is necessary, return: {{"review": []}}
+
+INFORMATION:
+
 Pull Request Title: {PULL_REQUEST_TITLE}
 Pull Request Description: {PULL_REQUEST_DESC}
 
@@ -336,7 +323,7 @@ PR_REVIEW_EVALUATION_PROMPT = """
 Please evaluate the accuracy and completeness of your previous responses in this conversation.
 Fix any potential errors or areas for improvement.
 
-Generate a code review with feedback organized as a JSON object, including only sections with relevant feedback and omitting sections without feedback. Use the following structure:
+Generate a JSON object with the following structure, including only sections with relevant feedback:
 {{
   "review": [
     {{
@@ -344,17 +331,27 @@ Generate a code review with feedback organized as a JSON object, including only 
       "comment": "<CONSICE_COMMENT_ON_WHATS_THE_ISSUE>",
       "confidence": "<CONFIDENCE_LEVEL>",
       "reason": "<YOUR_REASON_FOR_COMMENTING_THIS_ISSUE>"
-      "solution": "<SOLUTION_TO_THE_COMMENT>",
+      "solution": "<HIGH_LEVEL_SOLUTION>",
+      "fixed_code": "<FIXED_CODE>",
       "start_line": "<CODE_START_LINE_INTEGER>",
       "end_line": "<CODE_END_LINE_INTEGER>",
-      "file_name": "<ABSOLUTE_CODE_FILE_PATH>",
-      "request_for_change": "<NEEDS_UPDATE_IN_TRUE_OR_FALSE>"
+      "side": "<LEFT_OR_RIGHT>",
+      "file_name": "<FULL_FILE_PATH>",
+      "sentiment": "<COMMENT_SENTIMENT_POSITIVE_NEGATIVE_OR_NEUTRAL>",
+      "severity_level": <INTEGER_FROM_1_TO_10>
     }},
     ...
   ]
-}}
+  }}
 
-For "file_name" make sure to give the whole path so that developers can know exactly which file has issue.
+Field Guidelines:
+- "solution": Provide a high-level solution to the identified issue.
+- "fixed_code": Generate corrected code to replace the commented lines, ensuring changes are between start_line and end_line.
+- "start_line": The actual line number in the new file where the change begins. For added lines, this is the line number of the first '+' line in the chunk.
+- "end_line": The actual line number in the new file where the change ends. For added lines, this is the line number of the last '+' line in the chunk.
+- "side": Use "LEFT" for deleted lines, "RIGHT" for added lines (for GitHub review comments).
+- "file_name": Include the full file path for precise issue location.
+- "severity_level": Score from 1 (least severe) to 10 (most critical).
 
 Confidence Levels based on severity of the issue:
 [
@@ -365,4 +362,12 @@ Confidence Levels based on severity of the issue:
   "trivial"
 ]
 
+If no feedback is necessary, return: {{"review": []}}
+
+
+ACTUAL_PROMPT:
+{ACTUAL_PROMPT}
+
+LLM_OUTPUT:
+{LLM_OUTPUT}
 """

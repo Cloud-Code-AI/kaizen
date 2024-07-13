@@ -9,6 +9,7 @@ from kaizen.llms.prompts.code_review_prompts import (
     PR_REVIEW_EVALUATION_PROMPT,
     CODE_REVIEW_SYSTEM_PROMPT,
 )
+import json
 
 
 @dataclass
@@ -193,14 +194,15 @@ class CodeReviewer:
         return resp["review"]
 
     def _reevaluate_response(self, prompt: str, resp: str, user: Optional[str]) -> str:
+        new_prompt = PR_REVIEW_EVALUATION_PROMPT.format(
+            ACTUAL_PROMPT=prompt, LLM_OUTPUT=json.dumps(resp)
+        )
         messages = [
             {"role": "system", "content": self.provider.system_prompt},
-            {"role": "user", "content": prompt},
-            {"role": "assistant", "content": resp},
-            {"role": "user", "content": PR_REVIEW_EVALUATION_PROMPT},
+            {"role": "user", "content": new_prompt},
         ]
-        resp, usage = self.provider.chat_completion(
-            prompt, user=user, messages=messages
+        resp, usage = self.provider.chat_completion_with_json(
+            new_prompt, user=user, messages=messages
         )
         self.total_usage = self.provider.update_usage(self.total_usage, usage)
         return resp
