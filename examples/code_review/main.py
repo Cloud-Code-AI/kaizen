@@ -26,7 +26,7 @@ review_data = reviewer.review_pull_request(
     pull_request_desc="",
     pull_request_files=pr_files,
     user="kaizen/example",
-    reeval_response=False
+    reeval_response=False,
 )
 
 topics = clean_keys(review_data.topics, "important")
@@ -37,12 +37,12 @@ print(f"Raw Topics: \n {json.dumps(topics, indent=2)}\n")
 print(f"GENERATED REVIEW: \n {review_desc}")
 print(f"\nComment and topics: \n {comments}, \n{topics}")
 print("---------------Generate desc-------------")
-# pr_desc = PRDescriptionGenerator(llm_provider=LLMProvider())
-# desc_data = pr_desc.generate_pull_request_desc(
-#     diff_text=None,
-#     pull_request_title=pr_title,
-#     pull_request_desc="",
-#     pull_request_files=pr_files,
-#     user="kaizen/example",
-# )
-# print(desc_data)
+pr_desc = PRDescriptionGenerator(llm_provider=LLMProvider())
+desc_data = pr_desc.generate_pull_request_desc(
+    diff_text=None,
+    pull_request_title=pr_title,
+    pull_request_desc="",
+    pull_request_files=pr_files,
+    user="kaizen/example",
+)
+print(desc_data)

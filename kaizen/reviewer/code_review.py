@@ -195,12 +195,11 @@ class CodeReviewer:
 
     def _reevaluate_response(self, prompt: str, resp: str, user: Optional[str]) -> str:
         new_prompt = PR_REVIEW_EVALUATION_PROMPT.format(
-            ACTUAL_PROMPT=prompt,
-            LLM_OUTPUT=json.dumps(resp)
+            ACTUAL_PROMPT=prompt, LLM_OUTPUT=json.dumps(resp)
         )
         messages = [
             {"role": "system", "content": self.provider.system_prompt},
-            {"role": "user", "content": new_prompt}
+            {"role": "user", "content": new_prompt},
         ]
         resp, usage = self.provider.chat_completion_with_json(
             new_prompt, user=user, messages=messages
