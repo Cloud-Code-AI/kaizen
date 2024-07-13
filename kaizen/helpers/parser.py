@@ -1,7 +1,63 @@
 import json
 import re
 
-EXCLUDED_FILETYPES = ["json"]
+EXCLUDED_FILETYPES = [
+    # Compiled output
+    "class",
+    "o",
+    "obj",
+    "exe",
+    "dll",
+    "pyc",
+    "pyo",
+    # Package manager files
+    "lock",  # Covers package-lock.json, yarn.lock, Gemfile.lock, composer.lock
+    # IDE configurations
+    "idea",
+    "vscode",
+    "project",
+    "classpath",
+    # Build artifacts and dependencies
+    "node_modules",
+    "vendor",
+    "target",
+    "build",
+    # Binary and large files
+    "zip",
+    "tar",
+    "gz",
+    "rar",
+    "pdf",
+    "doc",
+    "docx",
+    "xls",
+    "xlsx",
+    "jpg",
+    "jpeg",
+    "png",
+    "gif",
+    "bmp",
+    "ico",
+    "mp3",
+    "mp4",
+    "avi",
+    "mov",
+    # Log files
+    "log",
+    # Database files
+    "db",
+    "sqlite",
+    # Temporary files
+    "tmp",
+    "temp",
+    # OS-specific files
+    "DS_Store",
+    "Thumbs.db",
+    # Configuration files
+    "gitignore",
+    "dockerignore",
+    # Add any other specific extensions or directory names you want to exclude
+]
 
 
 def extract_json(text):

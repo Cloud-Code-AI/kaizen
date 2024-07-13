@@ -45,7 +45,7 @@ def process_pull_request(payload):
     # Get PR Files
     pr_files = get_pr_files(pr_files_url, access_token)
 
-    reviewer = CodeReviewer(llm_provider=LLMProvider())
+    reviewer = CodeReviewer(llm_provider=LLMProvider(default_temperature=0.1))
     review_data = reviewer.review_pull_request(
         diff_text=diff_text,
         pull_request_title=pr_title,
