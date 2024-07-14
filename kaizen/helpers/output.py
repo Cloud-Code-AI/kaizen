@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 PR_COLLAPSIBLE_TEMPLATE = """
 <details>
 <summary> --> {comment}</summary> \n
-</strong> Potential Solution:</strong> \n\n{solution}
+<strong> Potential Solution:</strong> \n\n{solution}
 \n
 <blockquote>  
     <p><code>{file_name} | {start_line} - {end_line}</code></p>
