@@ -352,7 +352,6 @@ Field Guidelines:
 - "side": Use "LEFT" for deleted lines, "RIGHT" for added lines (for GitHub review comments).
 - "file_name": Include the full file path for precise issue location.
 - "severity_level": Score from 1 (least severe) to 10 (most critical).
-
 Confidence Levels based on severity of the issue:
 [
   "critical",

@@ -7,6 +7,8 @@ from kaizen.helpers.general import retry
 from kaizen.helpers.parser import extract_json
 from litellm import Router
 import logging
+from collections import defaultdict
+
 
 LOGLEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()
 logging.basicConfig(
@@ -69,6 +71,19 @@ class LLMProvider:
 
         self.provider = Router(**provider_kwargs)
         self.model = self.models[0]["litellm_params"]["model"]
+        self.model_group_to_name = dict(
+            defaultdict(
+                list,
+                {
+                    item["model_name"]: [
+                        i["litellm_params"]["model"]
+                        for i in self.models
+                        if i["model_name"] == item["model_name"]
+                    ]
+                    for item in self.models
+                },
+            )
+        )
 
     def _setup_redis(self, provider_kwargs: Dict[str, Any]) -> None:
         redis_host = os.environ.get("REDIS_HOST")
