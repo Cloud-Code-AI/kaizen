@@ -1,13 +1,11 @@
-from typing import Optional, List, Dict, Generator
+from typing import Optional, List, Dict
 from dataclasses import dataclass
 import logging
-from kaizen.helpers import parser
 from kaizen.llms.provider import LLMProvider
 from kaizen.llms.prompts.code_scan_prompts import (
     CODE_SCAN_SYSTEM_PROMPT,
     CODE_SCAN_PROMPT,
 )
-import json
 
 
 @dataclass
