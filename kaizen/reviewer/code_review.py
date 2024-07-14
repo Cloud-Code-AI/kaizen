@@ -96,7 +96,7 @@ class CodeReviewer:
         reeval_response: bool,
     ) -> List[Dict]:
         self.logger.debug("Processing directly from diff")
-        resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
+        resp, usage = self.provider.chat_completion_with_format(prompt, user=user)
         self.total_usage = self.provider.update_usage(self.total_usage, usage)
         if reeval_response:
             resp = self._reevaluate_response(prompt, resp, user)
@@ -185,7 +185,7 @@ class CodeReviewer:
             PULL_REQUEST_DESC=pull_request_desc,
             FILE_PATCH=diff_data,
         )
-        resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
+        resp, usage = self.provider.chat_completion_with_format(prompt, user=user)
         self.total_usage = self.provider.update_usage(self.total_usage, usage)
 
         if reeval_response:
@@ -201,7 +201,7 @@ class CodeReviewer:
             {"role": "system", "content": self.provider.system_prompt},
             {"role": "user", "content": new_prompt},
         ]
-        resp, usage = self.provider.chat_completion_with_json(
+        resp, usage = self.provider.chat_completion_with_format(
             new_prompt, user=user, messages=messages
         )
         self.total_usage = self.provider.update_usage(self.total_usage, usage)

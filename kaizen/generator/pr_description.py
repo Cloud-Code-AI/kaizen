@@ -80,12 +80,12 @@ class PRDescriptionGenerator:
         reeval_response: bool,
     ) -> str:
         self.logger.debug("Processing directly from diff")
-        resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
+        resp, usage = self.provider.chat_completion_with_format(prompt, user=user, format="markdown")
         self.total_usage = self.provider.update_usage(self.total_usage, usage)
 
         if reeval_response:
             resp = self._reevaluate_response(prompt, resp, user)
-        return resp["desc"]
+        return resp
 
     def _process_files(
         self,
@@ -107,10 +107,10 @@ class PRDescriptionGenerator:
             file_descs.extend(file_review)
 
         prompt = MERGE_PR_DESCRIPTION_PROMPT.format(DESCS=json.dumps(file_descs))
-        resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
+        resp, usage = self.provider.chat_completion_with_format(prompt, user=user, format="markdown")
         self.total_usage = self.provider.update_usage(self.total_usage, usage)
 
-        return resp["desc"]
+        return resp
 
     def _process_files_generator(
         self,
@@ -179,13 +179,13 @@ class PRDescriptionGenerator:
             PULL_REQUEST_DESC=pull_request_desc,
             CODE_DIFF=diff_data,
         )
-        resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
+        resp, usage = self.provider.chat_completion_with_format(prompt, user=user, format="markdown")
         self.total_usage = self.provider.update_usage(self.total_usage, usage)
 
         if reeval_response:
             resp = self._reevaluate_response(prompt, resp, user)
 
-        return resp["desc"]
+        return resp
 
     def _reevaluate_response(self, prompt: str, resp: str, user: Optional[str]) -> str:
         messages = [

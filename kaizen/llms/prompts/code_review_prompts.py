@@ -179,119 +179,114 @@ File PATCH:
 """
 
 PR_DESCRIPTION_PROMPT = """
-As a skilled developer reviewing a pull request, generate a concise and well-formatted description summarizing the main purpose, scope of changes, significant modifications, refactoring, or new features introduced in the pull request.
+Summarize this pull request concisely and comprehensively. Output in this markdown format:
 
-Provide the output in the following JSON format:
+```markdown
+# Pull Request Summary
 
-{{
-  "desc": "
-### Summary
+## Overview
+[One-line summary]
 
-<Brief one-line summary of the pull request>
+## Key Changes
+- [Change 1]
+- [Change 2]
 
-### Details
+## New Features
+- [Feature 1]
+- [Feature 2]
 
-<Detailed multi-line description in markdown format>
-- List of key changes
-- New features
-- Refactoring details
-  "
-}}
+## Refactoring
+- [Refactoring 1]
+- [Refactoring 2]
 
-When generating the description:
+## Notes
+[Additional context]
+```
 
-- Create a concise and clear summary highlighting the main purpose of the pull request.
-- Use markdown formatting in the detailed description for better readability.
-- Organize the details into relevant sections or bullet points.
-- Focus on the most significant aspects of the changes.
-- Avoid repeating information already present in the pull request title or description.
-- Ensure the output is in valid JSON format.
+Guidelines:
+- Highlight main purpose and significant changes
+- Use bullet points for clarity
+- Avoid repeating PR title/description
+- Infer details from available information if needed
 
-Based on the provided information:
-
-Pull Request Title: {PULL_REQUEST_TITLE}
-Pull Request Description: {PULL_REQUEST_DESC}
-Patch Data:
+Based on:
+Title: {PULL_REQUEST_TITLE}
+Description: {PULL_REQUEST_DESC}
+Patch:
 {CODE_DIFF}
-
-Analyze the information thoroughly and generate a comprehensive summary and detailed description.
-Use your expertise to identify and highlight the most important aspects of the changes without asking for additional clarification. If certain details are unclear, make reasonable inferences based on the available information and your development experience.
-
 """
 
 PR_FILE_DESCRIPTION_PROMPT = """
-As a skilled developer reviewing a pull request, generate a concise and well-formatted description summarizing the main purpose, scope of changes, significant modifications, refactoring, or new features introduced in the pull request.
+Summarize this pull request file concisely and comprehensively. Output in this markdown format:
 
-Provide the output in the following JSON format:
+```markdown
+# Pull Request Summary
 
-{{
-  "desc": "
-### Summary
+## Overview
+[One-line summary]
 
-<Brief one-line summary of the pull request>
+## Key Changes
+- [Change 1]
+- [Change 2]
 
-### Details
+## New Features
+- [Feature 1]
+- [Feature 2]
 
-<Detailed multi-line description in markdown format>
-- List of key changes
-- New features
-- Refactoring details
-  "
-}}
+## Refactoring
+- [Refactoring 1]
+- [Refactoring 2]
 
-When generating the description:
+## Notes
+[Additional context]
+```
 
-- Create a concise and clear summary highlighting the main purpose of the pull request.
-- Use markdown formatting in the detailed description for better readability.
-- Organize the details into relevant sections or bullet points.
-- Focus on the most significant aspects of the changes.
-- Avoid repeating information already present in the pull request title or description.
-- Ensure the output is in valid JSON format.
+Guidelines:
+- Highlight main purpose and significant changes
+- Use bullet points for clarity
+- Avoid repeating PR title/description
+- Infer details from available information if needed
 
-Based on the provided information:
-
-Pull Request Title: {PULL_REQUEST_TITLE}
-Pull Request Description: {PULL_REQUEST_DESC}
-Patch Data:
+Based on:
+Title: {PULL_REQUEST_TITLE}
+Description: {PULL_REQUEST_DESC}
+Patch:
 {CODE_DIFF}
-
-Analyze the information thoroughly and generate a comprehensive summary and detailed description.
-Use your expertise to identify and highlight the most important aspects of the changes without asking for additional clarification. If certain details are unclear, make reasonable inferences based on the available information and your development experience.
 """
 
 MERGE_PR_DESCRIPTION_PROMPT = """
-As a skilled developer reviewing a pull request, generate a concise and well-formatted description that synthesizes multiple PR descriptions into a single, comprehensive summary. This summary should encapsulate the main purpose, scope of changes, significant modifications, refactoring, and new features introduced in the pull request.
+Synthesize multiple PR descriptions into a single, comprehensive summary. Use this markdown format:
 
-Using the provided PR descriptions in JSON format, create a merged PR Description in the following JSON format:
+```markdown
+# Pull Request Summary
 
-{{
-  "desc": "
-### Summary
+## Overview
+[One-line summary of overall purpose]
 
-<Brief one-line summary encompassing the overall purpose of the pull request>
+## Changes
+- [Change 1]
+- [Change 2]
 
-### Details
+## New Features
+- [Feature 1]
+- [Feature 2]
 
-<Detailed multi-line description in markdown format>
-- Consolidated list of key changes
-- Aggregated new features
-- Combined refactoring details
-- Other significant aspects from all descriptions
-  "
-}}
+##  Refactoring
+- [Refactoring 1]
+- [Refactoring 2]
 
-When generating the merged description:
+## Notes
+[Important context from all descriptions]
+```
 
-- Create a concise yet comprehensive summary that captures the essence of all provided descriptions.
-- Use markdown formatting in the detailed description for improved readability.
-- Organize the details into relevant sections or bullet points, consolidating similar information from different descriptions.
-- Focus on the most significant aspects of the changes across all descriptions.
-- Eliminate redundancies and repetitions while ensuring all unique and important points are included.
-- Ensure the output is in valid JSON format.
+Guidelines:
+- Capture essence of all descriptions
+- Consolidate similar items
+- Focus on most significant aspects
+- Eliminate redundancies
+- Use Notes for special attention items
 
-Analyze the provided PR descriptions thoroughly and generate a unified, comprehensive summary and detailed description. Use your expertise to identify, merge, and highlight the most important aspects of the changes across all descriptions. If certain details seem contradictory or unclear, use your best judgment to provide the most accurate and coherent representation of the pull request's purpose and changes.
-
-Here is the information:
+PR descriptions to merge:
 {DESCS}
 """
 

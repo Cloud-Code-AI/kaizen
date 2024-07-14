@@ -21,7 +21,7 @@ class UIReviewer:
         # Get HTML Data
         html = output.get_web_html(url)
         prompt = UI_REVIEWER_PROMPT.format(HTML_CODE=html)
-        response, usage = self.provider.chat_completion_with_json(prompt, user=user)
+        response, usage = self.provider.chat_completion_with_format(prompt, user=user)
         feedback = response.get("review", [])
 
         return {"reviews": feedback, "usage": usage}

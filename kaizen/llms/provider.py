@@ -4,7 +4,7 @@ from typing import Dict, Optional, Any
 from kaizen.llms.prompts.general_prompts import BASIC_SYSTEM_PROMPT
 from kaizen.utils.config import ConfigData
 from kaizen.helpers.general import retry
-from kaizen.helpers.parser import extract_json
+from kaizen.helpers.parser import extract_json, extract_markdown_content
 from litellm import Router
 import logging
 from collections import defaultdict
@@ -143,13 +143,14 @@ class LLMProvider:
         return response["choices"][0]["message"]["content"], response["usage"]
 
     @retry(max_attempts=3, delay=1)
-    def chat_completion_with_json(
+    def chat_completion_with_format(
         self,
         prompt,
         user: str = None,
         model="default",
         custom_model=None,
         messages=None,
+        format="json"
     ):
         response, usage = self.chat_completion(
             prompt=prompt,
@@ -158,7 +159,10 @@ class LLMProvider:
             custom_model=custom_model,
             messages=messages,
         )
-        response = extract_json(response)
+        if format == "json":
+            response = extract_json(response)
+        elif format == "markdown":
+            response = extract_markdown_content(response)
         return response, usage
 
     def is_inside_token_limit(self, PROMPT: str, percentage: float = 0.8) -> bool:

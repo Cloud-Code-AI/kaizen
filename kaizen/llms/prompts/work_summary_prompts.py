@@ -48,7 +48,7 @@ Summary:
 {SUMMARY}
 
 Twitter Post:
-```
+```markdown
 <Your Twitter post here>
 ```
 """
@@ -60,7 +60,7 @@ Summary:
 {SUMMARY}
 
 LinkedIn Post:
-```
+```markdown
 <Your LinkedIn post here>
 ```
 """

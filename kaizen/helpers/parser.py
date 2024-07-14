@@ -89,7 +89,7 @@ def extract_multi_json(text):
 
 
 def extract_markdown_content(text: str) -> str:
-    match = re.search(r"```([\s\S]*?)```", text)
+    match = re.search(r"```(?:markdown)?\s*([\s\S]*?)\s*```", text, re.IGNORECASE)
     if match:
         return match.group(1).strip()
     return ""

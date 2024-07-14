@@ -72,7 +72,7 @@ class CodeScanner:
         prompt: str,
         user: Optional[str],
     ) -> List[Dict]:
-        resp, usage = self.provider.chat_completion_with_json(
+        resp, usage = self.provider.chat_completion_with_format(
             prompt, user=user, model="best"
         )
         self.total_usage = self.provider.update_usage(self.total_usage, usage)
