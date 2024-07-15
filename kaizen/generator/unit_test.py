@@ -62,7 +62,9 @@ class UnitTestGenerator:
         self.total_usage = self.provider.DEFAULT_USAGE
         for item in parsed_data:
             test_file_name = f"test_{item['name'].lower()}.{file_extension}"
-            test_file_path = os.path.join(self.output_folder, folder_path, test_file_name)
+            test_file_path = os.path.join(
+                self.output_folder, folder_path, test_file_name
+            )
             self._create_output_folder("/".join(test_file_path.split("/")[:-1]))
             item["full_path"] = file_path
             ai_generated_tests, usage = self.generate_ai_tests(

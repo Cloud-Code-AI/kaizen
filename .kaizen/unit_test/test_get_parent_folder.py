@@ -1,4 +1,3 @@
-import os
 import pytest
 from unittest import mock
 from kaizen.helpers.output import get_parent_folder
