@@ -2,7 +2,7 @@ import pytest
 from kaizen.helpers.output import create_pr_description
 
 DESC_COLLAPSIBLE_TEMPLATE = (
-    "<details><summary>Original Description</summary>{desc}</details>"
+    "<details><summary>Original Description</summary>\n\n{desc}\n\n</details>"
 )
 
 
@@ -10,43 +10,39 @@ DESC_COLLAPSIBLE_TEMPLATE = (
     "desc, original_desc, expected",
     [
         (
-            "This is a PR description.",
-            "This is the original description.",
-            "This is a PR description.\n\n> ✨ Generated with love by Kaizen ❤️\n\n<details><summary>Original Description</summary>This is the original description.</details>",
-        ),
-        (
-            "Short desc.",
-            "Original.",
-            "Short desc.\n\n> ✨ Generated with love by Kaizen ❤️\n\n<details><summary>Original Description</summary>Original.</details>",
+            "New feature added",
+            "This is the original description",
+            "New feature added\n\n> ✨ Generated with love by Kaizen ❤️\n\n<details><summary>Original Description</summary>\n\nThis is the original description\n\n</details>",
         ),
         (
             "",
-            "Empty original.",
-            "\n\n> ✨ Generated with love by Kaizen ❤️\n\n<details><summary>Original Description</summary>Empty original.</details>",
+            "",
+            "\n\n> ✨ Generated with love by Kaizen ❤️\n\n<details><summary>Original Description</summary>\n\n\n\n</details>",
         ),
         (
-            "Edge case with special chars !@#$%^&*()",
-            "Special chars in original !@#$%^&*()",
-            "Edge case with special chars !@#$%^&*()\n\n> ✨ Generated with love by Kaizen ❤️\n\n<details><summary>Original Description</summary>Special chars in original !@#$%^&*()</details>",
+            "Fix bug in code",
+            "Original bug description",
+            "Fix bug in code\n\n> ✨ Generated with love by Kaizen ❤️\n\n<details><summary>Original Description</summary>\n\nOriginal bug description\n\n</details>",
         ),
         (
-            "Long description " + "a" * 1000,
-            "Long original description " + "b" * 1000,
-            "Long description "
-            + "a" * 1000
-            + "\n\n> ✨ Generated with love by Kaizen ❤️\n\n<details><summary>Original Description</summary>Long original description "
-            + "b" * 1000
-            + "</details>",
+            "Update documentation",
+            "",
+            "Update documentation\n\n> ✨ Generated with love by Kaizen ❤️\n\n<details><summary>Original Description</summary>\n\n\n\n</details>",
         ),
     ],
 )
 def test_create_pr_description(desc, original_desc, expected):
-    assert create_pr_description(desc, original_desc) == expected
+    result = create_pr_description(desc, original_desc)
+    assert result == expected
 
 
 @pytest.mark.parametrize(
     "desc, original_desc",
-    [(None, "Original description"), ("Description", None), (None, None)],
+    [
+        (None, "This is the original description"),
+        ("New feature added", None),
+        (None, None),
+    ],
 )
 def test_create_pr_description_with_none(desc, original_desc):
     with pytest.raises(TypeError):
@@ -54,19 +50,36 @@ def test_create_pr_description_with_none(desc, original_desc):
 
 
 @pytest.mark.parametrize(
+    "desc, original_desc, expected_length",
+    [("a" * 1000, "b" * 1000, 2024), ("a" * 5000, "b" * 5000, 10024)],
+)
+def test_create_pr_description_boundary_conditions(
+    desc, original_desc, expected_length
+):
+    result = create_pr_description(desc, original_desc)
+    assert len(result) == expected_length
+
+
+@pytest.mark.parametrize(
     "desc, original_desc, expected",
     [
         (
-            "This is a PR description.",
-            "",
-            "This is a PR description.\n\n> ✨ Generated with love by Kaizen ❤️\n\n<details><summary>Original Description</summary></details>",
+            "New feature added",
+            "This is the original description",
+            "New feature added\n\n> ✨ Generated with love by Kaizen ❤️\n\n<details><summary>Original Description</summary>\n\nThis is the original description\n\n</details>",
         ),
         (
             "",
             "",
-            "\n\n> ✨ Generated with love by Kaizen ❤️\n\n<details><summary>Original Description</summary></details>",
+            "\n\n> ✨ Generated with love by Kaizen ❤️\n\n<details><summary>Original Description</summary>\n\n\n\n</details>",
         ),
     ],
 )
-def test_create_pr_description_with_empty_original(desc, original_desc, expected):
-    assert create_pr_description(desc, original_desc) == expected
+def test_create_pr_description_with_mocked_template(
+    desc, original_desc, expected, mocker
+):
+    mocker.patch(
+        "kaizen.helpers.output.DESC_COLLAPSIBLE_TEMPLATE", DESC_COLLAPSIBLE_TEMPLATE
+    )
+    result = create_pr_description(desc, original_desc)
+    assert result == expected

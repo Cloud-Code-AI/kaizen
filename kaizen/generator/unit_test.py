@@ -27,13 +27,17 @@ class UnitTestGenerator:
         }
         self.logger = logging.getLogger(__name__)
         self.provider = LLMProvider(system_prompt=UNIT_TEST_SYSTEM_PROMPT)
-        self._create_output_folder()
+        self._create_output_folder(self.output_folder)
 
-    def generate_tests(self, file_path: str, content: str = None):
+    def generate_tests(
+        self, file_path: str, content: str = None, output_path: str = None
+    ):
         """
         file_path: (str) - path of file relative to the root of project.
         content: (str) - File Content
         """
+        if output_path:
+            self.output_folder = output_path
         file_extension = file_path.split(".")[-1]
         if file_extension not in self.supported_languages:
             raise ValueError(f"Unsupported file type: .{file_extension}")
@@ -45,19 +49,23 @@ class UnitTestGenerator:
         parser_class = getattr(parser_module, parser_class_name)
         parser = parser_class()
 
-        # Load content if its none
-        with open(file_path, "r+") as file:
-            content = file.read()
+        if not content:
+            with open(file_path, "r+") as file:
+                content = file.read()
 
         parsed_data = parser.parse(content)
         self.generate_test_files(parsed_data, file_extension, file_path)
         return {}, self.total_usage
 
     def generate_test_files(self, parsed_data, file_extension, file_path):
+        folder_path = "/".join(file_path.split("/")[:-1])
         self.total_usage = self.provider.DEFAULT_USAGE
         for item in parsed_data:
             test_file_name = f"test_{item['name'].lower()}.{file_extension}"
-            test_file_path = os.path.join(self.output_folder, test_file_name)
+            test_file_path = os.path.join(
+                self.output_folder, folder_path, test_file_name
+            )
+            self._create_output_folder("/".join(test_file_path.split("/")[:-1]))
             item["full_path"] = file_path
             ai_generated_tests, usage = self.generate_ai_tests(
                 item, source_code=item["source"]
@@ -95,41 +103,5 @@ class UnitTestGenerator:
         response, usage = self.provider.chat_completion(prompt, model="best")
         return response, usage
 
-    def _create_output_folder(self):
-        os.makedirs(self.output_folder, exist_ok=True)
-
-
-if __name__ == "__main__":
-    generator = UnitTestGenerator()
-    code = '''
-class Calculator:
-    def __init__(self):
-        self.result = 0
-
-    def add(self, a, b):
-        """Add two numbers and store the result."""
-        self.result = a + b
-        return self.result
-
-    def subtract(self, a, b):
-        """Subtract b from a and store the result."""
-        self.result = a - b
-        return self.result
-
-    def get_result(self):
-        """Return the last calculated result."""
-        return self.result
-
-def greet(name):
-    """Return a greeting message."""
-    return f"Hello, {name}!"
-
-if __name__ == "__main__":
-    calc = Calculator()
-    print(calc.add(5, 3))  # Should print 8
-    print(calc.subtract(10, 4))  # Should print 6
-    print(calc.get_result())  # Should print 6
-    print(greet("Alice"))  # Should print "Hello, Alice!"
-'''
-    # generator.generate_tests(file_path="sample.py", content=code)  # Replace with the actual file path
-    generator.generate_tests(file_path="kaizen/helpers/output.py")
+    def _create_output_folder(self, folder_name):
+        os.makedirs(folder_name, exist_ok=True)
