@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://path-to-your-logo.png" alt="Kaizen Logo" width="200"/>
+  <img src="/kaizen_icon.png" alt="Kaizen Logo" width="200"/>
 </p>
 
 <h1 align="center">Kaizen: AI-Powered Code Quality Assistant</h1>
