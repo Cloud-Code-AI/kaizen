@@ -2,6 +2,7 @@ import click
 import os
 import json
 from kaizen.generator.ui import UITestGenerator
+from kaizen.generator.unit_test import UnitTestGenerator
 
 CONFIG_FILE = os.path.expanduser("~/.myapp_config.json")
 
@@ -82,6 +83,14 @@ def run(obj, command, region):
 def ui_tests(url):
     """Run ui test generation"""
     UITestGenerator().generate_ui_tests(url)
+
+
+@cli.command()
+@click.argument("file_path", required=True)
+@click.argument("output_folder", default=None)
+def unit_test(file_path, output_folder):
+    """Run unit test generation"""
+    UnitTestGenerator().generate_tests(file_path, output_path=output_folder)
 
 
 @cli.group()
