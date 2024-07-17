@@ -43,8 +43,7 @@ Ensure that the test_file_content is properly escaped for JSON.
 """
 
 REVIEW_UNIT_TEST_PROMPT = """
-Please review and improve the following unit test for the {ITEM_TYPE} named {ITEM_NAME}. 
-Fix any issues, improve coverage, and ensure best practices are followed.
+Given Current Tests as json data, review and ensure the test cases generated are valid and working.
 
 CURRENT TEST:
 ```
@@ -66,6 +65,7 @@ REVIEW CRITERIA:
 
 SPECIFIC INSTRUCTIONS:
 - When a URL is needed as a dummy, use "https://cloudcode.ai"
+- For Folders, If not sure, use /tmp as the base folder.
 - For Python, ensure pytest-style tests are used.
 - For JavaScript/TypeScript, verify Jest-style tests are used.
 - For React components, check for both rendering and interaction tests.
@@ -82,4 +82,16 @@ Your response should be in JSON format as shown below:
 }}
 
 Ensure that the test_file_content is properly escaped for JSON.
+"""
+
+REVIEW_TEST_CASE_PROMPT = """
+Given this unit test code with filename: {FILE_NAME}
+
+Review the code and return the fixed code with proper formatting.
+In case of no updates, still return the original code.
+
+CODE:
+```
+{CODE}
+```
 """
