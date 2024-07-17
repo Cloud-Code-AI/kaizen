@@ -2,11 +2,12 @@ import os
 import importlib
 import logging
 from kaizen.llms.provider import LLMProvider
-from kaizen.helpers.parser import extract_json
+from kaizen.helpers.parser import extract_json, extract_code_from_markdown
 from kaizen.llms.prompts.unit_tests_prompts import (
     UNIT_TEST_SYSTEM_PROMPT,
     UNIT_TEST_PROMPT,
     REVIEW_UNIT_TEST_PROMPT,
+    REVIEW_TEST_CASE_PROMPT,
 )
 
 
@@ -72,15 +73,23 @@ class UnitTestGenerator:
             )
             self.total_usage = self.provider.update_usage(self.total_usage, usage)
             tests_json = extract_json(ai_generated_tests)
-            self.logger.info(f"ai generated tests: {ai_generated_tests}")
+            self.logger.debug(f"ai generated tests: {ai_generated_tests}")
             # test_file_path = tests_json["test_file_name"]
-            ai_generated_tests, usage = self.review_ai_generated_tests(
-                item, source_code=item["source"], current_tests=tests_json
+            # ai_generated_tests, usage = self.review_ai_generated_tests(
+            #     item, source_code=item["source"], current_tests=tests_json
+            # )
+            # self.total_usage = self.provider.update_usage(self.total_usage, usage)
+            # tests_json = extract_json(ai_generated_tests)
+
+            # Review File Content
+
+            test_code, usage = self.review_test_file(
+                test_file_name, tests_json["test_file_content"]
             )
             self.total_usage = self.provider.update_usage(self.total_usage, usage)
-            tests_json = extract_json(ai_generated_tests)
+            test_code = extract_code_from_markdown(test_code)
             with open(test_file_path, "w") as test_file:
-                test_file.write(tests_json["test_file_content"])
+                test_file.write(test_code)
 
     def generate_ai_tests(self, item, source_code):
         prompt = UNIT_TEST_PROMPT.format(
@@ -101,6 +110,15 @@ class UnitTestGenerator:
             CURRENT_TEST=current_tests["test_file_content"],
         )
         response, usage = self.provider.chat_completion(prompt, model="best")
+        return response, usage
+
+    def review_test_file(self, file_name, test_code):
+        file_content_prompt = REVIEW_TEST_CASE_PROMPT.format(
+            FILE_NAME=file_name, CODE=test_code
+        )
+        response, usage = self.provider.chat_completion(
+            file_content_prompt, model="best"
+        )
         return response, usage
 
     def _create_output_folder(self, folder_name):

@@ -96,7 +96,8 @@ def extract_markdown_content(text: str) -> str:
 
 
 def extract_code_from_markdown(text: str) -> str:
-    match = re.search(r"```([\s\S]*?)```", text)
+    pattern = r"```(?:\w+)?\n([\s\S]*?)\n```"
+    match = re.search(pattern, text)
     if match:
         return match.group(1).strip()
     return text

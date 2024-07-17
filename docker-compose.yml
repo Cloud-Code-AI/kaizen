@@ -12,6 +12,8 @@ services:
     restart: always
     secrets:
       - github_app_pem
+    depends_on:
+      - redis
   
   redis:
     image: "redis:alpine"
