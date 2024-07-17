@@ -27,7 +27,7 @@ OUTPUT Format:
 }}
 
 estimated_time: its the range of time you think the above work might have taken for a developer. example "10-15hrs"
-details: its list of important changes in human readable term so that anyone can understand how the software has been impacted.
+details: its list of changes in human readable term so that anyone can understand how the software has been impacted.
   
 Guidelines:  
 1. Give a high-level overview of the goal.  
@@ -39,6 +39,26 @@ Guidelines:
 7. Maintain a consistent, readable tone.  
   
 PATCH DATA: {PATCH_DATA}  
+"""
+
+MERGE_WORK_SUMMARY_PROMPT = """  
+Merge all this information into the following output format.
+
+OUTPUT Format:  
+{{
+    "summary": "<SUMMARY_OF_WORK_DONE>",  
+    "details": ["<IMPORTANT_DETAILS>", ...],  
+    "todo": ["<TODO_ITEMS>", ...],  
+    "future_considerations": ["<THINGS_TO_CONSIDER_IN_FUTURE>", ...],  
+    "estimated_time": <ESTIMATED_TIME_IN_HOURS>  
+}}
+
+estimated_time: its the range of time you think the above work might have taken for a developer in hours, be little generous. example "10-15hrs"
+details: its list of changes in human readable term so that anyone can understand how the software has been impacted.
+  
+All the summaries: 
+
+{SUMMARY_JSON}
 """
 
 TWITTER_POST_PROMPT = """
