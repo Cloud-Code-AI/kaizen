@@ -6,7 +6,7 @@ from kaizen.llms.prompts.work_summary_prompts import (
     WORK_SUMMARY_SYSTEM_PROMPT,
     TWITTER_POST_PROMPT,
     LINKEDIN_POST_PROMPT,
-    MERGE_WORK_SUMMARY_PROMPT
+    MERGE_WORK_SUMMARY_PROMPT,
 )
 import logging
 import json
@@ -57,7 +57,9 @@ class WorkSummaryGenerator:
 
         if len(summaries) > 1:
             # TODO Merge summaries
-            prompt = MERGE_WORK_SUMMARY_PROMPT.format(SUMMARY_JSON=json.dumps(summaries))
+            prompt = MERGE_WORK_SUMMARY_PROMPT.format(
+                SUMMARY_JSON=json.dumps(summaries)
+            )
             response, usage = self.provider.chat_completion_with_json(prompt, user=user)
             summaries = [response]
 

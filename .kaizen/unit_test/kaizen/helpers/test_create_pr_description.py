@@ -1,7 +1,9 @@
-import pytest
 from kaizen.helpers.output import create_pr_description
 
-DESC_COLLAPSIBLE_TEMPLATE = "<details><summary>Original Description</summary>{desc}</details>"
+DESC_COLLAPSIBLE_TEMPLATE = (
+    "<details><summary>Original Description</summary>{desc}</details>"
+)
+
 
 def test_create_pr_description_normal_case():
     desc = "This is a pull request description."
@@ -12,6 +14,7 @@ def test_create_pr_description_normal_case():
     )
     assert create_pr_description(desc, original_desc) == expected_output
 
+
 def test_create_pr_description_empty_desc():
     desc = ""
     original_desc = "This is the original description."
@@ -20,6 +23,7 @@ def test_create_pr_description_empty_desc():
         "<details><summary>Original Description</summary>This is the original description.</details>"
     )
     assert create_pr_description(desc, original_desc) == expected_output
+
 
 def test_create_pr_description_empty_original_desc():
     desc = "This is a pull request description."
@@ -30,6 +34,7 @@ def test_create_pr_description_empty_original_desc():
     )
     assert create_pr_description(desc, original_desc) == expected_output
 
+
 def test_create_pr_description_both_empty():
     desc = ""
     original_desc = ""
@@ -38,6 +43,7 @@ def test_create_pr_description_both_empty():
         "<details><summary>Original Description</summary></details>"
     )
     assert create_pr_description(desc, original_desc) == expected_output
+
 
 def test_create_pr_description_long_desc():
     desc = "a" * 1000

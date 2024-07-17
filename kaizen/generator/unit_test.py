@@ -7,7 +7,7 @@ from kaizen.llms.prompts.unit_tests_prompts import (
     UNIT_TEST_SYSTEM_PROMPT,
     UNIT_TEST_PROMPT,
     REVIEW_UNIT_TEST_PROMPT,
-    REVIEW_TEST_CASE_PROMPT
+    REVIEW_TEST_CASE_PROMPT,
 )
 
 
@@ -82,13 +82,14 @@ class UnitTestGenerator:
             # tests_json = extract_json(ai_generated_tests)
 
             # Review File Content
-            
-            test_code, usage = self.review_test_file(test_file_name, tests_json["test_file_content"])
+
+            test_code, usage = self.review_test_file(
+                test_file_name, tests_json["test_file_content"]
+            )
             self.total_usage = self.provider.update_usage(self.total_usage, usage)
             test_code = extract_code_from_markdown(test_code)
             with open(test_file_path, "w") as test_file:
                 test_file.write(test_code)
-            
 
     def generate_ai_tests(self, item, source_code):
         prompt = UNIT_TEST_PROMPT.format(
@@ -113,10 +114,11 @@ class UnitTestGenerator:
 
     def review_test_file(self, file_name, test_code):
         file_content_prompt = REVIEW_TEST_CASE_PROMPT.format(
-                FILE_NAME=file_name,
-                CODE=test_code
-            )
-        response, usage = self.provider.chat_completion(file_content_prompt, model="best")
+            FILE_NAME=file_name, CODE=test_code
+        )
+        response, usage = self.provider.chat_completion(
+            file_content_prompt, model="best"
+        )
         return response, usage
 
     def _create_output_folder(self, folder_name):
