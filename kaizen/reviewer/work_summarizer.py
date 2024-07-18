@@ -15,7 +15,9 @@ import json
 class WorkSummaryGenerator:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-        self.provider = LLMProvider(system_prompt=WORK_SUMMARY_SYSTEM_PROMPT)
+        self.provider = LLMProvider(
+            system_prompt=WORK_SUMMARY_SYSTEM_PROMPT, default_temperature=0.1
+        )
         self.total_usage = {
             "prompt_tokens": 0,
             "completion_tokens": 0,
