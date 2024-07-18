@@ -10,33 +10,30 @@ Generate a JSON object with the following structure, including only sections wit
   "review": [
     {{
       "topic": "<SECTION_TOPIC>",
-      "comment": "<CONSICE_COMMENT_ON_WHATS_THE_ISSUE>",
-      "confidence": "<CONFIDENCE_LEVEL>",
-      "reason": "<YOUR_REASON_FOR_COMMENTING_THIS_ISSUE>"
+      "comment": "<CONCISE_ISSUE_DESCRIPTION>",
+      "confidence": "critical|important|moderate|low|trivial",
+      "reason": "<ISSUE_REASONING>",
       "solution": "<HIGH_LEVEL_SOLUTION>",
-      "fixed_code": "<FIXED_CODE>",
-      "start_line": "<CODE_START_LINE_INTEGER>",
-      "end_line": "<CODE_END_LINE_INTEGER>",
-      "side": "<LEFT_OR_RIGHT>",
+      "fixed_code": "<CORRECTED_CODE>",
+      "start_line": <START_LINE_NUMBER>,
+      "end_line": <END_LINE_NUMBER>,
+      "side": "LEFT|RIGHT",
       "file_name": "<FULL_FILE_PATH>",
-      "sentiment": "<COMMENT_SENTIMENT_POSITIVE_NEGATIVE_OR_NEUTRAL>",
-      "severity_level": <INTEGER_FROM_1_TO_10>
-    }},
-    ...
-  ],
-  "desc": "
-  ### Summary
-<Brief one-line summary of the pull request>
-### Details
-<Detailed multi-line description in markdown format>
-- List of key changes
-- New features
-- Refactoring details
-  "
-  }}
+      "sentiment": "positive|negative|neutral",
+      "severity_level": <1_TO_10>
+    }}
+  ]
+}}
+Guidelines:
+
+Provide actionable feedback with specific file paths and line numbers
+Use markdown for code snippets
+Merge duplicate feedback
+Concise yet useful comments
+Examine: syntax/logic errors, loops, null values, resource leaks, race conditions, integration/performance issues, security vulnerabilities
+If no feedback: {{"review": []}}
 
 Field Guidelines:
-- "solution": Provide a high-level solution to the identified issue.
 - "fixed_code": Generate corrected code to replace the commented lines, ensuring changes are between start_line and end_line.
 - "start_line": The actual line number in the new file where the change begins. For added lines, this is the line number of the first '+' line in the chunk.
 - "end_line": The actual line number in the new file where the change ends. For added lines, this is the line number of the last '+' line in the chunk.
@@ -45,47 +42,38 @@ Field Guidelines:
 - "severity_level": Score from 1 (least severe) to 10 (most critical).
 
 Patch Data Processing:
-Reading git patch data involves understanding several key elements. The patch starts with file information, indicating which files are being modified.
-Chunk headers, beginning with "@@", show the affected line numbers in both old and new versions of the file. 
-Content changes are marked with '-' for deletions and '+' for additions, while unchanged lines serve as context. 
-A single file may have multiple chunks, each starting with a new "@@" header. When calculating line numbers, it's crucial to account for all previous additions and deletions in the file.
 
+Git patch data consists of file information, chunk headers ("@@"), and content changes ('+' for additions, '-' for deletions). Unchanged lines provide context. Multiple chunks may exist per file.
 
-When analyzing this patch:
-1. Note that there are changes in two different files.
-2. The first file has two separate chunks of changes.
-3. Line numbers in the second chunk of the first file are affected by the additions in the first chunk.
-4. The second file has one chunk of changes, including both additions and a deletion.
+Key points:
+1. Changes can occur in multiple files
+2. A file may have multiple change chunks
+3. Line numbers in later chunks are affected by earlier changes
+4. Calculate actual line numbers in the new version, accounting for all previous changes
 
-Always calculate the actual line numbers in the new version of each file, accounting for all additions and deletions in previous chunks.
+Interpreting a diff hunk:
+1. Hunk header ("@@"): Shows affected line numbers in old and new versions
+2. Unchanged lines: No prefix, present in both versions
+3. Removed lines: Start with "-"
+4. Added lines: Start with "+" (exclude file headers "+++")
 
-Patch Data Processing:
-- Identify lines starting with '+' as additions (exclude file header lines starting with '+++').
+Example:
+```
+@@ -82,7 +82,7 @@ def *retrieve*igd_profile(url):
+     Retrieve the device's UPnP profile.
+     try:
+-        return urllib2.urlopen(url.geturl(), timeout=5).read()
++        return urllib2.urlopen(url.geturl(), timeout=5).read().decode('utf-8')
+     except socket.error:
+         raise IGDError('IGD profile query timed out')
+```
 
-Confidence Levels: ["critical", "important", "moderate", "low", "trivial"]
-
-Potential Topics:
-- Code Quality
-- Performance
-- Potential Issues
-- Improvements
-
-Key Areas to Examine:
-- Syntax Errors
-- Logic Errors
-- Off-by-one Errors
-- Infinite Loops
-- Null/Undefined Values
-- Resource Leaks
-- Race Conditions
-- Integration Issues
-- Performance Issues
-- Security Vulnerabilities
-
-
-Provide actionable feedback, referencing specific files and line numbers. Use markdown code blocks for relevant snippets. Merge duplicate feedback for the same line. Ensure comments are concise yet useful.
-
-If no feedback is necessary, return: {{"review": []}}
+To interpret:
+1. Examine hunk header for context
+2. Identify removed lines ("-")
+3. Identify added lines ("+")
+4. Compare changes
+5. Use unchanged lines for context
 
 INFORMATION:
 
@@ -104,24 +92,30 @@ Generate a JSON object with the following structure, including only sections wit
   "review": [
     {{
       "topic": "<SECTION_TOPIC>",
-      "comment": "<CONSICE_COMMENT_ON_WHATS_THE_ISSUE>",
-      "confidence": "<CONFIDENCE_LEVEL>",
-      "reason": "<YOUR_REASON_FOR_COMMENTING_THIS_ISSUE>"
+      "comment": "<CONCISE_ISSUE_DESCRIPTION>",
+      "confidence": "critical|important|moderate|low|trivial",
+      "reason": "<ISSUE_REASONING>",
       "solution": "<HIGH_LEVEL_SOLUTION>",
-      "fixed_code": "<FIXED_CODE>",
-      "start_line": "<CODE_START_LINE_INTEGER>",
-      "end_line": "<CODE_END_LINE_INTEGER>",
-      "side": "<LEFT_OR_RIGHT>",
+      "fixed_code": "<CORRECTED_CODE>",
+      "start_line": <START_LINE_NUMBER>,
+      "end_line": <END_LINE_NUMBER>,
+      "side": "LEFT|RIGHT",
       "file_name": "<FULL_FILE_PATH>",
-      "sentiment": "<COMMENT_SENTIMENT_POSITIVE_NEGATIVE_OR_NEUTRAL>",
-      "severity_level": <INTEGER_FROM_1_TO_10>
-    }},
-    ...
+      "sentiment": "positive|negative|neutral",
+      "severity_level": <1_TO_10>
+    }}
   ]
-  }}
+}}
+Guidelines:
+
+Provide actionable feedback with specific file paths and line numbers
+Use markdown for code snippets
+Merge duplicate feedback
+Concise yet useful comments
+Examine: syntax/logic errors, loops, null values, resource leaks, race conditions, integration/performance issues, security vulnerabilities
+If no feedback: {{"review": []}}
 
 Field Guidelines:
-- "solution": Provide a high-level solution to the identified issue.
 - "fixed_code": Generate corrected code to replace the commented lines, ensuring changes are between start_line and end_line.
 - "start_line": The actual line number in the new file where the change begins. For added lines, this is the line number of the first '+' line in the chunk.
 - "end_line": The actual line number in the new file where the change ends. For added lines, this is the line number of the last '+' line in the chunk.
@@ -130,44 +124,38 @@ Field Guidelines:
 - "severity_level": Score from 1 (least severe) to 10 (most critical).
 
 Patch Data Processing:
-Reading git patch data involves understanding several key elements. The patch starts with file information, indicating which files are being modified.
-Chunk headers, beginning with "@@", show the affected line numbers in both old and new versions of the file. 
-Content changes are marked with '-' for deletions and '+' for additions, while unchanged lines serve as context. 
-A single file may have multiple chunks, each starting with a new "@@" header. When calculating line numbers, it's crucial to account for all previous additions and deletions in the file.
 
+Git patch data consists of file information, chunk headers ("@@"), and content changes ('+' for additions, '-' for deletions). Unchanged lines provide context. Multiple chunks may exist per file.
 
-When analyzing this patch:
-1. Note that there are changes in two different files.
-2. The first file has two separate chunks of changes.
-3. Line numbers in the second chunk of the first file are affected by the additions in the first chunk.
-4. The second file has one chunk of changes, including both additions and a deletion.
+Key points:
+1. Changes can occur in multiple files
+2. A file may have multiple change chunks
+3. Line numbers in later chunks are affected by earlier changes
+4. Calculate actual line numbers in the new version, accounting for all previous changes
 
-Always calculate the actual line numbers in the new version of each file, accounting for all additions and deletions in previous chunks.
+Interpreting a diff hunk:
+1. Hunk header ("@@"): Shows affected line numbers in old and new versions
+2. Unchanged lines: No prefix, present in both versions
+3. Removed lines: Start with "-"
+4. Added lines: Start with "+" (exclude file headers "+++")
 
-Confidence Levels: ["critical", "important", "moderate", "low", "trivial"]
+Example:
+```
+@@ -82,7 +82,7 @@ def *retrieve*igd_profile(url):
+     Retrieve the device's UPnP profile.
+     try:
+-        return urllib2.urlopen(url.geturl(), timeout=5).read()
++        return urllib2.urlopen(url.geturl(), timeout=5).read().decode('utf-8')
+     except socket.error:
+         raise IGDError('IGD profile query timed out')
+```
 
-Potential Topics:
-- Code Quality
-- Performance
-- Potential Issues
-- Improvements
-
-Key Areas to Examine:
-- Syntax Errors
-- Logic Errors
-- Off-by-one Errors
-- Infinite Loops
-- Null/Undefined Values
-- Resource Leaks
-- Race Conditions
-- Integration Issues
-- Performance Issues
-- Security Vulnerabilities
-
-
-Provide actionable feedback, referencing specific files and line numbers. Use markdown code blocks for relevant snippets. Merge duplicate feedback for the same line. Ensure comments are concise yet useful.
-
-If no feedback is necessary, return: {{"review": []}}
+To interpret:
+1. Examine hunk header for context
+2. Identify removed lines ("-")
+3. Identify added lines ("+")
+4. Compare changes
+5. Use unchanged lines for context
 
 INFORMATION:
 

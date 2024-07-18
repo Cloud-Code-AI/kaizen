@@ -40,7 +40,7 @@ class CodeReviewer:
         prompt = CODE_REVIEW_PROMPT.format(
             PULL_REQUEST_TITLE=pull_request_title,
             PULL_REQUEST_DESC=pull_request_desc,
-            CODE_DIFF=diff_text,
+            CODE_DIFF=parser.patch_to_separate_chunks(diff_text),
         )
         return self.provider.is_inside_token_limit(PROMPT=prompt)
 
@@ -56,7 +56,7 @@ class CodeReviewer:
         prompt = CODE_REVIEW_PROMPT.format(
             PULL_REQUEST_TITLE=pull_request_title,
             PULL_REQUEST_DESC=pull_request_desc,
-            CODE_DIFF=diff_text,
+            CODE_DIFF=parser.patch_to_separate_chunks(diff_text),
         )
         self.total_usage = {
             "prompt_tokens": 0,
@@ -143,7 +143,7 @@ class CodeReviewer:
             ):
                 temp_prompt = (
                     combined_diff_data
-                    + f"\n---->\nFile Name: {filename}\nPatch Details: {patch_details}"
+                    + f"\n---->\nFile Name: {filename}\nPatch Details: {parser.patch_to_separate_chunks(patch_details)}"
                 )
 
                 if available_tokens - self.provider.get_token_count(temp_prompt) > 0:
