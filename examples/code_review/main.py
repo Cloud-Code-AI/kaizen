@@ -9,8 +9,8 @@ from github_app.github_helper.pull_requests import (
 )
 import json
 
-pr_diff = "https://github.com/sauravpanda/applicant-screening/pull/4.patch"
-pr_files = "https://api.github.com/repos/sauravpanda/applicant-screening/pulls/4/files"
+pr_diff = "https://github.com/Cloud-Code-AI/kaizen/pull/308.patch"
+pr_files = "https://api.github.com/repos/Cloud-Code-AI/kaizen/pulls/308/files"
 pr_title = "feat: updated the prompt to provide solution"
 
 diff_text = get_diff_text(pr_diff, "")
@@ -21,7 +21,7 @@ pr_files = get_pr_files(pr_files, "")
 
 reviewer = CodeReviewer(llm_provider=LLMProvider())
 review_data = reviewer.review_pull_request(
-    diff_text="",
+    diff_text=diff_text,
     pull_request_title=pr_title,
     pull_request_desc="",
     pull_request_files=pr_files,
@@ -35,7 +35,9 @@ comments, topics = create_review_comments(topics)
 
 print(f"Raw Topics: \n {json.dumps(topics, indent=2)}\n")
 print(f"GENERATED REVIEW: \n {review_desc}")
-print(f"\nComment and topics: \n {comments}, \n{topics}")
+print(f"\nComment and topics: \n {json.dumps(comments, indent=2)}, \n{topics}")
+
+
 print("---------------Generate desc-------------")
 pr_desc = PRDescriptionGenerator(llm_provider=LLMProvider())
 desc_data = pr_desc.generate_pull_request_desc(

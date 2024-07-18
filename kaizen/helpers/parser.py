@@ -101,3 +101,61 @@ def extract_code_from_markdown(text: str) -> str:
     if match:
         return match.group(1).strip()
     return text
+
+
+def patch_to_separate_chunks(patch_text):
+    lines = patch_text.split("\n")
+    removals = []
+    additions = []
+    metadata = []
+    removal_line_num = 0
+    addition_line_num = 0
+    unedited_count = 0
+    current_hunk = None
+    is_diff = False
+
+    for line in lines:
+        if "diff --git" in line:
+            is_diff = True
+            removals.append("~~~~~~~~~~")
+            additions.append("~~~~~~~~~~")
+        elif is_diff:
+            is_diff = False
+        elif line.startswith("@"):
+            if current_hunk:
+                metadata.append(current_hunk)
+            current_hunk = line
+            match = re.match(r"@@ -(\d+),\d+ \+(\d+),\d+ @@", line)
+            if match:
+                removal_line_num = int(match.group(1))
+                addition_line_num = int(match.group(2))
+                removals.append("=====")
+                additions.append("=====")
+        elif line.startswith("---"):
+            removals.append(f"{0:<4} {line}")
+        elif line.startswith("+++"):
+            additions.append(f"{0:<4} {line}")
+        elif line.startswith("-"):
+            removals.append(f"{removal_line_num:<4} {line}")
+            removal_line_num += 1
+        elif line.startswith("+"):
+            additions.append(f"{addition_line_num:<4} {line}")
+            addition_line_num += 1
+        else:
+            removals.append(f"{removal_line_num:<4} {line}")
+            additions.append(f"{addition_line_num:<4} {line}")
+            removal_line_num += 1
+            addition_line_num += 1
+            unedited_count += 1
+
+    if current_hunk:
+        metadata.append(current_hunk)
+
+    output = ["Metadata:"]
+    output.extend(metadata)
+    output.append(f"\nRemovals: (including {unedited_count} unedited lines)")
+    output.extend(removals)
+    output.append(f"\nAdditions: (including {unedited_count} unedited lines)")
+    output.extend(additions)
+
+    return "\n".join(output)
