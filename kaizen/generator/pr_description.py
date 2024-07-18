@@ -5,12 +5,11 @@ import json
 
 from kaizen.helpers import output, parser
 from kaizen.llms.provider import LLMProvider
-from kaizen.llms.prompts.code_review_prompts import (
+from kaizen.llms.prompts.pr_desc_prompts import (
     PR_DESCRIPTION_PROMPT,
     MERGE_PR_DESCRIPTION_PROMPT,
     PR_FILE_DESCRIPTION_PROMPT,
-    PR_DESC_EVALUATION_PROMPT,
-    CODE_REVIEW_SYSTEM_PROMPT,
+    PR_DESCRIPTION_SYSTEM_PROMPT,
 )
 
 
@@ -26,7 +25,7 @@ class PRDescriptionGenerator:
     def __init__(self, llm_provider: LLMProvider):
         self.logger = logging.getLogger(__name__)
         self.provider = llm_provider
-        self.provider.system_prompt = CODE_REVIEW_SYSTEM_PROMPT
+        self.provider.system_prompt = PR_DESCRIPTION_SYSTEM_PROMPT
         self.total_usage = {
             "prompt_tokens": 0,
             "completion_tokens": 0,
@@ -40,7 +39,6 @@ class PRDescriptionGenerator:
         pull_request_desc: str,
         pull_request_files: List[Dict],
         user: Optional[str] = None,
-        reeval_response: bool = False,
     ) -> DescOutput:
         prompt = PR_DESCRIPTION_PROMPT.format(
             PULL_REQUEST_TITLE=pull_request_title,
@@ -51,14 +49,13 @@ class PRDescriptionGenerator:
             raise Exception("Both diff_text and pull_request_files are empty!")
 
         if diff_text and self.provider.is_inside_token_limit(PROMPT=prompt):
-            desc = self._process_full_diff(prompt, user, reeval_response)
+            desc = self._process_full_diff(prompt, user)
         else:
             desc = self._process_files(
                 pull_request_files,
                 pull_request_title,
                 pull_request_desc,
                 user,
-                reeval_response,
             )
 
         body = output.create_pr_description(desc, pull_request_desc)
@@ -77,15 +74,13 @@ class PRDescriptionGenerator:
         self,
         prompt: str,
         user: Optional[str],
-        reeval_response: bool,
     ) -> str:
         self.logger.debug("Processing directly from diff")
-        resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
+        resp, usage = self.provider.chat_completion(prompt, user=user)
+        desc = parser.extract_code_from_markdown(resp)
         self.total_usage = self.provider.update_usage(self.total_usage, usage)
 
-        if reeval_response:
-            resp = self._reevaluate_response(prompt, resp, user)
-        return resp["desc"]
+        return desc
 
     def _process_files(
         self,
@@ -93,7 +88,6 @@ class PRDescriptionGenerator:
         pull_request_title: str,
         pull_request_desc: str,
         user: Optional[str],
-        reeval_response: bool,
     ) -> List[Dict]:
         self.logger.debug("Processing based on files")
         file_descs = []
@@ -102,15 +96,15 @@ class PRDescriptionGenerator:
             pull_request_title,
             pull_request_desc,
             user,
-            reeval_response,
         ):
             file_descs.extend(file_review)
 
         prompt = MERGE_PR_DESCRIPTION_PROMPT.format(DESCS=json.dumps(file_descs))
-        resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
+        resp, usage = self.provider.chat_completion(prompt, user=user)
+        desc = parser.extract_code_from_markdown(resp)
         self.total_usage = self.provider.update_usage(self.total_usage, usage)
 
-        return resp["desc"]
+        return desc
 
     def _process_files_generator(
         self,
@@ -118,7 +112,6 @@ class PRDescriptionGenerator:
         pull_request_title: str,
         pull_request_desc: str,
         user: Optional[str],
-        reeval_response: bool,
     ) -> Generator[List[Dict], None, None]:
         combined_diff_data = ""
         available_tokens = self.provider.available_tokens(
@@ -151,7 +144,6 @@ class PRDescriptionGenerator:
                     pull_request_title,
                     pull_request_desc,
                     user,
-                    reeval_response,
                 )
                 combined_diff_data = (
                     f"\n---->\nFile Name: {filename}\nPatch Details: {patch_details}"
@@ -163,7 +155,6 @@ class PRDescriptionGenerator:
                 pull_request_title,
                 pull_request_desc,
                 user,
-                reeval_response,
             )
 
     def _process_file_chunk(
@@ -172,30 +163,14 @@ class PRDescriptionGenerator:
         pull_request_title: str,
         pull_request_desc: str,
         user: Optional[str],
-        reeval_response: bool,
     ) -> List[Dict]:
         prompt = PR_FILE_DESCRIPTION_PROMPT.format(
             PULL_REQUEST_TITLE=pull_request_title,
             PULL_REQUEST_DESC=pull_request_desc,
             CODE_DIFF=diff_data,
         )
-        resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
+        resp, usage = self.provider.chat_completion(prompt, user=user)
+        desc = parser.extract_code_from_markdown(resp)
         self.total_usage = self.provider.update_usage(self.total_usage, usage)
 
-        if reeval_response:
-            resp = self._reevaluate_response(prompt, resp, user)
-
-        return resp["desc"]
-
-    def _reevaluate_response(self, prompt: str, resp: str, user: Optional[str]) -> str:
-        messages = [
-            {"role": "system", "content": self.provider.system_prompt},
-            {"role": "user", "content": prompt},
-            {"role": "assistant", "content": resp},
-            {"role": "user", "content": PR_DESC_EVALUATION_PROMPT},
-        ]
-        resp, usage = self.provider.chat_completion(
-            prompt, user=user, messages=messages
-        )
-        self.total_usage = self.provider.update_usage(self.total_usage, usage)
-        return resp
+        return desc
