@@ -113,12 +113,19 @@ def patch_to_separate_chunks(patch_text):
     unedited_count = 0
     current_hunk = None
     is_diff = False
-
+    first_transition = True
+    current_file_name = ""
     for line in lines:
         if "diff --git" in line:
             is_diff = True
-            removals.append("~~~~~~~~~~")
-            additions.append("~~~~~~~~~~")
+            if first_transition:
+                removals = []
+                additions = []
+                first_transition = False
+                continue
+            removals.append("\n</change_block>\n\n")
+            additions.append("\n</change_block>\n\n")
+
         elif is_diff:
             is_diff = False
         elif line.startswith("@"):
@@ -129,16 +136,28 @@ def patch_to_separate_chunks(patch_text):
             if match:
                 removal_line_num = int(match.group(1))
                 addition_line_num = int(match.group(2))
-                removals.append("=====")
-                additions.append("=====")
+                if removals:
+                    removals.append("</change_block>")
+                if additions:
+                    additions.append("</change_block>")
+                removals.append("\n<change_block>")
+                removals.append(f"Filename: {current_file_name}\n")
+                additions.append("\n<change_block>")
+                additions.append(f"Filename: {current_file_name}\n")
+                # removals.append(current_hunk + "\n")
+                # additions.append(current_hunk + "\n")
         elif line.startswith("---"):
-            removals.append(f"{0:<4} {line}")
+            line = line.replace("a/", "").replace("b/", "").replace("--- ", "")
+            current_file_name = line
         elif line.startswith("+++"):
-            additions.append(f"{0:<4} {line}")
+            line = line.replace("a/", "").replace("b/", "").replace("+++ ", "")
+            current_file_name = line
         elif line.startswith("-"):
+            line = "<-> " + line[1:]
             removals.append(f"{removal_line_num:<4} {line}")
             removal_line_num += 1
         elif line.startswith("+"):
+            line = "<+> " + line[1:]
             additions.append(f"{addition_line_num:<4} {line}")
             addition_line_num += 1
         else:
@@ -150,12 +169,94 @@ def patch_to_separate_chunks(patch_text):
 
     if current_hunk:
         metadata.append(current_hunk)
+        removals.append("</change_block>\n\n")
+        additions.append("</change_block>\n\n")
 
-    output = ["Metadata:"]
-    output.extend(metadata)
-    output.append(f"\nRemovals: (including {unedited_count} unedited lines)")
+    output = []
+    output.append(f"\n##Removals: (including {unedited_count} unedited lines)\n")
     output.extend(removals)
-    output.append(f"\nAdditions: (including {unedited_count} unedited lines)")
+    output.append(f"\n\n\n##Additions: (including {unedited_count} unedited lines)\n")
     output.extend(additions)
+
+    return "\n".join(output)
+
+
+def format_change(old_num, new_num, change_type, content):
+    old_num_str = f"{old_num:<4}" if old_num is not None else "    "
+    new_num_str = f"{new_num:<4}" if new_num is not None else "    "
+    return f"{old_num_str} {new_num_str} {change_type} {content}"
+
+
+def patch_to_combined_chunks(patch_text):
+    lines = patch_text.split("\n")
+    changes = []
+    metadata = []
+    removal_line_num = 0
+    addition_line_num = 0
+    unedited_removal_num = 0
+    unedited_addition_num = 0
+    unedited_count = 0
+    current_hunk = None
+    is_diff = False
+    first_transition = True
+    current_file_name = ""
+
+    for line in lines:
+        if "diff --git" in line:
+            is_diff = True
+            if not first_transition:
+                changes.append("\n</change_block>\n\n")
+            first_transition = False
+
+        elif is_diff:
+            is_diff = False
+        elif line.startswith("@"):
+            if current_hunk:
+                metadata.append(current_hunk)
+            current_hunk = line
+            match = re.match(r"@@ -(\d+),\d+ \+(\d+),\d+ @@", line)
+            if match:
+                removal_line_num = int(match.group(1))
+                addition_line_num = int(match.group(2))
+                unedited_removal_num = removal_line_num
+                unedited_addition_num = addition_line_num
+                if changes:
+                    changes.append("\n</change_block>")
+                changes.append("\n<change_block>")
+                changes.append(f"Filename: {current_file_name}\n")
+        elif line.startswith("index "):
+            continue
+        elif line.startswith("---"):
+            line = line.replace("a/", "").replace("b/", "").replace("--- ", "")
+            current_file_name = line
+        elif line.startswith("+++"):
+            line = line.replace("a/", "").replace("b/", "").replace("+++ ", "")
+            current_file_name = line
+        elif line.startswith("-"):
+            content = line[1:]
+            changes.append(format_change(removal_line_num, None, "<->", content))
+            removal_line_num += 1
+            unedited_removal_num = removal_line_num
+        elif line.startswith("+"):
+            content = line[1:]
+            changes.append(format_change(None, addition_line_num, "<+>", content))
+            addition_line_num += 1
+            unedited_addition_num = addition_line_num
+        else:
+            changes.append(
+                format_change(unedited_removal_num, unedited_addition_num, "<.>", line)
+            )
+            unedited_removal_num += 1
+            unedited_addition_num += 1
+            removal_line_num += 1
+            addition_line_num += 1
+            unedited_count += 1
+
+    if current_hunk:
+        metadata.append(current_hunk)
+        changes.append("</change_block>\n\n")
+
+    output = [f"\n##Changes: (including {unedited_count} unedited lines)\n"]
+    output.extend(changes)
 
     return "\n".join(output)

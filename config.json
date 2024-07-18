@@ -7,9 +7,9 @@
             {
                 "model_name": "default",
                 "litellm_params": {
-                    "model": "gpt-3.5-turbo-1106",
-                    "input_cost_per_token": 0.0000005,
-                    "output_cost_per_token": 0.0000015
+                    "model": "gpt-4o-mini",
+                    "input_cost_per_token": 0.000000015,
+                    "output_cost_per_token": 0.0000006
                 }
             },
             {

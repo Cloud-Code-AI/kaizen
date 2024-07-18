@@ -8,9 +8,12 @@ from github_app.github_helper.pull_requests import (
     create_review_comments,
 )
 import json
+import logging
 
-pr_diff = "https://github.com/Cloud-Code-AI/kaizen/pull/308.patch"
-pr_files = "https://api.github.com/repos/Cloud-Code-AI/kaizen/pulls/308/files"
+logging.basicConfig(level="DEBUG")
+
+pr_diff = "https://github.com/Cloud-Code-AI/kaizen/pull/335.patch"
+pr_files = "https://api.github.com/repos/Cloud-Code-AI/kaizen/pulls/335/files"
 pr_title = "feat: updated the prompt to provide solution"
 
 diff_text = get_diff_text(pr_diff, "")
