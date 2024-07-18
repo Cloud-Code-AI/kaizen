@@ -34,9 +34,19 @@ Guidelines:
 - If no feedback: {{"review": []}}
 
 Review Focus:
-1. Analyze removals (lines starting with '<->') to identify potential issues caused by the deletion of code.
-2. Provide feedback and code fixes primarily for additions (lines starting with '<+>').
-3. Consider the impact of both removals and additions on the overall functionality and structure of the code.
+1. Analyze removals ('<->')
+2. Provide feedback for additions ('<+>')
+3. Consider impact of changes on code
+4. Note unchanged lines ('<.>')
+
+Patch Data Format:
+- First column: Original file line numbers
+- Second column: New file line numbers
+- Third column: Change type
+  '<->': Line removed (first column)
+  '<+>': Line added (last column)
+  '<.>': Unchanged line (both columns)
+- Remaining columns: Code content
 
 Field Guidelines:
 - "fixed_code": Provide corrected code only for additions, ensuring changes are between start_line and end_line.
@@ -84,10 +94,19 @@ Guidelines:
 - If no feedback: {{"review": []}}
 
 Review Focus:
-1. Analyze removals (lines starting with '<->') to identify potential issues caused by the deletion of code.
-2. Provide feedback and code fixes primarily for additions (lines starting with '<+>').
-3. Consider the impact of both removals and additions on the overall functionality and structure of the code.
-4. '<.>' indicates no changes were made in this line.
+1. Analyze removals ('<->')
+2. Provide feedback for additions ('<+>')
+3. Consider impact of changes on code
+4. Note unchanged lines ('<.>')
+
+Patch Data Format:
+- First column: Original file line numbers
+- Second column: New file line numbers
+- Third column: Change type
+  '<->': Line removed (first column)
+  '<+>': Line added (last column)
+  '<.>': Unchanged line (both columns)
+- Remaining columns: Code content
 
 Field Guidelines:
 - "fixed_code": Provide corrected code only for additions, ensuring changes are between start_line and end_line.

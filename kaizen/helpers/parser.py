@@ -181,6 +181,10 @@ def patch_to_separate_chunks(patch_text):
 
     return "\n".join(output)
 
+def format_change(old_num, new_num, change_type, content):
+    old_num_str = f"{old_num:<4}" if old_num is not None else "    "
+    new_num_str = f"{new_num:<4}" if new_num is not None else "    "
+    return f"{old_num_str} {new_num_str} {change_type} {content}"
 
 def patch_to_combined_chunks(patch_text):
     lines = patch_text.split("\n")
@@ -228,17 +232,17 @@ def patch_to_combined_chunks(patch_text):
             line = line.replace("a/", "").replace("b/", "").replace("+++ ", "")
             current_file_name = line
         elif line.startswith("-"):
-            line = "<->   " + line[1:]
-            changes.append(f"{removal_line_num:<4} {line}")
+            content = line[1:]
+            changes.append(format_change(removal_line_num, None, "<->", content))
             removal_line_num += 1
             unedited_removal_num = removal_line_num
         elif line.startswith("+"):
-            line = "<+>   " + line[1:]
-            changes.append(f"{addition_line_num:<4} {line}")
+            content = line[1:]
+            changes.append(format_change(None, addition_line_num, "<+>", content))
             addition_line_num += 1
             unedited_addition_num = addition_line_num
         else:
-            changes.append(f"{unedited_removal_num:<4} <.>   {line}")
+            changes.append(format_change(unedited_removal_num, unedited_addition_num, "<.>", line))
             unedited_removal_num += 1
             unedited_addition_num += 1
             removal_line_num += 1
