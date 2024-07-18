@@ -41,13 +41,13 @@ print(f"GENERATED REVIEW: \n {review_desc}")
 print(f"\nComment and topics: \n {json.dumps(comments, indent=2)}, \n{topics}")
 
 
-# print("---------------Generate desc-------------")
-# pr_desc = PRDescriptionGenerator(llm_provider=LLMProvider())
-# desc_data = pr_desc.generate_pull_request_desc(
-#     diff_text=None,
-#     pull_request_title=pr_title,
-#     pull_request_desc="",
-#     pull_request_files=pr_files,
-#     user="kaizen/example",
-# )
-# print(desc_data)
+print("---------------Generate desc-------------")
+pr_desc = PRDescriptionGenerator(llm_provider=LLMProvider())
+desc_data = pr_desc.generate_pull_request_desc(
+    diff_text=None,
+    pull_request_title=pr_title,
+    pull_request_desc="",
+    pull_request_files=pr_files,
+    user="kaizen/example",
+)
+print(desc_data)

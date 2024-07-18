@@ -125,7 +125,7 @@ def patch_to_separate_chunks(patch_text):
                 continue
             removals.append("\n</change_block>\n\n")
             additions.append("\n</change_block>\n\n")
-            
+
         elif is_diff:
             is_diff = False
         elif line.startswith("@"):
@@ -172,7 +172,6 @@ def patch_to_separate_chunks(patch_text):
         removals.append("</change_block>\n\n")
         additions.append("</change_block>\n\n")
 
-
     output = []
     output.append(f"\n##Removals: (including {unedited_count} unedited lines)\n")
     output.extend(removals)
@@ -181,10 +180,12 @@ def patch_to_separate_chunks(patch_text):
 
     return "\n".join(output)
 
+
 def format_change(old_num, new_num, change_type, content):
     old_num_str = f"{old_num:<4}" if old_num is not None else "    "
     new_num_str = f"{new_num:<4}" if new_num is not None else "    "
     return f"{old_num_str} {new_num_str} {change_type} {content}"
+
 
 def patch_to_combined_chunks(patch_text):
     lines = patch_text.split("\n")
@@ -199,14 +200,14 @@ def patch_to_combined_chunks(patch_text):
     is_diff = False
     first_transition = True
     current_file_name = ""
-    
+
     for line in lines:
         if "diff --git" in line:
             is_diff = True
             if not first_transition:
                 changes.append("\n</change_block>\n\n")
             first_transition = False
-            
+
         elif is_diff:
             is_diff = False
         elif line.startswith("@"):
@@ -242,7 +243,9 @@ def patch_to_combined_chunks(patch_text):
             addition_line_num += 1
             unedited_addition_num = addition_line_num
         else:
-            changes.append(format_change(unedited_removal_num, unedited_addition_num, "<.>", line))
+            changes.append(
+                format_change(unedited_removal_num, unedited_addition_num, "<.>", line)
+            )
             unedited_removal_num += 1
             unedited_addition_num += 1
             removal_line_num += 1
