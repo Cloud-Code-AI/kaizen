@@ -105,7 +105,7 @@ def post_pull_request(url, data, installation_id):
     access_token = get_installation_access_token(
         installation_id, PULL_REQUEST_PERMISSION
     )
-    data = {"body": f"{data}\n\n> ✨ Generated with love by Kaizen ❤️"}
+    data = {"body": f"{data}\n\n> ✨ Generated with love by [Kaizen](https://cloudcode.ai) ❤️"}
     headers = {
         "Authorization": f"Bearer {access_token}",
         "Accept": "application/vnd.github.v3+json",
