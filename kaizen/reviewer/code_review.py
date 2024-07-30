@@ -21,10 +21,11 @@ class ReviewOutput:
 
 
 class CodeReviewer:
-    def __init__(self, llm_provider: LLMProvider):
+    def __init__(self, llm_provider: LLMProvider, default_model="default"):
         self.logger = logging.getLogger(__name__)
         self.provider = llm_provider
         self.provider.system_prompt = CODE_REVIEW_SYSTEM_PROMPT
+        self.default_model = default_model
         self.total_usage = {
             "prompt_tokens": 0,
             "completion_tokens": 0,
@@ -52,6 +53,7 @@ class CodeReviewer:
         pull_request_files: List[Dict],
         user: Optional[str] = None,
         reeval_response: bool = False,
+        model="default"
     ) -> ReviewOutput:
         prompt = CODE_REVIEW_PROMPT.format(
             PULL_REQUEST_TITLE=pull_request_title,
@@ -96,7 +98,8 @@ class CodeReviewer:
         reeval_response: bool,
     ) -> List[Dict]:
         self.logger.debug("Processing directly from diff")
-        resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
+        custom_model = {"model": self.default_model}
+        resp, usage = self.provider.chat_completion_with_json(prompt, user=user, custom_model=custom_model)
         self.total_usage = self.provider.update_usage(self.total_usage, usage)
         if reeval_response:
             resp = self._reevaluate_response(prompt, resp, user)
@@ -185,7 +188,8 @@ class CodeReviewer:
             PULL_REQUEST_DESC=pull_request_desc,
             FILE_PATCH=diff_data,
         )
-        resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
+        custom_model = {"model": self.default_model}
+        resp, usage = self.provider.chat_completion_with_json(prompt, user=user, custom_model=custom_model)
         self.total_usage = self.provider.update_usage(self.total_usage, usage)
 
         if reeval_response:
@@ -201,8 +205,9 @@ class CodeReviewer:
             {"role": "system", "content": self.provider.system_prompt},
             {"role": "user", "content": new_prompt},
         ]
+        custom_model = {"model": self.default_model}
         resp, usage = self.provider.chat_completion_with_json(
-            new_prompt, user=user, messages=messages
+            new_prompt, user=user, messages=messages, custom_model=custom_model
         )
         self.total_usage = self.provider.update_usage(self.total_usage, usage)
         return resp
