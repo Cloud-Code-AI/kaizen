@@ -34,8 +34,8 @@ Guidelines:
 - If no feedback: {{"review": []}}
 
 Review Focus:
-1. Analyze removals ('<->')
-2. Provide feedback for additions ('<+>')
+1. removals ('<->') are the original code, just identify if anything causes problem because of removal
+2. Provide feedback for additions ('<+>') as this are the new code changes.
 3. Consider impact of changes on code
 4. Note unchanged lines ('<.>')
 
@@ -94,8 +94,8 @@ Guidelines:
 - If no feedback: {{"review": []}}
 
 Review Focus:
-1. Analyze removals ('<->')
-2. Provide feedback for additions ('<+>')
+1. removals ('<->') are the original code, just identify if anything causes problem because of removal
+2. Provide feedback for additions ('<+>') as this are the new code changes.
 3. Consider impact of changes on code
 4. Note unchanged lines ('<.>')
 
