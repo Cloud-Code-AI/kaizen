@@ -20,6 +20,7 @@
   <a href="https://www.cloudcode.ai/book-a-demo.html"><img src="https://img.shields.io/badge/Book%20a%20Demo-Book%20Now-brightgreen" alt="Book a Demo"></a>
   <a href="https://cloudcode.ai/#cta"><img src="https://img.shields.io/badge/Get%20Started-Sign%20Up-blue" alt="Sign Up for Free"></a>
   <a href="https://github.com/apps/kaizen-bot"><img src="https://img.shields.io/badge/Get%20Kaizen%20App-Install-8A2BE2" alt="Install Kaizen App"></a>
+  <a href="https://cloudcode.ai/kaizen/docs"><img src="https://img.shields.io/badge/docs-view%20Kaizen%20Docs" alt="Kaizen Docs"></a>
 </p>
 
 ## 🚀 What is Kaizen?
@@ -91,22 +92,6 @@ For PR review and description updates:
   </a>
 </p>
 
-## 📂 Project Structure
-
-- `github_app`: API server for the GitHub app
-- `kaizen`: Main logic for LLM interaction and data processing
-- `docs`: Project documentation
-- `examples`: Sample code for various use cases
-
-## 🤝 Contributing
-
-We welcome contributions! Here's how you can help:
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Open a Pull Request
 
 ## 📄 License
 
