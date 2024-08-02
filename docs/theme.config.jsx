@@ -96,7 +96,7 @@ export default {
         } 
     },
     project: {
-      link: 'https://github.com/Cloud-Code-AI/cloudcode'
+      link: 'https://cloudcode.ai'
     },
     docsRepositoryBase: 'https://github.com/Cloud-Code-AI/cloudcode/tree/main/docs',
     footer: {
