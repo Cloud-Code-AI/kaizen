@@ -72,15 +72,31 @@ Kaizen is an open-source AI-powered suite that revolutionizes your code quality 
    ```
    
 3. Generate tests:
+   **Mac/Linux**
    ```bash
    PYTHONPATH=. poetry run python examples/basic/generate.py
    ```
 
-4. Execute tests:
+   **Windows**
+   ```bash
+   set PYTHONPATH=.
+   poetry run python examples/basic/generate.py
+   ```
+
+
+5. Execute tests:
+   **Mac/Linux**
    ```bash
    PYTHONPATH=. poetry run python examples/basic/execute.py
    ```
+
+   **Windows**
+   ```bash
+   set PYTHONPATH=.
+   poetry run python examples/basic/execute.py
+   
    or
+   
    ```bash
    pytest -v .kaizen/ui-tests/
    ```
