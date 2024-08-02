@@ -164,14 +164,13 @@ class CodeReviewer:
                     f"\n---->\nFile Name: {filename}\nPatch Details: {patch_details}"
                 )
 
-        if combined_diff_data:
-            yield self._process_file_chunk(
-                combined_diff_data,
-                pull_request_title,
-                pull_request_desc,
-                user,
-                reeval_response,
-            )
+        yield self._process_file_chunk(
+            combined_diff_data,
+            pull_request_title,
+            pull_request_desc,
+            user,
+            reeval_response,
+        )
 
     def _process_file_chunk(
         self,
