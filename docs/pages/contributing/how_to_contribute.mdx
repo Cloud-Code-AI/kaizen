@@ -1,0 +1,105 @@
+---
+title: 'How to Contribute to Our Open Source Project'
+description: 'A guide for developers looking to contribute to our open source software project'
+---
+
+# How to Contribute to Our Open Source Project
+
+We're excited that you're interested in contributing to our project! This guide will help you get started with contributing to Kaizen.
+
+## Table of Contents
+
+1. [Getting Started](#getting-started)
+2. [Setting Up Your Development Environment](#setting-up-your-development-environment)
+3. [Finding Issues to Work On](#finding-issues-to-work-on)
+4. [Making Changes](#making-changes)
+5. [Submitting a Pull Request](#submitting-a-pull-request)
+6. [Code Review Process](#code-review-process)
+7. [Community Guidelines](#community-guidelines)
+
+## Getting Started
+
+1. **Fork the Repository**: Start by forking our repository to your GitHub account.
+
+2. **Clone Your Fork**: Clone your fork to your local machine:
+
+   ```bash
+   git clone https://github.com/your-username/project-name.git
+   cd project-name
+   ```
+
+3. **Add Upstream Remote**: Add the original repository as an upstream remote:
+
+   ```bash
+   git remote add upstream https://github.com/Cloud-Code-AI/kaizen.git
+   ```
+
+## Setting Up Your Development Environment
+
+1. **Install Dependencies**: Follow the instructions in our README.md to install necessary dependencies.
+
+    ```bash
+    poetry install
+    ```
+
+2. **Create a Branch**: Create a new branch for your work:
+
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+## Finding Issues to Work On
+
+- Check our [Issues](https://github.com/Cloud-Code-AI/kaizen/issues) page for open issues.
+- Look for issues tagged with `good first issue` or `help wanted`.
+- If you have an idea for a new feature, open an issue to discuss it before starting work.
+
+## Making Changes
+
+1. **Write Your Code**: Make your changes, following our coding standards and guidelines.
+
+2. **Write Tests**: Add or update tests as necessary.
+
+3. **Run Tests**: Ensure all tests pass:
+
+   ```bash
+   pytest .
+   ```
+
+4. **Commit Your Changes**: Use clear and concise commit messages:
+
+   ```bash
+   git commit -m "Add feature: brief description of changes"
+   ```
+
+## Submitting a Pull Request
+
+1. **Push Your Changes**: Push your branch to your fork:
+
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+
+2. **Open a Pull Request**: Go to the original repository on GitHub and open a pull request.
+
+3. **Describe Your Changes**: In the PR description, explain your changes and link to any relevant issues.
+
+## Code Review Process
+
+1. Maintainers will review your PR and may request changes.
+2. Address any comments or requested changes.
+3. Once approved, a maintainer will merge your PR.
+
+## Community Guidelines
+
+- Be respectful and inclusive in your interactions with other contributors.
+- Follow our [Code of Conduct](LINK_TO_CODE_OF_CONDUCT.md).
+- Participate in discussions and help other contributors.
+
+## Additional Resources
+
+- [Project Documentation](https://cloudcode.ai/kaizen/docs/)
+- [Coding Standards](https://cloudcode.ai/kaizen/docs/contributing/code_of_conduct)
+- [Join Our Community Chat](https://discord.gg/W33Hh5yWpj)
+
+Thank you for contributing to our project! Your efforts help make our software better for everyone.
