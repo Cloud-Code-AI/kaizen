@@ -52,30 +52,31 @@ Kaizen is an open-source AI-powered suite that revolutionizes your code quality 
 3. Follow the on-screen instructions to connect your repository
 
 ### Local Installation
-#### Create and Activate Virtual Environment:
+1. Create and activate a virtual environment:
 
  **Mac/Linux**
    ```bash
    python3 -m venv venv
    source venv/bin/activate
    ```
+
  **Windows**
-    ```bash
+   ```bash
    python -m venv venv
    .\venv\Scripts\activate
    ```
 
-1. Install Kaizen:
+2. Install Kaizen:
    ```bash
    pip install kaizen-cloudcode
    ```
-
-2. Generate tests:
+   
+3. Generate tests:
    ```bash
    PYTHONPATH=. poetry run python examples/basic/generate.py
    ```
 
-3. Execute tests:
+4. Execute tests:
    ```bash
    PYTHONPATH=. poetry run python examples/basic/execute.py
    ```
