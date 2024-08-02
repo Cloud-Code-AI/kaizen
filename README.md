@@ -96,9 +96,11 @@ Kaizen is an open-source AI-powered suite that revolutionizes your code quality 
    ```bash
    set PYTHONPATH=.
    poetry run python examples/basic/execute.py
+   ```
    
    or
-   
+
+   **Mac/Linux/Windows**   
    ```bash
    pytest -v .kaizen/ui-tests/
    ```
