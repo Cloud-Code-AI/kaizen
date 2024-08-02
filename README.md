@@ -54,13 +54,13 @@ Kaizen is an open-source AI-powered suite that revolutionizes your code quality 
 ### Local Installation
 1. Create and activate a virtual environment:
 
- **Mac/Linux**
+   **Mac/Linux**
    ```bash
    python3 -m venv venv
    source venv/bin/activate
    ```
 
- **Windows**
+   **Windows**
    ```bash
    python -m venv venv
    .\venv\Scripts\activate
