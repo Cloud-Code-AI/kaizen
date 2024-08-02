@@ -66,9 +66,9 @@ Kaizen is an open-source AI-powered suite that revolutionizes your code quality 
    .\venv\Scripts\activate
    ```
 
-2. Install Kaizen:
+2. Install poetry and Kaizen:
    ```bash
-   pip install kaizen-cloudcode
+   pip install poetry kaizen-cloudcode
    ```
    
 3. Generate tests:
