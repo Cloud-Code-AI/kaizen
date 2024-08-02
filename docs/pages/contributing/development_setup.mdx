@@ -1,0 +1,112 @@
+---
+title: 'Kaizen Development Setup Guide'
+description: 'A guide to setting up the Kaizen development environment'
+---
+
+# Kaizen Development Setup Guide
+
+This guide will walk you through the process of setting up the Kaizen development environment.
+
+## Step 1: Clone the Repository
+
+First, clone the Kaizen repository from GitHub:
+
+```bash
+git clone https://github.com/your-username/kaizen.git
+cd kaizen
+```
+
+## Step 2: Set Up Environment Variables
+
+Copy the `.env.example` file to create a new `.env` file:
+
+```bash
+cp .env.example .env
+```
+
+Make sure to fill in the necessary environment variables in the `.env` file.
+
+## Step 3: Configure `config.json`
+
+Create a `config.json` file in the root directory of the project. The general structure should look like this:
+
+```json
+{
+    "language_model": {
+        "provider": "litellm",
+        "enable_observability_logging": true,
+        "redis_enabled": true,
+        "models": [
+            {
+                "model_name": "default",
+                "litellm_params": {
+                    "model": "gpt-4o-mini",
+                    "input_cost_per_token": 0.000000015,
+                    "output_cost_per_token": 0.0000006
+                }
+            },
+            {
+                "model_name": "best",
+                "litellm_params": {
+                    "model": "gpt-4o",
+                    "input_cost_per_token": 0.000005,
+                    "output_cost_per_token": 0.000015
+                }
+            },
+            {
+                "model_name": "CUSTOM_MODEL",
+                "litellm_params": {
+                    "model": "azure_ai/MODEL_NAME",
+                    "api_key": "os.environ/CUSTOM_API_KEY",
+                    "api_base": "os.environ/CUSTOM_API_BASE"
+                },
+                "model_info": {
+                    "max_tokens": 4096,
+                    "input_cost_per_token": 0.000015,
+                    "output_cost_per_token": 0.000015,
+                    "max_input_tokens": 128000,
+                    "max_output_tokens": 4096,
+                    "litellm_provider": "openai",
+                    "mode": "chat"
+                }
+            }
+        ]
+    },
+    "github_app": {
+        "check_signature": false,
+        "auto_pr_review": true,
+        "edit_pr_desc": true,
+        "process_on_push": true,
+        "auto_unit_test_generation": false
+    }
+}
+```
+
+### Configuration Notes:
+
+- `model_name` is the type of model used for routing. You can have multiple models with the same `model_name`.
+- `litellm_params.model` is the actual model name by provider. Refer to the LiteLLM documentation for more details.
+- All API keys should be set up in the `.env` file.
+- You can set up custom models with custom API keys and base names.
+
+## Step 4: Running Examples
+
+Once the setup is complete, you can run any example using the following command:
+
+```bash
+PYTHONPATH=. poetry run python examples/basic/generate.py
+```
+
+## Development and Testing
+
+To test any development changes:
+
+1. Feel free to update the examples as they use the local Kaizen files.
+2. Create your own tests in the `tests` directory.
+
+## Additional Resources
+
+- [LiteLLM Documentation](https://litellm.com/docs/)
+- [Kaizen GitHub Repository](https://github.com/Cloud-Code-Ai/kaizen)
+
+For more information or if you encounter any issues, please refer to the project's documentation or create an issue on the GitHub repository.
