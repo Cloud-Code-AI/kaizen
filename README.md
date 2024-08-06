@@ -51,7 +51,7 @@ Kaizen is an open-source AI-powered suite that revolutionizes your code quality 
 2. Sign up for an account
 3. Follow the on-screen instructions to connect your repository
 
-### Local Installation
+### Using Kaizen SDK
 1. Create and activate a virtual environment:
 
    **Mac/Linux**
@@ -125,6 +125,9 @@ For PR review and description updates:
   </a>
 </p>
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Cloud-Code-AI/kaizen&type=Date)](https://star-history.com/#Cloud-Code-AI/kaizen&Date)
 
 ## 📄 License
 
