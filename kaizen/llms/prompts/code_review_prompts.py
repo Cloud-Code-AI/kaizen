@@ -19,7 +19,6 @@ Generate a JSON object with the following structure:
       "start_line": <START_LINE_NUMBER>,
       "end_line": <END_LINE_NUMBER>,
       "side": "LEFT|RIGHT",
-      "file_name": "<FULL_FILE_PATH>",
       "sentiment": "positive|negative|neutral",
       "severity_level": <1_TO_10>
     }}
@@ -84,7 +83,6 @@ Generate a JSON object with the following structure:
       "start_line": <START_LINE_NUMBER>,
       "end_line": <END_LINE_NUMBER>,
       "side": "LEFT|RIGHT",
-      "file_name": "<FULL_FILE_PATH>",
       "sentiment": "positive|negative|neutral",
       "severity_level": <1_TO_10>
     }}
