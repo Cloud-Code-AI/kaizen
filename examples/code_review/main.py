@@ -30,7 +30,7 @@ review_data = reviewer.review_pull_request(
     pull_request_files=pr_files,
     user="kaizen/example",
     reeval_response=False,
-    custom_prompt="Changes in prompt should be marked critical with high severity"
+    custom_prompt="Changes in prompt should be marked critical with high severity",
 )
 
 topics = clean_keys(review_data.topics, "important")

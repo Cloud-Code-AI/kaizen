@@ -10,7 +10,6 @@ from kaizen.llms.prompts.code_review_prompts import (
     CODE_REVIEW_SYSTEM_PROMPT,
 )
 import json
-import os
 import fnmatch
 
 sensitive_files = {
@@ -335,5 +334,4 @@ class CodeReviewer:
                                 "severity_level": 10,
                             }
                         )
-        print("sensetive files: ", reviews)
         return reviews
