@@ -1,23 +1,27 @@
 {
     "language_model": {
         "provider": "litellm",
-        "enable_observability_logging": true,
+        "enable_observability_logging": false,
         "redis_enabled": true,
         "models": [
             {
                 "model_name": "default",
                 "litellm_params": {
-                    "model": "gpt-4o-mini",
+                    "model": "azure/gpt-4o-mini",
                     "input_cost_per_token": 0.000000015,
-                    "output_cost_per_token": 0.0000006
+                    "output_cost_per_token": 0.0000006,
+                    "api_key": "os.environ/AZURE_API_KEY",
+                    "api_base": "os.environ/AZURE_API_BASE"
                 }
             },
             {
                 "model_name": "best",
                 "litellm_params": {
-                    "model": "gpt-4o",
+                    "model": "azure/gpt-4o",
                     "input_cost_per_token": 0.000005,
-                    "output_cost_per_token": 0.000015
+                    "output_cost_per_token": 0.000015,
+                    "api_key": "os.environ/AZURE_API_KEY",
+                    "api_base": "os.environ/AZURE_API_BASE"
                 }
             },
             {

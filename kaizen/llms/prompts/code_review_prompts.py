@@ -26,20 +26,21 @@ Generate a JSON object with the following structure:
   ]
 }}
 
-Guidelines:
+## Guidelines:
 - Provide actionable feedback with specific file paths and line numbers
 - Use markdown for code snippets
 - Merge duplicate feedback
 - Examine: syntax/logic errors, loops, null values, resource leaks, race conditions, integration/performance issues, security vulnerabilities
 - If no feedback: {{"review": []}}
 
-Review Focus:
+## Review Focus:
 1. removals ('<->') are the original code, just identify if anything causes problem because of removal
 2. Provide feedback for additions ('<+>') as this are the new code changes.
 3. Consider impact of changes on code
 4. Note unchanged lines ('<.>')
+5. Make sure to follow the additional instruction.
 
-Patch Data Format:
+## Patch Data Format:
 - First column: Original file line numbers
 - Second column: New file line numbers
 - Third column: Change type
@@ -48,12 +49,16 @@ Patch Data Format:
   '<.>': Unchanged line (both columns)
 - Remaining columns: Code content
 
-Field Guidelines:
+## Field Guidelines:
 - "fixed_code": Provide corrected code only for additions, ensuring changes are between start_line and end_line.
 - "start_line" and "end_line": Actual line numbers in the new file where the change begins and ends
 - "severity_level": Score from 1 (least severe) to 10 (most critical)
 
-INFORMATION:
+## Additional Instructions:
+Mark items which fall under following as critical and severity score of 10.
+{CUSTOM_PROMPT}
+
+## INFORMATION:
 
 Pull Request Title: {PULL_REQUEST_TITLE}
 Pull Request Description: {PULL_REQUEST_DESC}
@@ -86,20 +91,20 @@ Generate a JSON object with the following structure:
   ]
 }}
 
-Guidelines:
+## Guidelines:
 - Provide actionable feedback with specific file paths and line numbers
 - Use markdown for code snippets
 - Merge duplicate feedback
 - Examine: syntax/logic errors, loops, null values, resource leaks, race conditions, integration/performance issues, security vulnerabilities
 - If no feedback: {{"review": []}}
 
-Review Focus:
+## Review Focus:
 1. removals ('<->') are the original code, just identify if anything causes problem because of removal
 2. Provide feedback for additions ('<+>') as this are the new code changes.
 3. Consider impact of changes on code
 4. Note unchanged lines ('<.>')
 
-Patch Data Format:
+## Patch Data Format:
 - First column: Original file line numbers
 - Second column: New file line numbers
 - Third column: Change type
@@ -108,15 +113,16 @@ Patch Data Format:
   '<.>': Unchanged line (both columns)
 - Remaining columns: Code content
 
-Field Guidelines:
+## Field Guidelines:
 - "fixed_code": Provide corrected code only for additions, ensuring changes are between start_line and end_line.
 - "start_line" and "end_line": Actual line numbers in the new file where the change begins and ends
 - "severity_level": Score from 1 (least severe) to 10 (most critical)
 
-INFORMATION:
+## Additional Instructions:
+Mark items which fall under following as critical and severity score of 10.
+{CUSTOM_PROMPT}
 
-Pull Request Title: {PULL_REQUEST_TITLE}
-Pull Request Description: {PULL_REQUEST_DESC}
+## INFORMATION:
 
 File PATCH:
 ```{FILE_PATCH}```
