@@ -53,12 +53,14 @@ class CodeReviewer:
         pull_request_files: List[Dict],
         user: Optional[str] = None,
         reeval_response: bool = False,
-        model="default"
+        model="default",
+        custom_prompt=""
     ) -> ReviewOutput:
         prompt = CODE_REVIEW_PROMPT.format(
             PULL_REQUEST_TITLE=pull_request_title,
             PULL_REQUEST_DESC=pull_request_desc,
             CODE_DIFF=parser.patch_to_combined_chunks(diff_text),
+            CUSTOM_PROMPT=custom_prompt
         )
         self.total_usage = {
             "prompt_tokens": 0,
@@ -77,6 +79,7 @@ class CodeReviewer:
                 pull_request_desc,
                 user,
                 reeval_response,
+                custom_prompt=custom_prompt
             )
 
         topics = self._merge_topics(reviews)
@@ -112,6 +115,7 @@ class CodeReviewer:
         pull_request_desc: str,
         user: Optional[str],
         reeval_response: bool,
+        custom_prompt: str,
     ) -> List[Dict]:
         self.logger.debug("Processing based on files")
         reviews = []
@@ -121,6 +125,7 @@ class CodeReviewer:
             pull_request_desc,
             user,
             reeval_response,
+            custom_prompt
         ):
             reviews.extend(file_review)
         return reviews
@@ -132,6 +137,7 @@ class CodeReviewer:
         pull_request_desc: str,
         user: Optional[str],
         reeval_response: bool,
+        custom_prompt: str,
     ) -> Generator[List[Dict], None, None]:
         combined_diff_data = ""
         available_tokens = self.provider.available_tokens(FILE_CODE_REVIEW_PROMPT)
@@ -159,6 +165,7 @@ class CodeReviewer:
                     pull_request_desc,
                     user,
                     reeval_response,
+                    custom_prompt
                 )
                 combined_diff_data = (
                     f"\n---->\nFile Name: {filename}\nPatch Details: {patch_details}"
@@ -170,6 +177,7 @@ class CodeReviewer:
             pull_request_desc,
             user,
             reeval_response,
+            custom_prompt
         )
 
     def _process_file_chunk(
@@ -179,6 +187,7 @@ class CodeReviewer:
         pull_request_desc: str,
         user: Optional[str],
         reeval_response: bool,
+        custom_prompt: str
     ) -> List[Dict]:
         if not diff_data:
             return []
@@ -186,6 +195,7 @@ class CodeReviewer:
             PULL_REQUEST_TITLE=pull_request_title,
             PULL_REQUEST_DESC=pull_request_desc,
             FILE_PATCH=diff_data,
+            CUSTOM_PROMPT=custom_prompt
         )
         custom_model = {"model": self.default_model}
         resp, usage = self.provider.chat_completion_with_json(prompt, user=user, custom_model=custom_model)
