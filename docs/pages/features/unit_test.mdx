@@ -1,25 +1,71 @@
-## Unit Test Generator
+# Unit Test Generator
 
 The Unit Test Generator feature is powered by kaizen and automatically creates comprehensive unit tests for your code, improving code quality and test coverage.
 
-### How it Works:
+## How it Works:
 - Input the source code for which you want to generate unit tests.
 - The Unit Test Generator leverages advanced language models to analyze the code and generate appropriate unit tests in a format compatible with popular testing frameworks.
 
 You can find an example [here](https://github.com/Cloud-Code-AI/kaizen/tree/main/examples/unittest/main.py)
 
-### Using the Unit Test Generator:
+## Using the Unit Test Generator:
 - Provide the source code or filename for which you want to generate unit tests.
 - [Optional] Setup Github App to Trigger the Unit Test Generator to receive automatically created unit tests.
 - Review and integrate the generated tests into your test suite.
 
-### Benefits:
+## API Reference:
+
+### Class: UnitTestGenerator
+
+#### Constructor
+- `__init__(self)`
+  Initializes the UnitTestGenerator with default settings.
+
+#### Methods
+
+##### generate_tests
+- `generate_tests(self, file_path: str, content: str = None, output_path: str = None) -> Tuple[Dict, Dict]`
+  Generates unit tests for a given file.
+  - Parameters:
+    - `file_path`: Path of the file relative to the project root.
+    - `content`: (Optional) File content.
+    - `output_path`: (Optional) Custom output path for generated tests.
+  - Returns: A tuple containing an empty dictionary and usage statistics.
+
+##### generate_test_files
+- `generate_test_files(self, parsed_data, file_extension, file_path)`
+  Generates test files for parsed data.
+
+##### generate_ai_tests
+- `generate_ai_tests(self, item, source_code) -> Tuple[str, Dict]`
+  Generates AI-powered tests for a given item.
+
+##### review_ai_generated_tests
+- `review_ai_generated_tests(self, item, source_code, current_tests) -> Tuple[str, Dict]`
+  Reviews AI-generated tests.
+
+##### review_test_file
+- `review_test_file(self, file_name, test_code) -> Tuple[str, Dict]`
+  Reviews a test file.
+
+##### run_tests
+- `run_tests(self) -> Dict`
+  Runs the generated unit tests and returns the results.
+
+#### Properties
+- `output_folder`: Directory for storing generated tests.
+- `total_usage`: Tracks token usage for API calls.
+- `supported_languages`: Dictionary of supported file extensions and their corresponding parsers.
+- `logger`: Logger instance for the class.
+- `provider`: LLMProvider instance for making API calls.
+
+## Benefits:
 - Increased Test Coverage
 - Time Efficiency
 - Consistency in Testing
 - Early Bug Detection
 
-### Limitations:
+## Limitations:
 - AI Limitations: May not cover all edge cases or complex scenarios.
 - Human Oversight: Generated tests should be reviewed and potentially modified by developers.
 
