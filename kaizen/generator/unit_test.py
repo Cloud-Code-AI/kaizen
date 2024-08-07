@@ -3,6 +3,7 @@ import importlib
 import logging
 from kaizen.llms.provider import LLMProvider
 from kaizen.helpers.parser import extract_json, extract_code_from_markdown
+from kaizen.actors.unit_test_runner import UnitTestRunner
 from kaizen.llms.prompts.unit_tests_prompts import (
     UNIT_TEST_SYSTEM_PROMPT,
     UNIT_TEST_PROMPT,
@@ -25,7 +26,7 @@ class UnitTestGenerator:
             "ts": "TypeScriptParser",
             "jsx": "ReactParser",
             "tsx": "ReactTSParser",
-            "rs": "RustParser"
+            "rs": "RustParser",
         }
         self.logger = logging.getLogger(__name__)
         self.provider = LLMProvider(system_prompt=UNIT_TEST_SYSTEM_PROMPT)
@@ -124,3 +125,8 @@ class UnitTestGenerator:
 
     def _create_output_folder(self, folder_name):
         os.makedirs(folder_name, exist_ok=True)
+
+    def run_tests(self):
+        runner = UnitTestRunner(self.output_folder)
+        results = runner.discover_and_run_tests()
+        return results

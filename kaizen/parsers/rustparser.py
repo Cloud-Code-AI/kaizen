@@ -4,7 +4,7 @@ import re
 class RustParser:
     def __init__(self):
         self.source = ""
-    
+
     def parse(self, source):
         self.source = source
         struct_pattern = r"struct\s+(\w+)\s*{([^}]*)}"
@@ -14,7 +14,7 @@ class RustParser:
         mod_pattern = r"mod\s+(\w+)\s*{([^}]*)}"
 
         parsed_data = []
-        
+
         for mod_match in re.finditer(mod_pattern, source):
             mod_name = mod_match.group(1)
             mod_body = mod_match.group(2)
@@ -26,11 +26,13 @@ class RustParser:
                     "source": mod_match.group(0),
                 }
             )
-        
+
         for struct_match in re.finditer(struct_pattern, source):
             struct_name = struct_match.group(1)
             struct_body = struct_match.group(2)
-            fields = [field.strip() for field in struct_body.split(";") if field.strip()]
+            fields = [
+                field.strip() for field in struct_body.split(";") if field.strip()
+            ]
             parsed_data.append(
                 {
                     "type": "struct",
@@ -39,11 +41,13 @@ class RustParser:
                     "source": struct_match.group(0),
                 }
             )
-        
+
         for enum_match in re.finditer(enum_pattern, source):
             enum_name = enum_match.group(1)
             enum_body = enum_match.group(2)
-            variants = [variant.strip() for variant in enum_body.split(",") if variant.strip()]
+            variants = [
+                variant.strip() for variant in enum_body.split(",") if variant.strip()
+            ]
             parsed_data.append(
                 {
                     "type": "enum",
@@ -52,7 +56,7 @@ class RustParser:
                     "source": enum_match.group(0),
                 }
             )
-            
+
         for func_match in re.finditer(function_pattern, source):
             async_keyword = func_match.group(1)
             parsed_data.append(
@@ -65,11 +69,13 @@ class RustParser:
                     "source": f"{async_keyword or ''}fn {func_match.group(2)}({func_match.group(3)}) {{{func_match.group(4)}}}",
                 }
             )
-        
+
         for impl_match in re.finditer(impl_pattern, source):
             impl_name = impl_match.group(1)
             impl_body = impl_match.group(2)
-            methods = re.findall(r"(async\s+)?fn\s+(\w+)\s*\((.*?)\)\s*{([^}]*)}", impl_body)
+            methods = re.findall(
+                r"(async\s+)?fn\s+(\w+)\s*\((.*?)\)\s*{([^}]*)}", impl_body
+            )
             parsed_data.append(
                 {
                     "type": "impl",
