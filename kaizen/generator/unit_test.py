@@ -25,6 +25,7 @@ class UnitTestGenerator:
             "ts": "TypeScriptParser",
             "jsx": "ReactParser",
             "tsx": "ReactTSParser",
+            "rs": "RustParser"
         }
         self.logger = logging.getLogger(__name__)
         self.provider = LLMProvider(system_prompt=UNIT_TEST_SYSTEM_PROMPT)
