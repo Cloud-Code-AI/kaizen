@@ -3,7 +3,7 @@ import re
 
 class RustParser:
     def __init__(self):
-            self.source = ""
+        self.source = ""
     
     def parse(self, source):
         self.source = source
