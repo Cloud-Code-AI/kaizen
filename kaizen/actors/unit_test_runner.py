@@ -1,6 +1,5 @@
 import subprocess
 import os
-import json
 
 
 class UnitTestRunner:
