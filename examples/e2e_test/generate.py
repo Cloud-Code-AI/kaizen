@@ -1,8 +1,8 @@
-from kaizen.generator.ui import UITestGenerator
+from kaizen.generator.e2e_tests import E2ETestGenerator
 import time
 import sys
 
-generator = UITestGenerator()
+generator = E2ETestGenerator()
 
 WEBPAGE_URL = "https://cloudcode.ai"
 

@@ -11,7 +11,7 @@ from kaizen.llms.prompts.ui_tests_prompts import (
 )
 
 
-class UITestGenerator:
+class E2ETestGenerator:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
         self.provider = LLMProvider(system_prompt=UI_TESTS_SYSTEM_PROMPT)
@@ -56,7 +56,7 @@ class UITestGenerator:
         This method identifies the different UI modules from a webpage.
         """
         prompt = UI_MODULES_PROMPT.format(WEB_CONTENT=web_content)
-        resp, usage = self.provider.chat_completion(
+        resp, usage = self.provider.chat_completion_with_retry(
             prompt, user=user, custom_model=self.custom_model
         )
         modules = parser.extract_multi_json(resp)
@@ -77,14 +77,14 @@ class UITestGenerator:
         prompt = PLAYWRIGHT_CODE_PLAN_PROMPT.format(
             WEB_CONTENT=web_content, TEST_DESCRIPTION=test_description, URL=web_url
         )
-        plan, usage = self.provider.chat_completion(
+        plan, usage = self.provider.chat_completion_with_retry(
             prompt, user=user, custom_model=self.custom_model
         )
         code_gen_usage = self.provider.update_usage(code_gen_usage, usage)
 
         # Next generate the code based on plan
         code_prompt = PLAYWRIGHT_CODE_PROMPT.format(PLAN_TEXT=plan)
-        code, usage = self.provider.chat_completion(
+        code, usage = self.provider.chat_completion_with_retry(
             code_prompt, user=user, custom_model=self.custom_model
         )
         code_gen_usage = self.provider.update_usage(code_gen_usage, usage)
