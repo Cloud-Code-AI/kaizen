@@ -161,6 +161,24 @@ class LLMProvider:
         response = extract_json(response)
         return response, usage
 
+    @retry(max_attempts=3, delay=1)
+    def chat_completion_with_retry(
+        self,
+        prompt,
+        user: str = None,
+        model="default",
+        custom_model=None,
+        messages=None,
+    ):
+        response, usage = self.chat_completion(
+            prompt=prompt,
+            user=user,
+            model=model,
+            custom_model=custom_model,
+            messages=messages,
+        )
+        return response, usage
+
     def is_inside_token_limit(self, PROMPT: str, percentage: float = 0.8) -> bool:
         # Include system prompt in token calculation
         messages = [

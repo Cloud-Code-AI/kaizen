@@ -60,15 +60,37 @@ def get_web_html(url):
     html = asyncio.run(get_html(url))
     soup = BeautifulSoup(html, "html.parser")
 
+    # Remove SVG elements
     for svg in soup.find_all("svg"):
         svg.decompose()
 
-    # Delete each comment
+    # Remove HTML comments
     for comment in soup.find_all(text=lambda text: isinstance(text, Comment)):
         comment.extract()
 
+    # Remove <style> elements
     for style_block in soup.find_all("style"):
         style_block.decompose()
+
+    # Remove <script> elements
+    for script in soup.find_all("script"):
+        script.decompose()
+
+    # Remove <noscript> elements
+    for noscript in soup.find_all("noscript"):
+        noscript.decompose()
+
+    # Remove <link> elements (typically used for stylesheets)
+    for link in soup.find_all("link"):
+        link.decompose()
+
+    # Remove <meta> elements (typically used for metadata)
+    for meta in soup.find_all("meta"):
+        meta.decompose()
+
+    # Remove <head> element (contains metadata, scripts, and stylesheets)
+    for head in soup.find_all("head"):
+        head.decompose()
 
     pretty_html = soup.prettify()
     return pretty_html

@@ -75,7 +75,7 @@ Kaizen is an open-source AI-powered suite that revolutionizes your code quality 
    
    **Mac/Linux**
    ```bash
-   PYTHONPATH=. poetry run python examples/basic/generate.py
+   PYTHONPATH=. poetry run python examples/e2e_test/generate.py
    ```
 
    **Windows**
@@ -89,7 +89,7 @@ Kaizen is an open-source AI-powered suite that revolutionizes your code quality 
    
    **Mac/Linux**
    ```bash
-   PYTHONPATH=. poetry run python examples/basic/execute.py
+   PYTHONPATH=. poetry run python examples/e2e_test/execute.py
    ```
 
    **Windows**
