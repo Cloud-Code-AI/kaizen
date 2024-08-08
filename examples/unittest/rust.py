@@ -1,7 +1,7 @@
 from kaizen.generator.unit_test import UnitTestGenerator
 
 generator = UnitTestGenerator()
-code = '''
+code = """
 struct Calculator {
     result: i32,
 }
@@ -37,7 +37,7 @@ fn main() {
     println!("{}", calc.get_result());  // Should print 6
     println!("{}", greet("Alice"));  // Should print "Hello, Alice!"
 }
-'''
+"""
 
 test_results = generator.run_tests()
 

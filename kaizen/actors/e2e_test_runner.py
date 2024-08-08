@@ -1,14 +1,19 @@
 import asyncio
+import glob
+import json
+import os
 from playwright.async_api import async_playwright
 
+
 class E2ETestRunner:
-    def __init__(self, test_directory="./.kaizen/unit_test/"):
+    def __init__(self, test_directory="./.kaizen/e2e-tests/"):
         self.test_directory = test_directory
 
-    def run_tests(self, tests_dir: str):
+    def run_tests(self):
         """
         This method runs playwright tests and updates logs and status accordingly.
         """
+
         async def run_test(test):
             async with async_playwright() as p:
                 browser = await p.chromium.launch()
@@ -23,6 +28,7 @@ class E2ETestRunner:
                 finally:
                     await browser.close()
 
+        tests_dir = self.test_directory
         tests = []
         for test_file in glob.glob(os.path.join(tests_dir, "*.json")):
             with open(test_file, "r") as f:

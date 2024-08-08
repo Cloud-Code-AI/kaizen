@@ -177,9 +177,7 @@ class LLMProvider:
             custom_model=custom_model,
             messages=messages,
         )
-        response = extract_json(response)
         return response, usage
-
 
     def is_inside_token_limit(self, PROMPT: str, percentage: float = 0.8) -> bool:
         # Include system prompt in token calculation

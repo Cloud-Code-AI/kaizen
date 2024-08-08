@@ -82,7 +82,7 @@ def run(obj, command, region):
 @click.argument("url", required=True)
 def ui_tests(url):
     """Run ui test generation"""
-    E2ETestGenerator().generate_ui_tests(url)
+    E2ETestGenerator().generate_e2e_tests(url)
 
 
 @cli.command()
@@ -104,7 +104,7 @@ def reviewer():
 @click.argument("branch", required=True)
 def work(url):
     """Run ui test generation"""
-    E2ETestGenerator().generate_ui_tests(url)
+    E2ETestGenerator().generate_e2e_tests(url)
 
 
 if __name__ == "__main__":
