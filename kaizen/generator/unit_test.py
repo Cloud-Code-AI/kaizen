@@ -1,6 +1,7 @@
 import os
 import importlib
 import logging
+from pathlib import Path
 from kaizen.llms.provider import LLMProvider
 from kaizen.helpers.parser import extract_json, extract_code_from_markdown
 from kaizen.actors.unit_test_runner import UnitTestRunner
@@ -33,6 +34,17 @@ class UnitTestGenerator:
         self.provider = LLMProvider(system_prompt=UNIT_TEST_SYSTEM_PROMPT)
         self._create_output_folder(self.output_folder)
 
+    def generate_tests_from_dir(
+        self, dir_path: str, output_path: str = None
+    ):
+        """
+        dir_path: (str) - path of the directory containing source files
+        """
+        if output_path:
+            self.output_folder = output_path
+        for file_path in Path(dir_path).rglob('*.*'):
+            self.generate_tests(file_path=str(file_path), output_path=output_path)
+        
     def generate_tests(
         self, file_path: str, content: str = None, output_path: str = None
     ):
