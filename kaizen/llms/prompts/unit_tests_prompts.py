@@ -4,8 +4,8 @@ Your expertise covers Python, JavaScript, TypeScript, Rust and React application
 Your task is to create comprehensive, meaningful, and efficient unit tests for given code snippets.
 """
 
-UNIT_TEST_ANALYSIS_PROMPT = """
-Analyze the following {ITEM_TYPE} named {ITEM_NAME} and identify test scenarios:
+UNIT_TEST_PLAN_PROMPT = """
+Analyze the following {NODE_TYPE} named {NODE_NAME} and identify test scenarios:
 
 SOURCE CODE:
 ```
@@ -31,7 +31,7 @@ SOURCE CODE:
 """
 
 PYTHON_UNIT_TEST_PROMPT = """
-Generate pytest-style unit tests for the Python {ITEM_TYPE} named {ITEM_NAME}:
+Generate pytest-style unit tests for the Python {NODE_TYPE} named {NODE_NAME}:
 
 SOURCE CODE:
 ```
@@ -52,7 +52,7 @@ Provide your tests as a single Python file containing all the test code.
 """
 
 JAVASCRIPT_UNIT_TEST_PROMPT = """
-Generate Jest-style unit tests for the JavaScript/TypeScript {ITEM_TYPE} named {ITEM_NAME}:
+Generate Jest-style unit tests for the JavaScript/TypeScript {NODE_TYPE} named {NODE_NAME}:
 
 SOURCE CODE:
 ```
@@ -74,7 +74,7 @@ Provide your tests as a single JavaScript/TypeScript file containing all the tes
 """
 
 REACT_UNIT_TEST_PROMPT = """
-Generate Jest and React Testing Library tests for the React component named {ITEM_NAME}:
+Generate Jest and React Testing Library tests for the React component of type {NODE_TYPE} and named {NODE_NAME}:
 
 SOURCE CODE:
 ```
@@ -96,7 +96,7 @@ Provide your tests as a single JavaScript/TypeScript file containing all the tes
 """
 
 RUST_UNIT_TEST_PROMPT = """
-Generate unit tests for the Rust {ITEM_TYPE} named {ITEM_NAME}:
+Generate unit tests for the Rust {NODE_TYPE} named {NODE_NAME}:
 
 SOURCE CODE:
 ```
@@ -118,7 +118,7 @@ Provide your tests as a single Rust file containing all the test code.
 
 
 REVIEW_UNIT_TEST_PROMPT = """
-Review the unit tests for the {ITEM_TYPE} named {ITEM_NAME}. Follow these steps:
+Review the unit tests for the {NODE_TYPE} named {NODE_NAME}. Follow these steps:
 
 1. ANALYZE CURRENT TESTS:
    ```
@@ -146,8 +146,6 @@ Review the unit tests for the {ITEM_TYPE} named {ITEM_NAME}. Follow these steps:
 5. FORMAT OUTPUT:
    Prepare the response in the following JSON format:
    {{
-       "test_file_name": "<TEST_FILE_NAME>",
-       "test_file_content": "<IMPROVED_CONTENT_OF_TEST_FILE>",
        "review_comments": [
            "Comment 1: Explanation of a necessary change or improvement",
            "Comment 2: Another necessary change or observation"
