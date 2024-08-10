@@ -3,8 +3,8 @@ import os
 
 
 class UnitTestRunner:
-    def __init__(self, test_directory="./.kaizen/unit_test/"):
-        self.test_directory = test_directory
+    def __init__(self, output_director="./.kaizen/unit_test/"):
+        self.output_director = output_director
         self.supported_extensions = {
             "py": self.run_python_tests,
             "js": self.run_javascript_tests,
@@ -39,7 +39,7 @@ class UnitTestRunner:
 
     def discover_and_run_tests(self):
         results = {}
-        for root, dirs, files in os.walk(self.test_directory):
+        for root, dirs, files in os.walk(self.output_director):
             for file in files:
                 if file.startswith("test_"):
                     file_path = os.path.join(root, file)

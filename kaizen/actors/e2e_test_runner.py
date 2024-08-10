@@ -6,8 +6,8 @@ from playwright.async_api import async_playwright
 
 
 class E2ETestRunner:
-    def __init__(self, test_directory="./.kaizen/e2e-tests/"):
-        self.test_directory = test_directory
+    def __init__(self, output_director="./.kaizen/e2e-tests/"):
+        self.output_director = output_director
 
     def run_tests(self):
         """
@@ -28,7 +28,7 @@ class E2ETestRunner:
                 finally:
                     await browser.close()
 
-        tests_dir = self.test_directory
+        tests_dir = self.output_director
         tests = []
         for test_file in glob.glob(os.path.join(tests_dir, "*.json")):
             with open(test_file, "r") as f:
