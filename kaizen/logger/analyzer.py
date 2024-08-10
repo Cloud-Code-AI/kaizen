@@ -8,7 +8,7 @@ def create_prompt(log_data):
 
 def analyze_logs(prompt, ollama_server_url):
     headers = {"Content-Type": "application/json"}
-    data = {"prompt": prompt}
+    data = {"prompt": prompt, "model":"mistral"}
     response = requests.post(ollama_server_url, headers=headers, data=json.dumps(data))
 
     if response.status_code == 200:
