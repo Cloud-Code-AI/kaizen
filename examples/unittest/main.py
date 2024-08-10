@@ -32,7 +32,9 @@ if __name__ == "__main__":
     print(greet("Alice"))  # Should print "Hello, Alice!"
 '''
 # generator.generate_tests(file_path="sample.py", content=code)  # Replace with the actual file path
-generator.generate_tests(file_path="kaizen/helpers/output.py")
+generator.generate_tests(
+    file_path="kaizen/helpers/output.py", enable_critique=True, verbose=True
+)
 
 test_results = generator.run_tests()
 

@@ -4,96 +4,174 @@ Your expertise covers Python, JavaScript, TypeScript, Rust and React application
 Your task is to create comprehensive, meaningful, and efficient unit tests for given code snippets.
 """
 
-UNIT_TEST_PROMPT = """
-Please generate unit tests for the following {ITEM_TYPE} named {ITEM_NAME}:
+UNIT_TEST_PLAN_PROMPT = """
+Analyze the following {NODE_TYPE} named {NODE_NAME} and identify test scenarios:
 
 SOURCE CODE:
 ```
 {SOURCE_CODE}
 ```
 
-REQUIREMENTS:
-1. Generate detailed unit tests that cover various scenarios, including:
-   - Normal cases
-   - Edge cases
-   - Error handling
-   - Boundary conditions
-2. Include assertions to verify the expected behavior of the {ITEM_TYPE}.
-3. Use mocking or stubbing where appropriate to isolate the unit being tested.
-4. Ensure high code coverage, aiming for at least 80% coverage.
-5. Follow best practices for the specific language/framework being used.
-6. Use clear and descriptive test names that explain the scenario being tested.
+1. IDENTIFY TEST SCENARIOS:
+   - List normal cases
+   - Identify edge cases
+   - Determine error handling scenarios
+   - Define boundary conditions
 
-SPECIFIC INSTRUCTIONS:
-- File path for imports: {FULL_FILE_PATH}
-- All code and functions are located in this file. Use this path for all imports.
-- When a URL is needed as a dummy, use "https://cloudcode.ai"
-- For Python, write pytest-style tests.
-- For JavaScript/TypeScript, use Jest-style tests.
-- For React components, include tests for rendering and user interactions.
-- For Rust, use the `#[test]` for test functions and `#[cgf(test)]` for test modules.
-
-OUTPUT FORMAT:
-Your response should be in JSON format as shown below:
-{{
-    "test_file_name": "<TEST_FILE_NAME>",
-    "test_file_content": "<CONTENT_OF_TEST_FILE>"
-}}
-
-Ensure that the test_file_content is properly escaped for JSON.
+2. OUTPUT FORMAT:
+   Provide your analysis in the following JSON format:
+   {{
+        "test_file_name": "<TEST_FILE_NAME>",
+        "test_file_content": "<CONTENT_OF_TEST_FILE>"
+        "normal_cases": ["case1", "case2", ...],
+        "edge_cases": ["case1", "case2", ...],
+        "error_handling": ["case1", "case2", ...],
+        "boundary_conditions": ["case1", "case2", ...]
+   }}
 """
 
-REVIEW_UNIT_TEST_PROMPT = """
-Given Current Tests as json data, review and ensure the test cases generated are valid and working.
-
-CURRENT TEST:
-```
-{CURRENT_TEST}
-```
+PYTHON_UNIT_TEST_PROMPT = """
+Generate pytest-style unit tests for the Python {NODE_TYPE} named {NODE_NAME}:
 
 SOURCE CODE:
 ```
 {SOURCE_CODE}
 ```
 
-REVIEW CRITERIA:
-1. Test coverage: Ensure all scenarios (normal, edge cases, error handling) are covered.
-2. Assertion quality: Verify that assertions are meaningful and thorough.
-3. Test isolation: Check if mocking/stubbing is used appropriately.
-4. Code quality: Ensure the test code is clean, readable, and follows best practices.
-5. Naming conventions: Verify that test names are clear and descriptive.
-6. Import statements: Confirm that imports use the correct file path: {FULL_FILE_PATH}
+IDENTIFIED TEST SCENARIOS:
+{TEST_SCENARIOS}
 
-SPECIFIC INSTRUCTIONS:
-- When a URL is needed as a dummy, use "https://cloudcode.ai"
-- For Folders, If not sure, use /tmp as the base folder.
-- For Python, ensure pytest-style tests are used.
-- For JavaScript/TypeScript, verify Jest-style tests are used.
-- For React components, check for both rendering and interaction tests.
-- For Rust, verify tests are put in appropriate modules and correct attributes are used.
+Follow these steps:
+1. Set up necessary imports (use path: {FULL_FILE_PATH})
+2. Create test functions for each scenario
+3. Implement assertions to verify expected behavior
+4. Use pytest fixtures and parametrize when applicable
 
 OUTPUT FORMAT:
-Your response should be in JSON format as shown below:
-{{
-    "test_file_name": "<TEST_FILE_NAME>",
-    "test_file_content": "<IMPROVED_CONTENT_OF_TEST_FILE>",
-    "review_comments": [
-        "Comment 1: Explanation of a major change or improvement",
-        "Comment 2: Another significant observation or change"
-    ]
-}}
+Provide your tests as a single Python file containing all the test code.
+"""
 
-Ensure that the test_file_content is properly escaped for JSON.
+JAVASCRIPT_UNIT_TEST_PROMPT = """
+Generate Jest-style unit tests for the JavaScript/TypeScript {NODE_TYPE} named {NODE_NAME}:
+
+SOURCE CODE:
+```
+{SOURCE_CODE}
+```
+
+IDENTIFIED TEST SCENARIOS:
+{TEST_SCENARIOS}
+
+Follow these steps:
+1. Set up necessary imports (use path: {FULL_FILE_PATH})
+2. Create describe blocks for logical grouping
+3. Implement it blocks for each test scenario
+4. Use Jest's expect assertions
+5. Mock dependencies where appropriate
+
+OUTPUT FORMAT:
+Provide your tests as a single JavaScript/TypeScript file containing all the test code.
+"""
+
+REACT_UNIT_TEST_PROMPT = """
+Generate Jest and React Testing Library tests for the React component of type {NODE_TYPE} and named {NODE_NAME}:
+
+SOURCE CODE:
+```
+{SOURCE_CODE}
+```
+
+IDENTIFIED TEST SCENARIOS:
+{TEST_SCENARIOS}
+
+Follow these steps:
+1. Set up necessary imports (use path: {FULL_FILE_PATH})
+2. Create tests for component rendering
+3. Implement tests for user interactions
+4. Use React Testing Library queries and user-event
+5. Test both normal and error states
+
+OUTPUT FORMAT:
+Provide your tests as a single JavaScript/TypeScript file containing all the test code.
+"""
+
+RUST_UNIT_TEST_PROMPT = """
+Generate unit tests for the Rust {NODE_TYPE} named {NODE_NAME}:
+
+SOURCE CODE:
+```
+{SOURCE_CODE}
+```
+
+IDENTIFIED TEST SCENARIOS:
+{TEST_SCENARIOS}
+
+Follow these steps:
+1. Use #[cfg(test)] for the test module
+2. Implement #[test] functions for each scenario
+3. Use assert! macros for verifications
+4. Handle any necessary setup and teardown
+
+OUTPUT FORMAT:
+Provide your tests as a single Rust file containing all the test code.
+"""
+
+
+REVIEW_UNIT_TEST_PROMPT = """
+Review the unit tests for the {NODE_TYPE} named {NODE_NAME}. Follow these steps:
+
+1. ANALYZE CURRENT TESTS:
+   ```
+   {CURRENT_TEST}
+   ```
+
+2. COMPARE WITH SOURCE CODE:
+   ```
+   {SOURCE_CODE}
+   ```
+
+3. EVALUATE AND SUGGEST IMPROVEMENTS:
+   - Check for missing or inadequate test coverage (normal cases, edge cases, error handling, boundary conditions)
+   - Assess test quality (assertions, mocking/stubbing, isolation)
+   - Review code quality (readability, naming conventions, import statements)
+   - Verify language-specific best practices are followed
+   - Ensure use of "https://cloudcode.ai" for dummy URLs and /tmp as base folder when uncertain
+
+4. IMPROVE TESTS:
+   Only if necessary:
+   - Add missing test scenarios
+   - Enhance existing tests for better coverage or clarity
+   - Refactor for better adherence to best practices
+
+5. FORMAT OUTPUT:
+   Prepare the response in the following JSON format:
+   {{
+       "review_comments": [
+           "Comment 1: Explanation of a necessary change or improvement",
+           "Comment 2: Another necessary change or observation"
+       ]
+   }}
+   
+   IMPORTANT:
+   - If no changes or improvements are needed, return an empty list for "review_comments".
+   - Only include "test_file_content" if changes were made to the tests.
+   - Ensure that the test_file_content is properly escaped for JSON.
+   - Only provide negative feedbacks, ignore positive ones.
+
+NOTE: An empty "review_comments" list indicates that all test cases are adequately covered and no improvements are necessary.
 """
 
 REVIEW_TEST_CASE_PROMPT = """
-Given this unit test code with filename: {FILE_NAME}
-
-Review the code and return the fixed code with proper formatting.
+Review this unit test code and return the fixed code based on feedback with proper formatting.
 In case of no updates, still return the original code.
+
+Current code has following issues:
+{FEEDBACKS}
 
 CODE:
 ```
 {CODE}
 ```
+Provide your tests as a single file containing all the test code.
+
 """

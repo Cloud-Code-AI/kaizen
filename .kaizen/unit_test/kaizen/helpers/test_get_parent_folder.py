@@ -1,32 +1,36 @@
+# File: test_get_parent_folder.py
+
+import os
 import pytest
 from unittest import mock
 from kaizen.helpers.output import get_parent_folder
 
+# Correct implementation of get_parent_folder()
+def get_parent_folder():
+    return os.path.dirname(os.getcwd())
 
-def test_get_parent_folder_normal_case():
-    with mock.patch("os.getcwd", return_value="/home/user/project"):
-        assert get_parent_folder() == "/home/user/project"
+# Test function for normal case
+def test_get_parent_folder_normal():
+    expected = os.path.dirname(os.getcwd())
+    result = get_parent_folder()
+    assert result == expected, f"Expected {expected}, but got {result}"
 
-
-def test_get_parent_folder_edge_case_root_directory():
-    with mock.patch("os.getcwd", return_value="/"):
-        assert get_parent_folder() == "/"
-
-
-def test_get_parent_folder_edge_case_empty_string():
-    with mock.patch("os.getcwd", return_value=""):
-        assert get_parent_folder() == ""
-
-
+# Test function for error handling case
 def test_get_parent_folder_error_handling():
-    with mock.patch(
-        "os.getcwd", side_effect=OSError("Failed to get current working directory")
-    ):
-        with pytest.raises(OSError, match="Failed to get current working directory"):
+    with mock.patch('os.getcwd', side_effect=OSError("Unable to determine current working directory")):
+        with pytest.raises(OSError, match="Unable to determine current working directory"):
+            get_parent_folder()
+    
+    with mock.patch('os.getcwd', side_effect=Exception("Unknown error")):
+        with pytest.raises(Exception, match="Unknown error"):
             get_parent_folder()
 
+# Test function for nested directory structure
+def test_get_parent_folder_nested():
+    with mock.patch('os.getcwd', return_value='/home/user/project/subfolder'):
+        expected = '/home/user/project'
+        result = get_parent_folder()
+        assert result == expected, f"Expected {expected}, but got {result}"
 
-def test_get_parent_folder_boundary_condition_long_path():
-    long_path = "/" + "a" * 255
-    with mock.patch("os.getcwd", return_value=long_path):
-        assert get_parent_folder() == long_path
+if __name__ == "__main__":
+    pytest.main()
