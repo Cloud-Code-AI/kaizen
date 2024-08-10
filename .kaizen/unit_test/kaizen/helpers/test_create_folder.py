@@ -8,8 +8,11 @@ from kaizen.helpers.output import create_folder
 @mock.patch("kaizen.helpers.output.logger")
 def test_create_folder_success(mock_logger, mock_exists, mock_makedirs):
     mock_exists.return_value = False
-    folder_path = "/fake/path"
+    folder_path = "/path/to/folder"
+
     create_folder(folder_path)
+
+    mock_exists.assert_called_once_with(folder_path)
     mock_makedirs.assert_called_once_with(folder_path)
     mock_logger.debug.assert_called_once_with(
         f"Folder '{folder_path}' created successfully."
@@ -21,8 +24,11 @@ def test_create_folder_success(mock_logger, mock_exists, mock_makedirs):
 @mock.patch("kaizen.helpers.output.logger")
 def test_create_folder_already_exists(mock_logger, mock_exists, mock_makedirs):
     mock_exists.return_value = True
-    folder_path = "/fake/path"
+    folder_path = "/path/to/folder"
+
     create_folder(folder_path)
+
+    mock_exists.assert_called_once_with(folder_path)
     mock_makedirs.assert_not_called()
     mock_logger.debug.assert_called_once_with(f"Folder '{folder_path}' already exists.")
 
@@ -31,9 +37,13 @@ def test_create_folder_already_exists(mock_logger, mock_exists, mock_makedirs):
 @mock.patch("kaizen.helpers.output.os.path.exists")
 @mock.patch("kaizen.helpers.output.logger")
 def test_create_folder_empty_path(mock_logger, mock_exists, mock_makedirs):
+    folder_path = ""
+
     with pytest.raises(ValueError) as excinfo:
-        create_folder("")
+        create_folder(folder_path)
+
     assert str(excinfo.value) == "Folder path cannot be empty"
+    mock_exists.assert_not_called()
     mock_makedirs.assert_not_called()
     mock_logger.debug.assert_not_called()
 
@@ -42,8 +52,12 @@ def test_create_folder_empty_path(mock_logger, mock_exists, mock_makedirs):
 @mock.patch("kaizen.helpers.output.os.path.exists")
 @mock.patch("kaizen.helpers.output.logger")
 def test_create_folder_none_path(mock_logger, mock_exists, mock_makedirs):
+    folder_path = None
+
     with pytest.raises(ValueError) as excinfo:
-        create_folder(None)
+        create_folder(folder_path)
+
     assert str(excinfo.value) == "Folder path cannot be empty"
+    mock_exists.assert_not_called()
     mock_makedirs.assert_not_called()
     mock_logger.debug.assert_not_called()

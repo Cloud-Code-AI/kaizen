@@ -60,6 +60,7 @@ Remember, you cannot open URLs or links directly. Ask the human to provide relev
 PLAYWRIGHT_CODE_PLAN_PROMPT = """
 Generate a step by step plan to write Playwright code in Python for the following test - {TEST_DESCRIPTION}. 
 Here are some other info. make sure all the necessary items are covered in the plan.
+
 URL: {URL}
 Content: 
 ```{WEB_CONTENT}```
@@ -67,6 +68,8 @@ Content:
 
 PLAYWRIGHT_CODE_PROMPT = """
 Based on this plan, generate playwright code running in headless mode. 
+
+Make sure all the code is in a single file and only provide the code info.
 Content: 
 ```{PLAN_TEXT}```
 """
