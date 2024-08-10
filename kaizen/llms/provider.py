@@ -9,7 +9,21 @@ from litellm import Router
 import logging
 from collections import defaultdict
 
+def set_all_loggers_to_ERROR():
+    print("All Loggers and their levels:")
+    for name, logger in logging.Logger.manager.loggerDict.items():
+        if isinstance(logger, logging.Logger):
+            print(f"Logger: {name}, Level: {logging.getLevelName(logger.level)}")
+            logging.getLogger(name).setLevel(logging.ERROR)
+        else:
+            print(f"PlaceHolder: {name}")
 
+set_all_loggers_to_ERROR()
+
+# Set litellm log level to ERROR
+logging.getLogger("LiteLLM").setLevel(logging.ERROR)
+logging.getLogger("LiteLLM Router").setLevel(logging.ERROR)
+logging.getLogger("LiteLLM Proxy").setLevel(logging.ERROR)
 LOGLEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()
 logging.basicConfig(
     level=LOGLEVEL, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"

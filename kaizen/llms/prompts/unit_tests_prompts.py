@@ -156,18 +156,22 @@ Review the unit tests for the {NODE_TYPE} named {NODE_NAME}. Follow these steps:
    - If no changes or improvements are needed, return an empty list for "review_comments".
    - Only include "test_file_content" if changes were made to the tests.
    - Ensure that the test_file_content is properly escaped for JSON.
+   - Only provide negative feedbacks, ignore positive ones.
 
 NOTE: An empty "review_comments" list indicates that all test cases are adequately covered and no improvements are necessary.
 """
 
 REVIEW_TEST_CASE_PROMPT = """
-Given this unit test code with filename: {FILE_NAME}
-
-Review the code and return the fixed code with proper formatting.
+Review this unit test code and return the fixed code based on feedback with proper formatting.
 In case of no updates, still return the original code.
+
+Current code has following issues:
+{FEEDBACKS}
 
 CODE:
 ```
 {CODE}
 ```
+Provide your tests as a single file containing all the test code.
+
 """
