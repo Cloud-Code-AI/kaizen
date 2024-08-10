@@ -4,13 +4,14 @@ from typing import Optional
 from kaizen.helpers import output
 from kaizen.llms.provider import LLMProvider
 from kaizen.actors.e2e_test_runner import E2ETestRunner
-from kaizen.llms.prompts.ui_tests_prompts import (
+from kaizen.llms.prompts.e2e_tests_prompts import (
     E2E_MODULES_PROMPT,
     E2E_TESTS_SYSTEM_PROMPT,
     PLAYWRIGHT_CODE_PROMPT,
     PLAYWRIGHT_CODE_PLAN_PROMPT,
 )
-
+from tqdm import tqdm
+import json
 
 class E2ETestGenerator:
     def __init__(self):
@@ -105,20 +106,36 @@ class E2ETestGenerator:
             "completion_tokens": 0,
             "total_tokens": 0,
         }
-        for module in ui_tests:
-            for test in module["tests"]:
-                self.logger.info(
-                    f"Generating playwright code for {test['test_description']}"
-                )
+        for module in tqdm(ui_tests, desc="Processing Modules", unit="module"):
+            module_title = module.get(
+                "module_title", "Unknown Module"
+            )  # Adjust if your module structure is different
+            print(f"\n{'='*50}")
+            print(f"Processing Module: {module_title}")
+            print(f"{'='*50}")
+
+            # Inner loop
+            for i, test in enumerate(module["tests"], 1):
                 test_description = test["test_description"]
+                print(f"\n--- Test {i}: {test_description} ---")
+
+                print("  • Generating playwright code...")
                 playwright_code = self.generate_playwright_code(
                     web_content, test_description, web_url
                 )
+
+                print("  • Updating test code...")
                 test["code"] = playwright_code["code"]
                 test["status"] = "Not run"
+
+                print("  • Updating usage statistics...")
                 self.total_usage = self.provider.update_usage(
                     self.total_usage, playwright_code["usage"]
                 )
+
+                print("  ✓ Test processing complete")
+
+        print("\nAll modules processed successfully!")
 
         return ui_tests, self.total_usage
 
@@ -131,11 +148,21 @@ class E2ETestGenerator:
         output.create_folder(folder_path)
         output.create_test_files(json_tests, folder_path)
         self.logger.info("Successfully store the files")
+    
+    def store_module_files(self, module_data: list, folder_path: str = ""):
 
-    def run_tests(self, ui_tests: dict):
+        if not folder_path:
+            folder_path = output.get_parent_folder()
+
+        folder_path = os.path.join(folder_path, self.test_folder_path)
+        output.create_folder(folder_path)
+        with open(f'{folder_path}/module_info.json', 'w+') as f:
+            f.write(json.dumps(module_data))
+
+    def run_tests(self):
         """
         This method runs playwright tests and updates logs and status accordingly.
         """
         runner = E2ETestRunner()
-        results = runner.run_tests(ui_tests)
+        results = runner.run_tests()
         return results
