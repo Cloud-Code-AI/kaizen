@@ -43,7 +43,10 @@ class UnitTestGenerator:
         if output_path:
             self.output_folder = output_path
         for file_path in Path(dir_path).rglob('*.*'):
-            self.generate_tests(file_path=str(file_path), output_path=output_path)
+            try:
+                self.generate_tests(file_path=str(file_path), output_path=output_path)
+            except Exception as e:
+                print(f"Error: Could not generate tests for {file_path}: {e}")
         
     def generate_tests(
         self, file_path: str, content: str = None, output_path: str = None
