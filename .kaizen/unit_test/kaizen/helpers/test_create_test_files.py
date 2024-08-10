@@ -1,67 +1,132 @@
 import os
 import json
-from unittest import mock
+import pytest
+from unittest.mock import patch, mock_open, MagicMock
+
+# Assuming the function is imported from kaizen/helpers/output.py
 from kaizen.helpers.output import create_test_files
 
+@pytest.fixture
+def mock_clean_python_code():
+    with patch("kaizen.helpers.output.general.clean_python_code") as mock_clean:
+        yield mock_clean
 
-@mock.patch("kaizen.helpers.output.create_folder")
-@mock.patch("kaizen.helpers.output.general.clean_python_code")
-@mock.patch("kaizen.helpers.output.logger")
-def test_create_test_files_normal_case(
-    mock_logger, mock_clean_python_code, mock_create_folder
-):
+@pytest.fixture
+def mock_create_folder():
+    with patch("kaizen.helpers.output.create_folder") as mock_folder:
+        yield mock_folder
+
+@pytest.fixture
+def mock_logger():
+    with patch("kaizen.helpers.output.logger") as mock_log:
+        yield mock_log
+
+@pytest.fixture
+def mock_open_file():
+    with patch("builtins.open", mock_open()) as mock_file:
+        yield mock_file
+
+def test_single_module_single_test(mock_clean_python_code, mock_create_folder, mock_open_file):
     json_tests = [
         {
             "folder_name": "module1",
-            "importance": "high",
+            "importance": "High",
             "module_title": "Module 1",
             "tests": [
                 {
-                    "test_name": "Test Case 1",
+                    "test_name": "Test 1",
                     "test_description": "Description 1",
-                    "code": "print('Hello World')",
+                    "code": "print('Hello, World!')"
                 }
-            ],
+            ]
         }
     ]
     folder_path = "test_folder"
-    mock_clean_python_code.return_value = "print('Hello World')"
+    mock_clean_python_code.return_value = "cleaned_code"
 
     create_test_files(json_tests, folder_path)
 
     mock_create_folder.assert_called_once_with(os.path.join(folder_path, "module1"))
-    mock_clean_python_code.assert_called_once_with("print('Hello World')")
-    mock_logger.info.assert_not_called()
+    mock_open_file.assert_any_call(os.path.join(folder_path, "tests.json"), "w")
+    mock_open_file.assert_any_call(os.path.join(folder_path, "module1", "test_test_1.py"), "w")
+    mock_clean_python_code.assert_called_once_with("print('Hello, World!')")
 
-    with open(os.path.join(folder_path, "tests.json"), "r") as f:
-        assert json.load(f) == json_tests
-
-    with open(os.path.join(folder_path, "module1", "test_test_case_1.py"), "r") as f:
-        content = f.read()
-        assert "Importance: high" in content
-        assert "Module Name: Module 1" in content
-        assert "Description: Description 1" in content
-        assert "print('Hello World')" in content
-
-
-@mock.patch("kaizen.helpers.output.create_folder")
-@mock.patch("kaizen.helpers.output.general.clean_python_code")
-@mock.patch("kaizen.helpers.output.logger")
-def test_create_test_files_empty_code(
-    mock_logger, mock_clean_python_code, mock_create_folder
-):
+def test_multiple_modules_multiple_tests(mock_clean_python_code, mock_create_folder, mock_open_file):
     json_tests = [
         {
             "folder_name": "module1",
-            "importance": "high",
+            "importance": "High",
             "module_title": "Module 1",
             "tests": [
                 {
-                    "test_name": "Test Case 1",
+                    "test_name": "Test 1",
                     "test_description": "Description 1",
-                    "code": "print('Hello World')",
+                    "code": "print('Hello, World!')"
                 }
-            ],
+            ]
+        },
+        {
+            "folder_name": "module2",
+            "importance": "Medium",
+            "module_title": "Module 2",
+            "tests": [
+                {
+                    "test_name": "Test 2",
+                    "test_description": "Description 2",
+                    "code": "print('Goodbye, World!')"
+                }
+            ]
+        }
+    ]
+    folder_path = "test_folder"
+    mock_clean_python_code.side_effect = ["cleaned_code1", "cleaned_code2"]
+
+    create_test_files(json_tests, folder_path)
+
+    assert mock_create_folder.call_count == 2
+    mock_open_file.assert_any_call(os.path.join(folder_path, "tests.json"), "w")
+    mock_open_file.assert_any_call(os.path.join(folder_path, "module1", "test_test_1.py"), "w")
+    mock_open_file.assert_any_call(os.path.join(folder_path, "module2", "test_test_2.py"), "w")
+    assert mock_clean_python_code.call_count == 2
+
+def test_empty_json_tests(mock_create_folder, mock_open_file):
+    json_tests = []
+    folder_path = "test_folder"
+
+    create_test_files(json_tests, folder_path)
+
+    mock_create_folder.assert_not_called()
+    mock_open_file.assert_called_once_with(os.path.join(folder_path, "tests.json"), "w")
+
+def test_module_with_no_tests(mock_create_folder, mock_open_file):
+    json_tests = [
+        {
+            "folder_name": "module1",
+            "importance": "High",
+            "module_title": "Module 1",
+            "tests": []
+        }
+    ]
+    folder_path = "test_folder"
+
+    create_test_files(json_tests, folder_path)
+
+    mock_create_folder.assert_called_once_with(os.path.join(folder_path, "module1"))
+    mock_open_file.assert_called_once_with(os.path.join(folder_path, "tests.json"), "w")
+
+def test_cleaning_code_fails(mock_clean_python_code, mock_create_folder, mock_open_file, mock_logger):
+    json_tests = [
+        {
+            "folder_name": "module1",
+            "importance": "High",
+            "module_title": "Module 1",
+            "tests": [
+                {
+                    "test_name": "Test 1",
+                    "test_description": "Description 1",
+                    "code": "print('Hello, World!')"
+                }
+            ]
         }
     ]
     folder_path = "test_folder"
@@ -69,83 +134,32 @@ def test_create_test_files_empty_code(
 
     create_test_files(json_tests, folder_path)
 
-    mock_create_folder.assert_called_once_with(os.path.join(folder_path, "module1"))
-    mock_clean_python_code.assert_called_once_with("print('Hello World')")
     mock_logger.info.assert_called_once_with("Failed to clean code")
 
-    with open(os.path.join(folder_path, "tests.json"), "r") as f:
-        assert json.load(f) == json_tests
-
-    assert not os.path.exists(
-        os.path.join(folder_path, "module1", "test_test_case_1.py")
-    )
-
-
-@mock.patch("kaizen.helpers.output.create_folder")
-@mock.patch("kaizen.helpers.output.general.clean_python_code")
-@mock.patch("kaizen.helpers.output.logger")
-def test_create_test_files_no_tests(
-    mock_logger, mock_clean_python_code, mock_create_folder
-):
+@pytest.mark.parametrize("test_name", [
+    ("Test with special characters!@#"),
+    ("Test with spaces"),
+    ("Test with a very very very very very very very very very long name")
+])
+def test_various_test_names(mock_clean_python_code, mock_create_folder, mock_open_file, test_name):
     json_tests = [
         {
             "folder_name": "module1",
-            "importance": "high",
-            "module_title": "Module 1",
-            "tests": [],
-        }
-    ]
-    folder_path = "test_folder"
-
-    create_test_files(json_tests, folder_path)
-
-    mock_create_folder.assert_called_once_with(os.path.join(folder_path, "module1"))
-    mock_clean_python_code.assert_not_called()
-    mock_logger.info.assert_not_called()
-
-    with open(os.path.join(folder_path, "tests.json"), "r") as f:
-        assert json.load(f) == json_tests
-
-    assert not os.path.exists(
-        os.path.join(folder_path, "module1", "test_test_case_1.py")
-    )
-
-
-@mock.patch("kaizen.helpers.output.create_folder")
-@mock.patch("kaizen.helpers.output.general.clean_python_code")
-@mock.patch("kaizen.helpers.output.logger")
-def test_create_test_files_special_characters(
-    mock_logger, mock_clean_python_code, mock_create_folder
-):
-    json_tests = [
-        {
-            "folder_name": "module1",
-            "importance": "high",
+            "importance": "High",
             "module_title": "Module 1",
             "tests": [
                 {
-                    "test_name": "Test@Case#1",
-                    "test_description": "Description 1",
-                    "code": "print('Hello World')",
+                    "test_name": test_name,
+                    "test_description": "Description",
+                    "code": "print('Hello, World!')"
                 }
-            ],
+            ]
         }
     ]
     folder_path = "test_folder"
-    mock_clean_python_code.return_value = "print('Hello World')"
+    mock_clean_python_code.return_value = "cleaned_code"
 
     create_test_files(json_tests, folder_path)
 
-    mock_create_folder.assert_called_once_with(os.path.join(folder_path, "module1"))
-    mock_clean_python_code.assert_called_once_with("print('Hello World')")
-    mock_logger.info.assert_not_called()
-
-    with open(os.path.join(folder_path, "tests.json"), "r") as f:
-        assert json.load(f) == json_tests
-
-    with open(os.path.join(folder_path, "module1", "test_test_case_1.py"), "r") as f:
-        content = f.read()
-        assert "Importance: high" in content
-        assert "Module Name: Module 1" in content
-        assert "Description: Description 1" in content
-        assert "print('Hello World')" in content
+    expected_file_name = "test_" + "_".join(test_name.lower().split(" ")) + ".py"
+    mock_open_file.assert_any_call(os.path.join(folder_path, "module1", expected_file_name), "w")

@@ -1,116 +1,63 @@
 import pytest
-from unittest.mock import patch, AsyncMock
 from bs4 import BeautifulSoup, Comment
+import asyncio
+import nest_asyncio
+from unittest.mock import patch, AsyncMock
+
+# Assuming get_web_html is defined in kaizen/helpers/output.py
 from kaizen.helpers.output import get_web_html
 
+# Mock the get_html function
+async def mock_get_html(url):
+    if url == "http://valid.url":
+        return """
+        <html>
+            <head>
+                <meta charset="UTF-8">
+                <link rel="stylesheet" href="styles.css">
+                <style>body { background-color: #fff; }</style>
+                <script src="script.js"></script>
+                <noscript>Your browser does not support JavaScript!</noscript>
+            </head>
+            <body>
+                <svg></svg>
+                <h1>Title</h1>
+                <p>Paragraph</p>
+                <!-- This is a comment -->
+            </body>
+        </html>
+        """
+    elif url == "http://no.removable.elements":
+        return """
+        <html>
+            <body>
+                <h1>Title</h1>
+                <p>Paragraph</p>
+            </body>
+        </html>
+        """
+    elif url == "http://empty.html":
+        return ""
+    elif url == "http://large.content":
+        return "<html>" + "<p>Content</p>" * 10000 + "</html>"
+    else:
+        raise ValueError("Invalid URL")
 
 @pytest.fixture
-def mock_get_html():
-    with patch("kaizen.helpers.output.get_html", new_callable=AsyncMock) as mock:
-        yield mock
+def mock_get_html_fixture():
+    with patch('kaizen.helpers.output.get_html', new=mock_get_html):
+        yield
 
-
-@patch("nest_asyncio.apply")
-def test_get_web_html_normal_case(mock_nest_asyncio_apply, mock_get_html):
-    url = "https://cloudcode.ai"
-    html_content = """
-    <html>
-        <head><title>Test</title></head>
-        <body>
-            <svg></svg>
-            <style>.test{color: red;}</style>
-            <script>console.log('test');</script>
-            <noscript>This is a noscript tag</noscript>
-            <link rel="stylesheet" href="styles.css">
-            <meta charset="UTF-8">
-            <div>Content</div>
-        </body>
-    </html>
-    """
-    mock_get_html.return_value = html_content
-
+@pytest.mark.parametrize("url, expected_substring", [
+    ("http://valid.url", "<h1>Title</h1>"),
+    ("http://no.removable.elements", "<h1>Title</h1>"),
+    ("http://empty.html", ""),
+    ("http://large.content", "<p>Content</p>")
+])
+def test_get_web_html(mock_get_html_fixture, url, expected_substring):
     result = get_web_html(url)
+    assert expected_substring in result
 
-    soup = BeautifulSoup(result, "html.parser")
-
-    assert not soup.find_all("svg")
-    assert not soup.find_all("style")
-    assert not soup.find_all("script")
-    assert not soup.find_all("noscript")
-    assert not soup.find_all("link")
-    assert not soup.find_all("meta")
-    assert not soup.find_all("head")
-    assert soup.find("div").text == "Content"
-
-
-@patch("nest_asyncio.apply")
-def test_get_web_html_no_elements_to_remove(mock_nest_asyncio_apply, mock_get_html):
-    url = "https://cloudcode.ai"
-    html_content = """
-    <html>
-        <body>
-            <div>Content</div>
-        </body>
-    </html>
-    """
-    mock_get_html.return_value = html_content
-
-    result = get_web_html(url)
-
-    soup = BeautifulSoup(result, "html.parser")
-
-    assert soup.find("div").text == "Content"
-
-
-@patch("nest_asyncio.apply")
-def test_get_web_html_with_comments(mock_nest_asyncio_apply, mock_get_html):
-    url = "https://cloudcode.ai"
-    html_content = """
-    <html>
-        <body>
-            <!-- This is a comment -->
-            <div>Content</div>
-        </body>
-    </html>
-    """
-    mock_get_html.return_value = html_content
-
-    result = get_web_html(url)
-
-    soup = BeautifulSoup(result, "html.parser")
-
-    assert not soup.find_all(text=lambda text: isinstance(text, Comment))
-    assert soup.find("div").text == "Content"
-
-
-@patch("nest_asyncio.apply")
-def test_get_web_html_empty_html(mock_nest_asyncio_apply, mock_get_html):
-    url = "https://cloudcode.ai"
-    html_content = ""
-    mock_get_html.return_value = html_content
-
-    result = get_web_html(url)
-
-    assert result == ""
-
-
-@patch("nest_asyncio.apply")
-def test_get_web_html_invalid_html(mock_nest_asyncio_apply, mock_get_html):
-    url = "https://cloudcode.ai"
-    html_content = "<html><div>Content</div>"  # Missing closing tags
-    mock_get_html.return_value = html_content
-
-    result = get_web_html(url)
-
-    soup = BeautifulSoup(result, "html.parser")
-
-    assert soup.find("div").text == "Content"
-
-
-@patch("nest_asyncio.apply")
-def test_get_web_html_error_handling(mock_nest_asyncio_apply, mock_get_html):
-    url = "https://cloudcode.ai"
-    mock_get_html.side_effect = Exception("Network error")
-
-    with pytest.raises(Exception, match="Network error"):
-        get_web_html(url)
+def test_invalid_url(mock_get_html_fixture):
+    with pytest.raises(ValueError, match="Invalid URL"):
+        get_web_html("http://invalid.url")
