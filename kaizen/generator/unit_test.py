@@ -4,6 +4,7 @@ import logging
 from datetime import datetime
 from tqdm import tqdm
 import json
+from pathlib import Path
 from kaizen.llms.provider import LLMProvider
 from kaizen.helpers.parser import extract_code_from_markdown
 from kaizen.actors.unit_test_runner import UnitTestRunner
@@ -57,6 +58,20 @@ class UnitTestGenerator:
         os.makedirs(self.log_dir, exist_ok=True)
         self._create_output_folder(self.output_folder)
 
+    def generate_tests_from_dir(
+        self, dir_path: str, output_path: str = None
+    ):
+        """
+        dir_path: (str) - path of the directory containing source files
+        """
+        if output_path:
+            self.output_folder = output_path
+        for file_path in Path(dir_path).rglob('*.*'):
+            try:
+                self.generate_tests(file_path=str(file_path), output_path=output_path)
+            except Exception as e:
+                print(f"Error: Could not generate tests for {file_path}: {e}")
+        
     def generate_tests(
         self,
         file_path: str,
