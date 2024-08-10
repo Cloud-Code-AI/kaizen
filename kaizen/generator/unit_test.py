@@ -77,9 +77,9 @@ class UnitTestGenerator:
         folder_path = "/".join(file_path.split("/")[:-1])
         self.total_usage = self.provider.DEFAULT_USAGE
         for item in tqdm(parsed_data, desc="Processing Items", unit="item"):
-            print(f"\n{'='*50}")
+            print(f"\n{'=' * 50}")
             print(f"Processing Item: {item['name']}")
-            print(f"{'='*50}")
+            print(f"{'=' * 50}")
 
             # Step 1: Prepare file name and path
             print("• Preparing file name and path...")
