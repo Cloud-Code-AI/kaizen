@@ -12,6 +12,7 @@ from kaizen.llms.prompts.unit_tests_prompts import (
 )
 from tqdm import tqdm
 
+
 class UnitTestGenerator:
     def __init__(self):
         self.output_folder = "./.kaizen/unit_test/"
@@ -71,21 +72,27 @@ class UnitTestGenerator:
             # Step 1: Prepare file name and path
             print("• Preparing file name and path...")
             test_file_name = f"test_{item['name'].lower()}.{file_extension}"
-            test_file_path = os.path.join(self.output_folder, folder_path, test_file_name)
+            test_file_path = os.path.join(
+                self.output_folder, folder_path, test_file_name
+            )
             self._create_output_folder("/".join(test_file_path.split("/")[:-1]))
             item["full_path"] = file_path
             print(f"  ✓ File will be saved as: {test_file_path}")
 
             # Step 2: Generate AI tests
             print("• Generating AI tests...")
-            ai_generated_tests, usage = self.generate_ai_tests(item, source_code=item["source"])
+            ai_generated_tests, usage = self.generate_ai_tests(
+                item, source_code=item["source"]
+            )
             self.total_usage = self.provider.update_usage(self.total_usage, usage)
             tests_json = extract_json(ai_generated_tests)
             print(f"  ✓ AI tests generated successfully")
 
             # Step 3: Review test file
             print("• Reviewing test file...")
-            test_code, usage = self.review_test_file(test_file_name, tests_json["test_file_content"])
+            test_code, usage = self.review_test_file(
+                test_file_name, tests_json["test_file_content"]
+            )
             self.total_usage = self.provider.update_usage(self.total_usage, usage)
             test_code = extract_code_from_markdown(test_code)
             print(f"  ✓ Test file reviewed successfully")
@@ -99,7 +106,6 @@ class UnitTestGenerator:
             print("\n✓ Item processing complete")
 
         print("\nAll items processed successfully!")
-
 
     def generate_ai_tests(self, item, source_code):
         prompt = UNIT_TEST_PROMPT.format(

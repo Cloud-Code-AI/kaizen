@@ -13,6 +13,7 @@ from kaizen.llms.prompts.e2e_tests_prompts import (
 from tqdm import tqdm
 import json
 
+
 class E2ETestGenerator:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -148,7 +149,7 @@ class E2ETestGenerator:
         output.create_folder(folder_path)
         output.create_test_files(json_tests, folder_path)
         self.logger.info("Successfully store the files")
-    
+
     def store_module_files(self, module_data: list, folder_path: str = ""):
 
         if not folder_path:
@@ -156,7 +157,7 @@ class E2ETestGenerator:
 
         folder_path = os.path.join(folder_path, self.test_folder_path)
         output.create_folder(folder_path)
-        with open(f'{folder_path}/module_info.json', 'w+') as f:
+        with open(f"{folder_path}/module_info.json", "w+") as f:
             f.write(json.dumps(module_data))
 
     def run_tests(self):

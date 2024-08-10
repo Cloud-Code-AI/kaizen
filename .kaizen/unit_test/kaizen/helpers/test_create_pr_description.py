@@ -1,32 +1,35 @@
 import pytest
 from kaizen.helpers.output import create_pr_description
 
-DESC_COLLAPSIBLE_TEMPLATE = '<details><summary>Original Description</summary>{desc}</details>'
+DESC_COLLAPSIBLE_TEMPLATE = (
+    "<details><summary>Original Description</summary>{desc}</details>"
+)
+
 
 @pytest.mark.parametrize(
     "desc, original_desc, expected",
     [
         (
-            "This is a test description.", 
+            "This is a test description.",
             "This is the original description.",
-            "This is a test description.\n\n> ✨ Generated with love by [Kaizen](https://cloudcode.ai) ❤️\n\n<details><summary>Original Description</summary>This is the original description.</details>"
+            "This is a test description.\n\n> ✨ Generated with love by [Kaizen](https://cloudcode.ai) ❤️\n\n<details><summary>Original Description</summary>This is the original description.</details>",
         ),
         (
-            "Short desc.", 
+            "Short desc.",
             "Short original.",
-            "Short desc.\n\n> ✨ Generated with love by [Kaizen](https://cloudcode.ai) ❤️\n\n<details><summary>Original Description</summary>Short original.</details>"
+            "Short desc.\n\n> ✨ Generated with love by [Kaizen](https://cloudcode.ai) ❤️\n\n<details><summary>Original Description</summary>Short original.</details>",
         ),
         (
-            "", 
+            "",
             "Empty original.",
-            "\n\n> ✨ Generated with love by [Kaizen](https://cloudcode.ai) ❤️\n\n<details><summary>Original Description</summary>Empty original.</details>"
+            "\n\n> ✨ Generated with love by [Kaizen](https://cloudcode.ai) ❤️\n\n<details><summary>Original Description</summary>Empty original.</details>",
         ),
         (
-            "Long description " * 10, 
+            "Long description " * 10,
             "Long original description " * 10,
-            "Long description Long description Long description Long description Long description Long description Long description Long description Long description Long description \n\n> ✨ Generated with love by [Kaizen](https://cloudcode.ai) ❤️\n\n<details><summary>Original Description</summary>Long original description Long original description Long original description Long original description Long original description Long original description Long original description Long original description Long original description Long original description </details>"
-        )
-    ]
+            "Long description Long description Long description Long description Long description Long description Long description Long description Long description Long description \n\n> ✨ Generated with love by [Kaizen](https://cloudcode.ai) ❤️\n\n<details><summary>Original Description</summary>Long original description Long original description Long original description Long original description Long original description Long original description Long original description Long original description Long original description Long original description </details>",
+        ),
+    ],
 )
 def test_create_pr_description(desc, original_desc, expected):
     assert create_pr_description(desc, original_desc) == expected
