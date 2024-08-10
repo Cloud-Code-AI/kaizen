@@ -1,6 +1,7 @@
 import os
 import importlib
 import logging
+from pathlib import Path
 from kaizen.llms.provider import LLMProvider
 from kaizen.helpers.parser import extract_json, extract_code_from_markdown
 from kaizen.actors.unit_test_runner import UnitTestRunner
@@ -33,6 +34,20 @@ class UnitTestGenerator:
         self.provider = LLMProvider(system_prompt=UNIT_TEST_SYSTEM_PROMPT)
         self._create_output_folder(self.output_folder)
 
+    def generate_tests_from_dir(
+        self, dir_path: str, output_path: str = None
+    ):
+        """
+        dir_path: (str) - path of the directory containing source files
+        """
+        if output_path:
+            self.output_folder = output_path
+        for file_path in Path(dir_path).rglob('*.*'):
+            try:
+                self.generate_tests(file_path=str(file_path), output_path=output_path)
+            except Exception as e:
+                print(f"Error: Could not generate tests for {file_path}: {e}")
+        
     def generate_tests(
         self, file_path: str, content: str = None, output_path: str = None
     ):
@@ -65,9 +80,9 @@ class UnitTestGenerator:
         folder_path = "/".join(file_path.split("/")[:-1])
         self.total_usage = self.provider.DEFAULT_USAGE
         for item in tqdm(parsed_data, desc="Processing Items", unit="item"):
-            print(f"\n{'='*50}")
+            print(f"\n{'=' * 50}")
             print(f"Processing Item: {item['name']}")
-            print(f"{'='*50}")
+            print(f"{'=' * 50}")
 
             # Step 1: Prepare file name and path
             print("• Preparing file name and path...")
