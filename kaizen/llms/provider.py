@@ -9,6 +9,7 @@ from litellm import Router
 import logging
 from collections import defaultdict
 
+
 def set_all_loggers_to_ERROR():
     print("All Loggers and their levels:")
     for name, logger in logging.Logger.manager.loggerDict.items():
@@ -17,6 +18,7 @@ def set_all_loggers_to_ERROR():
             logging.getLogger(name).setLevel(logging.ERROR)
         else:
             print(f"PlaceHolder: {name}")
+
 
 set_all_loggers_to_ERROR()
 

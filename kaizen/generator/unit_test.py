@@ -5,7 +5,7 @@ from datetime import datetime
 from tqdm import tqdm
 import json
 from kaizen.llms.provider import LLMProvider
-from kaizen.helpers.parser import extract_json, extract_code_from_markdown
+from kaizen.helpers.parser import extract_code_from_markdown
 from kaizen.actors.unit_test_runner import UnitTestRunner
 from kaizen.llms.prompts.unit_tests_prompts import (
     UNIT_TEST_SYSTEM_PROMPT,
@@ -64,7 +64,7 @@ class UnitTestGenerator:
         max_critique: int = 3,
         output_path: str = None,
         verbose: bool = False,
-        enable_critique: bool = False
+        enable_critique: bool = False,
     ):
         self.max_critique = max_critique
         self.enable_critique = enable_critique
@@ -101,7 +101,9 @@ class UnitTestGenerator:
         for item in tqdm(parsed_data, desc="Processing Items", unit="item"):
             self._process_item(item, file_extension, file_path, folder_path)
 
-        print(f"\nAll items processed successfully!\n Total Tokens Spent: {self.total_usage}")
+        print(
+            f"\nAll items processed successfully!\n Total Tokens Spent: {self.total_usage}"
+        )
         self.total_usage = self.provider.DEFAULT_USAGE
 
     def _process_item(self, item, file_extension, file_path, folder_path):
@@ -131,7 +133,9 @@ class UnitTestGenerator:
         plan_response, usage = self._generate_test_scenarios(item, source_code)
         self.update_usage(usage)
         print("  ✓ Plan Created successfully ...")
-        self.log_step("Generated Test Scenario", f"Generated Test Scenario:\n{plan_response}")
+        self.log_step(
+            "Generated Test Scenario", f"Generated Test Scenario:\n{plan_response}"
+        )
         test_scenarios = self.format_test_scenarios(plan_response)
         print("• Generating AI tests...")
 
@@ -171,7 +175,9 @@ class UnitTestGenerator:
             review, usage = self.review_tests(item, source_code, test_code)
             self.update_usage(usage)
             feedbacks = review.get("review_comments", [])
-            self.log_step(f"- Critique Attempt: {counter}", f"Generated TEst Code:\n {test_code}")
+            self.log_step(
+                f"- Critique Attempt: {counter}", f"Generated TEst Code:\n {test_code}"
+            )
             self.log_step(f"- Critique Attempt: {counter}", f" Feedbacks: {feedbacks}")
             print(f"\t\t - Critique Attempt: {counter}: Feedbacks: {len(feedbacks)}")
             if len(feedbacks) == 0:
