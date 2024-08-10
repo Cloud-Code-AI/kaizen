@@ -6,7 +6,7 @@ from kaizen.helpers.parser import extract_json, extract_code_from_markdown
 from kaizen.actors.unit_test_runner import UnitTestRunner
 from kaizen.llms.prompts.unit_tests_prompts import (
     UNIT_TEST_SYSTEM_PROMPT,
-    UNIT_TEST_PROMPT,
+    UNIT_TEST_ANALYSIS_PROMPT,
     REVIEW_UNIT_TEST_PROMPT,
     REVIEW_TEST_CASE_PROMPT,
 )
@@ -108,7 +108,7 @@ class UnitTestGenerator:
         print("\nAll items processed successfully!")
 
     def generate_ai_tests(self, item, source_code):
-        prompt = UNIT_TEST_PROMPT.format(
+        prompt = UNIT_TEST_ANALYSIS_PROMPT.format(
             SOURCE_CODE=source_code,
             ITEM_TYPE=item["type"],
             ITEM_NAME=item["name"],
