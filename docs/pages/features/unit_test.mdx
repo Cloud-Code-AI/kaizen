@@ -23,6 +23,13 @@ You can find an example [here](https://github.com/Cloud-Code-AI/kaizen/tree/main
 
 #### Methods
 
+#### generate_tests_from_dir
+- `generate_tests_from_dir(self, dir_path: str, output_path: str = None)`
+  Generates unit tests for files in a given directory
+  - Parameters:
+	- `dir_path`: Path of the directory containing source files.
+	- `output_path`: (Optional) Custom output path for generated tests.
+
 ##### generate_tests
 - `generate_tests(self, file_path: str, content: str = None, output_path: str = None) -> Tuple[Dict, Dict]`
   Generates unit tests for a given file.
