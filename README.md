@@ -29,13 +29,13 @@ In the ever-evolving world of software development, delivering high-quality code
 
 ### 🔍 Key Features
 
-- [**🤖 AI-Powered Code Reviews**](https://cloudcode.ai/kaizen/docs/features/code_review): Automated pull request reviews with insightful summaries and improvement suggestions, catching potential issues before they escalate.
+- 🤖 [**AI-Powered Code Reviews**](https://cloudcode.ai/kaizen/docs/features/code_review): Automated pull request reviews with insightful summaries and improvement suggestions, catching potential issues before they escalate.
 
-- [**🧪 Smart Test Generation**](https://cloudcode.ai/kaizen/docs/features/unit_test): 
+- **🧪 Smart Test Generation**: 
   - [End-to-end tests](https://cloudcode.ai/kaizen/docs/features/e2e_testing) based on your application's code and documentation, ensuring comprehensive coverage.
-  - [Unit test generation]((https://cloudcode.ai/kaizen/docs/features/unit_test)) for Python (with TypeScript and React support coming soon!), saving you valuable time and effort.
-- [**🎨 UI Testing and Review**](https://cloudcode.ai/kaizen/docs/features/ui_review): Comprehensive reviews for UI components with automatic test generation, ensuring a flawless user experience.
-- [**🔬 Code Scanning**](https://cloudcode.ai/kaizen/docs/features/code_scan): Identify potential issues before they become problems, allowing you to take proactive measures and maintain high-quality code.
+  - [Unit test generation](https://cloudcode.ai/kaizen/docs/features/unit_test) for Python (with TypeScript and React support coming soon!), saving you valuable time and effort.
+- 🎨 [**UI Testing and Review**](https://cloudcode.ai/kaizen/docs/features/ui_review): Comprehensive reviews for UI components with automatic test generation, ensuring a flawless user experience.
+- 🔬 [**Code Scanning**](https://cloudcode.ai/kaizen/docs/features/code_scan): Identify potential issues before they become problems, allowing you to take proactive measures and maintain high-quality code.
 - **🕵️ Intelligent AI Logger**: Monitor your live applications with our AI-powered logger, catching and reporting bugs as they occur.
 
 ## 💡 How Kaizen Helps You Find Bugs
