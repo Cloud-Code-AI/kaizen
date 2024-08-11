@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="/logo.png" alt="Kaizen Logo" width="200"/>
+  <img src="/assets/logo.png" alt="Kaizen Logo" width="200"/>
 </p>
 
 <h1 align="center">Kaizen: The Ultimate Code Quality Guardian</h1>
