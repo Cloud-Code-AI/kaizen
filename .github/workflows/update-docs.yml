@@ -1,4 +1,4 @@
-name: Update Docs on GitHub Pages
+name: Update Docs on GitHub Pages and S3
 
 on:
   push:
@@ -39,3 +39,16 @@ jobs:
           branch: gh-pages
           folder: docs/out
           token: ${{ secrets.DEPLOY_TOKEN }}
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+        
+      - name: Copy files to specific path
+        run: |          
+          aws s3 cp docs/out ${{ secrets.S3_BUCKET_PATH }}/ --recursive
+
+

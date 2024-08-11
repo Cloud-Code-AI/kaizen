@@ -5,7 +5,7 @@ from kaizen.llms.prompts.ui_reviewer_prompts import (
     UI_REVIEWER_SYSTEM_PROMPT,
 )
 import logging
-from kaizen.helpers import output, parser
+from kaizen.helpers import output
 
 
 class UIReviewer:
@@ -21,7 +21,7 @@ class UIReviewer:
         # Get HTML Data
         html = output.get_web_html(url)
         prompt = UI_REVIEWER_PROMPT.format(HTML_CODE=html)
-        response, usage = self.provider.chat_completion(prompt, user=user)
-        feedback = parser.extract_json(response).get("review", [])
+        response, usage = self.provider.chat_completion_with_json(prompt, user=user)
+        feedback = response.get("review", [])
 
         return {"reviews": feedback, "usage": usage}

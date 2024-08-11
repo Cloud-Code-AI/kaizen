@@ -10,7 +10,7 @@ from github_app.github_helper.utils import is_github_signature_valid
 from kaizen.utils.config import ConfigData
 import logging
 
-# from cloudcode.generator.ui import UITester
+# from cloudcode.generator.ui import E2ETestGenerator
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"

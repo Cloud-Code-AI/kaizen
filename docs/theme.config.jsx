@@ -3,7 +3,10 @@ import { useRouter } from 'next/router'
 export default {
     logo: (
         <>
-            <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+        <svg width="30" height="30" viewBox="0 0 1539 1539" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M225 257H369V372.635C450.465 304.12 556.298 262 668.5 262C829.391 262 980.056 347.15 1052.85 472.813C1077.22 468.339 1102.33 466 1128 466C1354.99 466 1539 648.892 1539 874.5C1539 1100.11 1354.99 1283 1128 1283H360C153.336 1282.83 0 1121.94 0 923.5C0 775.971 92.5735 649.197 225 593.788V257ZM225.487 593.586C248.641 507.398 300.107 430.579 369 372.637V848.202L583.8 562.602H751.8L528.6 853.002L756.6 1171H587.4L369 856.602V1171H225V593.789C225.162 593.722 225.325 593.654 225.487 593.586Z" fill="#626ED8"/>
+        </svg>
+        <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
                 width="120px" height="160px" viewBox="0 0 1497.000000 270.000000"
                 preserveAspectRatio="xMidYMid meet">
 
@@ -93,7 +96,7 @@ export default {
         } 
     },
     project: {
-      link: 'https://github.com/Cloud-Code-AI/cloudcode'
+      link: 'https://cloudcode.ai'
     },
     docsRepositoryBase: 'https://github.com/Cloud-Code-AI/cloudcode/tree/main/docs',
     footer: {

@@ -1,0 +1,86 @@
+# Setting up Language Models in config.json
+
+To use various Language Models (LLMs) in your project, you need to configure them in the `config.json` file. This file should be located in the root directory of your project. Here's how you can set up different LLMs in the `config.json` file.
+
+## Basic Setup
+
+The `config.json` file should have the following structure:
+
+```json
+{
+    "language_model": {
+        "provider": "litellm",
+        "enable_observability_logging": true,
+        "redis_enabled": true,
+        "models": [
+            // Model configurations go here
+        ]
+    },
+    "github_app": {
+        "check_signature": false,
+        "auto_pr_review": true,
+        "edit_pr_desc": true,
+        "process_on_push": true,
+        "auto_unit_test_generation": false
+    }
+}
+```
+
+The `language_model` object contains the configurations for the LLMs you want to use. The `models` array inside it is where you define the configurations for each LLM.
+
+## Example: Open AI models
+
+First, you need to add `OPENAI_API_KEY` in the `.env` file.
+Here's an example of how to configure a LitELLM model:
+
+```json
+{
+    "model_name": "default",
+    "litellm_params": {
+        "model": "gpt-4o-mini",
+        "input_cost_per_token": 0.000000015,
+        "output_cost_per_token": 0.0000006
+    }
+}
+```
+
+In this example, we're defining a model named `default` that uses the `gpt-4o-mini` model from LitELLM. The `litellm_params` object specifies the cost per token for input and output.
+
+## Example: Azure OpenAI Model
+
+For this example, you need to add the `AZURE_API_BASE` and `AZURE_API_KEY` in the `.env` file.
+To configure an Azure OpenAI model, you can use the following structure:
+
+```json
+{
+    "model_name": "CUSTOM_MODEL",
+    "litellm_params": {
+        "model": "azure_ai/MODEL_NAME",
+        "api_key": "os.environ['AZURE_API_KEY']",
+        "api_base": "os.environ['AZURE_API_BASE']"
+    },
+    "model_info": {
+        "max_tokens": 4096,
+        "input_cost_per_token": 0.000015,
+        "output_cost_per_token": 0.000015,
+        "max_input_tokens": 128000,
+        "max_output_tokens": 4096,
+        "litellm_provider": "openai",
+        "mode": "chat"
+    }
+}
+```
+
+## Example: Groq models
+
+For GroQ, you need to add the `GROQ_API_KEY` in the `.env` file.
+To configure a GroQ model, you can use the following structure:
+
+```json
+{
+    "model_name": "default",
+    "litellm_params": {
+        "model": "groq/llama3-8b-8192"
+    }
+}
+```

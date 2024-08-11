@@ -1,6 +1,35 @@
 import litellm
+import os
+from typing import Dict, Optional, Any
 from kaizen.llms.prompts.general_prompts import BASIC_SYSTEM_PROMPT
 from kaizen.utils.config import ConfigData
+from kaizen.helpers.general import retry
+from kaizen.helpers.parser import extract_json
+from litellm import Router
+import logging
+from collections import defaultdict
+
+
+def set_all_loggers_to_ERROR():
+    print("All Loggers and their levels:")
+    for name, logger in logging.Logger.manager.loggerDict.items():
+        if isinstance(logger, logging.Logger):
+            print(f"Logger: {name}, Level: {logging.getLevelName(logger.level)}")
+            logging.getLogger(name).setLevel(logging.ERROR)
+        else:
+            print(f"PlaceHolder: {name}")
+
+
+set_all_loggers_to_ERROR()
+
+# Set litellm log level to ERROR
+logging.getLogger("LiteLLM").setLevel(logging.ERROR)
+logging.getLogger("LiteLLM Router").setLevel(logging.ERROR)
+logging.getLogger("LiteLLM Proxy").setLevel(logging.ERROR)
+LOGLEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()
+logging.basicConfig(
+    level=LOGLEVEL, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 
 
 class LLMProvider:
@@ -8,138 +37,198 @@ class LLMProvider:
     DEFAULT_MAX_TOKENS = 4000
     DEFAULT_TEMPERATURE = 0
     DEFAULT_MODEL_CONFIG = {"model": DEFAULT_MODEL}
+    DEFAULT_MODEL_NAME = "default"
+    DEFAULT_USAGE = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
 
     def __init__(
-        self, system_prompt=BASIC_SYSTEM_PROMPT, model_config=DEFAULT_MODEL_CONFIG
+        self,
+        system_prompt: str = BASIC_SYSTEM_PROMPT,
+        model_config: Dict[str, Any] = DEFAULT_MODEL_CONFIG,
+        default_temperature: float = 0.3,
+        callback_obj="supabase",
     ):
         self.config = ConfigData().get_config_data()
         self.system_prompt = system_prompt
         self.model_config = model_config
-        if "default_model_config" in self.config.get("language_model", {}):
-            self.model_config = self.config["language_model"]["default_model_config"]
+        self.default_temperature = default_temperature
+        self.callback_obj = "supabase"
+        self.logger = logging.getLogger(
+            __name__,
+        )
 
-        if "models" in self.config.get("language_model"):
+        self._validate_config()
+        self._setup_provider()
+        self._setup_observability()
+        self._register_unkown_models()
+
+    def _validate_config(self) -> None:
+        if "language_model" not in self.config:
+            raise ValueError("Missing 'language_model' in configuration")
+
+        if "models" in self.config["language_model"]:
             self.models = self.config["language_model"]["models"]
         else:
-            self.models = {}
+            self.models = [
+                {
+                    "model_name": self.DEFAULT_MODEL_NAME,
+                    "litellm_params": self.model_config,
+                }
+            ]
 
-        self.model = self.model_config["model"]
-        if self.config.get("language_model", {}).get(
-            "enable_observability_logging", False
-        ):
-            # set callbacks
-            litellm.success_callback = ["supabase"]
-            litellm.failure_callback = ["supabase"]
+    def _setup_provider(self) -> None:
+        provider_kwargs = {
+            "model_list": self.models,
+            "allowed_fails": 1,
+            "enable_pre_call_checks": True,
+        }
+
+        if self.config["language_model"].get("redis_enabled", False):
+            self._setup_redis(provider_kwargs)
+
+        self.provider = Router(**provider_kwargs)
+        self.model = self.models[0]["litellm_params"]["model"]
+        self.model_group_to_name = dict(
+            defaultdict(
+                list,
+                {
+                    item["model_name"]: [
+                        i["litellm_params"]["model"]
+                        for i in self.models
+                        if i["model_name"] == item["model_name"]
+                    ]
+                    for item in self.models
+                },
+            )
+        )
+
+    def _setup_redis(self, provider_kwargs: Dict[str, Any]) -> None:
+        redis_host = os.environ.get("REDIS_HOST")
+        redis_port = os.environ.get("REDIS_PORT")
+        if not redis_host or not redis_port:
+            raise ValueError(
+                "Redis is enabled but REDIS_HOST or REDIS_PORT environment variables are missing"
+            )
+
+        provider_kwargs.update(
+            {
+                "redis_host": redis_host,
+                "redis_port": redis_port,
+                "routing_strategy": "usage-based-routing-v2",
+            }
+        )
+
+    def _setup_observability(self) -> None:
+        if self.config["language_model"].get("enable_observability_logging", False):
+            litellm.success_callback = [self.callback_obj]
+            litellm.failure_callback = [self.callback_obj]
+
+    def _register_unkown_models(self) -> None:
+        for model_data in self.models:
+            model_info = model_data.get("model_info", {})
+            if "litellm_provider" in model_info:
+                # Register this model
+                litellm.register_model({model_data["model_name"]: model_info})
+
+    async def router_acompletion(self, messages, user, custom_model):
+        response = await self.provider.acompletion(
+            messages=messages, user=user, **custom_model
+        )
+        return response
 
     def chat_completion(
-        self, prompt, user: str = None, custom_model=None, messages=None
+        self,
+        prompt,
+        user: str = None,
+        model="default",
+        custom_model=None,
+        messages=None,
     ):
-
         if not messages:
             messages = [
                 {"role": "system", "content": self.system_prompt},
                 {"role": "user", "content": prompt},
             ]
         if not custom_model:
-            custom_model = self.model_config
+            custom_model = {"model": model}
+        if "temperature" not in custom_model:
+            custom_model["temperature"] = self.default_temperature
 
-        response = litellm.completion(messages=messages, user=user, **custom_model)
+        response = self.provider.completion(
+            messages=messages, user=user, **custom_model
+        )
         return response["choices"][0]["message"]["content"], response["usage"]
 
-    def is_inside_token_limit(self, PROMPT, percentage=0.7):
-        # TODO: Also include system prompt
-        messages = [{"user": "role", "content": PROMPT}]
-        if (
-            litellm.token_counter(model=self.model, messages=messages)
-            > litellm.get_max_tokens(self.model) * percentage
-        ):
-            return False
-        return True
-
-    def available_tokens(self, message, percentage=0.8):
-        """
-        Calculate the number of tokens available for a single request after accounting for the tokens consumed by the prompt.
-
-        Args:
-            message (str): The input message for which tokens are being calculated.
-            percentage (float, optional): The percentage of total tokens to be considered available. Defaults to 0.8.
-
-        Returns:
-            int: The number of tokens available for a single request.
-        """
-        return litellm.get_max_tokens(self.model) * percentage - litellm.token_counter(
-            model=self.model, text=message
+    @retry(max_attempts=3, delay=1)
+    def chat_completion_with_json(
+        self,
+        prompt,
+        user: str = None,
+        model="default",
+        custom_model=None,
+        messages=None,
+    ):
+        response, usage = self.chat_completion(
+            prompt=prompt,
+            user=user,
+            model=model,
+            custom_model=custom_model,
+            messages=messages,
         )
+        response = extract_json(response)
+        return response, usage
 
-    def get_token_count(self, message):
-        return litellm.token_counter(model=self.model, text=message)
+    @retry(max_attempts=3, delay=1)
+    def chat_completion_with_retry(
+        self,
+        prompt,
+        user: str = None,
+        model="default",
+        custom_model=None,
+        messages=None,
+    ):
+        response, usage = self.chat_completion(
+            prompt=prompt,
+            user=user,
+            model=model,
+            custom_model=custom_model,
+            messages=messages,
+        )
+        return response, usage
 
-    def update_usage(self, total_usage, current_usage):
-        """
-        Update the total usage with the current usage values.
+    def is_inside_token_limit(self, PROMPT: str, percentage: float = 0.8) -> bool:
+        # Include system prompt in token calculation
+        messages = [
+            {"role": "system", "content": self.system_prompt},
+            {"role": "user", "content": PROMPT},
+        ]
+        token_count = litellm.token_counter(model=self.model, messages=messages)
+        max_tokens = litellm.get_max_tokens(self.model)
+        return token_count <= max_tokens * percentage
 
-        This function updates the `total_usage` dictionary by adding the values from the
-        `current_usage` dictionary. If `total_usage` is None, it initializes `total_usage` with
-        the values from `current_usage`.
+    def available_tokens(
+        self, message: str, percentage: float = 0.8, model: str = None
+    ) -> int:
+        if not model:
+            model = self.model
+        max_tokens = litellm.get_max_tokens(model)
+        used_tokens = litellm.token_counter(model=model, text=message)
+        return int(max_tokens * percentage) - used_tokens
 
-        Args:
-            total_usage (dict or None): The dictionary containing the cumulative usage information.
-                If None, it will be initialized with the values from `current_usage`.
-            current_usage (dict): A dictionary containing the current usage information with keys
-                corresponding to those in `total_usage`.
+    def get_token_count(self, message: str, model: str = None) -> int:
+        if not model:
+            model = self.model
+        return litellm.token_counter(model=model, text=message)
 
-        Returns:
-            dict: The updated total usage dictionary with the values from `current_usage` added
-            to the corresponding keys in `total_usage`.
-
-        Example:
-            total_usage = {
-                "prompt_tokens": 150,
-                "completion_tokens": 250
-            }
-            current_usage = {
-                "prompt_tokens": 100,
-                "completion_tokens": 200
-            }
-            updated_usage = instance.update_usage(total_usage, current_usage)
-            print(updated_usage)
-            # Output: {"prompt_tokens": 250, "completion_tokens": 450}
-
-            # If total_usage is None
-            total_usage = None
-            updated_usage = instance.update_usage(total_usage, current_usage)
-            print(updated_usage)
-            # Output: {"prompt_tokens": 100, "completion_tokens": 200}
-        """
-
+    def update_usage(
+        self, total_usage: Optional[Dict[str, int]], current_usage: Dict[str, int]
+    ) -> Dict[str, int]:
         if total_usage is not None:
-            total_usage = {
-                key: total_usage[key] + current_usage[key] for key in total_usage
-            }
-        else:
-            total_usage = {key[0]: current_usage[key[0]] for key in current_usage}
-        return total_usage
+            return {key: total_usage[key] + current_usage[key] for key in total_usage}
+        return {key: current_usage[key] for key in current_usage}
 
-    def get_usage_cost(self, total_usage):
-        """
-        Calculate the cost of usage based on the number of tokens used in the prompt and completion.
-
-        Args:
-            total_usage (dict): A dictionary containing the usage information with the following keys:
-                - "prompt_tokens" (int): The number of tokens used in the prompt.
-                - "completion_tokens" (int): The number of tokens used in the completion.
-
-        Returns:
-            float: The total cost of the usage based on the model's cost per token.
-
-        Example:
-            total_usage = {
-                "prompt_tokens": 100,
-                "completion_tokens": 200
-            }
-            cost = instance.get_usage_cost(total_usage)
-            print(cost)  # Output will depend on the model's cost per token.
-        """
+    def get_usage_cost(self, total_usage: Dict[str, int], model: str = None) -> float:
+        if not model:
+            model = self.model
         return litellm.cost_per_token(
-            self.model, total_usage["prompt_tokens"], total_usage["completion_tokens"]
+            model, total_usage["prompt_tokens"], total_usage["completion_tokens"]
         )

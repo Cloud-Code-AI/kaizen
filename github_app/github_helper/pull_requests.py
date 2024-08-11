@@ -1,11 +1,13 @@
 import requests
 import logging
 import os
-from github_app.github_helper.utils import get_diff_text
+from github_app.github_helper.utils import get_diff_text, get_pr_files
 from github_app.github_helper.installation import get_installation_access_token
 from github_app.github_helper.permissions import PULL_REQUEST_PERMISSION
 from kaizen.reviewer.code_review import CodeReviewer
-
+from kaizen.generator.pr_description import PRDescriptionGenerator
+from kaizen.helpers.output import create_pr_review_text
+from kaizen.llms.provider import LLMProvider
 
 logger = logging.getLogger(__name__)
 
@@ -41,9 +43,9 @@ def process_pull_request(payload):
     diff_text = get_diff_text(diff_url, access_token)
 
     # Get PR Files
-    pr_files = get_pr_files(pr_files_url, installation_id)
+    pr_files = get_pr_files(pr_files_url, access_token)
 
-    reviewer = CodeReviewer()
+    reviewer = CodeReviewer(llm_provider=LLMProvider(default_temperature=0.1))
     review_data = reviewer.review_pull_request(
         diff_text=diff_text,
         pull_request_title=pr_title,
@@ -52,7 +54,7 @@ def process_pull_request(payload):
         user=repo_name,
     )
     topics = clean_keys(review_data.topics, "important")
-    review_desc = reviewer.create_pr_review_text(topics)
+    review_desc = create_pr_review_text(topics)
     comments, topics = create_review_comments(topics)
 
     post_pull_request(comment_url, review_desc, installation_id)
@@ -88,8 +90,8 @@ def process_pr_desc(payload):
     pr_files = get_pr_files(pr_files_url, installation_id)
 
     diff_text = get_diff_text(diff_url, access_token)
-    reviewer = CodeReviewer()
-    description = reviewer.generate_pull_request_desc(
+    desc_generator = PRDescriptionGenerator(llm_provider=LLMProvider())
+    description = desc_generator.generate_pull_request_desc(
         diff_text=diff_text,
         pull_request_title=pr_title,
         pull_request_desc=pr_description,
@@ -103,7 +105,9 @@ def post_pull_request(url, data, installation_id):
     access_token = get_installation_access_token(
         installation_id, PULL_REQUEST_PERMISSION
     )
-    data = {"body": f"{data}\n\n> ✨ Generated with love by Kaizen ❤️"}
+    data = {
+        "body": f"{data}\n\n> ✨ Generated with love by [Kaizen](https://cloudcode.ai) ❤️"
+    }
     headers = {
         "Authorization": f"Bearer {access_token}",
         "Accept": "application/vnd.github.v3+json",
@@ -147,19 +151,6 @@ def clean_keys(topics, min_confidence=None):
     return new_topics
 
 
-def get_pr_files(url, installation_id):
-    access_token = get_installation_access_token(
-        installation_id, PULL_REQUEST_PERMISSION
-    )
-    headers = {
-        "Authorization": f"Bearer {access_token}",
-        "Accept": "application/vnd.github.v3+json",
-    }
-
-    response = requests.get(url, headers=headers)
-    return response.json()
-
-
 def post_pull_request_comments(url, review, installation_id):
     access_token = get_installation_access_token(
         installation_id, PULL_REQUEST_PERMISSION
@@ -169,7 +160,8 @@ def post_pull_request_comments(url, review, installation_id):
         "comments": [
             {
                 "path": review["file_name"],
-                "position": review["start_line"],
+                "start_line": review["start_line"],
+                "line": review["end_line"],
                 "body": review["comment"],
             }
         ],

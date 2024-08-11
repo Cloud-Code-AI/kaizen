@@ -6,14 +6,23 @@ from kaizen.llms.prompts.work_summary_prompts import (
     WORK_SUMMARY_SYSTEM_PROMPT,
     TWITTER_POST_PROMPT,
     LINKEDIN_POST_PROMPT,
+    MERGE_WORK_SUMMARY_PROMPT,
 )
 import logging
+import json
 
 
 class WorkSummaryGenerator:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-        self.provider = LLMProvider(system_prompt=WORK_SUMMARY_SYSTEM_PROMPT)
+        self.provider = LLMProvider(
+            system_prompt=WORK_SUMMARY_SYSTEM_PROMPT, default_temperature=0.1
+        )
+        self.total_usage = {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "total_tokens": 0,
+        }
 
     def generate_work_summaries(
         self,
@@ -24,7 +33,6 @@ class WorkSummaryGenerator:
         summaries = []
         # Try to merge the files untill LLM can process the response
         combined_diff_data = ""
-        total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
         for file_dict in diff_file_data:
             temp_prompt = combined_diff_data
             temp_prompt += f"""\n---->\nFile Name: {file_dict["file"]}\nPatch: {file_dict["patch"]}\n Status: {file_dict["status"]}"""
@@ -36,24 +44,28 @@ class WorkSummaryGenerator:
 
             # Process the prompt
             prompt = WORK_SUMMARY_PROMPT.format(PATCH_DATA=combined_diff_data)
-            response, usage = self.provider.chat_completion(prompt, user=user)
-            total_usage = self.provider.update_usage(total_usage, usage)
-            summaries.append(parser.extract_json(response))
+            response, usage = self.provider.chat_completion_with_json(prompt, user=user)
+            self.total_usage = self.provider.update_usage(self.total_usage, usage)
+            summaries.append(response)
             combined_diff_data = ""
 
         if combined_diff_data != "":
             # process the remaining file diff pending
             prompt = WORK_SUMMARY_PROMPT.format(PATCH_DATA=combined_diff_data)
-            response, usage = self.provider.chat_completion(prompt, user=user)
-            summaries.append(parser.extract_json(response))
+            response, usage = self.provider.chat_completion_with_json(prompt, user=user)
+            summaries.append(response)
             combined_diff_data = ""
-            total_usage = self.provider.update_usage(total_usage, usage)
+            self.total_usage = self.provider.update_usage(self.total_usage, usage)
 
         if len(summaries) > 1:
             # TODO Merge summaries
-            pass
+            prompt = MERGE_WORK_SUMMARY_PROMPT.format(
+                SUMMARY_JSON=json.dumps(summaries)
+            )
+            response, usage = self.provider.chat_completion_with_json(prompt, user=user)
+            summaries = [response]
 
-        return {"summary": summaries[0], "usage": total_usage}
+        return {"summary": summaries[0], "usage": self.total_usage}
 
     def generate_twitter_post(
         self,
@@ -61,8 +73,8 @@ class WorkSummaryGenerator:
         user: Optional[str] = None,
     ) -> str:
         prompt = TWITTER_POST_PROMPT.format(SUMMARY=summary)
-        response, total_usage = self.provider.chat_completion(prompt, user=user)
-        return parser.extract_markdown_content(response), total_usage
+        response, usage = self.provider.chat_completion(prompt, user=user)
+        return parser.extract_markdown_content(response), usage
 
     def generate_linkedin_post(
         self,
@@ -70,5 +82,5 @@ class WorkSummaryGenerator:
         user: Optional[str] = None,
     ) -> str:
         prompt = LINKEDIN_POST_PROMPT.format(SUMMARY=summary)
-        response, total_usage = self.provider.chat_completion(prompt, user=user)
-        return parser.extract_markdown_content(response), total_usage
+        response, usage = self.provider.chat_completion(prompt, user=user)
+        return parser.extract_markdown_content(response), usage

@@ -42,7 +42,16 @@ def test_chat_completion(mock_completion, llm_provider):
 def test_is_inside_token_limit(mock_get_max_tokens, mock_token_counter, llm_provider):
     mock_token_counter.return_value = 100
     mock_get_max_tokens.return_value = 150
+
+    # Including system prompt in the calculation
+    system_prompt_length = len(llm_provider.system_prompt.split())
+    user_prompt_length = len("test prompt".split())
+    total_length = system_prompt_length + user_prompt_length
+
+    mock_token_counter.return_value = total_length
+
     assert llm_provider.is_inside_token_limit("test prompt") is True
+
     mock_token_counter.return_value = 120
     assert llm_provider.is_inside_token_limit("test prompt") is False
 
@@ -58,4 +67,4 @@ def test_available_tokens(mock_get_max_tokens, mock_token_counter, llm_provider)
 @patch("kaizen.llms.provider.litellm.token_counter")
 def test_get_token_count(mock_token_counter, llm_provider):
     mock_token_counter.return_value = 50
-    assert llm_provider.get_token_count("test message")
+    assert llm_provider.get_token_count("test message") == 50

@@ -1,10 +1,29 @@
-UI_MODULES_PROMPT = """
+E2E_MODULES_PROMPT = """
 Assign yourself as a quality assurance engineer. 
 Read this code and design comprehensive tests to test the UI of this HTML. 
 Break it down into 5-10 separate modules and identify the possible things to test for each module. 
 For each module, also identify which tests should be checked repeatedly (e.g., after every code change, every build, etc.).
 
 Return the output as JSON with the following keys:
+{{"tests": {{
+    "id": "serial number to identify module",
+    "module_title": "title of the identified module",
+    "tests": [
+      {{
+        "id": "serial number for the test case",
+        "test_description": "description of the test case",
+        "test_name": "name of the test case",
+        "repeat": true,
+        "reason": "reason to add this test",
+      }},
+      ...
+    ],
+    "folder_name": "relevant name for the module",
+    "importance": "critical"
+  }}
+}}
+
+Details:
 id - serial number to identify module
 module_title - title of the identified module
 tests - JSON containing list of tests steps to carry out for that module with keys:
@@ -12,6 +31,7 @@ tests - JSON containing list of tests steps to carry out for that module with ke
   test_description - description of the test case
   test_name - name of the test case
   repeat - boolean indicating if this test should be checked repeatedly or not
+  reason - reason to add this test case
 folder_name - relevant name for the module
 importance - level of importance of this test out of ['critical', 'good_to_have', 'non_essential']
 
@@ -19,7 +39,7 @@ Share the JSON output ONLY. No other text.
 CONTENT: ```{WEB_CONTENT}```
 """
 
-UI_TESTS_SYSTEM_PROMPT = """
+E2E_TESTS_SYSTEM_PROMPT = """
 You are a Quality Assurance AI assistant specializing in writing Playwright test scripts for web applications. Your goal is to create robust and maintainable test scripts that can be integrated into a CI/CD pipeline.
 
 When given requirements or specifications, you should:
@@ -40,6 +60,7 @@ Remember, you cannot open URLs or links directly. Ask the human to provide relev
 PLAYWRIGHT_CODE_PLAN_PROMPT = """
 Generate a step by step plan to write Playwright code in Python for the following test - {TEST_DESCRIPTION}. 
 Here are some other info. make sure all the necessary items are covered in the plan.
+
 URL: {URL}
 Content: 
 ```{WEB_CONTENT}```
@@ -47,6 +68,8 @@ Content:
 
 PLAYWRIGHT_CODE_PROMPT = """
 Based on this plan, generate playwright code running in headless mode. 
+
+Make sure all the code is in a single file and only provide the code info.
 Content: 
 ```{PLAN_TEXT}```
 """

@@ -12,6 +12,8 @@ services:
     restart: always
     secrets:
       - github_app_pem
+    depends_on:
+      - redis
   
   postgres:
     image: postgres:16-bullseye
@@ -21,6 +23,14 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
+  
+  redis:
+    image: "redis:alpine"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    ports:
+      - "6379:6379"
+
 
 secrets:
   github_app_pem:

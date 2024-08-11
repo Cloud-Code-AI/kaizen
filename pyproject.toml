@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kaizen-cloudcode"
-version = "0.2.13"
+version = "0.3.19"
 description = "An intelligent coding companion that accelerates your development workflow by providing efficient assistance, enabling you to craft high-quality code more rapidly."
 authors = ["Saurav Panda <saurav.panda@cloudcode.ai>"]
 license = "Apache2.0"
@@ -15,7 +15,7 @@ requests = "^2.31.0"
 pyjwt = "^2.8.0"
 uvicorn = "^0.29.0"
 fastapi = "^0.110.0"
-litellm = "^1.34.42"
+litellm = "^1.40.29"
 flake8 = "^7.0.0"
 black = "^24.3.0"
 cryptography = "^42.0.5"
@@ -32,6 +32,8 @@ llama-index-vector-stores-postgres = "^0.1.11"
 sqlalchemy = "^2.0.31"
 esprima = "^4.0.1"
 escodegen = "^1.0.11"
+redis = "^5.0.7"
+tqdm = "^4.66.5"
 
 
 [build-system]

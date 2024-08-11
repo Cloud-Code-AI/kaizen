@@ -8,7 +8,7 @@ GITHUB_REPO_NAME = "kaizen"
 
 # Get the current date and calculate the date 14 days ago
 current_date = datetime.now(timezone.utc).date()
-since_date = current_date - timedelta(days=7)
+since_date = current_date - timedelta(days=14)
 
 # Convert the date to ISO format
 since_date_iso = since_date.isoformat()
@@ -56,7 +56,9 @@ work_summary_generator = WorkSummaryGenerator()
 result = work_summary_generator.generate_work_summaries(file_diffs, user="oss_example")
 summary = result["summary"]
 
-twitter_post, _ = work_summary_generator.generate_twitter_post(summary, user="oss_example")
+twitter_post, _ = work_summary_generator.generate_twitter_post(
+    summary, user="oss_example"
+)
 linkedin_post, _ = work_summary_generator.generate_linkedin_post(
     summary, user="oss_example"
 )

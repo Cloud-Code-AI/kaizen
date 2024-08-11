@@ -2,6 +2,30 @@ import subprocess
 import json
 import os
 import re
+import time
+from functools import wraps
+
+
+def retry(max_attempts=3, delay=1):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            attempts = 0
+            while attempts < max_attempts:
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    attempts += 1
+                    if attempts == max_attempts:
+                        raise
+                    print(
+                        f"Attempt {attempts} failed: error |{e}|. Retrying in {delay} seconds..."
+                    )
+                    time.sleep(delay)
+
+        return wrapper
+
+    return decorator
 
 
 def run_test(code):
