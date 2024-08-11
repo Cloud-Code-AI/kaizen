@@ -23,7 +23,7 @@ for file_path, result in test_results.items():
     print()
 
 
-
+# You can also directly pass code to generator to generate tests
 code = '''
 class Calculator:
     def __init__(self):
