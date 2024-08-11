@@ -31,10 +31,6 @@ In the ever-evolving world of software development, delivering high-quality code
 
 - **🤖 AI-Powered Code Reviews**: Automated pull request reviews with insightful summaries and improvement suggestions, catching potential issues before they escalate.
 
-<p align="center">
-  <img src="/assets/code_review.gif" alt="Code Review Feature in Action">
-</p>
-
 - **🧪 Smart Test Generation**: 
   - End-to-end tests based on your application's code and documentation, ensuring comprehensive coverage.
   - Unit test generation for Python (with TypeScript and React support coming soon!), saving you valuable time and effort.
