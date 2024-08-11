@@ -1,7 +1,8 @@
 import click
 import os
 import json
-from kaizen.generator.ui import UITestGenerator
+from kaizen.generator.e2e_tests import E2ETestGenerator
+from kaizen.generator.unit_test import UnitTestGenerator
 
 CONFIG_FILE = os.path.expanduser("~/.myapp_config.json")
 
@@ -81,7 +82,15 @@ def run(obj, command, region):
 @click.argument("url", required=True)
 def ui_tests(url):
     """Run ui test generation"""
-    UITestGenerator().generate_ui_tests(url)
+    E2ETestGenerator().generate_e2e_tests(url)
+
+
+@cli.command()
+@click.argument("file_path", required=True)
+@click.argument("output_folder", default=None)
+def unit_test(file_path, output_folder):
+    """Run unit test generation"""
+    UnitTestGenerator().generate_tests(file_path, output_path=output_folder)
 
 
 @cli.group()
@@ -95,7 +104,7 @@ def reviewer():
 @click.argument("branch", required=True)
 def work(url):
     """Run ui test generation"""
-    UITestGenerator().generate_ui_tests(url)
+    E2ETestGenerator().generate_e2e_tests(url)
 
 
 if __name__ == "__main__":

@@ -42,7 +42,7 @@ def generate_jwt():
 
 def get_diff_text(url, access_token):
     headers = {
-        "Accept": "application/vnd.github.v3.diff",
+        "Accept": "application/vnd.github.v3.patch",
         "X-GitHub-Api-Version": "2022-11-28",
     }
     if access_token:
@@ -66,7 +66,6 @@ def get_pr_files(url, access_token):
         headers["Authorization"] = f"Bearer {access_token}"
 
     response = requests.get(url, headers=headers)
-    print(response.text)
     if not is_successful_status(response.status_code):
         logger.error(
             f"Unable to fetch PR files with error: {response.status_code} url: {url}"

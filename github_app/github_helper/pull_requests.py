@@ -45,7 +45,7 @@ def process_pull_request(payload):
     # Get PR Files
     pr_files = get_pr_files(pr_files_url, access_token)
 
-    reviewer = CodeReviewer(llm_provider=LLMProvider())
+    reviewer = CodeReviewer(llm_provider=LLMProvider(default_temperature=0.1))
     review_data = reviewer.review_pull_request(
         diff_text=diff_text,
         pull_request_title=pr_title,
@@ -105,7 +105,9 @@ def post_pull_request(url, data, installation_id):
     access_token = get_installation_access_token(
         installation_id, PULL_REQUEST_PERMISSION
     )
-    data = {"body": f"{data}\n\n> ✨ Generated with love by Kaizen ❤️"}
+    data = {
+        "body": f"{data}\n\n> ✨ Generated with love by [Kaizen](https://cloudcode.ai) ❤️"
+    }
     headers = {
         "Authorization": f"Bearer {access_token}",
         "Accept": "application/vnd.github.v3+json",

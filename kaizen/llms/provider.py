@@ -7,7 +7,25 @@ from kaizen.helpers.general import retry
 from kaizen.helpers.parser import extract_json
 from litellm import Router
 import logging
+from collections import defaultdict
 
+
+def set_all_loggers_to_ERROR():
+    print("All Loggers and their levels:")
+    for name, logger in logging.Logger.manager.loggerDict.items():
+        if isinstance(logger, logging.Logger):
+            print(f"Logger: {name}, Level: {logging.getLevelName(logger.level)}")
+            logging.getLogger(name).setLevel(logging.ERROR)
+        else:
+            print(f"PlaceHolder: {name}")
+
+
+set_all_loggers_to_ERROR()
+
+# Set litellm log level to ERROR
+logging.getLogger("LiteLLM").setLevel(logging.ERROR)
+logging.getLogger("LiteLLM Router").setLevel(logging.ERROR)
+logging.getLogger("LiteLLM Proxy").setLevel(logging.ERROR)
 LOGLEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()
 logging.basicConfig(
     level=LOGLEVEL, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -69,6 +87,19 @@ class LLMProvider:
 
         self.provider = Router(**provider_kwargs)
         self.model = self.models[0]["litellm_params"]["model"]
+        self.model_group_to_name = dict(
+            defaultdict(
+                list,
+                {
+                    item["model_name"]: [
+                        i["litellm_params"]["model"]
+                        for i in self.models
+                        if i["model_name"] == item["model_name"]
+                    ]
+                    for item in self.models
+                },
+            )
+        )
 
     def _setup_redis(self, provider_kwargs: Dict[str, Any]) -> None:
         redis_host = os.environ.get("REDIS_HOST")
@@ -144,6 +175,24 @@ class LLMProvider:
             messages=messages,
         )
         response = extract_json(response)
+        return response, usage
+
+    @retry(max_attempts=3, delay=1)
+    def chat_completion_with_retry(
+        self,
+        prompt,
+        user: str = None,
+        model="default",
+        custom_model=None,
+        messages=None,
+    ):
+        response, usage = self.chat_completion(
+            prompt=prompt,
+            user=user,
+            model=model,
+            custom_model=custom_model,
+            messages=messages,
+        )
         return response, usage
 
     def is_inside_token_limit(self, PROMPT: str, percentage: float = 0.8) -> bool:

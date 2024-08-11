@@ -8,15 +8,18 @@ from github_app.github_helper.pull_requests import (
     create_review_comments,
 )
 import json
+import logging
 
-pr_diff = "https://github.com/Cloud-Code-AI/kaizen/pull/146.diff"
-pr_files = "https://api.github.com/repos/Cloud-Code-AI/kaizen/pulls/146/files"
+logging.basicConfig(level="DEBUG")
+
+pr_diff = "https://github.com/Cloud-Code-AI/kaizen/pull/335.patch"
+pr_files = "https://api.github.com/repos/Cloud-Code-AI/kaizen/pulls/335/files"
 pr_title = "feat: updated the prompt to provide solution"
 
 diff_text = get_diff_text(pr_diff, "")
 pr_files = get_pr_files(pr_files, "")
-print("diff: ", diff_text)
-print("pr_files", pr_files)
+# print("diff: ", diff_text)
+# print("pr_files", pr_files)
 
 
 reviewer = CodeReviewer(llm_provider=LLMProvider())
@@ -26,6 +29,8 @@ review_data = reviewer.review_pull_request(
     pull_request_desc="",
     pull_request_files=pr_files,
     user="kaizen/example",
+    reeval_response=False,
+    custom_prompt="Changes in prompt should be marked critical with high severity",
 )
 
 topics = clean_keys(review_data.topics, "important")
@@ -34,8 +39,9 @@ comments, topics = create_review_comments(topics)
 
 print(f"Raw Topics: \n {json.dumps(topics, indent=2)}\n")
 print(f"GENERATED REVIEW: \n {review_desc}")
-print(f"\nComment and topics: \n {comments}, \n{topics}")
-print(review_data)
+print(f"\nComment and topics: \n {json.dumps(comments, indent=2)}, \n{topics}")
+
+
 print("---------------Generate desc-------------")
 pr_desc = PRDescriptionGenerator(llm_provider=LLMProvider())
 desc_data = pr_desc.generate_pull_request_desc(

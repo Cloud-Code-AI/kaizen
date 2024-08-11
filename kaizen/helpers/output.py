@@ -14,9 +14,9 @@ logger = logging.getLogger(__name__)
 
 PR_COLLAPSIBLE_TEMPLATE = """
 <details>
-<summary> --> {comment}</summary> \n
-</strong> Potential Solution:</strong> \n\n{solution}
-\n
+<summary> {comment}</summary> \n\n
+<strong> Potential Solution:</strong> \n\n{solution}
+\n\n
 <blockquote>  
     <p><code>{file_name} | {start_line} - {end_line}</code></p>
     <p>reason_for_request: {reason}</p>
@@ -37,7 +37,9 @@ DESC_COLLAPSIBLE_TEMPLATE = """
 
 def create_pr_description(desc, original_desc):
     markdown_output = desc
-    markdown_output += "\n\n> ✨ Generated with love by Kaizen ❤️"
+    markdown_output += (
+        "\n\n> ✨ Generated with love by [Kaizen](https://cloudcode.ai) ❤️"
+    )
     markdown_output += "\n\n" + DESC_COLLAPSIBLE_TEMPLATE.format(desc=original_desc)
     return markdown_output
 
@@ -58,15 +60,37 @@ def get_web_html(url):
     html = asyncio.run(get_html(url))
     soup = BeautifulSoup(html, "html.parser")
 
+    # Remove SVG elements
     for svg in soup.find_all("svg"):
         svg.decompose()
 
-    # Delete each comment
+    # Remove HTML comments
     for comment in soup.find_all(text=lambda text: isinstance(text, Comment)):
         comment.extract()
 
+    # Remove <style> elements
     for style_block in soup.find_all("style"):
         style_block.decompose()
+
+    # Remove <script> elements
+    for script in soup.find_all("script"):
+        script.decompose()
+
+    # Remove <noscript> elements
+    for noscript in soup.find_all("noscript"):
+        noscript.decompose()
+
+    # Remove <link> elements (typically used for stylesheets)
+    for link in soup.find_all("link"):
+        link.decompose()
+
+    # Remove <meta> elements (typically used for metadata)
+    for meta in soup.find_all("meta"):
+        meta.decompose()
+
+    # Remove <head> element (contains metadata, scripts, and stylesheets)
+    for head in soup.find_all("head"):
+        head.decompose()
 
     pretty_html = soup.prettify()
     return pretty_html
