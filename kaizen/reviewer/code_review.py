@@ -154,7 +154,7 @@ class CodeReviewer:
                 custom_prompt=custom_prompt,
             )
 
-        reviews.extend(self.check_sensetive_files(pull_request_files))
+        reviews.extend(self.check_sensitive_files(pull_request_files))
 
         topics = self._merge_topics(reviews)
         prompt_cost, completion_cost = self.provider.get_usage_cost(
@@ -306,7 +306,7 @@ class CodeReviewer:
             topics.setdefault(review["topic"], []).append(review)
         return topics
 
-    def check_sensetive_files(self, pull_request_files: list):
+    def check_sensitive_files(self, pull_request_files: list):
         reviews = []
 
         for category, patterns in sensitive_files.items():
@@ -321,7 +321,7 @@ class CodeReviewer:
                         reviews.append(
                             {
                                 "topic": category,
-                                "comment": "Changes made to Sensetive file",
+                                "comment": "Changes made to sensitive file",
                                 "confidence": "critical",
                                 "reason": f"Changes were made to {file_name}, which needs review",
                                 "solution": "NA",
