@@ -15,6 +15,7 @@ PR_COLLAPSIBLE_TEMPLATE = """
 </details>
 """
 
+
 @pytest.fixture
 def setup_single_topic_single_review():
     return {
@@ -31,6 +32,7 @@ def setup_single_topic_single_review():
             }
         ]
     }
+
 
 @pytest.fixture
 def setup_multiple_topics_multiple_reviews():
@@ -55,7 +57,7 @@ def setup_multiple_topics_multiple_reviews():
                 "end_line": 40,
                 "file_name": "file2.py",
                 "severity_level": 7,
-            }
+            },
         ],
         "topic2": [
             {
@@ -68,13 +70,17 @@ def setup_multiple_topics_multiple_reviews():
                 "file_name": "file3.py",
                 "severity_level": 5,
             }
-        ]
+        ],
     }
+
 
 def test_empty_topics():
     topics = {}
-    expected_output = "## Code Review\n\n✅ **All Clear:** This PR is ready to merge! 👍\n\n"
+    expected_output = (
+        "## Code Review\n\n✅ **All Clear:** This PR is ready to merge! 👍\n\n"
+    )
     assert create_pr_review_text(topics) == expected_output
+
 
 def test_single_topic_single_review(setup_single_topic_single_review):
     topics = setup_single_topic_single_review
@@ -95,6 +101,7 @@ def test_single_topic_single_review(setup_single_topic_single_review):
         + "\n"
     )
     assert create_pr_review_text(topics) == expected_output
+
 
 def test_multiple_topics_multiple_reviews(setup_multiple_topics_multiple_reviews):
     topics = setup_multiple_topics_multiple_reviews
@@ -139,6 +146,7 @@ def test_multiple_topics_multiple_reviews(setup_multiple_topics_multiple_reviews
     )
     assert create_pr_review_text(topics) == expected_output
 
+
 def test_reviews_with_missing_fields():
     topics = {
         "topic1": [
@@ -181,7 +189,7 @@ def test_reviews_with_missing_fields():
                 "end_line": 80,
                 "file_name": "final_test_file.py",
                 # Missing severity_level
-            }
+            },
         ]
     }
     expected_output = (
@@ -235,6 +243,7 @@ def test_reviews_with_missing_fields():
     )
     assert create_pr_review_text(topics) == expected_output
 
+
 def test_reviews_with_missing_comment():
     topics = {
         "topic1": [
@@ -268,9 +277,10 @@ def test_reviews_with_missing_comment():
     )
     assert create_pr_review_text(topics) == expected_output
 
+
 def test_empty_list_in_topics():
-    topics = {
-        "topic1": []
-    }
-    expected_output = "## Code Review\n\n✅ **All Clear:** This PR is ready to merge! 👍\n\n"
+    topics = {"topic1": []}
+    expected_output = (
+        "## Code Review\n\n✅ **All Clear:** This PR is ready to merge! 👍\n\n"
+    )
     assert create_pr_review_text(topics) == expected_output

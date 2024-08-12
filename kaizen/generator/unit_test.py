@@ -59,7 +59,11 @@ class UnitTestGenerator:
         self._create_output_folder(self.output_folder)
 
     def generate_tests_from_dir(
-        self, dir_path: str, output_path: str = None, max_critique: int = 3, verbose: bool = False,
+        self,
+        dir_path: str,
+        output_path: str = None,
+        max_critique: int = 3,
+        verbose: bool = False,
         enable_critique: bool = False,
     ):
         """
@@ -69,14 +73,14 @@ class UnitTestGenerator:
         self.enable_critique = enable_critique
         self.verbose = verbose if verbose else self.verbose
         self.output_folder = output_path if output_path else self.output_folder
-        for file_path in Path(dir_path).rglob('*.*'):
+        for file_path in Path(dir_path).rglob("*.*"):
             try:
                 self.generate_tests(file_path=str(file_path), output_path=output_path)
             except Exception as e:
                 print(f"Error: Could not generate tests for {file_path}: {e}")
-        
+
         return {}, self.total_usage
-        
+
     def generate_tests(
         self,
         file_path: str,
