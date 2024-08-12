@@ -55,7 +55,7 @@ Prioritize the most critical issues that could have significant impacts on the s
 Provide the output in json format only as shown below:
 
 {{
-"issues": {{
+"issues": [ {{
       "severity": "critical|high|medium|low",
       "category": "security|performance|quality|bug",
       "description": "Brief description of the issue",
@@ -65,11 +65,57 @@ Provide the output in json format only as shown below:
       }},
       "impact": "Explanation of the issue's impact",
       "suggestion": "Proposed fix or improvement",
-      "code_sample": "Optional: Example code for fix"
-    }}
+      "code_sample": "Optional: Example code for fix",
+      "good_for_first_time": "true if this can be solved by firstime contributor else false",
+      "issue_title": "Title of the issue"
+    }}]
 }}
+
+If not issues found return {{"issues": []}}
 
 Here's the file data to analyze:
 
 ```{FILE_DATA}```
+"""
+
+CODE_SCAN_REEVALUATION_PROMPT = """
+You are an expert code analyzer performing a secondary review. Your task is to reevaluate the initial findings from a code analysis and refine the results. Consider the following:
+
+1. Are there any critical issues that were missed in the initial analysis?
+2. Are any of the reported issues false positives?
+3. Can any of the existing issues be clarified or expanded upon?
+4. Are the severity levels and categories accurately assigned?
+
+Please review the following code and initial findings, then provide a refined list of issues.
+
+Code to analyze:
+```{FILE_DATA}```
+
+Initial findings:
+{ISSUES}
+
+Provide the output in the same JSON format as the initial findings:
+
+{{
+"issues": [
+    {{
+      "severity": "critical|high|medium|low",
+      "category": "security|performance|quality|bug",
+      "description": "Brief description of the issue",
+      "location": {{
+        "line_start": 1,
+        "line_end": 1
+      }},
+      "impact": "Explanation of the issue's impact",
+      "suggestion": "Proposed fix or improvement",
+      "code_sample": "Optional: Example code for fix",
+      "good_for_first_time": "true if this can be solved by firstime contributor else false",
+      "issue_title": "Title of the issue"
+
+    }}
+]
+}}
+If not issues found return {{"issues": []}}
+
+Only include issues in the output. If no changes are necessary, return the original issues unchanged.
 """
