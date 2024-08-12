@@ -156,6 +156,7 @@ class LLMProvider:
         response = self.provider.completion(
             messages=messages, user=user, **custom_model
         )
+        self.model = response["model"]
         return response["choices"][0]["message"]["content"], response["usage"]
 
     @retry(max_attempts=3, delay=1)
