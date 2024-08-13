@@ -123,7 +123,10 @@ class UnitTestGenerator:
         self.total_usage = self.provider.DEFAULT_USAGE
 
         for item in tqdm(parsed_data, desc="Processing Items", unit="item"):
-            self._process_item(item, file_extension, file_path, folder_path)
+            try:
+                self._process_item(item, file_extension, file_path, folder_path)
+            except:
+                self.logger.error(f"Failed to generate test case for item: {item}")
 
         print(
             f"\nAll items processed successfully!\n Total Tokens Spent: {self.total_usage}"
