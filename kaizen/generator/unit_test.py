@@ -125,7 +125,7 @@ class UnitTestGenerator:
         for item in tqdm(parsed_data, desc="Processing Items", unit="item"):
             try:
                 self._process_item(item, file_extension, file_path, folder_path)
-            except:
+            except Exception:
                 self.logger.error(f"Failed to generate test case for item: {item}")
 
         print(

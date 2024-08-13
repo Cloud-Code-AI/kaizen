@@ -1,5 +1,6 @@
 import re
 
+
 class TypeScriptParser:
     def parse(self, source):
         self.source = source
