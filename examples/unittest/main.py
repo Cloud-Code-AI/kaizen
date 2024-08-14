@@ -3,12 +3,13 @@ from kaizen.generator.unit_test import UnitTestGenerator
 generator = UnitTestGenerator()
 
 # You can run it for one file at a time
-generator.generate_tests(
-    file_path="kaizen/helpers/output.py", enable_critique=True, verbose=True
-)
+# generator.generate_tests(
+#     file_path="kaizen/helpers/output.py", enable_critique=True, verbose=True, max_critique=1
+# )
 
 # OR for a directory
-# generator.generate_tests_from_dir(dir_path="kaizen/utils/", enable_critique=True, verbose=True)
+result = generator.generate_tests_from_dir(dir_path="examples/unittest/python_sample", output_path="example/unittest/tests/", enable_critique=True, verbose=True, max_critique=1)
+print(result)
 
 test_results = generator.run_tests()
 

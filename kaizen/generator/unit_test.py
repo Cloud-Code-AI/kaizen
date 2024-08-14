@@ -4,6 +4,8 @@ import logging
 from datetime import datetime
 from tqdm import tqdm
 import json
+from dataclasses import dataclass
+from typing import Optional, List, Dict, Generator
 from pathlib import Path
 from kaizen.llms.provider import LLMProvider
 from kaizen.helpers.parser import extract_code_from_markdown
@@ -18,6 +20,15 @@ from kaizen.llms.prompts.unit_tests_prompts import (
     REACT_UNIT_TEST_PROMPT,
     RUST_UNIT_TEST_PROMPT,
 )
+
+@dataclass
+class UnitTestOutput:
+    tests: Dict
+    files: List
+    failed: List
+    usage: Dict[str, int]
+    model_name: str
+    cost: Dict[str, float]
 
 
 class UnitTestGenerator:
@@ -73,13 +84,29 @@ class UnitTestGenerator:
         self.enable_critique = enable_critique
         self.verbose = verbose if verbose else self.verbose
         self.output_folder = output_path if output_path else self.output_folder
+        files = []
+        tests = {}
+        failed = []
         for file_path in Path(dir_path).rglob("*.*"):
+            files.append(file_path)
             try:
-                self.generate_tests(file_path=str(file_path), output_path=output_path)
+                test_files, _ = self.generate_tests(file_path=str(file_path), output_path=output_path)
+                tests.update(test_files)
             except Exception as e:
+                failed.append(file_path)
                 print(f"Error: Could not generate tests for {file_path}: {e}")
+        prompt_cost, completion_cost = self.provider.get_usage_cost(
+            total_usage=self.total_usage
+        )
 
-        return {}, self.total_usage
+        return UnitTestOutput(
+            tests=tests,
+            files=files,
+            failed=failed,
+            usage=self.total_usage,
+            model_name=self.provider.model,
+            cost={"prompt_cost": prompt_cost, "completion_cost": completion_cost}
+        )
 
     def generate_tests(
         self,
@@ -96,15 +123,15 @@ class UnitTestGenerator:
         self.output_folder = output_path if output_path else self.output_folder
 
         file_extension = file_path.split(".")[-1]
-        if file_extension not in self.SUPPORTED_LANGUAGES:
+        if file_extension not in self.SUPPORTED_LANGUAGES or file_extension == "pyc":
             raise ValueError(f"Unsupported file type: .{file_extension}")
 
         parser = self._get_parser(file_extension)
         content = content or self._read_file_content(file_path)
         parsed_data = parser.parse(content)
 
-        self.generate_test_files(parsed_data, file_extension, file_path)
-        return {}, self.total_usage
+        test_files = self.generate_test_files(parsed_data, file_extension, file_path)
+        return test_files, self.total_usage
 
     def _get_parser(self, file_extension):
         parser_class_name = self.SUPPORTED_LANGUAGES[file_extension]
@@ -120,18 +147,18 @@ class UnitTestGenerator:
 
     def generate_test_files(self, parsed_data, file_extension, file_path):
         folder_path = "/".join(file_path.split("/")[:-1])
-        self.total_usage = self.provider.DEFAULT_USAGE
-
+        test_files = {}
         for item in tqdm(parsed_data, desc="Processing Items", unit="item"):
             try:
-                self._process_item(item, file_extension, file_path, folder_path)
+                test_code = self._process_item(item, file_extension, file_path, folder_path)
+                test_files[file_path] = test_code
             except Exception:
                 self.logger.error(f"Failed to generate test case for item: {item}")
 
         print(
             f"\nAll items processed successfully!\n Total Tokens Spent: {self.total_usage}"
         )
-        self.total_usage = self.provider.DEFAULT_USAGE
+        return test_files
 
     def _process_item(self, item, file_extension, file_path, folder_path):
         print(f"\n{'='*50}\nProcessing Item: {item['name']}\n{'='*50}")
@@ -144,6 +171,7 @@ class UnitTestGenerator:
         self._write_test_file(test_file_path, test_code)
 
         print("\n✓ Item processing complete")
+        return test_code
 
     def _prepare_test_file_path(self, item, file_extension, folder_path):
         test_file_name = f"test_{item['name'].lower()}.{file_extension}"
