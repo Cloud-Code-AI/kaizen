@@ -5,7 +5,7 @@ from datetime import datetime
 from tqdm import tqdm
 import json
 from dataclasses import dataclass
-from typing import Optional, List, Dict, Generator
+from typing import List, Dict
 from pathlib import Path
 from kaizen.llms.provider import LLMProvider
 from kaizen.helpers.parser import extract_code_from_markdown
@@ -20,6 +20,7 @@ from kaizen.llms.prompts.unit_tests_prompts import (
     REACT_UNIT_TEST_PROMPT,
     RUST_UNIT_TEST_PROMPT,
 )
+
 
 @dataclass
 class UnitTestOutput:
@@ -90,7 +91,9 @@ class UnitTestGenerator:
         for file_path in Path(dir_path).rglob("*.*"):
             files.append(file_path)
             try:
-                test_files, _ = self.generate_tests(file_path=str(file_path), output_path=output_path)
+                test_files, _ = self.generate_tests(
+                    file_path=str(file_path), output_path=output_path
+                )
                 tests.update(test_files)
             except Exception as e:
                 failed.append(file_path)
@@ -105,7 +108,7 @@ class UnitTestGenerator:
             failed=failed,
             usage=self.total_usage,
             model_name=self.provider.model,
-            cost={"prompt_cost": prompt_cost, "completion_cost": completion_cost}
+            cost={"prompt_cost": prompt_cost, "completion_cost": completion_cost},
         )
 
     def generate_tests(
@@ -150,7 +153,9 @@ class UnitTestGenerator:
         test_files = {}
         for item in tqdm(parsed_data, desc="Processing Items", unit="item"):
             try:
-                test_code = self._process_item(item, file_extension, file_path, folder_path)
+                test_code = self._process_item(
+                    item, file_extension, file_path, folder_path
+                )
                 test_files[file_path] = test_code
             except Exception:
                 self.logger.error(f"Failed to generate test case for item: {item}")

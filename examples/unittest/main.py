@@ -8,7 +8,13 @@ generator = UnitTestGenerator()
 # )
 
 # OR for a directory
-result = generator.generate_tests_from_dir(dir_path="examples/unittest/python_sample", output_path="example/unittest/tests/", enable_critique=True, verbose=True, max_critique=1)
+result = generator.generate_tests_from_dir(
+    dir_path="examples/unittest/python_sample",
+    output_path="example/unittest/tests/",
+    enable_critique=True,
+    verbose=True,
+    max_critique=1,
+)
 print(result)
 
 test_results = generator.run_tests()
