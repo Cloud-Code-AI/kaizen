@@ -2,6 +2,7 @@ import subprocess
 import os
 from kaizen.helpers.output import safe_path_join
 
+
 class UnitTestRunner:
     def __init__(self, test_directory="./.kaizen/unit_test/"):
         self.test_directory = test_directory
