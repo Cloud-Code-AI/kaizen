@@ -65,7 +65,7 @@ Provide the output in json format only as shown below:
       }},
       "impact": "Explanation of the issue's impact",
       "suggestion": "Proposed fix or improvement",
-      "code_sample": "Optional: Example code for fix",
+      "solution": "Optional: fixed code to solve this problem.",
       "good_for_first_time": "true if this can be solved by firstime contributor else false",
       "issue_title": "Title of the issue"
     }}]
@@ -108,7 +108,7 @@ Provide the output in the same JSON format as the initial findings:
       }},
       "impact": "Explanation of the issue's impact",
       "suggestion": "Proposed fix or improvement",
-      "code_sample": "Optional: Example code for fix",
+      "solution": "Optional: fixed code to solve this problem.",
       "good_for_first_time": "true if this can be solved by firstime contributor else false",
       "issue_title": "Title of the issue"
 
