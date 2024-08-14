@@ -1,5 +1,6 @@
 import subprocess
 import os
+from kaizen.helpers.output import safe_path_join
 
 
 class UnitTestRunner:
@@ -42,7 +43,7 @@ class UnitTestRunner:
         for root, dirs, files in os.walk(self.test_directory):
             for file in files:
                 if file.startswith("test_"):
-                    file_path = os.path.join(root, file)
+                    file_path = safe_path_join(root, file)
                     extension = file.split(".")[-1]
                     if extension in self.supported_extensions:
                         result = self.supported_extensions[extension](file_path)
