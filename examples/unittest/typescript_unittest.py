@@ -4,7 +4,9 @@ generator = UnitTestGenerator()
 
 # You can run it for one file at a time
 generator.generate_tests(
-    file_path="examples/unittest/typescript_code/home.page.tsx", enable_critique=True, verbose=True
+    file_path="examples/unittest/typescript_code/home.page.tsx",
+    enable_critique=True,
+    verbose=True,
 )
 
 # test_results = generator.run_tests()
