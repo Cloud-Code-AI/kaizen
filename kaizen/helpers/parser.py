@@ -144,8 +144,6 @@ def patch_to_separate_chunks(patch_text):
                 removals.append(f"Filename: {current_file_name}\n")
                 additions.append("\n<change_block>")
                 additions.append(f"Filename: {current_file_name}\n")
-                # removals.append(current_hunk + "\n")
-                # additions.append(current_hunk + "\n")
         elif line.startswith("---"):
             line = line.replace("a/", "").replace("b/", "").replace("--- ", "")
             current_file_name = line
@@ -186,7 +184,6 @@ def format_change(old_num, new_num, change_type, content):
     new_num_str = f"{new_num:<4}" if new_num is not None else "    "
     return f"{old_num_str} {new_num_str} {change_type} {content}"
 
-
 def patch_to_combined_chunks(patch_text):
     lines = patch_text.split("\n")
     changes = []
@@ -220,10 +217,10 @@ def patch_to_combined_chunks(patch_text):
                 addition_line_num = int(match.group(2))
                 unedited_removal_num = removal_line_num
                 unedited_addition_num = addition_line_num
-                if changes:
-                    changes.append("\n</change_block>")
+                if changes and "\n<change_block>" not in changes:
+                    changes = []
                 changes.append("\n<change_block>")
-                changes.append(f"Filename: {current_file_name}\n")
+                changes.append(f"\n<file_start>\nFilename: {current_file_name}\n<file_end>\n")
         elif line.startswith("index "):
             continue
         elif line.startswith("---"):
@@ -234,17 +231,18 @@ def patch_to_combined_chunks(patch_text):
             current_file_name = line
         elif line.startswith("-"):
             content = line[1:]
-            changes.append(format_change(removal_line_num, None, "<->", content))
+            changes.append(format_change(removal_line_num, None, "-1:[-]", content))
             removal_line_num += 1
             unedited_removal_num = removal_line_num
         elif line.startswith("+"):
             content = line[1:]
-            changes.append(format_change(None, addition_line_num, "<+>", content))
+            changes.append(format_change(None, addition_line_num, "+1:[+]", content))
             addition_line_num += 1
             unedited_addition_num = addition_line_num
         else:
+            content = line
             changes.append(
-                format_change(unedited_removal_num, unedited_addition_num, "<.>", line)
+                format_change(unedited_removal_num, unedited_addition_num, " 0:[.]", content)
             )
             unedited_removal_num += 1
             unedited_addition_num += 1
@@ -256,7 +254,6 @@ def patch_to_combined_chunks(patch_text):
         metadata.append(current_hunk)
         changes.append("</change_block>\n\n")
 
-    output = [f"\n##Changes: (including {unedited_count} unedited lines)\n"]
-    output.extend(changes)
+    output = changes
 
     return "\n".join(output)
