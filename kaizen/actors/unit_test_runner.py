@@ -1,6 +1,6 @@
 import subprocess
 import os
-from kaizen.helpers.output import safe_path_join
+from kaizen.helpers.general import safe_path_join
 
 
 class UnitTestRunner:
