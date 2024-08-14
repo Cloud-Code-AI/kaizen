@@ -184,6 +184,7 @@ def format_change(old_num, new_num, change_type, content):
     new_num_str = f"{new_num:<4}" if new_num is not None else "    "
     return f"{old_num_str} {new_num_str} {change_type} {content}"
 
+
 def patch_to_combined_chunks(patch_text):
     lines = patch_text.split("\n")
     changes = []
@@ -220,7 +221,9 @@ def patch_to_combined_chunks(patch_text):
                 if changes and "\n<change_block>" not in changes:
                     changes = []
                 changes.append("\n<change_block>")
-                changes.append(f"\n<file_start>\nFilename: {current_file_name}\n<file_end>\n")
+                changes.append(
+                    f"\n<file_start>\nFilename: {current_file_name}\n<file_end>\n"
+                )
         elif line.startswith("index "):
             continue
         elif line.startswith("---"):
@@ -242,7 +245,9 @@ def patch_to_combined_chunks(patch_text):
         else:
             content = line
             changes.append(
-                format_change(unedited_removal_num, unedited_addition_num, " 0:[.]", content)
+                format_change(
+                    unedited_removal_num, unedited_addition_num, " 0:[.]", content
+                )
             )
             unedited_removal_num += 1
             unedited_addition_num += 1
