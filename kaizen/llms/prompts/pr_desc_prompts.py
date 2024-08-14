@@ -16,6 +16,11 @@ Output Format:
 - Key Changes: {{List main modifications}}
 - New Features: {{List key new features}}
 - Refactoring: {{List main refactoring changes}}
+
+<details>
+<summary>Original Description</summary>
+{PULL_REQUEST_DESCRIPTION}
+</details>
 ```
 
 Instructions:
