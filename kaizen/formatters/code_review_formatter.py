@@ -8,9 +8,11 @@ def create_pr_review_text(
     markdown_output = "# 🔍 Code Review Summary\n\n"
 
     if sum(1 for review in reviews if review["confidence"] == "critical") == 0:
-        markdown_output +=  "✅ **All Clear:** This commit looks good! 👍\n\n"
+        markdown_output += "✅ **All Clear:** This commit looks good! 👍\n\n"
     else:
-        markdown_output += "❗ **Attention Required:** This push has potential issues. 🚨\n\n"
+        markdown_output += (
+            "❗ **Attention Required:** This push has potential issues. 🚨\n\n"
+        )
 
     # Add Stats section
     markdown_output += create_stats_section(reviews)
