@@ -5,6 +5,7 @@ As a senior software developer reviewing code submissions, provide thorough, con
 CODE_REVIEW_PROMPT = """
 As an experienced software engineer, provide a concise, actionable code review for the given pull request. Generate a JSON object with the following structure:
 {{
+  "code_quality_percentage": <0_TO_100>,
   "review": [
     {{
       "topic": "<SECTION_TOPIC>",
@@ -12,6 +13,7 @@ As an experienced software engineer, provide a concise, actionable code review f
       "confidence": "critical|important|moderate|low|trivial",
       "reason": "<ISSUE_REASONING>",
       "solution": "<HIGH_LEVEL_SOLUTION>",
+      "actual_code": "<PEICE_OF_CODE_WHICH_HAS_ISSUES>",
       "fixed_code": "<CORRECTED_CODE>",
       "file_name": "<FULL_FILE_PATH>",
       "start_line": <START_LINE_NUMBER>,
@@ -25,7 +27,7 @@ As an experienced software engineer, provide a concise, actionable code review f
 
 ## Guidelines:
 - Provide specific feedback with file paths and line numbers
-- Use markdown for code snippets
+- Use markdown for code snippets. Make sure all code is following the original indentations.
 - Merge duplicate feedback
 - Examine: syntax/logic errors, resource leaks, race conditions, security vulnerabilities
 - If no issues found: {{"review": []}}
@@ -57,10 +59,6 @@ Example:
 - "fixed_code": Corrected code for additions only, between start_line and end_line.
 - "start_line" and "end_line": Actual line numbers in the new file.
 - "severity_level": 1 (least severe) to 10 (most critical).
-
-## Additional Instructions:
-Mark items as critical (severity 10) if they match: {CUSTOM_PROMPT}
-
 
 ## PATCH DATA:
 ```{CODE_DIFF}```
@@ -69,6 +67,7 @@ Mark items as critical (severity 10) if they match: {CUSTOM_PROMPT}
 FILE_CODE_REVIEW_PROMPT = """
 As an experienced software engineer, provide a concise, actionable code review for the given pull request. Generate a JSON object with the following structure:
 {{
+  "code_quality_percentage": <0_TO_100>,
   "review": [
     {{
       "topic": "<SECTION_TOPIC>",
@@ -76,6 +75,7 @@ As an experienced software engineer, provide a concise, actionable code review f
       "confidence": "critical|important|moderate|low|trivial",
       "reason": "<ISSUE_REASONING>",
       "solution": "<HIGH_LEVEL_SOLUTION>",
+      "actual_code": "<PEICE_OF_CODE_WHICH_HAS_ISSUES>",
       "fixed_code": "<CORRECTED_CODE>",
       "file_name": "<FULL_FILE_PATH>",
       "start_line": <START_LINE_NUMBER>,
@@ -89,7 +89,7 @@ As an experienced software engineer, provide a concise, actionable code review f
 
 ## Guidelines:
 - Provide specific feedback with file paths and line numbers
-- Use markdown for code snippets
+- Use markdown for code snippets. Make sure all code is following the original indentations.
 - Merge duplicate feedback
 - Examine: syntax/logic errors, resource leaks, race conditions, security vulnerabilities
 - If no issues found: {{"review": []}}
@@ -121,9 +121,6 @@ Example:
 - "fixed_code": Corrected code for additions only, between start_line and end_line.
 - "start_line" and "end_line": Actual line numbers in the new file.
 - "severity_level": 1 (least severe) to 10 (most critical).
-
-## Additional Instructions:
-Mark items as critical (severity 10) if they match: {CUSTOM_PROMPT}
 
 ## File PATCH Data:
 ```{FILE_PATCH}```
@@ -135,6 +132,7 @@ As an experienced software engineer, evaluate and improve your previous code rev
 
 Generate a JSON object with the following structure:
 {{
+  "code_quality_percentage": <0_TO_100>,
   "review": [
     {{
       "topic": "<SECTION_TOPIC>",
@@ -142,6 +140,7 @@ Generate a JSON object with the following structure:
       "confidence": "critical|important|moderate|low|trivial",
       "reason": "<ISSUE_REASONING>",
       "solution": "<HIGH_LEVEL_SOLUTION>",
+      "actual_code": "<PEICE_OF_CODE_WHICH_HAS_ISSUES>",
       "fixed_code": "<CORRECTED_CODE>",
       "file_name": "<FULL_FILE_PATH>",
       "start_line": <START_LINE_NUMBER>,
@@ -157,7 +156,7 @@ Generate a JSON object with the following structure:
 - Thoroughly review your previous output and the original code changes
 - Identify any missed issues, inaccuracies, or areas for improvement
 - Provide specific feedback with file paths and line numbers
-- Use markdown for code snippets
+- Use markdown for code snippets. Make sure all code is following the original indentations.
 - If no issues found or no changes needed: {{"review": []}}
 
 ## Patch Data Format:
@@ -187,9 +186,6 @@ Generate a JSON object with the following structure:
 - "file_name": Include the full file path for precise issue location.
 - "sentiment": Indicate whether the comment is "positive", "negative", or "neutral".
 - "severity_level": Score from 1 (least severe) to 10 (most critical).
-
-## Additional Instructions:
-Re-evaluate if items match the following criteria and mark them as critical (severity 10): {CUSTOM_PROMPT}
 
 ORIGINAL PROMPT:
 {ACTUAL_PROMPT}

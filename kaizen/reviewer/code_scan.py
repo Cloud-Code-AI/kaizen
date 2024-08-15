@@ -18,7 +18,7 @@ compiled_patterns = [re.compile(pattern) for pattern in ignore_patterns]
 
 @dataclass
 class CodeScanOutput:
-    issues: Dict[str, List[Dict]]
+    issues: List[Dict]
     usage: Dict[str, int]
     model_name: str
 

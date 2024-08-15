@@ -87,6 +87,8 @@ sensitive_files = {
 @dataclass
 class ReviewOutput:
     topics: Dict[str, List[Dict]]
+    issues: List[Dict]
+    code_quality: float
     usage: Dict[str, int]
     model_name: str
     cost: Dict[str, float]
@@ -143,9 +145,11 @@ class CodeReviewer:
             raise Exception("Both diff_text and pull_request_files are empty!")
 
         if diff_text and self.provider.is_inside_token_limit(PROMPT=prompt):
-            reviews = self._process_full_diff(prompt, user, reeval_response)
+            reviews, code_quality = self._process_full_diff(
+                prompt, user, reeval_response
+            )
         else:
-            reviews = self._process_files(
+            reviews, code_quality = self._process_files(
                 pull_request_files,
                 pull_request_title,
                 pull_request_desc,
@@ -165,6 +169,8 @@ class CodeReviewer:
             usage=self.total_usage,
             model_name=self.provider.model,
             topics=topics,
+            issues=reviews,
+            code_quality=code_quality,
             cost={"prompt_cost": prompt_cost, "completion_cost": completion_cost},
         )
 
@@ -182,7 +188,7 @@ class CodeReviewer:
         self.total_usage = self.provider.update_usage(self.total_usage, usage)
         if reeval_response:
             resp = self._reevaluate_response(prompt, resp, user)
-        return resp["review"]
+        return resp["review"], resp.get("code_quality_percentage", None)
 
     def _process_files(
         self,
@@ -191,20 +197,24 @@ class CodeReviewer:
         pull_request_desc: str,
         user: Optional[str],
         reeval_response: bool,
-        custom_prompt: str,
     ) -> List[Dict]:
         self.logger.debug("Processing based on files")
         reviews = []
-        for file_review in self._process_files_generator(
+        code_quality = None
+        for file_review, quality in self._process_files_generator(
             pull_request_files,
             pull_request_title,
             pull_request_desc,
             user,
             reeval_response,
-            custom_prompt,
         ):
             reviews.extend(file_review)
-        return reviews
+            if quality:
+                if code_quality and code_quality > quality:
+                    code_quality = quality
+                else:
+                    code_quality = quality
+        return reviews, code_quality
 
     def _process_files_generator(
         self,
@@ -213,7 +223,6 @@ class CodeReviewer:
         pull_request_desc: str,
         user: Optional[str],
         reeval_response: bool,
-        custom_prompt: str,
     ) -> Generator[List[Dict], None, None]:
         combined_diff_data = ""
         available_tokens = self.provider.available_tokens(FILE_CODE_REVIEW_PROMPT)
@@ -241,7 +250,6 @@ class CodeReviewer:
                     pull_request_desc,
                     user,
                     reeval_response,
-                    custom_prompt,
                 )
                 combined_diff_data = (
                     f"\n---->\nFile Name: {filename}\nPatch Details: {patch_details}"
@@ -253,7 +261,6 @@ class CodeReviewer:
             pull_request_desc,
             user,
             reeval_response,
-            custom_prompt,
         )
 
     def _process_file_chunk(
@@ -263,7 +270,6 @@ class CodeReviewer:
         pull_request_desc: str,
         user: Optional[str],
         reeval_response: bool,
-        custom_prompt: str,
     ) -> List[Dict]:
         if not diff_data:
             return []
@@ -271,7 +277,6 @@ class CodeReviewer:
             PULL_REQUEST_TITLE=pull_request_title,
             PULL_REQUEST_DESC=pull_request_desc,
             FILE_PATCH=diff_data,
-            CUSTOM_PROMPT=custom_prompt,
         )
         custom_model = {"model": self.default_model}
         resp, usage = self.provider.chat_completion_with_json(
@@ -282,7 +287,7 @@ class CodeReviewer:
         if reeval_response:
             resp = self._reevaluate_response(prompt, resp, user)
 
-        return resp["review"]
+        return resp["review"], resp.get("code_quality_percentage", None)
 
     def _reevaluate_response(self, prompt: str, resp: str, user: Optional[str]) -> str:
         new_prompt = PR_REVIEW_EVALUATION_PROMPT.format(

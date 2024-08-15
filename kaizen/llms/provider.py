@@ -14,10 +14,11 @@ def set_all_loggers_to_ERROR():
     print("All Loggers and their levels:")
     for name, logger in logging.Logger.manager.loggerDict.items():
         if isinstance(logger, logging.Logger):
-            print(f"Logger: {name}, Level: {logging.getLevelName(logger.level)}")
+            # print(f"Logger: {name}, Level: {logging.getLevelName(logger.level)}")
             logging.getLogger(name).setLevel(logging.ERROR)
         else:
-            print(f"PlaceHolder: {name}")
+            # print(f"PlaceHolder: {name}")
+            pass
 
 
 set_all_loggers_to_ERROR()
