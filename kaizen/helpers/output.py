@@ -7,7 +7,6 @@ import subprocess
 import os
 import json
 from kaizen.helpers import general
-from typing import List, Dict
 
 logger = logging.getLogger(__name__)
 

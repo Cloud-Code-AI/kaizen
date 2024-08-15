@@ -1,14 +1,12 @@
 import os
 import json
 import datetime
-import sys
 import logging
 from tqdm import tqdm
 from kaizen.reviewer.code_review import CodeReviewer
 from kaizen.llms.provider import LLMProvider
 from github_app.github_helper.utils import get_diff_text, get_pr_files
 from github_app.github_helper.pull_requests import (
-    clean_keys,
     create_review_comments,
 )
 from kaizen.formatters.code_review_formatter import create_pr_review_text
