@@ -1,0 +1,17 @@
+[
+  {
+    "topic": "Functionality",
+    "comment": "Changing the method from 'chat_completion_with_json' to 'chat_completion' may alter expected behavior.",
+    "confidence": "critical",
+    "reason": "If 'chat_completion_with_json' was designed to handle specific JSON formatting, switching to 'chat_completion' may lead to data handling issues.",
+    "solution": "Review the implementation of 'chat_completion' to ensure it meets the requirements previously handled by 'chat_completion_with_json'.",
+    "actual_code": "resp, usage = self.provider.chat_completion_with_json(prompt, user=user)",
+    "fixed_code": "resp, usage = self.provider.chat_completion(prompt, user=user)",
+    "file_name": "kaizen/generator/pr_description.py",
+    "start_line": 83,
+    "end_line": 83,
+    "side": "LEFT",
+    "sentiment": "negative",
+    "severity_level": 8
+  }
+]

@@ -2,7 +2,7 @@ import requests
 from kaizen.reviewer.code_review import CodeReviewer
 from kaizen.llms.provider import LLMProvider
 import json
-from kaizen.helpers.output import create_pr_review_text
+from kaizen.formatters.code_review_formatter import create_pr_review_text
 from github_app.github_helper.pull_requests import clean_keys, create_review_comments
 from kaizen.generator.pr_description import PRDescriptionGenerator
 
