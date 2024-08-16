@@ -232,3 +232,12 @@ class LLMProvider:
         return litellm.cost_per_token(
             model, total_usage["prompt_tokens"], total_usage["completion_tokens"]
         )
+
+    def get_text_embedding(self, text):
+        # for model in self.config["language_model"]["models"]:
+        #     if model["model_name"] == "embedding":
+        #         break
+        response = self.provider.embedding(
+            model="embedding", input=[text], dimensions=1536
+        )
+        return response["data"], response["usage"]

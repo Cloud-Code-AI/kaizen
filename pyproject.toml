@@ -34,6 +34,8 @@ esprima = "^4.0.1"
 escodegen = "^1.0.11"
 redis = "^5.0.7"
 tqdm = "^4.66.5"
+tree-sitter = "^0.22.3"
+llama-index = "^0.10.65"
 
 
 [build-system]

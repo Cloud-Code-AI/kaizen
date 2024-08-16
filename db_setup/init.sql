@@ -20,54 +20,49 @@ CREATE TABLE files (
     programming_language TEXT
 );
 
--- Table to store code snippets
-CREATE TABLE code_snippets (
-    snippet_id SERIAL PRIMARY KEY,
+-- Table to store function abstractions
+CREATE TABLE function_abstractions (
+    function_id SERIAL PRIMARY KEY,
     file_id INTEGER NOT NULL REFERENCES files(file_id),
-    snippet_text TEXT NOT NULL,
+    function_name TEXT NOT NULL,
+    function_signature TEXT NOT NULL,
+    abstract_functionality TEXT NOT NULL,
+    complexity_score FLOAT,
+    input_output_description TEXT,
     start_line INTEGER NOT NULL,
-    end_line INTEGER NOT NULL,
-    functionality TEXT,
-    context TEXT
+    end_line INTEGER NOT NULL
 );
 
--- Table to store vector embeddings for code snippets
-CREATE TABLE embeddings (
+-- Table to store vector embeddings for function abstractions
+CREATE TABLE function_embeddings (
     embedding_id SERIAL PRIMARY KEY,
-    snippet_id INTEGER NOT NULL REFERENCES code_snippets(snippet_id),
-    vector VECTOR NOT NULL
+    function_id INTEGER NOT NULL REFERENCES function_abstractions(function_id),
+    vector VECTOR(1536) NOT NULL
 );
 
--- Table to store AI-generated summaries for code snippets
-CREATE TABLE snippet_summaries (
-    summary_id SERIAL PRIMARY KEY,
-    snippet_id INTEGER NOT NULL REFERENCES code_snippets(snippet_id),
-    summary TEXT NOT NULL,
-    summary_quality_score FLOAT
-);
 
--- Node level data for AST
-CREATE TABLE ast_nodes (
+CREATE TABLE syntax_nodes (
     node_id SERIAL PRIMARY KEY,
     file_id INTEGER NOT NULL REFERENCES files(file_id),
     node_type TEXT NOT NULL,
     start_line INTEGER NOT NULL,
-    end_line INTEGER NOT NULL
-    -- Add other common node properties here
-);
-
--- Table to store node properties
-CREATE TABLE node_properties (
-    property_id SERIAL PRIMARY KEY,
-    node_id INTEGER NOT NULL REFERENCES ast_nodes(node_id),
-    property_name TEXT NOT NULL,
-    property_value TEXT NOT NULL
+    end_line INTEGER NOT NULL,
+    node_content TEXT,
+    language TEXT NOT NULL
 );
 
 -- Table to store node relationships
 CREATE TABLE node_relationships (
     relationship_id SERIAL PRIMARY KEY,
-    parent_node_id INTEGER NOT NULL REFERENCES ast_nodes(node_id),
-    child_node_id INTEGER NOT NULL REFERENCES ast_nodes(node_id),
+    parent_node_id INTEGER NOT NULL REFERENCES syntax_nodes(node_id),
+    child_node_id INTEGER NOT NULL REFERENCES syntax_nodes(node_id),
     relationship_type TEXT NOT NULL
+);
+
+-- Table to store node properties
+CREATE TABLE node_properties (
+    property_id SERIAL PRIMARY KEY,
+    node_id INTEGER NOT NULL REFERENCES syntax_nodes(node_id),
+    property_name TEXT NOT NULL,
+    property_value TEXT NOT NULL
 );

@@ -1,140 +1,156 @@
-import ast
-import esprima
-import escodegen
-import json
+import os
+import subprocess
+from tree_sitter import Language, Parser
+from typing import Dict, List, Any
 
+ParsedBody = Dict[str, Dict[str, Any]]
 
-ParsedBody = {
-    "functions": {},
-    "classes": {},
-    "hooks": {},
-    "components": {},
-    "other_blocks": [],
+# Define the languages and their GitHub repositories
+LANGUAGES = {
+    "python": "https://github.com/tree-sitter/tree-sitter-python",
+    "javascript": "https://github.com/tree-sitter/tree-sitter-javascript",
+    "typescript": "https://github.com/tree-sitter/tree-sitter-typescript",
+    "rust": "https://github.com/tree-sitter/tree-sitter-rust",
 }
 
-
-def chunk_python_code(code):
-    tree = ast.parse(code)
-    functions = {}
-    classes = {}
-    other_blocks = []
-    current_block = []
-
-    for node in ast.iter_child_nodes(tree):
-        if isinstance(node, ast.FunctionDef):
-            functions[node.name] = ast.unparse(node)
-        elif isinstance(node, ast.ClassDef):
-            methods = {}
-            for item in node.body:
-                if isinstance(item, ast.FunctionDef):
-                    methods[item.name] = ast.unparse(item)
-            classes[node.name] = {"definition": ast.unparse(node), "methods": methods}
-        elif isinstance(node, (ast.If, ast.For, ast.While)):
-            other_blocks.append(ast.unparse(node))
-        else:
-            current_block.append(ast.unparse(node))
-
-    if current_block:
-        other_blocks.append("\n".join(current_block))
-
-    body = ParsedBody
-    body["functions"] = functions
-    body["classes"] = classes
-    body["other_blocks"] = other_blocks
-    return body
+# Directory to store the language libraries
+LANGUAGE_DIR = os.path.join(os.path.dirname(__file__), "tree_sitter_languages")
 
 
-def chunk_javascript_code(code):
-    tree = esprima.parseModule(code, jsx=True, tolerant=True)
-    functions = {}
-    classes = {}
-    components = {}
-    hooks = {}
-    other_blocks = []
+def ensure_language_installed(language: str) -> None:
+    if not os.path.exists(LANGUAGE_DIR):
+        os.makedirs(LANGUAGE_DIR)
 
-    def ast_to_source(node):
-        try:
-            return escodegen.generate(node)
-        except Exception:
-            return f"// Unable to generate code for {node.type}"
+    lang_file = os.path.join(LANGUAGE_DIR, f"{language}.so")
+    if not os.path.exists(lang_file):
+        repo_url = LANGUAGES[language]
+        repo_dir = os.path.join(LANGUAGE_DIR, f"tree-sitter-{language}")
+
+        if not os.path.exists(repo_dir):
+            subprocess.run(["git", "clone", repo_url, repo_dir], check=True)
+
+        subprocess.run(
+            ["bash", "-c", f"cd {repo_dir} && git submodule update --init"], check=True
+        )
+        Language.build_library(lang_file, [repo_dir])
+
+
+def get_parser(language: str) -> Parser:
+    ensure_language_installed(language)
+    parser = Parser()
+    lang_file = os.path.join(LANGUAGE_DIR, f"{language}.so")
+    lang = Language(lang_file, language)
+    parser.set_language(lang)
+    return parser
+
+
+def traverse_tree(node, code_bytes: bytes) -> Dict[str, Any]:
+    if node.type in [
+        "function_definition",
+        "function_declaration",
+        "arrow_function",
+        "method_definition",
+    ]:
+        return {
+            "type": "function",
+            "name": (
+                node.child_by_field_name("name").text.decode("utf8")
+                if node.child_by_field_name("name")
+                else "anonymous"
+            ),
+            "code": code_bytes[node.start_byte : node.end_byte].decode("utf8"),
+        }
+    elif node.type in ["class_definition", "class_declaration"]:
+        return {
+            "type": "class",
+            "name": node.child_by_field_name("name").text.decode("utf8"),
+            "code": code_bytes[node.start_byte : node.end_byte].decode("utf8"),
+        }
+    elif node.type in ["jsx_element", "jsx_self_closing_element"]:
+        return {
+            "type": "component",
+            "name": (
+                node.child_by_field_name("opening_element")
+                .child_by_field_name("name")
+                .text.decode("utf8")
+                if node.type == "jsx_element"
+                else node.child_by_field_name("name").text.decode("utf8")
+            ),
+            "code": code_bytes[node.start_byte : node.end_byte].decode("utf8"),
+        }
+    elif node.type == "impl_item":
+        return {
+            "type": "impl",
+            "name": node.child_by_field_name("type").text.decode("utf8"),
+            "code": code_bytes[node.start_byte : node.end_byte].decode("utf8"),
+        }
+    else:
+        return None
+
+
+def chunk_code(code: str, language: str) -> ParsedBody:
+    parser = get_parser(language)
+    tree = parser.parse(code.encode("utf8"))
+
+    body: ParsedBody = {
+        "functions": {},
+        "classes": {},
+        "hooks": {},
+        "components": {},
+        "other_blocks": [],
+    }
+    code_bytes = code.encode("utf8")
 
     def process_node(node):
-        if node.type == "FunctionDeclaration":
-            if is_react_component(node):
-                components[node.id.name] = ast_to_source(node)
-            else:
-                functions[node.id.name] = ast_to_source(node)
-        elif node.type == "ClassDeclaration":
-            if is_react_component(node):
-                components[node.id.name] = ast_to_source(node)
-            else:
-                methods = {}
-                for item in node.body.body:
-                    if item.type == "MethodDefinition":
-                        methods[item.key.name] = ast_to_source(item)
-                classes[node.id.name] = {
-                    "definition": ast_to_source(node),
-                    "methods": methods,
-                }
-        elif node.type == "VariableDeclaration":
-            for decl in node.declarations:
-                if decl.init and decl.init.type == "ArrowFunctionExpression":
-                    if is_react_component(decl.init):
-                        components[decl.id.name] = ast_to_source(node)
-                    elif is_react_hook(decl.id.name):
-                        hooks[decl.id.name] = ast_to_source(node)
-                    else:
-                        functions[decl.id.name] = ast_to_source(node)
+        result = traverse_tree(node, code_bytes)
+        if result:
+            if result["type"] == "function":
+                if is_react_hook(result["name"]):
+                    body["hooks"][result["name"]] = result["code"]
+                elif is_react_component(result["code"]):
+                    body["components"][result["name"]] = result["code"]
                 else:
-                    other_blocks.append(ast_to_source(node))
-        elif node.type in [
-            "ImportDeclaration",
-            "ExportDefaultDeclaration",
-            "ExportNamedDeclaration",
-        ]:
-            other_blocks.append(ast_to_source(node))
+                    body["functions"][result["name"]] = result["code"]
+            elif result["type"] == "class":
+                if is_react_component(result["code"]):
+                    body["components"][result["name"]] = result["code"]
+                else:
+                    body["classes"][result["name"]] = result["code"]
+            elif result["type"] == "component":
+                body["components"][result["name"]] = result["code"]
+            elif result["type"] == "impl":
+                body["classes"][result["name"]] = result["code"]
         else:
-            other_blocks.append(ast_to_source(node))
+            for child in node.children:
+                process_node(child)
 
-    def is_react_component(node):
-        # Check if the function/class is likely a React component
-        if node.type == "FunctionDeclaration" or node.type == "ArrowFunctionExpression":
-            body = node.body.body if node.body.type == "BlockStatement" else [node.body]
-            return any(
-                stmt.type == "ReturnStatement"
-                and stmt.argument
-                and stmt.argument.type == "JSXElement"
-                for stmt in body
-            )
-        elif node.type == "ClassDeclaration":
-            return any(
-                method.key.name == "render"
-                for method in node.body.body
-                if method.type == "MethodDefinition"
-            )
-        return False
+    process_node(tree.root_node)
 
-    def is_react_hook(name):
-        # Check if the function name starts with 'use'
-        return name.startswith("use") and name[3].isupper()
+    # Collect remaining code as other_blocks
+    collected_ranges = []
+    for section in body.values():
+        if isinstance(section, dict):
+            for code_block in section.values():
+                start = code.index(code_block)
+                collected_ranges.append((start, start + len(code_block)))
 
-    for node in tree.body:
-        process_node(node)
+    collected_ranges.sort()
+    last_end = 0
+    for start, end in collected_ranges:
+        if start > last_end:
+            body["other_blocks"].append(code[last_end:start].strip())
+        last_end = end
+    if last_end < len(code):
+        body["other_blocks"].append(code[last_end:].strip())
 
-    # return functions, classes, components, hooks, other_blocks
-    body = ParsedBody
-    body["functions"] = functions
-    body["classes"] = classes
-    body["other_blocks"] = other_blocks
-    body["components"] = components
-    body["hooks"] = hooks
     return body
 
 
-def chunk_code(code, language):
-    if language.lower() == "python":
-        return chunk_python_code(code)
-    elif language.lower() in ["javascript", "js"]:
-        return chunk_javascript_code(code)
-    else:
-        raise ValueError("Unsupported language. Please use 'python' or 'javascript'.")
+def is_react_hook(name: str) -> bool:
+    return name.startswith("use") and len(name) > 3 and name[3].isupper()
+
+
+def is_react_component(code: str) -> bool:
+    return (
+        "React" in code or "jsx" in code.lower() or "tsx" in code.lower() or "<" in code
+    )
