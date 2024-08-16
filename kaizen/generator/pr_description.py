@@ -41,8 +41,6 @@ class PRDescriptionGenerator:
         user: Optional[str] = None,
     ) -> DescOutput:
         prompt = PR_DESCRIPTION_PROMPT.format(
-            PULL_REQUEST_TITLE=pull_request_title,
-            PULL_REQUEST_DESC=pull_request_desc,
             CODE_DIFF=diff_text,
         )
         if not diff_text and not pull_request_files:
@@ -116,8 +114,6 @@ class PRDescriptionGenerator:
         combined_diff_data = ""
         available_tokens = self.provider.available_tokens(
             PR_FILE_DESCRIPTION_PROMPT.format(
-                PULL_REQUEST_TITLE=pull_request_title,
-                PULL_REQUEST_DESC=pull_request_desc,
                 CODE_DIFF="",
             )
         )
@@ -165,8 +161,6 @@ class PRDescriptionGenerator:
         user: Optional[str],
     ) -> List[Dict]:
         prompt = PR_FILE_DESCRIPTION_PROMPT.format(
-            PULL_REQUEST_TITLE=pull_request_title,
-            PULL_REQUEST_DESC=pull_request_desc,
             CODE_DIFF=diff_data,
         )
         resp, usage = self.provider.chat_completion(prompt, user=user)
