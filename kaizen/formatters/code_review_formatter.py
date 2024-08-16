@@ -2,7 +2,7 @@ from typing import Dict, List
 
 
 def create_pr_review_text(
-    reviews: Dict, code_quality: float, tests: List = None
+    reviews: List[Dict], code_quality: float, tests: List = None
 ) -> str:
 
     markdown_output = "# 🔍 Code Review Summary\n\n"
@@ -44,20 +44,36 @@ def create_pr_review_text(
             markdown_output += f"## {emoji} {confidence.capitalize()} Issues\n\n"
             markdown_output += create_issues_section(issues)
 
+    # Add other issues section (collapsible)
+    other_issues = categories["moderate"] + categories["low"] + categories["trivial"]
+    if other_issues:
+        markdown_output += "## 📌 Other Issues\n\n"
+        markdown_output += "<details>\n"
+        markdown_output += f"<summary><strong>Click to expand ({len(other_issues)} issues)</strong></summary>\n\n"
+
+        # Moderate issues
+        moderate_issues = categories["moderate"]
+        if moderate_issues:
+            markdown_output += "### ℹ️ Moderate Issues\n\n"
+            markdown_output += create_issues_section(moderate_issues)
+
+        # Low issues
+        low_issues = categories["low"]
+        if low_issues:
+            markdown_output += "### 📉 Low Priority Issues\n\n"
+            markdown_output += create_issues_section(low_issues)
+
+        # Trivial issues
+        trivial_issues = categories["trivial"]
+        if trivial_issues:
+            markdown_output += "### 🔎 Trivial Issues\n\n"
+            markdown_output += create_issues_section(trivial_issues)
+
+        markdown_output += "</details>\n\n"
+
     # Add Test Cases section
     if tests:
         markdown_output += create_test_cases_section()
-
-    # # Add Highlights section
-    # markdown_output += "## 👍 Highlights\n"
-    # markdown_output += "- Good code organization and structure\n"
-    # markdown_output += "- Consistent naming conventions used throughout\n\n"
-
-    # # Add Next Steps section
-    # markdown_output += create_next_steps_section()
-
-    # # Add Trends section
-    # markdown_output += create_trends_section()
 
     # Add footer
     markdown_output += "---\n\n"
