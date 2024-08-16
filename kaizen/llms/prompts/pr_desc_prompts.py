@@ -28,9 +28,6 @@ Instructions:
 - Use markdown formatting for readability.
 - Focus on significant changes and avoid repetition.
 
-Based on:
-Title: {PULL_REQUEST_TITLE}
-Description: {PULL_REQUEST_DESC}
 Patch:
 {CODE_DIFF}
 
@@ -58,9 +55,6 @@ Instructions:
 - Use markdown formatting for readability.
 - Focus on significant changes and avoid repetition.
 
-Based on:
-Title: {PULL_REQUEST_TITLE}
-Description: {PULL_REQUEST_DESC}
 Patch:
 {CODE_DIFF}
 

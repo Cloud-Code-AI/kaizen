@@ -128,13 +128,9 @@ class CodeReviewer:
         user: Optional[str] = None,
         reeval_response: bool = False,
         model="default",
-        custom_prompt="",
     ) -> ReviewOutput:
         prompt = CODE_REVIEW_PROMPT.format(
-            PULL_REQUEST_TITLE=pull_request_title,
-            PULL_REQUEST_DESC=pull_request_desc,
             CODE_DIFF=parser.patch_to_combined_chunks(diff_text),
-            CUSTOM_PROMPT=custom_prompt,
         )
         self.total_usage = {
             "prompt_tokens": 0,
@@ -155,7 +151,6 @@ class CodeReviewer:
                 pull_request_desc,
                 user,
                 reeval_response,
-                custom_prompt=custom_prompt,
             )
 
         reviews.extend(self.check_sensitive_files(pull_request_files))
@@ -274,8 +269,6 @@ class CodeReviewer:
         if not diff_data:
             return []
         prompt = FILE_CODE_REVIEW_PROMPT.format(
-            PULL_REQUEST_TITLE=pull_request_title,
-            PULL_REQUEST_DESC=pull_request_desc,
             FILE_PATCH=diff_data,
         )
         custom_model = {"model": self.default_model}
