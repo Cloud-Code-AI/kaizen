@@ -1,6 +1,7 @@
 from kaizen.actors.unit_test_runner import UnitTestRunner
 import logging
 import json
+
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )

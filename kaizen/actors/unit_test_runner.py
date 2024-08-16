@@ -28,16 +28,18 @@ class UnitTestRunner:
             # Use shlex.split() to properly handle command arguments
             if isinstance(command, str):
                 command = shlex.split(command)
-            
+
             result = subprocess.run(
                 command,
                 capture_output=True,
                 text=True,
                 cwd=cwd,
                 shell=False,
-                timeout=300
+                timeout=300,
             )
-            self.logger.debug(f"Command completed with return code: {result.returncode}")
+            self.logger.debug(
+                f"Command completed with return code: {result.returncode}"
+            )
             return result.returncode, result.stdout, result.stderr
         except FileNotFoundError:
             self.logger.error(f"Command not found: {command[0]}")
