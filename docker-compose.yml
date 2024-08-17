@@ -15,6 +15,15 @@ services:
     depends_on:
       - redis
   
+  postgres:
+    image: postgres:16-bullseye
+    env_file:
+      - .env
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+  
   redis:
     image: "redis:alpine"
     environment:
@@ -22,6 +31,8 @@ services:
     ports:
       - "6379:6379"
 
+
 secrets:
   github_app_pem:
     file: ./GITHUB_APP_NIGHTLY.pem
+

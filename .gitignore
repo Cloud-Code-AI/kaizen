@@ -165,3 +165,4 @@ node_modules
 .next
 
 .cloudcode
+tree_sitter_languages/
