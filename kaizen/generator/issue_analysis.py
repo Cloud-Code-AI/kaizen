@@ -1,7 +1,6 @@
-from typing import Optional, List, Dict, Generator
+from typing import Optional, List, Dict
 import logging
 from dataclasses import dataclass
-import json
 
 from kaizen.helpers import output, parser
 from kaizen.llms.provider import LLMProvider
@@ -11,6 +10,7 @@ from kaizen.llms.prompts.issue_analysis_prompts import (
     ISSUE_LABEL_SYSTEM_PROMPT,
 )
 
+
 @dataclass
 class IssueLabelOutput:
     labels: List[str]
@@ -18,6 +18,7 @@ class IssueLabelOutput:
     model_name: str
     cost: Dict[str, float]
     
+
 @dataclass
 class IssueDescOutput:
     desc: str
@@ -25,6 +26,7 @@ class IssueDescOutput:
     model_name: str
     cost: Dict[str, float]
     
+
 class IssueAnalysisGenerator:
     def __init__(self, llm_provider: LLMProvider):
         self.logger = logging.getLogger(__name__)

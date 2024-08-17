@@ -111,9 +111,9 @@ class E2ETestGenerator:
             module_title = module.get(
                 "module_title", "Unknown Module"
             )  # Adjust if your module structure is different
-            print(f"\n{'='*50}")
+            print(f"\n{'=' * 50}")
             print(f"Processing Module: {module_title}")
-            print(f"{'='*50}")
+            print(f"{'=' * 50}")
 
             # Inner loop
             for i, test in enumerate(module["tests"], 1):

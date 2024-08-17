@@ -25,7 +25,7 @@ Description: {ISSUE_DESCRIPTION}
 Exisiting labels: {ISSUE_LABEL_LIST}
 """
 
-ISSUE_DESC_PROMPT="""
+ISSUE_DESC_PROMPT = """
 Understand the issue and summarize the main purpose, scope of changes, modifications and approach required to tackle the issue. Also provide a brief summary of why the change proposed in the issue is necessary.
 
 Output Format:
@@ -50,4 +50,3 @@ Based on:
 Title: {ISSUE_TITLE}
 Description: {ISSUE_DESCRIPTION}
 """
-

@@ -139,5 +139,5 @@ class CodeScanner:
 
     def _add_line_numbers(self, file_content):
         lines = file_content.split("\n")
-        numbered_lines = [f"{i+1:4d} | {line}" for i, line in enumerate(lines)]
+        numbered_lines = [f"{i + 1:4d} | {line}" for i, line in enumerate(lines)]
         return "\n".join(numbered_lines)
