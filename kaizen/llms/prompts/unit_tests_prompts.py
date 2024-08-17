@@ -68,6 +68,8 @@ Follow these steps:
 3. Implement it blocks for each test scenario
 4. Use Jest's expect assertions
 5. Mock dependencies where appropriate
+6. Implement assertions to verify expected behavior
+
 
 OUTPUT FORMAT:
 Provide your tests as a single JavaScript/TypeScript file containing all the test code.

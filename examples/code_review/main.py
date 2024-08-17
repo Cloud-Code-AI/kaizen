@@ -1,6 +1,5 @@
 from kaizen.reviewer.code_review import CodeReviewer
 from kaizen.generator.pr_description import PRDescriptionGenerator
-from kaizen.helpers.output import create_pr_review_text
 from kaizen.llms.provider import LLMProvider
 from github_app.github_helper.utils import get_diff_text, get_pr_files
 from github_app.github_helper.pull_requests import (
@@ -9,6 +8,7 @@ from github_app.github_helper.pull_requests import (
 )
 import json
 import logging
+from kaizen.formatters.code_review_formatter import create_pr_review_text
 
 logging.basicConfig(level="DEBUG")
 
@@ -30,7 +30,6 @@ review_data = reviewer.review_pull_request(
     pull_request_files=pr_files,
     user="kaizen/example",
     reeval_response=False,
-    custom_prompt="Changes in prompt should be marked critical with high severity",
 )
 
 topics = clean_keys(review_data.topics, "important")
