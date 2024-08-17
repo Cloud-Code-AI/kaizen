@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kaizen-cloudcode"
-version = "0.3.19"
+version = "0.4.0"
 description = "An intelligent coding companion that accelerates your development workflow by providing efficient assistance, enabling you to craft high-quality code more rapidly."
 authors = ["Saurav Panda <saurav.panda@cloudcode.ai>"]
 license = "Apache2.0"
@@ -26,7 +26,6 @@ pip = "^24.0"
 fuzzywuzzy = "^0.18.0"
 llama-index-core = "^0.10.47"
 llama-index-llms-openai = "^0.1.22"
-llama-index-embeddings-openai = "^0.1.10"
 llama-index-readers-file = "^0.1.25"
 llama-index-vector-stores-postgres = "^0.1.11"
 sqlalchemy = "^2.0.31"
@@ -36,7 +35,19 @@ redis = "^5.0.7"
 tqdm = "^4.66.5"
 tree-sitter = "^0.22.3"
 llama-index = "^0.10.65"
+tree-sitter-python = "^0.21.0"
+tree-sitter-javascript = "^0.21.4"
+tree-sitter-typescript = "^0.21.2"
+tree-sitter-rust = "^0.21.2"
+llama-index-llms-litellm = "^0.1.4"
+llama-index-embeddings-litellm = "^0.1.1"
 
+[tool.poetry.extras]
+python = ["tree-sitter-python"]
+javascript = ["tree-sitter-javascript"]
+typescript = ["tree-sitter-typescript"]
+rust = ["tree-sitter-rust"]
+all = ["tree-sitter-python", "tree-sitter-javascript", "tree-sitter-typescript", "tree-sitter-rust"]
 
 [build-system]
 requires = ["poetry-core"]

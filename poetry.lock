@@ -1268,14 +1268,29 @@ typing-inspect = ">=0.8.0"
 wrapt = "*"
 
 [[package]]
+name = "llama-index-embeddings-litellm"
+version = "0.1.1"
+description = "llama-index embeddings litellm integration"
+optional = false
+python-versions = "<4.0,>=3.8.1"
+files = [
+    {file = "llama_index_embeddings_litellm-0.1.1-py3-none-any.whl", hash = "sha256:1003c259a11538cab5ef23f2b1cfcaa4a7b134ceb09d20bed4d809d9c5b7c4a1"},
+    {file = "llama_index_embeddings_litellm-0.1.1.tar.gz", hash = "sha256:0f6ea5f64857d5d2593cb1a2278446a434246cd2c50845a15a276efe6a42ecdc"},
+]
+
+[package.dependencies]
+litellm = ">=1.41.3,<2.0.0"
+llama-index-core = ">=0.10.1,<0.11.0"
+
+[[package]]
 name = "llama-index-embeddings-openai"
-version = "0.1.10"
+version = "0.1.11"
 description = "llama-index embeddings openai integration"
 optional = false
 python-versions = "<4.0,>=3.8.1"
 files = [
-    {file = "llama_index_embeddings_openai-0.1.10-py3-none-any.whl", hash = "sha256:c3cfa83b537ded34d035fc172a945dd444c87fb58a89b02dfbf785b675f9f681"},
-    {file = "llama_index_embeddings_openai-0.1.10.tar.gz", hash = "sha256:1bc1fc9b46773a12870c5d3097d3735d7ca33805f12462a8e35ae8a6e5ce1cf6"},
+    {file = "llama_index_embeddings_openai-0.1.11-py3-none-any.whl", hash = "sha256:e20806fc4baff6b8f5274decf2c1ca7c5c737648e01865475ffada164e32e173"},
+    {file = "llama_index_embeddings_openai-0.1.11.tar.gz", hash = "sha256:6025e229e375201788a9b14d6ebe470329907576cba5f6b7b832c3d68f39db30"},
 ]
 
 [package.dependencies]
@@ -1334,6 +1349,21 @@ langchain = ["langchain (>=0.0.303)"]
 local-models = ["optimum[onnxruntime] (>=1.13.2,<2.0.0)", "sentencepiece (>=0.1.99,<0.2.0)", "transformers[torch] (>=4.33.1,<5.0.0)"]
 postgres = ["asyncpg (>=0.28.0,<0.29.0)", "pgvector (>=0.1.0,<0.2.0)", "psycopg2-binary (>=2.9.9,<3.0.0)"]
 query-tools = ["guidance (>=0.0.64,<0.0.65)", "jsonpath-ng (>=1.6.0,<2.0.0)", "lm-format-enforcer (>=0.4.3,<0.5.0)", "rank-bm25 (>=0.2.2,<0.3.0)", "scikit-learn", "spacy (>=3.7.1,<4.0.0)"]
+
+[[package]]
+name = "llama-index-llms-litellm"
+version = "0.1.4"
+description = "llama-index llms litellm integration"
+optional = false
+python-versions = "<4.0,>=3.8.1"
+files = [
+    {file = "llama_index_llms_litellm-0.1.4-py3-none-any.whl", hash = "sha256:5a4150ffcad38c874ba5d58aca7a53d85f4faede67ecfe93f40cac4416f90725"},
+    {file = "llama_index_llms_litellm-0.1.4.tar.gz", hash = "sha256:5a8a396de97b779f96e21d1d2b8554a67904ec1daf461b486ed26edc2be74508"},
+]
+
+[package.dependencies]
+litellm = ">=1.18.13,<2.0.0"
+llama-index-core = ">=0.10.1,<0.11.0"
 
 [[package]]
 name = "llama-index-llms-openai"
@@ -1845,9 +1875,9 @@ files = [
 
 [package.dependencies]
 numpy = [
-    {version = ">=1.26.0", markers = "python_version >= \"3.12\""},
     {version = ">=1.22.4", markers = "python_version < \"3.11\""},
     {version = ">=1.23.2", markers = "python_version == \"3.11\""},
+    {version = ">=1.26.0", markers = "python_version >= \"3.12\""},
 ]
 python-dateutil = ">=2.8.2"
 pytz = ">=2020.1"
@@ -2168,8 +2198,8 @@ files = [
 annotated-types = ">=0.4.0"
 pydantic-core = "2.20.1"
 typing-extensions = [
-    {version = ">=4.12.2", markers = "python_version >= \"3.13\""},
     {version = ">=4.6.1", markers = "python_version < \"3.13\""},
+    {version = ">=4.12.2", markers = "python_version >= \"3.13\""},
 ]
 
 [package.extras]
@@ -3187,6 +3217,84 @@ docs = ["sphinx (>=7.3,<8.0)", "sphinx-book-theme"]
 tests = ["tree-sitter-html", "tree-sitter-javascript", "tree-sitter-json", "tree-sitter-python", "tree-sitter-rust"]
 
 [[package]]
+name = "tree-sitter-javascript"
+version = "0.21.4"
+description = "Javascript grammar for tree-sitter"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "tree-sitter-javascript-0.21.4.tar.gz", hash = "sha256:5ae97db218c22f16f1fd1108d77c4017b453addc36041136779c99800f23ff20"},
+    {file = "tree_sitter_javascript-0.21.4-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:e0f1d26ec85cc66d56fb25fd41ce499dc5c4a60b478a91754684e2289433daae"},
+    {file = "tree_sitter_javascript-0.21.4-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:e9172dc9e59649d7598c6509103db1648e7187c2bcb39c34222fc052b9db0ac4"},
+    {file = "tree_sitter_javascript-0.21.4-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d45bd39ce931b164f84cfb6a186df504e38c6f91f541e2e60d5a40eb9d574005"},
+    {file = "tree_sitter_javascript-0.21.4-cp38-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:00ff426e9bb552abb49ce3234b083edb1a6aa73bfeea7d9bf0f6bb3d0256c4cd"},
+    {file = "tree_sitter_javascript-0.21.4-cp38-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:c2945bc49985ab396773e2738ae9b1e7d06950d6ad70c535c010fb9b2816a855"},
+    {file = "tree_sitter_javascript-0.21.4-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:5fc87d07f4c6a7067d4e0f004956a549c05e21eeced3287f3ea2bdd04a71a97a"},
+    {file = "tree_sitter_javascript-0.21.4-cp38-abi3-win_amd64.whl", hash = "sha256:2843b0e81564d8176922ef2b40db128a4de026606d6b1d22a06efb8e8a5c01b8"},
+]
+
+[package.extras]
+core = ["tree-sitter (>=0.21,<1.0)"]
+
+[[package]]
+name = "tree-sitter-python"
+version = "0.21.0"
+description = "Python grammar for tree-sitter"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "tree_sitter_python-0.21.0-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:29e3addfabdaa88fa2aaaa2426d8ff12f0a0346c46b10dd5a76424355e5fa3cc"},
+    {file = "tree_sitter_python-0.21.0-cp38-abi3-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:4b40e71ebd41046ca4fcde78b734e86f0b3f77055f51f1cac6e2662c37ec0520"},
+    {file = "tree_sitter_python-0.21.0-cp38-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:cda4e742627724eabed95e06ca67b640f8b31e86e776905afc396c928082f032"},
+    {file = "tree_sitter_python-0.21.0-cp38-abi3-musllinux_1_1_i686.whl", hash = "sha256:df142d166aa6b575fdb0726a64d56cb1d8cb7a3ad5377eb5fa90557ffe4caffe"},
+    {file = "tree_sitter_python-0.21.0-cp38-abi3-musllinux_1_1_x86_64.whl", hash = "sha256:23a0cf850788c990436704837e6125cbf6535fe5a5729b9a84846fc254e915c7"},
+    {file = "tree_sitter_python-0.21.0-cp38-abi3-win32.whl", hash = "sha256:86dce33757fa8d420d1c9089280d352507a7b9601b26732c73b77e9d0ddd8604"},
+    {file = "tree_sitter_python-0.21.0-cp38-abi3-win_amd64.whl", hash = "sha256:86b5c81b00f07b9cdc87e4fade0497c0af7b95365908608e31070668564b02e7"},
+]
+
+[package.extras]
+core = ["tree-sitter (>=0.21,<1.0)"]
+
+[[package]]
+name = "tree-sitter-rust"
+version = "0.21.2"
+description = "Rust grammar for tree-sitter"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "tree_sitter_rust-0.21.2-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:483591f17117fe802aa679fc058937be025b76a89bf17a82ccb462ce032c143e"},
+    {file = "tree_sitter_rust-0.21.2-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:635b3781a9c44211b49950feabd081f3096dbd55b1f50fe7451a7f46d6d28f81"},
+    {file = "tree_sitter_rust-0.21.2-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:50f2ec41d8c1beda3c2d2765083d02c16f29bfab9d6269ac1387fa40f017f3b0"},
+    {file = "tree_sitter_rust-0.21.2-cp38-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:28c3ee2d21850e5b14289e1d4569b8770983af20f2575d2e2a3e1eeed3fc3c4c"},
+    {file = "tree_sitter_rust-0.21.2-cp38-abi3-musllinux_1_1_aarch64.whl", hash = "sha256:ed32387af91b37c6e592a34d4eb9fc935231a3ba8ba1ef52547c48fa0d20e249"},
+    {file = "tree_sitter_rust-0.21.2-cp38-abi3-musllinux_1_1_x86_64.whl", hash = "sha256:efd0f28f3da2a3341c0a2dd15410319b6d553b0b3900471a14c781d0833bd8eb"},
+    {file = "tree_sitter_rust-0.21.2-cp38-abi3-win_amd64.whl", hash = "sha256:2637441981531ab72b580fb567b0c65a61e59de337f2d5a02347269266ab9913"},
+]
+
+[package.extras]
+core = ["tree-sitter (>=0.21,<1.0)"]
+
+[[package]]
+name = "tree-sitter-typescript"
+version = "0.21.2"
+description = "TypeScript and TSX grammars for tree-sitter"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "tree-sitter-typescript-0.21.2.tar.gz", hash = "sha256:c0d8a22d5bff5c4ead0cafe09de39a61a2f5d51709ab382f3bd10e66db27f59b"},
+    {file = "tree_sitter_typescript-0.21.2-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:5cf887119df68684da10b459e4fda6344d0264c3965fd74a662c1846fdeee95d"},
+    {file = "tree_sitter_typescript-0.21.2-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:2a374de17bc0f2ec3c382c718f1e2b65527eded37c7302266301362b635b9b28"},
+    {file = "tree_sitter_typescript-0.21.2-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3983cd2872c0a3380ecd8a57011e087243e000ff971717c789193eea05ad6ff9"},
+    {file = "tree_sitter_typescript-0.21.2-cp38-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ecc3b3eca84e6b3d19bfa783364e56b89996dbbb65cb25cba102ad19c534240a"},
+    {file = "tree_sitter_typescript-0.21.2-cp38-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:b6d4572dbff40ea80566eaeb8fcce188fd2b79ed5fd0c064819e0b2986d4b542"},
+    {file = "tree_sitter_typescript-0.21.2-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:4c6e0b499c1fcac00e2e318e6a58d70b0faef85a8c624ee00c813a569f239159"},
+    {file = "tree_sitter_typescript-0.21.2-cp38-abi3-win_amd64.whl", hash = "sha256:20534e4264823ace685f8009719bb249bfef3042d58e9bd5c9af8c7c61eeed42"},
+]
+
+[package.extras]
+core = ["tree-sitter (>=0.21,<1.0)"]
+
+[[package]]
 name = "typing-extensions"
 version = "4.12.2"
 description = "Backported and Experimental Type Hints for Python 3.8+"
@@ -3456,7 +3564,14 @@ files = [
 doc = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (>=3.5)", "sphinx-lint"]
 test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more-itertools", "pytest (>=6,!=8.1.*)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-ignore-flaky", "pytest-mypy", "pytest-ruff (>=0.2.1)"]
 
+[extras]
+all = ["tree-sitter-javascript", "tree-sitter-python", "tree-sitter-rust", "tree-sitter-typescript"]
+javascript = ["tree-sitter-javascript"]
+python = ["tree-sitter-python"]
+rust = ["tree-sitter-rust"]
+typescript = ["tree-sitter-typescript"]
+
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9.0"
-content-hash = "3047839778c62f1db3f6405778595f938edc258aca93d573dd6dd42011965adc"
+content-hash = "01857d87d886adf1a75fd581b37a45bcdf28d21eccc62963700594c80944e2db"

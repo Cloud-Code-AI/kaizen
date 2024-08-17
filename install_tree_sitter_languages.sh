@@ -30,12 +30,8 @@ install_language() {
     # Update submodules
     git submodule update --init
     
-    # Compile the parser
-    cc -fPIC -c -I./src src/parser.c
-    cc -shared *.o -o "../$lang.so"
-    
-    # Clean up object files
-    rm *.o
+    # Build the parser using tree-sitter CLI
+    tree-sitter generate
     
     # Navigate back to the original directory
     cd ../..

@@ -1,28 +1,34 @@
-import os
 from functools import lru_cache
 from tree_sitter import Language, Parser
 from typing import Dict, Any
 import logging
+import importlib
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Directory where the language libraries are stored
-LANGUAGE_DIR = "/app/tree_sitter_languages"
 
 class LanguageLoader:
     @staticmethod
     @lru_cache(maxsize=None)
     def load_language(language: str) -> Language:
         try:
-            lang_file = os.path.join(LANGUAGE_DIR, f"{language}.so")
-            if not os.path.exists(lang_file):
-                raise FileNotFoundError(f"Language file for {language} not found.")
-            return Language(lang_file, language)
+            # Remove 'tree-sitter-' prefix if present
+            lang = language.replace("tree-sitter-", "")
+
+            # Dynamically import the language module
+            module_name = f"tree_sitter_{lang}"
+            try:
+                module = importlib.import_module(module_name)
+            except ImportError:
+                raise ValueError(f"Language module not found: {module_name}")
+
+            return Language(module.language())
         except Exception as e:
             logger.error(f"Failed to load language {language}: {str(e)}")
             raise
+
 
 class ParserFactory:
     @staticmethod
@@ -36,6 +42,7 @@ class ParserFactory:
         except Exception as e:
             logger.error(f"Failed to create parser for {language}: {str(e)}")
             raise
+
 
 def traverse_tree(node, code_bytes: bytes) -> Dict[str, Any]:
     if node.type in [
@@ -80,6 +87,7 @@ def traverse_tree(node, code_bytes: bytes) -> Dict[str, Any]:
     else:
         return None
 
+
 def parse_code(code: str, language: str) -> Dict[str, Any]:
     try:
         parser = ParserFactory.get_parser(language)
@@ -89,19 +97,24 @@ def parse_code(code: str, language: str) -> Dict[str, Any]:
         logger.error(f"Failed to parse {language} code: {str(e)}")
         raise
 
+
 def check_language_files():
     required_languages = ["python", "javascript", "typescript", "rust"]
     missing_languages = []
     for lang in required_languages:
         try:
             LanguageLoader.load_language(lang)
-        except FileNotFoundError:
+        except Exception as e:
+            logger.warning(f"Failed to load language {lang}: {str(e)}")
             missing_languages.append(lang)
-    
+
     if missing_languages:
-        logger.warning(f"Missing language files for: {', '.join(missing_languages)}")
+        logger.warning(
+            f"Missing or failed to load language files for: {', '.join(missing_languages)}"
+        )
     else:
-        logger.info("All required language files are present.")
+        logger.info("All required language files are present and loaded successfully.")
+
 
 # Call this function at the start of your application
 check_language_files()

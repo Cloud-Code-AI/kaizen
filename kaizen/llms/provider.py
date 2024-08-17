@@ -238,6 +238,6 @@ class LLMProvider:
         #     if model["model_name"] == "embedding":
         #         break
         response = self.provider.embedding(
-            model="embedding", input=[text], dimensions=1536
+            model="embedding", input=[text], dimensions=1536, encoding_format="float"
         )
         return response["data"], response["usage"]
