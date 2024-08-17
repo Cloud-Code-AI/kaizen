@@ -66,7 +66,8 @@ This snippet shows a diff (difference) between two versions of a function:
 5. For 'fixed_code' -> always suggest changes for Additions. 
 
 ## Field Guidelines:
-- "fixed_code": Corrected code for additions only, between start_line and end_line. make sure start_line you suggest doesnt has `0:[.]`.
+- "fixed_code": Corrected code for additions only, between start_line and end_line. make sure start_line you suggest does not has `0:[.]`.
+- "actual_code": Current Code line which you think has error. make sure it always done on `+1:[+]` lines. If not, keep it empty ''.
 - "start_line" and "end_line": Actual line numbers in the additions.
 - "severity_level": 1 (least severe) to 10 (most critical).
 
@@ -137,7 +138,8 @@ This snippet shows a diff (difference) between two versions of a function:
 5. For 'fixed_code' -> always suggest changes for Additions. 
 
 ## Field Guidelines:
-- "fixed_code": Corrected code for additions only, between start_line and end_line. make sure start_line you suggest doesnt has `0:[.]`.
+- "fixed_code": Corrected code for additions only, between start_line and end_line. make sure start_line you suggest does not has `0:[.]`.
+- "actual_code": Current Code line which you think has error. make sure it always done on `+1:[+]` lines. If not, keep it empty ''.
 - "start_line" and "end_line": Actual line numbers in the additions.
 - "severity_level": 1 (least severe) to 10 (most critical).
 
@@ -211,7 +213,8 @@ This snippet shows a diff (difference) between two versions of a function:
 5. For 'fixed_code' -> always suggest changes for Additions. 
 
 ## Field Guidelines:
-- "fixed_code": Corrected code for additions only, between start_line and end_line. make sure start_line you suggest doesnt has `0:[.]`.
+- "fixed_code": Corrected code for additions only, between start_line and end_line. make sure start_line you suggest does not has `0:[.]`.
+- "actual_code": Current Code line which you think has error. make sure it always done on `+1:[+]` lines. If not, keep it empty ''.
 - "start_line" and "end_line": Actual line numbers in the additions.
 - "severity_level": 1 (least severe) to 10 (most critical).
 

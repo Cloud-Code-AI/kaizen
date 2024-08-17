@@ -40,34 +40,38 @@ def create_pr_review_text(
         ("important", "🟠"),
     ]:
         issues = categories[confidence]
-        if issues:
+        if issues and confidence == "critical":
             markdown_output += f"## {emoji} {confidence.capitalize()} Issues\n\n"
+            markdown_output += create_issues_section(issues)
+        elif issues:
+            markdown_output += f"## {emoji} Refinement Suggestions:\n"
+            markdown_output += "These are not critical issues, but addressing them could further improve the code:\n\n"
             markdown_output += create_issues_section(issues)
 
     # Add other issues section (collapsible)
     other_issues = categories["moderate"] + categories["low"] + categories["trivial"]
     if other_issues:
-        markdown_output += "## 📌 Other Issues\n\n"
+        markdown_output += "## 📝 Minor Notes\nAdditional small points that you might want to consider:\n\n"
         markdown_output += "<details>\n"
         markdown_output += f"<summary><strong>Click to expand ({len(other_issues)} issues)</strong></summary>\n\n"
 
         # Moderate issues
         moderate_issues = categories["moderate"]
         if moderate_issues:
-            markdown_output += "### ℹ️ Moderate Issues\n\n"
+            # markdown_output += "### ℹ️ Moderate Issues\n\n"
             markdown_output += create_issues_section(moderate_issues)
 
-        # Low issues
-        low_issues = categories["low"]
-        if low_issues:
-            markdown_output += "### 📉 Low Priority Issues\n\n"
-            markdown_output += create_issues_section(low_issues)
+        # # Low issues
+        # low_issues = categories["low"]
+        # if low_issues:
+        #     # markdown_output += "### 📉 Low Priority Issues\n\n"
+        #     markdown_output += create_issues_section(low_issues)
 
-        # Trivial issues
-        trivial_issues = categories["trivial"]
-        if trivial_issues:
-            markdown_output += "### 🔎 Trivial Issues\n\n"
-            markdown_output += create_issues_section(trivial_issues)
+        # # Trivial issues
+        # trivial_issues = categories["trivial"]
+        # if trivial_issues:
+        #     markdown_output += "### 🔎 Trivial Issues\n\n"
+        #     markdown_output += create_issues_section(trivial_issues)
 
         markdown_output += "</details>\n\n"
 
@@ -92,7 +96,7 @@ def create_stats_section(reviews: List[Dict]) -> str:
         1 for review in reviews if review["confidence"] == "important"
     )
     minor_issues = sum(
-        1 for review in reviews if review["confidence"] not in ["critical", "important"]
+        1 for review in reviews if review["confidence"] in ["moderate"]
     )
     files_affected = len(set(review["file_name"] for review in reviews))
 
@@ -120,10 +124,11 @@ def create_issue_section(issue: Dict, index: int) -> str:
     output += f"⚖️ **Severity:** {issue['severity_level']}/10\n"
     output += f"🔍 **Description:** {issue['reason']}\n"
     output += f"💡 **Solution:** {issue['solution']}\n\n"
-    output += "**Current Code:**\n"
-    output += f"```python\n{issue['actual_code']}\n```\n\n"
-    output += "**Suggested Code:**\n"
-    output += f"```python\n{issue['fixed_code']}\n```\n\n"
+    if issue.get('actual_code', None) or issue.get('fixed_code', ''):
+        output += "**Current Code:**\n"
+        output += f"```python\n{issue.get('actual_code', '')}\n```\n\n"
+        output += "**Suggested Code:**\n"
+        output += f"```python\n{issue.get('fixed_code', '')}\n```\n\n"
     return output
 
 
