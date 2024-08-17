@@ -18,15 +18,15 @@ Output Format:
 - Refactoring: {{List main refactoring changes}}
 
 <details>
-<summary>Original Description</summary>
-{PULL_REQUEST_DESCRIPTION}
-</details>
 ```
 
 Instructions:
-- Create a concise summary of the PR's main purpose.
-- Use markdown formatting for readability.
-- Focus on significant changes and avoid repetition.
+- Create a concise yet comprehensive summary of the PR's main purpose.
+- Use only the markdown sections specified in the output format.
+- Focus on significant changes, avoiding repetition and minor details.
+- Ensure all key modifications, new features, and refactoring are captured within the existing sections.
+- Keep descriptions brief but informative.
+- Do not introduce any new sections or categories beyond those specified.
 
 Patch:
 {CODE_DIFF}
@@ -35,25 +35,30 @@ Analyze the information and generate a comprehensive summary. Make reasonable in
 """
 
 PR_FILE_DESCRIPTION_PROMPT = """
-Summarize the main purpose, scope of changes, significant modifications, refactoring, or new features in this pull request file.
+Summarize the main purpose, scope of changes, significant modifications, refactoring, or new features in this pull request.
 
 Output Format:
 ```markdown
 # {{Generated PR Title}}
 
 ## Overview
-{{Brief summary of file changes}}
+{{Brief summary of overall purpose}}
 
-## Details
-- Main Changes: {{List key modifications}}
-- New Features: {{List new features, if any}}
-- Refactoring: {{List refactoring changes, if any}}
+## Changes
+- Key Changes: {{List main modifications}}
+- New Features: {{List key new features}}
+- Refactoring: {{List main refactoring changes}}
+
+<details>
 ```
 
 Instructions:
-- Create a concise summary of the file changes.
-- Use markdown formatting for readability.
-- Focus on significant changes and avoid repetition.
+- Create a concise yet comprehensive summary of the PR's main purpose.
+- Use only the markdown sections specified in the output format.
+- Focus on significant changes, avoiding repetition and minor details.
+- Ensure all key modifications, new features, and refactoring are captured within the existing sections.
+- Keep descriptions brief but informative.
+- Do not introduce any new sections or categories beyond those specified.
 
 Patch:
 {CODE_DIFF}
@@ -72,17 +77,20 @@ Output Format:
 {{Brief summary of overall purpose}}
 
 ## Changes
+- Key Changes: {{List main modifications}}
 - New Features: {{List key new features}}
 - Refactoring: {{List main refactoring changes}}
-- Other Changes: {{List other significant modifications}}
+
+<details>
 ```
 
 Instructions:
-- Capture the essence of all descriptions concisely.
-- Use markdown formatting for readability.
-- Organize details into the specified sections.
-- Focus on the most significant aspects across all descriptions.
-- Ensure all unique and important points are included.
+- Create a concise yet comprehensive summary of the PR's main purpose.
+- Use only the markdown sections specified in the output format.
+- Focus on significant changes, avoiding repetition and minor details.
+- Ensure all key modifications, new features, and refactoring are captured within the existing sections.
+- Keep descriptions brief but informative.
+- Do not introduce any new sections or categories beyond those specified.
 
 Analyze the provided PR descriptions and generate a unified summary. Use your judgment to resolve any contradictions or unclear points.
 
