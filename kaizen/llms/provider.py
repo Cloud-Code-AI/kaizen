@@ -14,10 +14,11 @@ def set_all_loggers_to_ERROR():
     print("All Loggers and their levels:")
     for name, logger in logging.Logger.manager.loggerDict.items():
         if isinstance(logger, logging.Logger):
-            print(f"Logger: {name}, Level: {logging.getLevelName(logger.level)}")
+            # print(f"Logger: {name}, Level: {logging.getLevelName(logger.level)}")
             logging.getLogger(name).setLevel(logging.ERROR)
         else:
-            print(f"PlaceHolder: {name}")
+            # print(f"PlaceHolder: {name}")
+            pass
 
 
 set_all_loggers_to_ERROR()
@@ -233,3 +234,12 @@ class LLMProvider:
         return litellm.cost_per_token(
             model, total_usage["prompt_tokens"], total_usage["completion_tokens"]
         )
+
+    def get_text_embedding(self, text):
+        # for model in self.config["language_model"]["models"]:
+        #     if model["model_name"] == "embedding":
+        #         break
+        response = self.provider.embedding(
+            model="embedding", input=[text], dimensions=1536, encoding_format="float"
+        )
+        return response["data"], response["usage"]

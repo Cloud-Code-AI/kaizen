@@ -4,6 +4,12 @@ FROM python:3.12-slim
 # Set the working directory in the container
 WORKDIR /app
 
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install Poetry
 RUN pip install --no-cache-dir poetry
 
@@ -15,6 +21,12 @@ RUN poetry install --no-dev --no-root
 
 # Copy the application code into the container
 COPY . .
+
+# Make the installation script executable
+RUN chmod +x install_tree_sitter_languages.sh
+
+# Run the Tree-sitter language installation script
+RUN ./install_tree_sitter_languages.sh
 
 # Expose the port on which the application will run
 EXPOSE 8000
