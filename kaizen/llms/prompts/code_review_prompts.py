@@ -49,15 +49,25 @@ Example:
 4         +1:[+]     result += y
 4    5     0:[.]     return result
 
+This snippet shows a diff (difference) between two versions of a function:
+
+1. The function name changed from 'old_function' to 'new_function'.
+2. A new parameter 'y' was added to the function.
+3. The line 'result = x * 2' remained unchanged.
+4. A new line 'result += y' was added, incorporating the new parameter.
+5. The return statement remained unchanged.
+
+
 ## Review Focus:
-1. Removals (-1:[-]): Identify if removal causes problems in remaining code.
-2. Additions (+1:[+]): Provide detailed feedback and suggest improvements.
+1. Removals (-1:[-]): Identify if removal causes problems in remaining code. Remember any line having -1:[-] is removed line from the new code.
+2. Additions (+1:[+]): Provide detailed feedback and suggest improvements. Remember any line having +1:[+] is added line.
 3. Consider impact of changes on overall code structure and functionality.
 4. Note unchanged lines (0:[.]) for context.
+5. For 'fixed_code' -> always suggest changes for Additions. 
 
 ## Field Guidelines:
-- "fixed_code": Corrected code for additions only, between start_line and end_line.
-- "start_line" and "end_line": Actual line numbers in the new file.
+- "fixed_code": Corrected code for additions only, between start_line and end_line. make sure start_line you suggest doesnt has `0:[.]`.
+- "start_line" and "end_line": Actual line numbers in the additions.
 - "severity_level": 1 (least severe) to 10 (most critical).
 
 ## PATCH DATA:
@@ -111,15 +121,24 @@ Example:
 4         +1:[+]     result += y
 4    5     0:[.]     return result
 
+This snippet shows a diff (difference) between two versions of a function:
+
+1. The function name changed from 'old_function' to 'new_function'.
+2. A new parameter 'y' was added to the function.
+3. The line 'result = x * 2' remained unchanged.
+4. A new line 'result += y' was added, incorporating the new parameter.
+5. The return statement remained unchanged.
+
 ## Review Focus:
-1. Removals (-1:[-]): Identify if removal causes problems in remaining code.
-2. Additions (+1:[+]): Provide detailed feedback and suggest improvements.
+1. Removals (-1:[-]): Identify if removal causes problems in remaining code. Remember any line having -1:[-] is removed line from the new code.
+2. Additions (+1:[+]): Provide detailed feedback and suggest improvements. Remember any line having +1:[+] is added line.
 3. Consider impact of changes on overall code structure and functionality.
 4. Note unchanged lines (0:[.]) for context.
+5. For 'fixed_code' -> always suggest changes for Additions. 
 
 ## Field Guidelines:
-- "fixed_code": Corrected code for additions only, between start_line and end_line.
-- "start_line" and "end_line": Actual line numbers in the new file.
+- "fixed_code": Corrected code for additions only, between start_line and end_line. make sure start_line you suggest doesnt has `0:[.]`.
+- "start_line" and "end_line": Actual line numbers in the additions.
 - "severity_level": 1 (least severe) to 10 (most critical).
 
 ## File PATCH Data:
@@ -168,24 +187,33 @@ Generate a JSON object with the following structure:
   '0:[.]': Unchanged line
 - Remaining columns: Code content
 
+Example:
+
+1    -    -1:[-] def old_function(x):
+2         +1:[+] def new_function(x, y):
+3    3     0:[.]     result = x * 2
+4         +1:[+]     result += y
+4    5     0:[.]     return result
+
+This snippet shows a diff (difference) between two versions of a function:
+
+1. The function name changed from 'old_function' to 'new_function'.
+2. A new parameter 'y' was added to the function.
+3. The line 'result = x * 2' remained unchanged.
+4. A new line 'result += y' was added, incorporating the new parameter.
+5. The return statement remained unchanged.
+
 ## Review Focus:
-1. Removals (-1:[-]): Ensure you've correctly identified if their removal causes any problems.
-2. Additions (+1:[+]): Verify your feedback is detailed and suggestions for improvements are appropriate.
-3. Re-evaluate the impact of changes on overall code structure and functionality.
-4. Check if you've missed any important issues or provided any incorrect advice.
+1. Removals (-1:[-]): Identify if removal causes problems in remaining code. Remember any line having -1:[-] is removed line from the new code.
+2. Additions (+1:[+]): Provide detailed feedback and suggest improvements. Remember any line having +1:[+] is added line.
+3. Consider impact of changes on overall code structure and functionality.
+4. Note unchanged lines (0:[.]) for context.
+5. For 'fixed_code' -> always suggest changes for Additions. 
 
 ## Field Guidelines:
-- "topic": Briefly describe the issue or area of improvement.
-- "comment": Provide a concise description of the issue.
-- "confidence": Use the appropriate level based on the severity and certainty of the issue.
-- "reason": Explain why this issue is important or needs attention.
-- "solution": Provide a high-level solution to the identified issue.
-- "fixed_code": Provide corrected code only for additions, ensuring changes are between start_line and end_line.
-- "start_line" and "end_line": Actual line numbers in the new file where the change begins and ends.
-- "side": Use "LEFT" for deleted lines (-1:[-]), "RIGHT" for added lines (+1:[+]).
-- "file_name": Include the full file path for precise issue location.
-- "sentiment": Indicate whether the comment is "positive", "negative", or "neutral".
-- "severity_level": Score from 1 (least severe) to 10 (most critical).
+- "fixed_code": Corrected code for additions only, between start_line and end_line. make sure start_line you suggest doesnt has `0:[.]`.
+- "start_line" and "end_line": Actual line numbers in the additions.
+- "severity_level": 1 (least severe) to 10 (most critical).
 
 ORIGINAL PROMPT:
 {ACTUAL_PROMPT}
