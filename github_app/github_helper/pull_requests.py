@@ -6,7 +6,7 @@ from github_app.github_helper.installation import get_installation_access_token
 from github_app.github_helper.permissions import PULL_REQUEST_PERMISSION
 from kaizen.reviewer.code_review import CodeReviewer
 from kaizen.generator.pr_description import PRDescriptionGenerator
-from kaizen.helpers.output import create_pr_review_text
+from kaizen.formatters.code_review_formatter import create_pr_review_text
 from kaizen.llms.provider import LLMProvider
 
 logger = logging.getLogger(__name__)

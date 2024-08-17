@@ -3,10 +3,9 @@ As a senior software developer reviewing code submissions, provide thorough, con
 """
 
 CODE_REVIEW_PROMPT = """
-As an experienced software engineer, provide a concise, actionable code review for the given pull request. Evaluate code changes, identify potential issues, and offer constructive feedback.
-
-Generate a JSON object with the following structure:
+As an experienced software engineer, provide a concise, actionable code review for the given pull request. Generate a JSON object with the following structure:
 {{
+  "code_quality_percentage": <0_TO_100>,
   "review": [
     {{
       "topic": "<SECTION_TOPIC>",
@@ -14,6 +13,7 @@ Generate a JSON object with the following structure:
       "confidence": "critical|important|moderate|low|trivial",
       "reason": "<ISSUE_REASONING>",
       "solution": "<HIGH_LEVEL_SOLUTION>",
+      "actual_code": "<PEICE_OF_CODE_WHICH_HAS_ISSUES>",
       "fixed_code": "<CORRECTED_CODE>",
       "file_name": "<FULL_FILE_PATH>",
       "start_line": <START_LINE_NUMBER>,
@@ -26,51 +26,48 @@ Generate a JSON object with the following structure:
 }}
 
 ## Guidelines:
-- Provide actionable feedback with specific file paths and line numbers
-- Use markdown for code snippets
+- Provide specific feedback with file paths and line numbers
+- Use markdown for code snippets. Make sure all code is following the original indentations.
 - Merge duplicate feedback
-- Examine: syntax/logic errors, loops, null values, resource leaks, race conditions, integration/performance issues, security vulnerabilities
-- If no feedback: {{"review": []}}
-
-## Review Focus:
-1. removals ('<->') are the original code, just identify if anything causes problem because of removal
-2. Provide feedback for additions ('<+>') as this are the new code changes.
-3. Consider impact of changes on code
-4. Note unchanged lines ('<.>')
-5. Make sure to follow the additional instruction.
+- Examine: syntax/logic errors, resource leaks, race conditions, security vulnerabilities
+- If no issues found: {{"review": []}}
 
 ## Patch Data Format:
 - First column: Original file line numbers
-- Second column: New file line numbers
+- Second column: New file line numbers (spaces for removed lines)
 - Third column: Change type
-  '<->': Line removed (first column)
-  '<+>': Line added (last column)
-  '<.>': Unchanged line (both columns)
+  '-1:[-]': Line removed
+  '+1:[+]': Line added
+  '0:[.]': Unchanged line
 - Remaining columns: Code content
 
+Example:
+
+1    -    -1:[-] def old_function(x):
+2         +1:[+] def new_function(x, y):
+3    3     0:[.]     result = x * 2
+4         +1:[+]     result += y
+4    5     0:[.]     return result
+
+## Review Focus:
+1. Removals (-1:[-]): Identify if removal causes problems in remaining code.
+2. Additions (+1:[+]): Provide detailed feedback and suggest improvements.
+3. Consider impact of changes on overall code structure and functionality.
+4. Note unchanged lines (0:[.]) for context.
+
 ## Field Guidelines:
-- "fixed_code": Provide corrected code only for additions, ensuring changes are between start_line and end_line.
-- "start_line" and "end_line": Actual line numbers in the new file where the change begins and ends
-- "severity_level": Score from 1 (least severe) to 10 (most critical)
+- "fixed_code": Corrected code for additions only, between start_line and end_line.
+- "start_line" and "end_line": Actual line numbers in the new file.
+- "severity_level": 1 (least severe) to 10 (most critical).
 
-## Additional Instructions:
-Mark items which fall under following as critical and severity score of 10.
-{CUSTOM_PROMPT}
-
-## INFORMATION:
-
-Pull Request Title: {PULL_REQUEST_TITLE}
-Pull Request Description: {PULL_REQUEST_DESC}
-
-PATCH DATA:
+## PATCH DATA:
 ```{CODE_DIFF}```
 """
 
 FILE_CODE_REVIEW_PROMPT = """
-As an experienced software engineer, provide a concise, actionable code review for the given pull request. Evaluate code changes, identify potential issues, and offer constructive feedback.
-
-Generate a JSON object with the following structure:
+As an experienced software engineer, provide a concise, actionable code review for the given pull request. Generate a JSON object with the following structure:
 {{
+  "code_quality_percentage": <0_TO_100>,
   "review": [
     {{
       "topic": "<SECTION_TOPIC>",
@@ -78,6 +75,7 @@ Generate a JSON object with the following structure:
       "confidence": "critical|important|moderate|low|trivial",
       "reason": "<ISSUE_REASONING>",
       "solution": "<HIGH_LEVEL_SOLUTION>",
+      "actual_code": "<PEICE_OF_CODE_WHICH_HAS_ISSUES>",
       "fixed_code": "<CORRECTED_CODE>",
       "file_name": "<FULL_FILE_PATH>",
       "start_line": <START_LINE_NUMBER>,
@@ -90,91 +88,110 @@ Generate a JSON object with the following structure:
 }}
 
 ## Guidelines:
-- Provide actionable feedback with specific file paths and line numbers
-- Use markdown for code snippets
+- Provide specific feedback with file paths and line numbers
+- Use markdown for code snippets. Make sure all code is following the original indentations.
 - Merge duplicate feedback
-- Examine: syntax/logic errors, loops, null values, resource leaks, race conditions, integration/performance issues, security vulnerabilities
-- If no feedback: {{"review": []}}
-
-## Review Focus:
-1. removals ('<->') are the original code, just identify if anything causes problem because of removal
-2. Provide feedback for additions ('<+>') as this are the new code changes.
-3. Consider impact of changes on code
-4. Note unchanged lines ('<.>')
+- Examine: syntax/logic errors, resource leaks, race conditions, security vulnerabilities
+- If no issues found: {{"review": []}}
 
 ## Patch Data Format:
 - First column: Original file line numbers
-- Second column: New file line numbers
+- Second column: New file line numbers (spaces for removed lines)
 - Third column: Change type
-  '<->': Line removed (first column)
-  '<+>': Line added (last column)
-  '<.>': Unchanged line (both columns)
+  '-1:[-]': Line removed
+  '+1:[+]': Line added
+  '0:[.]': Unchanged line
 - Remaining columns: Code content
 
+Example:
+
+1    -    -1:[-] def old_function(x):
+2         +1:[+] def new_function(x, y):
+3    3     0:[.]     result = x * 2
+4         +1:[+]     result += y
+4    5     0:[.]     return result
+
+## Review Focus:
+1. Removals (-1:[-]): Identify if removal causes problems in remaining code.
+2. Additions (+1:[+]): Provide detailed feedback and suggest improvements.
+3. Consider impact of changes on overall code structure and functionality.
+4. Note unchanged lines (0:[.]) for context.
+
 ## Field Guidelines:
-- "fixed_code": Provide corrected code only for additions, ensuring changes are between start_line and end_line.
-- "start_line" and "end_line": Actual line numbers in the new file where the change begins and ends
-- "severity_level": Score from 1 (least severe) to 10 (most critical)
+- "fixed_code": Corrected code for additions only, between start_line and end_line.
+- "start_line" and "end_line": Actual line numbers in the new file.
+- "severity_level": 1 (least severe) to 10 (most critical).
 
-## Additional Instructions:
-Mark items which fall under following as critical and severity score of 10.
-{CUSTOM_PROMPT}
-
-## INFORMATION:
-
-File PATCH:
+## File PATCH Data:
 ```{FILE_PATCH}```
 """
 
 
 PR_REVIEW_EVALUATION_PROMPT = """
-Please evaluate the accuracy and completeness of your previous responses in this conversation.
-Fix any potential errors or areas for improvement.
+As an experienced software engineer, evaluate and improve your previous code review for the given pull request. Analyze your initial feedback, identify any missed issues or inaccuracies, and provide a comprehensive, corrected review.
 
-Generate a JSON object with the following structure, including only sections with relevant feedback:
+Generate a JSON object with the following structure:
 {{
+  "code_quality_percentage": <0_TO_100>,
   "review": [
     {{
       "topic": "<SECTION_TOPIC>",
-      "comment": "<CONSICE_COMMENT_ON_WHATS_THE_ISSUE>",
-      "confidence": "<CONFIDENCE_LEVEL>",
-      "reason": "<YOUR_REASON_FOR_COMMENTING_THIS_ISSUE>"
+      "comment": "<CONCISE_ISSUE_DESCRIPTION>",
+      "confidence": "critical|important|moderate|low|trivial",
+      "reason": "<ISSUE_REASONING>",
       "solution": "<HIGH_LEVEL_SOLUTION>",
-      "fixed_code": "<FIXED_CODE>",
-      "start_line": "<CODE_START_LINE_INTEGER>",
-      "end_line": "<CODE_END_LINE_INTEGER>",
-      "side": "<LEFT_OR_RIGHT>",
+      "actual_code": "<PEICE_OF_CODE_WHICH_HAS_ISSUES>",
+      "fixed_code": "<CORRECTED_CODE>",
       "file_name": "<FULL_FILE_PATH>",
-      "sentiment": "<COMMENT_SENTIMENT_POSITIVE_NEGATIVE_OR_NEUTRAL>",
-      "severity_level": <INTEGER_FROM_1_TO_10>
-    }},
-    ...
+      "start_line": <START_LINE_NUMBER>,
+      "end_line": <END_LINE_NUMBER>,
+      "side": "LEFT|RIGHT",
+      "sentiment": "positive|negative|neutral",
+      "severity_level": <1_TO_10>
+    }}
   ]
-  }}
+}}
 
-Field Guidelines:
+## Guidelines:
+- Thoroughly review your previous output and the original code changes
+- Identify any missed issues, inaccuracies, or areas for improvement
+- Provide specific feedback with file paths and line numbers
+- Use markdown for code snippets. Make sure all code is following the original indentations.
+- If no issues found or no changes needed: {{"review": []}}
+
+## Patch Data Format:
+- First column: Original file line numbers
+- Second column: New file line numbers (spaces for removed lines)
+- Third column: Change type
+  '-1:[-]': Line removed
+  '+1:[+]': Line added
+  '0:[.]': Unchanged line
+- Remaining columns: Code content
+
+## Review Focus:
+1. Removals (-1:[-]): Ensure you've correctly identified if their removal causes any problems.
+2. Additions (+1:[+]): Verify your feedback is detailed and suggestions for improvements are appropriate.
+3. Re-evaluate the impact of changes on overall code structure and functionality.
+4. Check if you've missed any important issues or provided any incorrect advice.
+
+## Field Guidelines:
+- "topic": Briefly describe the issue or area of improvement.
+- "comment": Provide a concise description of the issue.
+- "confidence": Use the appropriate level based on the severity and certainty of the issue.
+- "reason": Explain why this issue is important or needs attention.
 - "solution": Provide a high-level solution to the identified issue.
-- "fixed_code": Generate corrected code to replace the commented lines, ensuring changes are between start_line and end_line.
-- "start_line": The actual line number in the new file where the change begins. For added lines, this is the line number of the first '+' line in the chunk.
-- "end_line": The actual line number in the new file where the change ends. For added lines, this is the line number of the last '+' line in the chunk.
-- "side": Use "LEFT" for deleted lines, "RIGHT" for added lines (for GitHub review comments).
+- "fixed_code": Provide corrected code only for additions, ensuring changes are between start_line and end_line.
+- "start_line" and "end_line": Actual line numbers in the new file where the change begins and ends.
+- "side": Use "LEFT" for deleted lines (-1:[-]), "RIGHT" for added lines (+1:[+]).
 - "file_name": Include the full file path for precise issue location.
+- "sentiment": Indicate whether the comment is "positive", "negative", or "neutral".
 - "severity_level": Score from 1 (least severe) to 10 (most critical).
-Confidence Levels based on severity of the issue:
-[
-  "critical",
-  "important",
-  "moderate",
-  "low",
-  "trivial"
-]
 
-If no feedback is necessary, return: {{"review": []}}
-
-
-ACTUAL_PROMPT:
+ORIGINAL PROMPT:
 {ACTUAL_PROMPT}
 
-LLM_OUTPUT:
+PREVIOUS OUTPUT:
 {LLM_OUTPUT}
+
+Based on this evaluation, provide a corrected and improved code review that addresses any oversights or inaccuracies in your initial review.
 """

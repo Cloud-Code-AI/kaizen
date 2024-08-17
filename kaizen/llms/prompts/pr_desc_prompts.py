@@ -16,6 +16,11 @@ Output Format:
 - Key Changes: {{List main modifications}}
 - New Features: {{List key new features}}
 - Refactoring: {{List main refactoring changes}}
+
+<details>
+<summary>Original Description</summary>
+{PULL_REQUEST_DESCRIPTION}
+</details>
 ```
 
 Instructions:
@@ -23,9 +28,6 @@ Instructions:
 - Use markdown formatting for readability.
 - Focus on significant changes and avoid repetition.
 
-Based on:
-Title: {PULL_REQUEST_TITLE}
-Description: {PULL_REQUEST_DESC}
 Patch:
 {CODE_DIFF}
 
@@ -53,9 +55,6 @@ Instructions:
 - Use markdown formatting for readability.
 - Focus on significant changes and avoid repetition.
 
-Based on:
-Title: {PULL_REQUEST_TITLE}
-Description: {PULL_REQUEST_DESC}
 Patch:
 {CODE_DIFF}
 

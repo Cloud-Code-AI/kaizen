@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="/logo.png" alt="Kaizen Logo" width="200"/>
+  <img src="/assets/logo.png" alt="Kaizen Logo" width="200"/>
 </p>
 
 <h1 align="center">Kaizen: The Ultimate Code Quality Guardian</h1>
@@ -30,6 +30,7 @@ In the ever-evolving world of software development, delivering high-quality code
 ### 🔍 Key Features
 
 - **🤖 AI-Powered Code Reviews**: Automated pull request reviews with insightful summaries and improvement suggestions, catching potential issues before they escalate.
+
 - **🧪 Smart Test Generation**: 
   - End-to-end tests based on your application's code and documentation, ensuring comprehensive coverage.
   - Unit test generation for Python (with TypeScript and React support coming soon!), saving you valuable time and effort.

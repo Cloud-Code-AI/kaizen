@@ -40,8 +40,8 @@
                 "model_name": "best",
                 "litellm_params": {
                     "model": "azure/gpt-4o",
-                    "input_cost_per_token": 0.000005,
-                    "output_cost_per_token": 0.000015,
+                    "input_cost_per_token": 0.000000015,
+                    "output_cost_per_token": 0.0000006,
                     "api_key": "os.environ/AZURE_API_KEY",
                     "api_base": "os.environ/AZURE_API_BASE",
                     "base_model": "azure/gpt-4o"
