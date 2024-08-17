@@ -154,6 +154,7 @@ class RepositoryAnalyzer:
         embedding, emb_usage = self.llm_provider.get_text_embedding(abstraction)
         embedding = embedding[0]["embedding"]
         # Store the embedding in the database
+        # TODO: DONT PUSH DUPLICATE
         with self.engine.begin() as connection:
             embedding_query = text(
                 """

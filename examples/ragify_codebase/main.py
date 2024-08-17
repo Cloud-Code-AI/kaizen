@@ -4,7 +4,7 @@ from kaizen.retriever.llama_index_retriever import RepositoryAnalyzer
 analyzer = RepositoryAnalyzer()
 
 # Set up the repository (do this when you first analyze a repo or when you want to update it)
-# analyzer.setup_repository("./github_app/")
+analyzer.setup_repository("./github_app/")
 
 # Perform queries (you can do this as many times as you want without calling setup_repository again)
 results = analyzer.query("Find functions that handle authentication")
