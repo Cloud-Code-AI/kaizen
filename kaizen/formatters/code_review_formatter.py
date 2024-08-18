@@ -95,9 +95,7 @@ def create_stats_section(reviews: List[Dict]) -> str:
     important_issues = sum(
         1 for review in reviews if review["confidence"] == "important"
     )
-    minor_issues = sum(
-        1 for review in reviews if review["confidence"] in ["moderate"]
-    )
+    minor_issues = sum(1 for review in reviews if review["confidence"] in ["moderate"])
     files_affected = len(set(review["file_name"] for review in reviews))
 
     output = "## 📊 Stats\n"
@@ -124,7 +122,7 @@ def create_issue_section(issue: Dict, index: int) -> str:
     output += f"⚖️ **Severity:** {issue['severity_level']}/10\n"
     output += f"🔍 **Description:** {issue['reason']}\n"
     output += f"💡 **Solution:** {issue['solution']}\n\n"
-    if issue.get('actual_code', None) or issue.get('fixed_code', ''):
+    if issue.get("actual_code", None) or issue.get("fixed_code", ""):
         output += "**Current Code:**\n"
         output += f"```python\n{issue.get('actual_code', '')}\n```\n\n"
         output += "**Suggested Code:**\n"

@@ -43,7 +43,7 @@ def process_pr(pr_url, reeval_response=False):
         pull_request_files=pr_files,
         user="kaizen/example",
         reeval_response=reeval_response,
-        model="best"
+        model="best",
     )
 
     # topics = clean_keys(review_data.topics, "important")
@@ -104,7 +104,7 @@ if __name__ == "__main__":
     pr_urls = [
         "https://github.com/Cloud-Code-AI/kaizen/pull/335",
         "https://github.com/Cloud-Code-AI/kaizen/pull/440",
-        "https://github.com/Cloud-Code-AI/kaizen/pull/222"
+        "https://github.com/Cloud-Code-AI/kaizen/pull/222",
         # Add more PR URLs here
     ]
     main(pr_urls)
