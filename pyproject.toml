@@ -40,6 +40,7 @@ tree-sitter-typescript = "^0.21.2"
 tree-sitter-rust = "^0.21.2"
 llama-index-llms-litellm = "^0.1.4"
 llama-index-embeddings-litellm = "^0.1.1"
+pre-commit = "^3.8.0"
 
 [tool.poetry.extras]
 python = ["tree-sitter-python"]
