@@ -9,6 +9,8 @@ from litellm import Router
 import logging
 from collections import defaultdict
 
+DEFAULT_MAX_TOKENS = 8000
+
 
 def set_all_loggers_to_ERROR():
     print("All Loggers and their levels:")
@@ -205,6 +207,8 @@ class LLMProvider:
         ]
         token_count = litellm.token_counter(model=self.model, messages=messages)
         max_tokens = litellm.get_max_tokens(self.model)
+        if not max_tokens:
+            max_tokens = DEFAULT_MAX_TOKENS
         return token_count <= max_tokens * percentage
 
     def available_tokens(
@@ -214,7 +218,10 @@ class LLMProvider:
             model = self.model
         max_tokens = litellm.get_max_tokens(model)
         used_tokens = litellm.token_counter(model=model, text=message)
-        return int(max_tokens * percentage) - used_tokens
+        if max_tokens:
+            return int(max_tokens * percentage) - used_tokens
+        else:
+            return DEFAULT_MAX_TOKENS - used_tokens
 
     def get_token_count(self, message: str, model: str = None) -> int:
         if not model:

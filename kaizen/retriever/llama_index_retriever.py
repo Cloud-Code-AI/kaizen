@@ -174,7 +174,12 @@ class RepositoryAnalyzer:
         # Create a TextNode for the vector store
         # Include repo_id in the metadata
         metadata = {"repo_id": self.repo_id}
-        node = TextNode(text=abstraction, id_=str(function_id), embedding=embedding, metadata=metadata)
+        node = TextNode(
+            text=abstraction,
+            id_=str(function_id),
+            embedding=embedding,
+            metadata=metadata,
+        )
 
         # Add the node to the vector store
         self.vector_store.add(nodes=[node])
@@ -350,7 +355,7 @@ class RepositoryAnalyzer:
 
         query_bundle = QueryBundle(query_str=query_text, embedding=embedding)
         retriever = index.as_retriever(similarity_top_k=num_results)
-        
+
         # Apply the filter during retrieval
         nodes = retriever.retrieve(query_bundle)  # Add potential filtering
 
