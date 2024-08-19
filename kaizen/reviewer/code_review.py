@@ -196,13 +196,14 @@ class CodeReviewer:
         self.logger.debug("Processing based on files")
         reviews = []
         code_quality = None
-        for file_review, quality in self._process_files_generator(
+        file_chunks_generator = self._process_files_generator(
             pull_request_files,
             pull_request_title,
             pull_request_desc,
             user,
             reeval_response,
-        ):
+        )
+        for file_review, quality in file_chunks_generator:
             reviews.extend(file_review)
             if quality:
                 if code_quality and code_quality > quality:
@@ -221,7 +222,6 @@ class CodeReviewer:
     ) -> Generator[List[Dict], None, None]:
         combined_diff_data = ""
         available_tokens = self.provider.available_tokens(FILE_CODE_REVIEW_PROMPT)
-
         for file in pull_request_files:
             patch_details = file.get("patch")
             filename = file.get("filename", "").replace(" ", "")
