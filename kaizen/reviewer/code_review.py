@@ -105,6 +105,7 @@ class CodeReviewer:
             "completion_tokens": 0,
             "total_tokens": 0,
         }
+        self.ignore_deletions = False
 
     def is_code_review_prompt_within_limit(
         self,
@@ -115,7 +116,9 @@ class CodeReviewer:
         prompt = CODE_REVIEW_PROMPT.format(
             PULL_REQUEST_TITLE=pull_request_title,
             PULL_REQUEST_DESC=pull_request_desc,
-            CODE_DIFF=parser.patch_to_combined_chunks(diff_text),
+            CODE_DIFF=parser.patch_to_combined_chunks(
+                diff_text, ignore_deletions=self.ignore_deletions
+            ),
         )
         return self.provider.is_inside_token_limit(PROMPT=prompt)
 
@@ -128,9 +131,11 @@ class CodeReviewer:
         user: Optional[str] = None,
         reeval_response: bool = False,
         model="default",
+        ignore_deletions=False,
     ) -> ReviewOutput:
+        self.ignore_deletions = ignore_deletions
         prompt = CODE_REVIEW_PROMPT.format(
-            CODE_DIFF=parser.patch_to_combined_chunks(diff_text),
+            CODE_DIFF=parser.patch_to_combined_chunks(diff_text, self.ignore_deletions),
         )
         self.total_usage = {
             "prompt_tokens": 0,
@@ -232,7 +237,7 @@ class CodeReviewer:
             ):
                 temp_prompt = (
                     combined_diff_data
-                    + f"\n---->\nFile Name: {filename}\nPatch Details: {parser.patch_to_combined_chunks(patch_details)}"
+                    + f"\n---->\nFile Name: {filename}\nPatch Details: {parser.patch_to_combined_chunks(patch_details, self.ignore_deletions)}"
                 )
 
                 if available_tokens - self.provider.get_token_count(temp_prompt) > 0:
@@ -246,9 +251,7 @@ class CodeReviewer:
                     user,
                     reeval_response,
                 )
-                combined_diff_data = (
-                    f"\n---->\nFile Name: {filename}\nPatch Details: {patch_details}"
-                )
+                combined_diff_data = f"\n---->\nFile Name: {filename}\nPatch Details: {parser.patch_to_combined_chunks(patch_details,  self.ignore_deletions)}"
 
         yield self._process_file_chunk(
             combined_diff_data,

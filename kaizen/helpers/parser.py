@@ -185,7 +185,7 @@ def format_change(old_num, new_num, change_type, content):
     return f"{old_num_str} {new_num_str} {change_type} {content}"
 
 
-def patch_to_combined_chunks(patch_text):
+def patch_to_combined_chunks(patch_text, ignore_deletions=False):
     lines = patch_text.split("\n")
     changes = []
     metadata = []
@@ -234,7 +234,8 @@ def patch_to_combined_chunks(patch_text):
             current_file_name = line
         elif line.startswith("-"):
             content = line[1:]
-            changes.append(format_change(removal_line_num, None, "-1:[-]", content))
+            if not ignore_deletions:
+                changes.append(format_change(removal_line_num, None, "-1:[-]", content))
             removal_line_num += 1
             unedited_removal_num = removal_line_num
         elif line.startswith("+"):
