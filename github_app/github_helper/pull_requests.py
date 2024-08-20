@@ -55,7 +55,7 @@ def process_pull_request(payload):
         user=repo_name,
     )
     if repo_name == "Cloud-Code-AI":
-        tests = []
+        tests = generate_tests(pr_files)
     topics = clean_keys(review_data.topics, "important")
     review_desc = create_pr_review_text(topics)
     comments, topics = create_review_comments(topics)
@@ -63,6 +63,8 @@ def process_pull_request(payload):
     post_pull_request(comment_url, review_desc, installation_id, tests=tests)
     for review in comments:
         post_pull_request_comments(review_url, review, installation_id)
+
+    return True, review_desc.decode("utf-8")
 
 
 def create_review_comments(topics, confidence_level=4):
@@ -192,3 +194,7 @@ def sort_files(files):
                 break
         sorted_files.insert(min_index, file)
     return sorted_files
+
+
+def generate_tests(pr_files):
+    return [f["filename"] for f in pr_files]
