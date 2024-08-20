@@ -40,6 +40,7 @@ def process_pull_request(payload):
     access_token = get_installation_access_token(
         installation_id, PULL_REQUEST_PERMISSION
     )
+
     diff_text = get_diff_text(diff_url, access_token)
 
     # Get PR Files
@@ -53,11 +54,13 @@ def process_pull_request(payload):
         pull_request_files=pr_files,
         user=repo_name,
     )
+    if repo_name == "Cloud-Code-AI":
+        tests = []
     topics = clean_keys(review_data.topics, "important")
     review_desc = create_pr_review_text(topics)
     comments, topics = create_review_comments(topics)
 
-    post_pull_request(comment_url, review_desc, installation_id)
+    post_pull_request(comment_url, review_desc, installation_id, tests=tests)
     for review in comments:
         post_pull_request_comments(review_url, review, installation_id)
 
@@ -86,8 +89,8 @@ def process_pr_desc(payload):
         installation_id, PULL_REQUEST_PERMISSION
     )
 
-    # Get PR Files
     pr_files = get_pr_files(pr_files_url, installation_id)
+    sorted_files = sort_files(pr_files)
 
     diff_text = get_diff_text(diff_url, access_token)
     desc_generator = PRDescriptionGenerator(llm_provider=LLMProvider())
@@ -95,13 +98,13 @@ def process_pr_desc(payload):
         diff_text=diff_text,
         pull_request_title=pr_title,
         pull_request_desc=pr_description,
-        pull_request_files=pr_files,
+        pull_request_files=sorted_files,
         user=repo_name,
     )
     patch_pr_body(pr_url, description.desc, installation_id)
 
 
-def post_pull_request(url, data, installation_id):
+def post_pull_request(url, data, installation_id, tests=None):
     access_token = get_installation_access_token(
         installation_id, PULL_REQUEST_PERMISSION
     )
@@ -134,20 +137,24 @@ def clean_keys(topics, min_confidence=None):
     if min_confidence:
         try:
             min_value = confidence_mapping[min_confidence]
-        except KeyError:
-            raise ValueError(f"Invalid confidence level: {min_confidence}")
+        except Exception:
+            print("Error")
     else:
         min_value = float("-inf")  # Include all items if no min_confidence is given
 
     new_topics = {}
+    issues = []
     for topic, reviews in topics.items():
         rev = []
         for review in reviews:
             if not review.get("reasoning"):
                 review["reasoning"] = review["comment"]
             if confidence_mapping[review["confidence"]] >= min_value:
+                issues = review
                 rev.append(review)
+
         new_topics[topic] = rev
+    print("issues: ", issues)
     return new_topics
 
 
@@ -172,3 +179,16 @@ def post_pull_request_comments(url, review, installation_id):
     }
     response = requests.post(url, headers=headers, json=data)
     logger.debug(f"Post Review comment response: {response.text}")
+
+
+def sort_files(files):
+    sorted_files = []
+    for file in files:
+        min_index = len(sorted_files)
+        file_name = file["filename"]
+        for i, sorted_file in enumerate(sorted_files):
+            if file_name < sorted_file["filename"]:
+                min_index = i
+                break
+        sorted_files.insert(min_index, file)
+    return sorted_files
