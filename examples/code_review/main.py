@@ -18,8 +18,8 @@ pr_title = "feat: updated the prompt to provide solution"
 
 diff_text = get_diff_text(pr_diff, "")
 pr_files = get_pr_files(pr_files, "")
-# print("diff: ", diff_text)
-# print("pr_files", pr_files)
+print("diff: ", diff_text)
+print("pr_files", pr_files)
 
 
 reviewer = CodeReviewer(llm_provider=LLMProvider())
@@ -33,10 +33,10 @@ review_data = reviewer.review_pull_request(
 )
 
 topics = clean_keys(review_data.topics, "important")
-review_desc = create_pr_review_text(topics)
+review_desc = create_pr_review_text(topics, code_quality=review_data.code_quality)
 comments, topics = create_review_comments(topics)
 
-print(f"Raw Topics: \n {json.dumps(topics, indent=2)}\n")
+print(f"Raw Topics: \n {json.dumps(review_data.issues, indent=2)}\n")
 print(f"GENERATED REVIEW: \n {review_desc}")
 print(f"\nComment and topics: \n {json.dumps(comments, indent=2)}, \n{topics}")
 
