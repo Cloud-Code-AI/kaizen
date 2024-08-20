@@ -162,6 +162,32 @@ class LLMProvider:
         self.model = response["model"]
         return response["choices"][0]["message"]["content"], response["usage"]
 
+    def raw_chat_completion(
+        self,
+        prompt,
+        user: str = None,
+        model="default",
+        custom_model=None,
+        messages=None,
+        n_choices=1
+    ):
+        custom_model["n"] = n_choices
+        if not messages:
+            messages = [
+                {"role": "system", "content": self.system_prompt},
+                {"role": "user", "content": prompt},
+            ]
+        if not custom_model:
+            custom_model = {"model": model}
+        if "temperature" not in custom_model:
+            custom_model["temperature"] = self.default_temperature
+
+        response = self.provider.completion(
+            messages=messages, user=user, **custom_model
+        )
+        self.model = response["model"]
+        return response, response["usage"]
+
     @retry(max_attempts=3, delay=1)
     def chat_completion_with_json(
         self,
