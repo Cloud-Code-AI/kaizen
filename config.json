@@ -1,7 +1,6 @@
 {
     "language_model": {
         "provider": "litellm",
-        "enable_observability_logging": false,
         "redis_enabled": true,
         "models": [
             {
