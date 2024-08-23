@@ -70,7 +70,9 @@ class UnitTestRunner:
         self.logger.warning("Project root not found")
         return None
 
-    def discover_and_run_tests(self):
+    def discover_and_run_tests(self, test_file=None):
+        if test_file is None:
+            self.logger.warning('No test file specified. Running all tests.')
         self.logger.info("Starting test discovery and execution")
         results = {}
         for root, dirs, files in os.walk(self.test_directory):
@@ -80,6 +82,9 @@ class UnitTestRunner:
                     extension = file.split(".")[-1]
                     self.logger.debug(f"Found test file: {file_path}")
                     if extension in self.supported_extensions:
+                        if test_file and file not in test_file:
+                            self.logger.debug("Skipping file test")
+                            continue
                         self.logger.info(f"Running tests for: {file_path}")
                         result = self.supported_extensions[extension](file_path)
                         results[str(file_path)] = result

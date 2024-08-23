@@ -169,7 +169,7 @@ class LLMProvider:
         model="default",
         custom_model=None,
         messages=None,
-        n_choices=1
+        n_choices=1,
     ):
         custom_model["n"] = n_choices
         if not messages:

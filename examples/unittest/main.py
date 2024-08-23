@@ -17,7 +17,11 @@ result = generator.generate_tests_from_dir(
 )
 print(result)
 
+# Run all tests
 test_results = generator.run_tests()
+
+# Run a single test file:
+# test_results = generator.run_tests(file_path="test_create_folder.py")
 
 for file_path, result in test_results.items():
     print(f"Results for {file_path}:")
