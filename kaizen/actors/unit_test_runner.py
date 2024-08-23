@@ -72,7 +72,7 @@ class UnitTestRunner:
 
     def discover_and_run_tests(self, test_file=None):
         if test_file is None:
-            self.logger.warning('No test file specified. Running all tests.')
+            self.logger.warning("No test file specified. Running all tests.")
         self.logger.info("Starting test discovery and execution")
         results = {}
         for root, dirs, files in os.walk(self.test_directory):
