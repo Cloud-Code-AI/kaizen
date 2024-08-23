@@ -80,7 +80,7 @@ class UnitTestRunner:
                     extension = file.split(".")[-1]
                     self.logger.debug(f"Found test file: {file_path}")
                     if extension in self.supported_extensions:
-                        if file_path and file not in test_file:
+                        if test_file and file not in test_file:
                             self.logger.debug("Skipping file test")
                             continue
                         self.logger.info(f"Running tests for: {file_path}")
