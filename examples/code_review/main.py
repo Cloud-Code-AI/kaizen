@@ -33,7 +33,9 @@ review_data = reviewer.review_pull_request(
 )
 
 topics = clean_keys(review_data.topics, "important")
-review_desc = create_pr_review_text(topics)
+review_desc = create_pr_review_text(
+    review_data.issues, code_quality=review_data.code_quality
+)
 comments, topics = create_review_comments(topics)
 
 print(f"Raw Topics: \n {json.dumps(topics, indent=2)}\n")

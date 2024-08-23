@@ -1,4 +1,4 @@
-from typing import Optional, List, Dict, Generator
+from typing import Optional, List, Dict, Generator, Tuple
 from dataclasses import dataclass
 import logging
 from kaizen.helpers import parser
@@ -197,7 +197,7 @@ class CodeReviewer:
         pull_request_desc: str,
         user: Optional[str],
         reeval_response: bool,
-    ) -> List[Dict]:
+    ) -> Tuple[List[Dict], Optional[float]]:
         self.logger.debug("Processing based on files")
         reviews = []
         code_quality = None
@@ -208,13 +208,13 @@ class CodeReviewer:
             user,
             reeval_response,
         )
-        for file_review, quality in file_chunks_generator:
-            reviews.extend(file_review)
-            if quality:
-                if code_quality and code_quality > quality:
-                    code_quality = quality
-                else:
-                    code_quality = quality
+        for result in file_chunks_generator:
+            if result:  # Check if the result is not None
+                file_review, quality = result
+                reviews.extend(file_review)
+                if quality:
+                    if code_quality is None or quality < code_quality:
+                        code_quality = quality
         return reviews, code_quality
 
     def _process_files_generator(
@@ -224,7 +224,7 @@ class CodeReviewer:
         pull_request_desc: str,
         user: Optional[str],
         reeval_response: bool,
-    ) -> Generator[List[Dict], None, None]:
+    ) -> Generator[Optional[Tuple[List[Dict], Optional[float]]], None, None]:
         combined_diff_data = ""
         available_tokens = self.provider.available_tokens(FILE_CODE_REVIEW_PROMPT)
         for file in pull_request_files:
@@ -253,13 +253,16 @@ class CodeReviewer:
                 )
                 combined_diff_data = f"\n---->\nFile Name: {filename}\nPatch Details: {parser.patch_to_combined_chunks(patch_details,  self.ignore_deletions)}"
 
-        yield self._process_file_chunk(
-            combined_diff_data,
-            pull_request_title,
-            pull_request_desc,
-            user,
-            reeval_response,
-        )
+        if combined_diff_data:
+            yield self._process_file_chunk(
+                combined_diff_data,
+                pull_request_title,
+                pull_request_desc,
+                user,
+                reeval_response,
+            )
+        else:
+            yield None  # Yield None if there's no data to process
 
     def _process_file_chunk(
         self,
@@ -268,9 +271,9 @@ class CodeReviewer:
         pull_request_desc: str,
         user: Optional[str],
         reeval_response: bool,
-    ) -> List[Dict]:
+    ) -> Optional[Tuple[List[Dict], Optional[float]]]:
         if not diff_data:
-            return []
+            return None
         prompt = FILE_CODE_REVIEW_PROMPT.format(
             FILE_PATCH=diff_data,
         )
