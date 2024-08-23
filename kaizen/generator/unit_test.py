@@ -277,9 +277,9 @@ class UnitTestGenerator:
     def _create_output_folder(self, folder_name):
         os.makedirs(folder_name, exist_ok=True)
 
-    def run_tests(self):
+    def run_tests(self, test_file=None):
         runner = UnitTestRunner(self.output_folder)
-        return runner.discover_and_run_tests()
+        return runner.discover_and_run_tests(test_file=test_file)
 
     def format_test_scenarios(self, scenarios):
         formatted_scenarios = ""
