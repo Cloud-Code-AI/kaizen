@@ -26,7 +26,6 @@ pip = "^24.0"
 fuzzywuzzy = "^0.18.0"
 llama-index-core = "0.10.65"
 llama-index-readers-file = "^0.1.25"
-llama-index-vector-stores-postgres = "^0.1.11"
 sqlalchemy = "^2.0.31"
 esprima = "^4.0.1"
 escodegen = "^1.0.11"
@@ -41,6 +40,8 @@ tree-sitter-rust = "^0.21.2"
 llama-index-llms-litellm = "^0.1.4"
 llama-index-embeddings-litellm = "^0.1.1"
 pre-commit = "^3.8.0"
+qdrant-client = "^1.11.0"
+psycopg2-binary = "^2.9.9"
 
 [tool.poetry.extras]
 python = ["tree-sitter-python"]

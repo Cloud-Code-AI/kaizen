@@ -2,10 +2,11 @@ import os
 import logging
 from llama_index.core import (
     StorageContext,
-    VectorStoreIndex,
 )
+from uuid import uuid4
+
 from llama_index.core.schema import TextNode
-from kaizen.retriever.custom_vector_store import CustomPGVectorStore
+from kaizen.retriever.qdrant_vector_store import QdrantVectorStore
 from sqlalchemy import create_engine, text
 from llama_index.llms.litellm import LiteLLM
 import networkx as nx
@@ -16,7 +17,6 @@ from kaizen.llms.provider import LLMProvider
 from kaizen.retriever.code_chunker import chunk_code
 import traceback
 from llama_index.embeddings.litellm import LiteLLMEmbedding
-from llama_index.core import QueryBundle
 
 
 # Set up logging
@@ -39,15 +39,7 @@ class RepositoryAnalyzer:
         )
         self.repo_id = repo_id
         self.graph = nx.DiGraph()
-        self.vector_store = CustomPGVectorStore.from_params(
-            database=os.environ["POSTGRES_DB"],
-            host=os.environ["POSTGRES_HOST"],
-            password=os.environ["POSTGRES_PASSWORD"],
-            port=os.environ["POSTGRES_PORT"],
-            user=os.environ["POSTGRES_USER"],
-            table_name="embeddings",
-            embed_dim=1536,
-        )
+        self.vector_store = QdrantVectorStore("embeddings", vector_size=1536)
         self.llm_provider = LLMProvider()
         self.llm = LiteLLM(model_name="small", router=self.llm_provider.provider)
         # embed_llm = LiteLLM(model_name="embedding", router=self.llm_provider.provider)
@@ -173,10 +165,11 @@ class RepositoryAnalyzer:
 
         # Create a TextNode for the vector store
         # Include repo_id in the metadata
-        metadata = {"repo_id": self.repo_id}
+        metadata = {"repo_id": self.repo_id, "function_id": function_id}
+        node_id = str(uuid4())
         node = TextNode(
             text=abstraction,
-            id_=str(function_id),
+            id_=node_id,
             embedding=embedding,
             metadata=metadata,
         )
@@ -189,19 +182,61 @@ class RepositoryAnalyzer:
     def generate_abstraction(
         self, code_block: str, language: str, max_tokens: int = 300
     ) -> str:
-        prompt = f"""Generate a concise yet comprehensive abstract description of the following {language} code block. 
-        Include information about:
-        1. The purpose or functionality of the code
-        2. Input parameters and return values (if applicable)
-        3. Any important algorithms or data structures used
-        4. Key dependencies or external libraries used
-        5. Any notable design patterns or architectural choices
-        6. Potential edge cases or error handling
+        prompt = f"""Analyze the following {language} code block and generate a structured abstraction. 
+Your response should be in YAML format and include the following sections:
 
-        Code:
-        ```{language}
-        {code_block}
-        ```
+summary: A concise one-sentence summary of the function's primary purpose.
+
+functionality: |
+  A detailed explanation of what the function does, including its main steps and logic.
+  Use multiple lines if needed for clarity.
+
+inputs:
+  - name: The parameter name
+    type: The parameter type
+    description: A brief description of the parameter's purpose
+    default_value: The default value, if any (or null if not applicable)
+
+output:
+  type: The return type of the function
+  description: |
+    A description of what is returned and under what conditions.
+    Use multiple lines if needed.
+
+dependencies:
+  - name: Name of the external library or module
+    purpose: Brief explanation of its use in this function
+
+algorithms:
+  - name: Name of the algorithm or data structure
+    description: Brief explanation of its use and importance
+
+edge_cases:
+  - A list of potential edge cases or special conditions the function handles or should handle
+
+error_handling: |
+  A description of how errors are handled or propagated.
+  Include specific error types if applicable.
+
+usage_context: |
+  A brief explanation of how this function might be used by parent functions or in a larger system.
+  Include typical scenarios and any important considerations for its use.
+
+complexity:
+  time: Estimated time complexity (e.g., O(n))
+  space: Estimated space complexity (e.g., O(1))
+
+code_snippet: |
+  ```{language}
+  {code_block}
+  ```
+
+Provide your analysis in this clear, structured YAML format. If any section is not applicable, use an empty list [] or null value as appropriate. Ensure that multi-line descriptions are properly indented under their respective keys.
+
+Code to analyze:
+```{language}
+{code_block}
+```
         """
 
         estimated_prompt_tokens = len(tokenizer.encode(prompt))
@@ -340,57 +375,47 @@ class RepositoryAnalyzer:
     #     logger.info(f"Query completed. Found {len(processed_results)} results.")
     #     return processed_results
 
-    def query(self, query_text: str, num_results: int = 5) -> List[Dict[str, Any]]:
-        logger.info(f"Performing query: '{query_text}' for repo_id: {self.repo_id}")
-
-        index = VectorStoreIndex.from_vector_store(
-            self.vector_store, embed_model=self.embed_model, llm=self.llm
-        )
-
+    def query(
+        self, query_text: str, num_results: int = 5, repo_id=None
+    ) -> List[Dict[str, Any]]:
         embedding, emb_usage = self.llm_provider.get_text_embedding(query_text)
         embedding = embedding[0]["embedding"]
 
-        # Create a filter to only search within the current repository
-        # filter_dict = {"repo_id": self.repo_id}
+        results = self.vector_store.search(embedding, limit=num_results)
 
-        query_bundle = QueryBundle(query_str=query_text, embedding=embedding)
-        retriever = index.as_retriever(similarity_top_k=num_results)
+        processed_results = []
+        for result in results:
+            processed_results.append(
+                {
+                    "function_id": result.payload["function_id"],
+                    "relevance_score": result.score,
+                }
+            )
 
-        # Apply the filter during retrieval
-        nodes = retriever.retrieve(query_bundle)  # Add potential filtering
-
-        results = []
+        # Fetch additional data from the database
         with self.engine.connect() as connection:
-            for node in nodes:
-                function_id = (
-                    node.node.id_
-                )  # Assuming we stored function_id as the node id
+            for result in processed_results:
                 query = text(
                     """
                     SELECT fa.function_name, fa.abstract_functionality, f.file_path, fa.function_signature
                     FROM function_abstractions fa
                     JOIN files f ON fa.file_id = f.file_id
                     WHERE fa.function_id = :function_id
-                    """
+                """
                 )
-                result = connection.execute(
-                    query, {"function_id": function_id}
+                db_result = connection.execute(
+                    query, {"function_id": result["function_id"]}
                 ).fetchone()
-                if result:
-                    results.append(
+                if db_result:
+                    result.update(
                         {
-                            "function_name": result[0],
-                            "abstraction": result[1],
-                            "file_path": result[2],
-                            "function_signature": result[3],
-                            "relevance_score": (
-                                node.score if hasattr(node, "score") else 1.0
-                            ),
+                            "function_name": db_result[0],
+                            "abstraction": db_result[1],
+                            "file_path": db_result[2],
+                            "function_signature": db_result[3],
                         }
                     )
 
-        sorted_results = sorted(
-            results, key=lambda x: x["relevance_score"], reverse=True
+        return sorted(
+            processed_results, key=lambda x: x["relevance_score"], reverse=True
         )
-        logger.info(f"Query completed. Found {len(sorted_results)} results.")
-        return sorted_results

@@ -7,12 +7,11 @@
             {
                 "model_name": "embedding",
                 "litellm_params": {
-                    "model": "azure/text-embedding-small",
+                    "model": "azure/text-embedding-3-small",
                     "input_cost_per_token": 0.000000015,
                     "output_cost_per_token": 0.0000006,
                     "api_key": "os.environ/AZURE_API_KEY",
-                    "api_base": "os.environ/AZURE_API_BASE",
-                    "base_model": "text-embedding-3-small"
+                    "api_base": "os.environ/AZURE_API_BASE"
                 },
                 "model_info": {
                     "max_tokens": 8191,

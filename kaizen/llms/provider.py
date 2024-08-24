@@ -83,6 +83,7 @@ class LLMProvider:
             "model_list": self.models,
             "allowed_fails": 1,
             "enable_pre_call_checks": True,
+            "routing_strategy": "simple-shuffle",
         }
 
         if self.config["language_model"].get("redis_enabled", False):
