@@ -14,7 +14,9 @@ services:
       - github_app_pem
     depends_on:
       - redis
-  
+      - postgres
+      - qdrant
+
   postgres:
     image: postgres:16-bullseye
     env_file:
@@ -23,7 +25,7 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
-  
+
   redis:
     image: "redis:alpine"
     environment:
@@ -31,8 +33,21 @@ services:
     ports:
       - "6379:6379"
 
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    environment:
+      - QDRANT__SERVICE__GRPC_PORT=6334
+    restart: always
+
+volumes:
+  qdrant_data:
+    driver: local
 
 secrets:
   github_app_pem:
     file: ./GITHUB_APP_NIGHTLY.pem
-
