@@ -1,0 +1,72 @@
+[
+  {
+    "topic": "Configuration",
+    "comment": "Changes made to sensitive file",
+    "confidence": "critical",
+    "reason": "Changes were made to config.json, which needs review",
+    "solution": "NA",
+    "fixed_code": "",
+    "start_line": "4",
+    "end_line": "4",
+    "side": "RIGHT",
+    "file_name": "config.json",
+    "sentiment": "negative",
+    "severity_level": 10
+  },
+  {
+    "topic": "Docker",
+    "comment": "Changes made to sensitive file",
+    "confidence": "critical",
+    "reason": "Changes were made to Dockerfile, which needs review",
+    "solution": "NA",
+    "fixed_code": "",
+    "start_line": "4",
+    "end_line": "4",
+    "side": "RIGHT",
+    "file_name": "Dockerfile",
+    "sentiment": "negative",
+    "severity_level": 10
+  },
+  {
+    "topic": "Docker",
+    "comment": "Changes made to sensitive file",
+    "confidence": "critical",
+    "reason": "Changes were made to docker-compose.yml, which needs review",
+    "solution": "NA",
+    "fixed_code": "",
+    "start_line": "15",
+    "end_line": "15",
+    "side": "RIGHT",
+    "file_name": "docker-compose.yml",
+    "sentiment": "negative",
+    "severity_level": 10
+  },
+  {
+    "topic": "Version Control",
+    "comment": "Changes made to sensitive file",
+    "confidence": "critical",
+    "reason": "Changes were made to .gitignore, which needs review",
+    "solution": "NA",
+    "fixed_code": "",
+    "start_line": "164",
+    "end_line": "164",
+    "side": "RIGHT",
+    "file_name": ".gitignore",
+    "sentiment": "negative",
+    "severity_level": 10
+  },
+  {
+    "topic": "Database",
+    "comment": "Changes made to sensitive file",
+    "confidence": "critical",
+    "reason": "Changes were made to db_setup/init.sql, which needs review",
+    "solution": "NA",
+    "fixed_code": "",
+    "start_line": "1",
+    "end_line": "1",
+    "side": "RIGHT",
+    "file_name": "db_setup/init.sql",
+    "sentiment": "negative",
+    "severity_level": 10
+  }
+]

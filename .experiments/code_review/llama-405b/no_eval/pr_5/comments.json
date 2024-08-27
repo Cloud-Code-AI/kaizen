@@ -1,0 +1,47 @@
+[
+  {
+    "topic": "API Call Failure",
+    "comment": "API call failure without retry mechanism.",
+    "confidence": "critical",
+    "reason": "The API call may fail without a retry mechanism, causing the program to crash.",
+    "solution": "Implement a retry mechanism for the API call.",
+    "actual_code": "response = completion(model=os.environ.get(\"model\", \"anyscale/mistralai/Mixtral-8x22B-Instruct-v0.1\"), messages=messages)",
+    "fixed_code": "import time\ntry:\n    response = completion(model=os.environ.get(\"model\", \"anyscale/mistralai/Mixtral-8x22B-Instruct-v0.1\"), messages=messages)\nexcept Exception as e:\n    print(f\"API call failed:{e}\")\n    time.sleep(1)\n    # retry the API call",
+    "file_name": "main.py",
+    "start_line": 65,
+    "end_line": 65,
+    "side": "RIGHT",
+    "sentiment": "negative",
+    "severity_level": 8
+  },
+  {
+    "topic": "Silent Failure",
+    "comment": "Silent failure without logging.",
+    "confidence": "critical",
+    "reason": "The program will fail silently without logging any errors.",
+    "solution": "Implement logging for errors.",
+    "actual_code": "except json.JSONDecodeError:\n    result ={key: \"\" for key in[\"feedback\", \"review\", \"should_interview\", \"rating\", \"input_tokens\", \"output_tokens\"]}",
+    "fixed_code": "import logging\nexcept json.JSONDecodeError as e:\n    logging.error(f\"JSON decode error:{e}\")\n    result ={key: \"\" for key in[\"feedback\", \"review\", \"should_interview\", \"rating\", \"input_tokens\", \"output_tokens\"]}",
+    "file_name": "main.py",
+    "start_line": 82,
+    "end_line": 84,
+    "side": "RIGHT",
+    "sentiment": "negative",
+    "severity_level": 8
+  },
+  {
+    "topic": "Division by Zero",
+    "comment": "Division by zero potential.",
+    "confidence": "critical",
+    "reason": "The code may divide by zero, causing a runtime error.",
+    "solution": "Add a check to prevent division by zero.",
+    "actual_code": "total_tokens = total_input_tokens + total_output_tokens",
+    "fixed_code": "if total_tokens == 0:\n    total_tokens = 1\n    print(\"Warning: total tokens is zero\")",
+    "file_name": "main.py",
+    "start_line": 156,
+    "end_line": 156,
+    "side": "RIGHT",
+    "sentiment": "negative",
+    "severity_level": 8
+  }
+]

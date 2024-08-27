@@ -1,0 +1,31 @@
+[
+  {
+    "topic": "Error Handling",
+    "comment": "Generic exception handling without logging specific error details.",
+    "confidence": "critical",
+    "reason": "Using a generic `except Exception` block without logging the specific error details can make debugging difficult.",
+    "solution": "Log the specific error message in the exception block.",
+    "actual_code": "except Exception:\n    print(\"Error\")",
+    "fixed_code": "except Exception as e:\n    print(f\"Error:{e}\")",
+    "file_name": "github_app/github_helper/pull_requests.py",
+    "start_line": 140,
+    "end_line": 141,
+    "side": "RIGHT",
+    "sentiment": "negative",
+    "severity_level": 9
+  },
+  {
+    "topic": "Configuration",
+    "comment": "Changes made to sensitive file",
+    "confidence": "critical",
+    "reason": "Changes were made to config.json, which needs review",
+    "solution": "NA",
+    "fixed_code": "",
+    "start_line": "1",
+    "end_line": "1",
+    "side": "RIGHT",
+    "file_name": "config.json",
+    "sentiment": "negative",
+    "severity_level": 10
+  }
+]

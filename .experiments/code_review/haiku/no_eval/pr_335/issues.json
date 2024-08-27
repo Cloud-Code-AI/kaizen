@@ -1,0 +1,62 @@
+[
+  {
+    "topic": "Prompt Changes",
+    "comment": "The `PR_DESCRIPTION_PROMPT` and `PR_FILE_DESCRIPTION_PROMPT` have been updated to use a more concise and structured format for the output.",
+    "confidence": "important",
+    "reason": "The new prompts provide a clearer and more organized structure for the generated pull request description, making it easier to read and understand.",
+    "solution": "The changes look good and should improve the overall quality and readability of the generated pull request descriptions.",
+    "actual_code": "",
+    "fixed_code": "",
+    "file_name": "kaizen/llms/prompts/pr_desc_prompts.py",
+    "start_line": 1,
+    "end_line": 92,
+    "side": "RIGHT",
+    "sentiment": "positive",
+    "severity_level": 7
+  },
+  {
+    "topic": "Removal of `PR_DESC_EVALUATION_PROMPT`",
+    "comment": "The `PR_DESC_EVALUATION_PROMPT` has been removed from the `code_review_prompts.py` file.",
+    "confidence": "moderate",
+    "reason": "The `PR_DESC_EVALUATION_PROMPT` was previously used for re-evaluating the generated pull request description, but it has been removed in the current changes.",
+    "solution": "Ensure that the functionality for re-evaluating the pull request description is still maintained, either through a different mechanism or by incorporating the evaluation logic directly into the main description generation process.",
+    "actual_code": "",
+    "fixed_code": "",
+    "file_name": "kaizen/llms/prompts/code_review_prompts.py",
+    "start_line": 190,
+    "end_line": 201,
+    "side": "LEFT",
+    "sentiment": "neutral",
+    "severity_level": 5
+  },
+  {
+    "topic": "Removal of `reeval_response` parameter",
+    "comment": "The `reeval_response` parameter has been removed from several method calls in the `pr_description.py` file.",
+    "confidence": "moderate",
+    "reason": "The `reeval_response` parameter was previously used for re-evaluating the generated pull request description, but it has been removed in the current changes.",
+    "solution": "Ensure that the functionality for re-evaluating the pull request description is still maintained, either through a different mechanism or by incorporating the evaluation logic directly into the main description generation process.",
+    "actual_code": "",
+    "fixed_code": "",
+    "file_name": "kaizen/generator/pr_description.py",
+    "start_line": 43,
+    "end_line": 96,
+    "side": "LEFT",
+    "sentiment": "neutral",
+    "severity_level": 5
+  },
+  {
+    "topic": "Removal of `CODE_REVIEW_SYSTEM_PROMPT`",
+    "comment": "The `CODE_REVIEW_SYSTEM_PROMPT` has been removed and replaced with `PR_DESCRIPTION_SYSTEM_PROMPT` in the `pr_description.py` file.",
+    "confidence": "important",
+    "reason": "The `CODE_REVIEW_SYSTEM_PROMPT` was previously used as the system prompt for the code review process, but it has been replaced with a new prompt specifically for generating pull request descriptions.",
+    "solution": "The changes look good and should help align the system prompt with the updated pull request description generation process.",
+    "actual_code": "",
+    "fixed_code": "",
+    "file_name": "kaizen/generator/pr_description.py",
+    "start_line": 29,
+    "end_line": 29,
+    "side": "RIGHT",
+    "sentiment": "positive",
+    "severity_level": 7
+  }
+]

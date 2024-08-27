@@ -1,0 +1,47 @@
+[
+  {
+    "topic": "Error Handling",
+    "comment": "API call may fail without a retry mechanism.",
+    "confidence": "critical",
+    "reason": "The completion function call does not handle potential API failures.",
+    "solution": "Implement a retry mechanism or error handling for API calls.",
+    "actual_code": "response = completion(",
+    "fixed_code": "# Implement retry logic here",
+    "file_name": "main.py",
+    "start_line": 66,
+    "end_line": 68,
+    "side": "LEFT",
+    "sentiment": "negative",
+    "severity_level": 8
+  },
+  {
+    "topic": "Silent Failure",
+    "comment": "Silent failure without logging in case of JSON parsing error.",
+    "confidence": "critical",
+    "reason": "The code does not log the error, making debugging difficult.",
+    "solution": "Log the error message to provide feedback in case of failure.",
+    "actual_code": "print(f\"Failed to parse content for applicant\")",
+    "fixed_code": "print(f\"Failed to parse content for applicant:{e}\")",
+    "file_name": "main.py",
+    "start_line": 86,
+    "end_line": 86,
+    "side": "LEFT",
+    "sentiment": "negative",
+    "severity_level": 7
+  },
+  {
+    "topic": "Division by Zero",
+    "comment": "Potential division by zero error.",
+    "confidence": "critical",
+    "reason": "If total_tokens is zero, this will raise an error.",
+    "solution": "Add a check to prevent division by zero.",
+    "actual_code": "print(f\"Total tokens used:{total_tokens:,}\")",
+    "fixed_code": "if total_tokens > 0: print(f\"Total tokens used:{total_tokens:,}\")",
+    "file_name": "main.py",
+    "start_line": 159,
+    "end_line": 159,
+    "side": "LEFT",
+    "sentiment": "negative",
+    "severity_level": 9
+  }
+]

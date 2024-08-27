@@ -286,7 +286,7 @@ class CodeReviewer:
         if reeval_response:
             resp = self._reevaluate_response(prompt, resp, user)
 
-        return resp["review"], resp.get("code_quality_percentage", None)
+        return resp.get("review", []), resp.get("code_quality_percentage", None)
 
     def _reevaluate_response(self, prompt: str, resp: str, user: Optional[str]) -> str:
         new_prompt = PR_REVIEW_EVALUATION_PROMPT.format(

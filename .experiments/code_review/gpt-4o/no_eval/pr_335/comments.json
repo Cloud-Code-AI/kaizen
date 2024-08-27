@@ -1,0 +1,32 @@
+[
+  {
+    "topic": "Function Parameters",
+    "comment": "Removed `reeval_response` parameter from multiple functions. Ensure that this parameter is no longer needed and does not affect the functionality.",
+    "confidence": "critical",
+    "reason": "Removing a parameter can lead to missing functionality if the parameter was being used elsewhere in the code.",
+    "solution": "Verify that `reeval_response` is not required for the functions to operate correctly.",
+    "actual_code": "",
+    "fixed_code": "",
+    "file_name": "kaizen/generator/pr_description.py",
+    "start_line": 43,
+    "end_line": 43,
+    "side": "LEFT",
+    "sentiment": "negative",
+    "severity_level": 8
+  },
+  {
+    "topic": "Function Implementation",
+    "comment": "Changed the implementation of `_process_full_diff` to remove `reeval_response` logic. Ensure that the re-evaluation logic is no longer needed.",
+    "confidence": "critical",
+    "reason": "Removing logic can lead to missing functionality if the logic was essential.",
+    "solution": "Verify that the re-evaluation logic is not required for the function to operate correctly.",
+    "actual_code": "resp, usage = self.provider.chat_completion(prompt, user=user)\ndesc = parser.extract_code_from_markdown(resp)\nreturn desc",
+    "fixed_code": "",
+    "file_name": "kaizen/generator/pr_description.py",
+    "start_line": 79,
+    "end_line": 83,
+    "side": "RIGHT",
+    "sentiment": "negative",
+    "severity_level": 8
+  }
+]

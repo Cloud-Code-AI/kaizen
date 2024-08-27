@@ -1,0 +1,31 @@
+[
+  {
+    "topic": "Configuration",
+    "comment": "Changes made to sensitive file",
+    "confidence": "critical",
+    "reason": "Changes were made to config.json, which needs review",
+    "solution": "NA",
+    "fixed_code": "",
+    "start_line": "11",
+    "end_line": "11",
+    "side": "RIGHT",
+    "file_name": "config.json",
+    "sentiment": "negative",
+    "severity_level": 10
+  },
+  {
+    "topic": "Asynchronous Testing",
+    "comment": "The tests have been updated to use async/await syntax, which is correct for testing asynchronous functions.",
+    "confidence": "critical",
+    "reason": "Proper async testing is crucial for accurate results when testing asynchronous code.",
+    "solution": "The implementation is correct. Ensure all test functions are defined with 'async def'.",
+    "actual_code": "async def test_get_web_html_normal_cases(mock_get_html, mock_nest_asyncio, html_content, expected_output):",
+    "fixed_code": "",
+    "file_name": ".kaizen/unit_test/kaizen/helpers/test_get_web_html.py",
+    "start_line": 76,
+    "end_line": 76,
+    "side": "RIGHT",
+    "sentiment": "positive",
+    "severity_level": 8
+  }
+]

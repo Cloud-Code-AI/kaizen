@@ -1,0 +1,62 @@
+[
+  {
+    "topic": "Code Structure",
+    "comment": "The `generate_linkedin_post` method call has been split across multiple lines, which improves readability for long function calls.",
+    "confidence": "moderate",
+    "reason": "Multi-line function calls can improve code readability, especially for functions with long parameter lists.",
+    "solution": "The current implementation is good. No changes needed.",
+    "actual_code": "linkedin_post = work_summary_generator.generate_linkedin_post(\n    summary, user=\"oss_example\"\n)",
+    "fixed_code": "",
+    "file_name": "examples/work_summarizer/main.py",
+    "start_line": 60,
+    "end_line": 62,
+    "side": "RIGHT",
+    "sentiment": "positive",
+    "severity_level": 2
+  },
+  {
+    "topic": "Code Consistency",
+    "comment": "The `generate_twitter_post` method call is not formatted consistently with the `generate_linkedin_post` call.",
+    "confidence": "moderate",
+    "reason": "Consistent formatting improves code readability and maintainability.",
+    "solution": "Consider formatting the `generate_twitter_post` call similarly to the `generate_linkedin_post` call for consistency.",
+    "actual_code": "twitter_post = work_summary_generator.generate_twitter_post(summary, user=\"oss_example\")",
+    "fixed_code": "twitter_post = work_summary_generator.generate_twitter_post(\n    summary, user=\"oss_example\"\n)",
+    "file_name": "examples/work_summarizer/main.py",
+    "start_line": 59,
+    "end_line": 59,
+    "side": "RIGHT",
+    "sentiment": "neutral",
+    "severity_level": 3
+  },
+  {
+    "topic": "Code Duplication",
+    "comment": "The print statement for LinkedIn post is duplicated.",
+    "confidence": "important",
+    "reason": "Code duplication can lead to maintenance issues and inconsistencies.",
+    "solution": "Remove the duplicated print statement for the LinkedIn post.",
+    "actual_code": "print(f\" LinkedIn Post: \\n{linkedin_post}\\n\")",
+    "fixed_code": "",
+    "file_name": "examples/work_summarizer/main.py",
+    "start_line": 68,
+    "end_line": 68,
+    "side": "RIGHT",
+    "sentiment": "negative",
+    "severity_level": 6
+  },
+  {
+    "topic": "Code Documentation",
+    "comment": "The new `severity_level` field in the code review prompt is not explained in detail.",
+    "confidence": "moderate",
+    "reason": "Clear documentation helps users understand how to use the severity level correctly.",
+    "solution": "Add a brief explanation of what each severity level represents (e.g., what constitutes a level 1 vs. level 10 issue).",
+    "actual_code": "For \"severity_level\" score in range of 1 to 10, 1 being not severe and 10 being critical.",
+    "fixed_code": "For \"severity_level\" score in range of 1 to 10:\n1-3: Minor issues (style, small optimizations)\n4-6: Moderate issues (potential bugs, performance concerns)\n7-8: Major issues (definite bugs, security vulnerabilities)\n9-10: Critical issues (severe security risks, system-breaking bugs)",
+    "file_name": "kaizen/llms/prompts/code_review_prompts.py",
+    "start_line": 100,
+    "end_line": 100,
+    "side": "RIGHT",
+    "sentiment": "neutral",
+    "severity_level": 4
+  }
+]

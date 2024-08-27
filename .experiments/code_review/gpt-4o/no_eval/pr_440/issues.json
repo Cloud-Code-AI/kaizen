@@ -1,0 +1,47 @@
+[
+  {
+    "topic": "Comment Clarity",
+    "comment": "The comment 'TODO: DONT PUSH DUPLICATE' is ambiguous and lacks context.",
+    "confidence": "moderate",
+    "reason": "Comments should provide clear guidance or context for future developers.",
+    "solution": "Provide a more descriptive comment explaining what needs to be done to avoid pushing duplicates.",
+    "actual_code": "# TODO: DONT PUSH DUPLICATE",
+    "fixed_code": "# TODO: Ensure that duplicate embeddings are not pushed to the database.",
+    "file_name": "kaizen/retriever/llama_index_retriever.py",
+    "start_line": 157,
+    "end_line": 157,
+    "side": "RIGHT",
+    "sentiment": "neutral",
+    "severity_level": 3
+  },
+  {
+    "topic": "Code Removal Impact",
+    "comment": "The removal of the llama-index-llms-openai dependency might cause issues if any part of the codebase relies on it.",
+    "confidence": "important",
+    "reason": "Removing dependencies without ensuring they are not used elsewhere can lead to runtime errors.",
+    "solution": "Verify that no part of the codebase uses llama-index-llms-openai before removing it.",
+    "actual_code": "",
+    "fixed_code": "",
+    "file_name": "pyproject.toml",
+    "start_line": 27,
+    "end_line": 28,
+    "side": "LEFT",
+    "sentiment": "negative",
+    "severity_level": 7
+  },
+  {
+    "topic": "Hardcoded Paths",
+    "comment": "The path './github_app/' is hardcoded, which can cause issues in different environments.",
+    "confidence": "important",
+    "reason": "Hardcoded paths can lead to errors when the code is run in different environments or directories.",
+    "solution": "Use a configuration file or environment variables to manage paths.",
+    "actual_code": "analyzer.setup_repository(\"./github_app/\")",
+    "fixed_code": "analyzer.setup_repository(os.getenv('GITHUB_APP_PATH', './github_app/'))",
+    "file_name": "examples/ragify_codebase/main.py",
+    "start_line": 7,
+    "end_line": 7,
+    "side": "RIGHT",
+    "sentiment": "neutral",
+    "severity_level": 6
+  }
+]

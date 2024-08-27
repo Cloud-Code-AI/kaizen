@@ -1,0 +1,16 @@
+[
+  {
+    "topic": "Configuration",
+    "comment": "Changes made to sensitive file",
+    "confidence": "critical",
+    "reason": "Changes were made to config.json, which needs review",
+    "solution": "NA",
+    "fixed_code": "",
+    "start_line": "1",
+    "end_line": "1",
+    "side": "RIGHT",
+    "file_name": "config.json",
+    "sentiment": "negative",
+    "severity_level": 10
+  }
+]

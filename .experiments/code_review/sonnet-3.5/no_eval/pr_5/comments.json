@@ -1,0 +1,47 @@
+[
+  {
+    "topic": "Error Handling",
+    "comment": "The API call in process_applicant() lacks a retry mechanism.",
+    "confidence": "critical",
+    "reason": "Without retries, temporary network issues could cause the application to fail.",
+    "solution": "Implement a retry mechanism with exponential backoff for the API call.",
+    "actual_code": "response = completion(\n    model=os.environ.get(\"model\", \"anyscale/mistralai/Mixtral-8x22B-Instruct-v0.1\"), messages=messages\n)",
+    "fixed_code": "from tenacity import retry, stop_after_attempt, wait_exponential\n\n@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))\ndef make_completion_call(model, messages):\n    return completion(model=model, messages=messages)\n\nresponse = make_completion_call(\n    model=os.environ.get(\"model\", \"anyscale/mistralai/Mixtral-8x22B-Instruct-v0.1\"),\n    messages=messages\n)",
+    "file_name": "main.py",
+    "start_line": 66,
+    "end_line": 68,
+    "side": "RIGHT",
+    "sentiment": "negative",
+    "severity_level": 8
+  },
+  {
+    "topic": "Error Handling",
+    "comment": "Potential division by zero when calculating token percentages.",
+    "confidence": "critical",
+    "reason": "If total_tokens is zero, it could lead to a runtime error.",
+    "solution": "Add a check to avoid division by zero when calculating percentages.",
+    "actual_code": "print(\"\\nProcessing Summary:\")\nprint(f\"Total applicants processed:{len(df)}\")\nprint(f\"Total tokens used:{total_tokens:,}\")\nprint(f\"  - Input tokens:{total_input_tokens:,}\")\nprint(f\"  - Output tokens:{total_output_tokens:,}\")",
+    "fixed_code": "print(\"\\nProcessing Summary:\")\nprint(f\"Total applicants processed:{len(df)}\")\nprint(f\"Total tokens used:{total_tokens:,}\")\nif total_tokens > 0:\n    print(f\"  - Input tokens:{total_input_tokens:,}({total_input_tokens/total_tokens:.2%})\")\n    print(f\"  - Output tokens:{total_output_tokens:,}({total_output_tokens/total_tokens:.2%})\")\nelse:\n    print(\"  - No tokens used.\")",
+    "file_name": "main.py",
+    "start_line": 159,
+    "end_line": 163,
+    "side": "RIGHT",
+    "sentiment": "negative",
+    "severity_level": 7
+  },
+  {
+    "topic": "Error Logging",
+    "comment": "JSONDecodeError is caught but not logged, leading to silent failures.",
+    "confidence": "critical",
+    "reason": "Silent failures make debugging difficult and may hide important issues.",
+    "solution": "Add logging for the JSONDecodeError to track parsing failures.",
+    "actual_code": "except json.JSONDecodeError:\n    # Critical: Silent failure without logging\n    result ={\n        key: \"\"\n        for key in[\n            \"feedback\",\n            \"review\",\n            \"should_interview\",\n            \"rating\",\n            \"input_tokens\",\n            \"output_tokens\",\n        ]\n}",
+    "fixed_code": "import logging\n\nlogging.basicConfig(level=logging.ERROR)\nlogger = logging.getLogger(__name__)\n\ntry:\n    parsed_content = extract_json(content)\n    # ... existing code ...\nexcept json.JSONDecodeError as e:\n    logger.error(f\"Failed to parse JSON content:{e}\")\n    result ={\n        key: \"\"\n        for key in[\n            \"feedback\",\n            \"review\",\n            \"should_interview\",\n            \"rating\",\n            \"input_tokens\",\n            \"output_tokens\",\n        ]\n}",
+    "file_name": "main.py",
+    "start_line": 82,
+    "end_line": 94,
+    "side": "RIGHT",
+    "sentiment": "negative",
+    "severity_level": 7
+  }
+]

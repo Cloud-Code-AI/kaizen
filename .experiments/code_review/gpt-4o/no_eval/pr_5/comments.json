@@ -1,0 +1,47 @@
+[
+  {
+    "topic": "API Call Error Handling",
+    "comment": "The API call to 'completion' lacks a retry mechanism.",
+    "confidence": "critical",
+    "reason": "API calls can fail due to network issues or server errors, and without a retry mechanism, the function may fail unexpectedly.",
+    "solution": "Implement a retry mechanism with exponential backoff for the API call.",
+    "actual_code": "response = completion(\n    model=os.environ.get(\"model\", \"anyscale/mistralai/Mixtral-8x22B-Instruct-v0.1\"), messages=messages\n)",
+    "fixed_code": "import time\n\nfor attempt in range(3):\n    try:\n        response = completion(\n            model=os.environ.get(\"model\", \"anyscale/mistralai/Mixtral-8x22B-Instruct-v0.1\"), messages=messages\n        )\n        break\n    except Exception as e:\n        if attempt < 2:\n            time.sleep(2 ** attempt)\n        else:\n            raise e",
+    "file_name": "main.py",
+    "start_line": 66,
+    "end_line": 68,
+    "side": "RIGHT",
+    "sentiment": "negative",
+    "severity_level": 9
+  },
+  {
+    "topic": "Silent Failure",
+    "comment": "The exception handling for JSON decoding fails silently without logging.",
+    "confidence": "critical",
+    "reason": "Silent failures make it difficult to diagnose issues when they occur.",
+    "solution": "Add logging to capture the exception details.",
+    "actual_code": "except json.JSONDecodeError:\n    result ={",
+    "fixed_code": "except json.JSONDecodeError as e:\n    print(f\"Failed to parse content for applicant:{e}\")\n    result ={",
+    "file_name": "main.py",
+    "start_line": 82,
+    "end_line": 84,
+    "side": "RIGHT",
+    "sentiment": "negative",
+    "severity_level": 8
+  },
+  {
+    "topic": "Division by Zero",
+    "comment": "Potential division by zero when calculating total tokens.",
+    "confidence": "critical",
+    "reason": "If 'total_tokens' is zero, it will cause a division by zero error.",
+    "solution": "Add a check to ensure 'total_tokens' is not zero before performing the division.",
+    "actual_code": "total_tokens = total_input_tokens + total_output_tokens",
+    "fixed_code": "total_tokens = total_input_tokens + total_output_tokens\nif total_tokens == 0:\n    print(\"No tokens were used.\")\n    return",
+    "file_name": "main.py",
+    "start_line": 156,
+    "end_line": 158,
+    "side": "RIGHT",
+    "sentiment": "negative",
+    "severity_level": 7
+  }
+]
