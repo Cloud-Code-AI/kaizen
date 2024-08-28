@@ -160,7 +160,7 @@ class CodeReviewer:
 
         reviews.extend(self.check_sensitive_files(pull_request_files))
 
-        topics = self._merge_topics(reviews)
+        categories = self._merge_categories(reviews)
         prompt_cost, completion_cost = self.provider.get_usage_cost(
             total_usage=self.total_usage
         )
@@ -168,7 +168,7 @@ class CodeReviewer:
         return ReviewOutput(
             usage=self.total_usage,
             model_name=self.provider.model,
-            topics=topics,
+            topics=categories,
             issues=reviews,
             code_quality=code_quality,
             cost={"prompt_cost": prompt_cost, "completion_cost": completion_cost},
@@ -304,11 +304,11 @@ class CodeReviewer:
         return resp
 
     @staticmethod
-    def _merge_topics(reviews: List[Dict]) -> Dict[str, List[Dict]]:
-        topics = {}
+    def _merge_categories(reviews: List[Dict]) -> Dict[str, List[Dict]]:
+        categories = {}
         for review in reviews:
-            topics.setdefault(review["topic"], []).append(review)
-        return topics
+            categories.setdefault(review["category"], []).append(review)
+        return categories
 
     def check_sensitive_files(self, pull_request_files: list):
         reviews = []
@@ -324,18 +324,18 @@ class CodeReviewer:
                             line = patch.split(" ")[2].split(",")[0][1:]
                         reviews.append(
                             {
-                                "topic": category,
-                                "comment": "Changes made to sensitive file",
-                                "confidence": "critical",
-                                "reason": f"Changes were made to {file_name}, which needs review",
-                                "solution": "NA",
+                                "category": category,
+                                "description": "Changes made to sensitive file",
+                                "impact": "critical",
+                                "recommendation": f"Changes were made to {file_name}, which needs review",
+                                "current_code": "NA",
                                 "fixed_code": "",
                                 "start_line": line,
                                 "end_line": line,
                                 "side": "RIGHT",
-                                "file_name": file_name,
+                                "file_path": file_name,
                                 "sentiment": "negative",
-                                "severity_level": 10,
+                                "severity": 10,
                             }
                         )
         return reviews

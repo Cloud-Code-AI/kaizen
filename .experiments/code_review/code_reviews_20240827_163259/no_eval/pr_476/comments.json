@@ -1,0 +1,31 @@
+[
+  {
+    "category": "Security Vulnerability",
+    "description": "Potential exposure of sensitive data in logs.",
+    "impact": "critical",
+    "rationale": "Logging sensitive information, such as access tokens or personal data, can lead to security vulnerabilities. It's essential to sanitize logs to avoid exposing sensitive data.",
+    "recommendation": "Review logging statements to ensure sensitive data is not logged. Implement logging best practices.",
+    "current_code": "logger.debug(f\"Post Review comment response:{response.text}\")",
+    "suggested_code": "logger.debug(\"Post Review comment response received.\")",
+    "file_path": "github_app/github_helper/pull_requests.py",
+    "start_line": 181,
+    "end_line": 182,
+    "change_type": "modification",
+    "sentiment": "negative",
+    "severity": 9
+  },
+  {
+    "category": "Configuration",
+    "description": "Changes made to sensitive file",
+    "impact": "critical",
+    "recommendation": "Changes were made to config.json, which needs review",
+    "current_code": "NA",
+    "fixed_code": "",
+    "start_line": "1",
+    "end_line": "1",
+    "side": "RIGHT",
+    "file_path": "config.json",
+    "sentiment": "negative",
+    "severity": 10
+  }
+]

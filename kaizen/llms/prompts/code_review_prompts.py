@@ -8,7 +8,7 @@ As an experienced software engineer, provide a concise, actionable code review f
   "code_quality_percentage": <0_TO_100>,
   "review": [
     {{
-      "topic": "<ISSUE_CATEGORY>",
+      "category": "<ISSUE_CATEGORY>",
       "description": "<CONCISE_ISSUE_DESCRIPTION>",
       "impact": "critical|high|medium|low|trivial",
       "rationale": "<DETAILED_EXPLANATION>",
@@ -18,77 +18,63 @@ As an experienced software engineer, provide a concise, actionable code review f
       "file_path": "<FULL_FILE_PATH>",
       "start_line": <STARTING_LINE_NUMBER>,
       "end_line": <ENDING_LINE_NUMBER>,
-      "change_type": "addition|deletion|modification",
       "sentiment": "positive|negative|neutral",
       "severity": <1_TO_10>
     }}
   ]
 }}
 
-## Guidelines:
-- Provide specific feedback with file paths and line numbers
-- Use markdown for code snippets. Make sure all code is following the original indentations.
-- Merge duplicate feedback
-- Examine: syntax/logic errors, resource leaks, race conditions, security vulnerabilities
-- If no issues found: {{"review": []}}
+## Guidelines
+1. Syntax and Logic Errors:
+   - Incorrect use of language constructs
+   - Off-by-one errors
+   - Null pointer dereferences
+   - Type mismatches
+   - Incorrect boolean logic
 
-## Patch Data Format:
-- First column: Original file line numbers
-- Second column: New file line numbers (spaces for removed lines)
-- Third column: Change type
-  '-1:[-]': Line removed
-  '+1:[+]': Line added
-  '0:[.]': Unchanged line
-- Remaining columns: Code content
+2. Performance Issues:
+   - Inefficient algorithms or data structures
+   - Unnecessary computations or memory allocations
+   - Improper use of caching mechanisms
+   - N+1 query problems in database operations
+   - Unoptimized loops or recursions
 
-Example:
+3. Resource Management:
+   - Memory leaks
+   - Unclosed resources (file handles, database connections)
+   - Improper disposal of heavy objects
 
-1    -    -1:[-] def old_function(x):
-2         +1:[+] def new_function(x, y):
-3    3     0:[.]     result = x * 2
-4         +1:[+]     result += y
-4    5     0:[.]     return result
+4. Concurrency and Threading:
+   - Race conditions
+   - Deadlocks or livelocks
+   - Improper use of synchronization primitives
+   - Thread safety issues
 
-This snippet shows a diff (difference) between two versions of a function:
+5. Security Vulnerabilities:
+   - SQL injection
+   - Cross-site scripting (XSS)
+   - Insecure cryptographic practices
+   - Improper input validation
+   - Hard-coded credentials or sensitive information
 
-1. The function name changed from 'old_function' to 'new_function'.
-2. A new parameter 'y' was added to the function.
-3. The line 'result = x * 2' remained unchanged.
-4. A new line 'result += y' was added, incorporating the new parameter.
-5. The return statement remained unchanged.
+6. Code Structure and Design:
+   - Violations of SOLID principles
+   - Excessive complexity (high cyclomatic complexity)
+   - Code duplication
+   - Poor separation of concerns
+   - Inconsistent naming conventions or coding style
 
-## Review Focus:
-1. Removals (-1:[-]): Identify if removal causes problems in remaining code. Remember any line having -1:[-] is removed line from the new code.
-2. Additions (+1:[+]): Provide detailed feedback and suggest improvements. Remember any line having +1:[+] is added line.
-3. Consider impact of changes on overall code structure and functionality.
-4. Note unchanged lines (0:[.]) for context.
-5. For 'fixed_code' -> always suggest changes for Additions. 
-6. Evaluate code for adherence to best practices and potential optimizations.
-7. Consider performance implications of the changes.
-8. Check for proper error handling and exception management.
-9. Assess the quality and coverage of unit tests, if present.
-10. Evaluate the clarity and completeness of comments and documentation.
-11. Look for potential security vulnerabilities or privacy concerns.
-12. Consider the scalability and maintainability of the changes.
+7. Error Handling and Logging:
+   - Inadequate or overly broad exception handling
+   - Lack of proper logging or monitoring
+   - Swallowed exceptions without proper handling
 
-## Field Guidelines:
-- "fixed_code": Corrected code for additions only, between start_line and end_line. make sure start_line you suggest does not has `0:[.]`.
-- "actual_code": Current Code line which you think has error. make sure it always done on `+1:[+]` lines. If not, keep it empty ''.
+Field Guidelines:
+- "suggested_code": Corrected code for additions only, between start_line and end_line.
 - "start_line" and "end_line": Actual line numbers in the additions.
-- "severity_level": 1 (least severe) to 10 (most critical).
+- "severity": 1 (least severe) to 10 (most critical).
 
-## Suggestion Guidelines:
-- Prioritize issues based on their potential impact on code quality, functionality, and maintainability.
-- Provide concrete examples or code snippets when suggesting improvements.
-- Consider both short-term fixes and long-term architectural improvements.
-- Suggest automated tools or techniques that could help prevent similar issues in the future.
-- When appropriate, reference relevant design patterns or best practices in your suggestions.
-
-## Holistic Review:
-- Consider how the changes fit into the broader context of the project.
-- Assess whether the changes introduce or resolve technical debt.
-- Evaluate if the changes are consistent with the overall architecture and coding style of the project.
-- Consider potential side effects or unintended consequences of the changes.
+Prioritize issues based on their potential impact on code quality, functionality, and maintainability. Provide concrete examples or code snippets when suggesting improvements.
 
 ## PATCH DATA:
 ```{CODE_DIFF}```
@@ -100,67 +86,74 @@ As an experienced software engineer, provide a concise, actionable code review f
   "code_quality_percentage": <0_TO_100>,
   "review": [
     {{
-      "topic": "<SECTION_TOPIC>",
-      "comment": "<CONCISE_ISSUE_DESCRIPTION>",
-      "confidence": "critical|important|moderate|low|trivial",
-      "reason": "<ISSUE_REASONING>",
-      "solution": "<HIGH_LEVEL_SOLUTION>",
-      "actual_code": "<PEICE_OF_CODE_WHICH_HAS_ISSUES>",
-      "fixed_code": "<CORRECTED_CODE>",
-      "file_name": "<FULL_FILE_PATH>",
-      "start_line": <START_LINE_NUMBER>,
-      "end_line": <END_LINE_NUMBER>,
-      "side": "LEFT|RIGHT",
+      "category": "<ISSUE_CATEGORY>",
+      "description": "<CONCISE_ISSUE_DESCRIPTION>",
+      "impact": "critical|high|medium|low|trivial",
+      "rationale": "<DETAILED_EXPLANATION>",
+      "recommendation": "<SPECIFIC_IMPROVEMENT_SUGGESTION>",
+      "current_code": "<PROBLEMATIC_CODE_SNIPPET>",
+      "suggested_code": "<IMPROVED_CODE_SNIPPET>",
+      "file_path": "<FULL_FILE_PATH>",
+      "start_line": <STARTING_LINE_NUMBER>,
+      "end_line": <ENDING_LINE_NUMBER>,
       "sentiment": "positive|negative|neutral",
-      "severity_level": <1_TO_10>
+      "severity": <1_TO_10>
     }}
   ]
 }}
 
-## Guidelines:
-- Provide specific feedback with file paths and line numbers
-- Use markdown for code snippets. Make sure all code is following the original indentations.
-- Merge duplicate feedback
-- Examine: syntax/logic errors, resource leaks, race conditions, security vulnerabilities
-- If no issues found: {{"review": []}}
 
-## Patch Data Format:
-- First column: Original file line numbers
-- Second column: New file line numbers (spaces for removed lines)
-- Third column: Change type
-  '-1:[-]': Line removed
-  '+1:[+]': Line added
-  '0:[.]': Unchanged line
-- Remaining columns: Code content
+## Guidelines
+1. Syntax and Logic Errors:
+   - Incorrect use of language constructs
+   - Off-by-one errors
+   - Null pointer dereferences
+   - Type mismatches
+   - Incorrect boolean logic
 
-Example:
+2. Performance Issues:
+   - Inefficient algorithms or data structures
+   - Unnecessary computations or memory allocations
+   - Improper use of caching mechanisms
+   - N+1 query problems in database operations
+   - Unoptimized loops or recursions
 
-1    -    -1:[-] def old_function(x):
-2         +1:[+] def new_function(x, y):
-3    3     0:[.]     result = x * 2
-4         +1:[+]     result += y
-4    5     0:[.]     return result
+3. Resource Management:
+   - Memory leaks
+   - Unclosed resources (file handles, database connections)
+   - Improper disposal of heavy objects
 
-This snippet shows a diff (difference) between two versions of a function:
+4. Concurrency and Threading:
+   - Race conditions
+   - Deadlocks or livelocks
+   - Improper use of synchronization primitives
+   - Thread safety issues
 
-1. The function name changed from 'old_function' to 'new_function'.
-2. A new parameter 'y' was added to the function.
-3. The line 'result = x * 2' remained unchanged.
-4. A new line 'result += y' was added, incorporating the new parameter.
-5. The return statement remained unchanged.
+5. Security Vulnerabilities:
+   - SQL injection
+   - Cross-site scripting (XSS)
+   - Insecure cryptographic practices
+   - Improper input validation
+   - Hard-coded credentials or sensitive information
 
-## Review Focus:
-1. Removals (-1:[-]): Identify if removal causes problems in remaining code. Remember any line having -1:[-] is removed line from the new code.
-2. Additions (+1:[+]): Provide detailed feedback and suggest improvements. Remember any line having +1:[+] is added line.
-3. Consider impact of changes on overall code structure and functionality.
-4. Note unchanged lines (0:[.]) for context.
-5. For 'fixed_code' -> always suggest changes for Additions. 
+6. Code Structure and Design:
+   - Violations of SOLID principles
+   - Excessive complexity (high cyclomatic complexity)
+   - Code duplication
+   - Poor separation of concerns
+   - Inconsistent naming conventions or coding style
 
-## Field Guidelines:
-- "fixed_code": Corrected code for additions only, between start_line and end_line. make sure start_line you suggest does not has `0:[.]`.
-- "actual_code": Current Code line which you think has error. make sure it always done on `+1:[+]` lines. If not, keep it empty ''.
+7. Error Handling and Logging:
+   - Inadequate or overly broad exception handling
+   - Lack of proper logging or monitoring
+   - Swallowed exceptions without proper handling
+
+Field Guidelines:
+- "suggested_code": Corrected code for additions only, between start_line and end_line.
 - "start_line" and "end_line": Actual line numbers in the additions.
-- "severity_level": 1 (least severe) to 10 (most critical).
+- "severity": 1 (least severe) to 10 (most critical).
+
+Prioritize issues based on their potential impact on code quality, functionality, and maintainability. Provide concrete examples or code snippets when suggesting improvements.
 
 ## File PATCH Data:
 ```{FILE_PATCH}```

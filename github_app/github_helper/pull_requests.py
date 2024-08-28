@@ -147,7 +147,7 @@ def clean_keys(topics, min_confidence=None):
         rev = []
         for review in reviews:
             if not review.get("reasoning"):
-                review["reasoning"] = review["comment"]
+                review["reasoning"] = review["description"]
             if confidence_mapping[review["impact"]] >= min_value:
                 rev.append(review)
         new_topics[topic] = rev
@@ -165,7 +165,7 @@ def post_pull_request_comments(url, review, installation_id):
                 "path": review["file_path"],
                 "start_line": review["start_line"],
                 "line": review["end_line"],
-                "body": review["comment"],
+                "body": review["description"],
             }
         ],
     }

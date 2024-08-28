@@ -6,7 +6,7 @@ def create_pr_review_text(
 ) -> str:
     markdown_output = "# 🔍 Code Review Summary\n\n"
 
-    if sum(1 for review in reviews if review["impact"] == "critical") == 0:
+    if sum(1 for review in reviews if review.get("impact", "") == "critical") == 0:
         markdown_output += "✅ **All Clear:** This commit looks good! 👍\n\n"
     else:
         markdown_output += (
@@ -90,9 +90,15 @@ def create_pr_review_text(
 
 def create_stats_section(reviews: List[Dict]) -> str:
     total_issues = len(reviews)
-    critical_issues = sum(1 for review in reviews if review["impact"] == "critical")
-    important_issues = sum(1 for review in reviews if review["impact"] == "important")
-    minor_issues = sum(1 for review in reviews if review["impact"] in ["moderate"])
+    critical_issues = sum(
+        1 for review in reviews if review.get("impact", "") == "critical"
+    )
+    important_issues = sum(
+        1 for review in reviews if review.get("impact", "") == "important"
+    )
+    minor_issues = sum(
+        1 for review in reviews if review.get("impact", "") in ["moderate"]
+    )
     files_affected = len(set(review["file_path"] for review in reviews))
 
     output = "## 📊 Stats\n"
@@ -106,7 +112,7 @@ def create_stats_section(reviews: List[Dict]) -> str:
 
 def create_issues_section(issues: List[Dict]) -> str:
     output = "<details>\n"
-    output += f"<summary><strong>{issues[0]['topic']} ({len(issues)} issues)</strong></summary>\n\n"
+    output += f"<summary><strong>{issues[0]['category']} ({len(issues)} issues)</strong></summary>\n\n"
     for i, issue in enumerate(issues, 1):
         output += create_issue_section(issue, i)
     output += "</details>\n\n"
@@ -114,10 +120,10 @@ def create_issues_section(issues: List[Dict]) -> str:
 
 
 def create_issue_section(issue: Dict, index: int) -> str:
-    output = f"### {index}. {issue['comment']}\n"
-    output += f"📁 **File:** `{issue['file_name']}:{issue['start_line']}`\n"
-    output += f"⚖️ **Severity:** {issue['severity_level']}/10\n"
-    output += f"🔍 **Description:** {issue.get('reason', '')}\n"
+    output = f"### {index}. {issue['description']}\n"
+    output += f"📁 **File:** `{issue['file_path']}:{issue['start_line']}`\n"
+    output += f"⚖️ **Severity:** {issue['severity']}/10\n"
+    output += f"🔍 **Description:** {issue.get('description', '')}\n"
     output += f"💡 **Solution:** {issue.get('solution', '')}\n\n"
     if issue.get("current_code", None) or issue.get("fixed_code", ""):
         output += "**Current Code:**\n"

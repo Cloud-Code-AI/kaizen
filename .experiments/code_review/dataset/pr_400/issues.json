@@ -1,52 +1,52 @@
 [
   {
-    "topic": "Test Coverage",
-    "comment": "Improved test coverage with more comprehensive test cases, including edge cases and error handling scenarios.",
-    "confidence": "important",
-    "reason": "Comprehensive test coverage is crucial for maintaining code quality, catching potential bugs, and ensuring the reliability of the code.",
-    "solution": "Continue to add test cases for edge cases and ensure all new functionality is covered by tests.",
-    "file_name": ".kaizen/unit_test/kaizen/helpers/test_create_pr_description.py, .kaizen/unit_test/kaizen/helpers/test_create_pr_review_text.py, .kaizen/unit_test/kaizen/helpers/test_create_test_files.py, .kaizen/unit_test/kaizen/helpers/test_get_web_html.py",
+    "category": "Test Coverage",
+    "description": "Improved test coverage with more comprehensive test cases, including edge cases and error handling scenarios.",
+    "impact": "high",
+    "rationale": "Comprehensive test coverage is crucial for maintaining code quality, catching potential bugs, and ensuring the reliability of the code.",
+    "recommendation": "Continue to add test cases for edge cases and ensure all new functionality is covered by tests.",
+    "file_path": ".kaizen/unit_test/kaizen/helpers/test_create_pr_description.py, .kaizen/unit_test/kaizen/helpers/test_create_pr_review_text.py, .kaizen/unit_test/kaizen/helpers/test_create_test_files.py, .kaizen/unit_test/kaizen/helpers/test_get_web_html.py",
     "sentiment": "positive",
-    "severity_level": 7
+    "severity": 7
   },
   {
-    "topic": "Code Structure and Organization",
-    "comment": "Improved code structure with better modularity, organization, and use of pytest fixtures.",
-    "confidence": "important",
-    "reason": "Good organization improves readability, maintainability, and allows for better separation of concerns.",
-    "solution": "Continue to monitor for potential further improvements in code structure and organization.",
-    "file_name": ".kaizen/unit_test/kaizen/helpers/test_create_test_files.py, kaizen/generator/unit_test.py",
+    "category": "Code Structure and Organization",
+    "description": "Improved code structure with better modularity, organization, and use of pytest fixtures.",
+    "impact": "high",
+    "rationale": "Good organization improves readability, maintainability, and allows for better separation of concerns.",
+    "recommendation": "Continue to monitor for potential further improvements in code structure and organization.",
+    "file_path": ".kaizen/unit_test/kaizen/helpers/test_create_test_files.py, kaizen/generator/unit_test.py",
     "sentiment": "positive",
-    "severity_level": 3
+    "severity": 3
   },
   {
-    "topic": "Error Handling",
-    "comment": "Insufficient error handling in some methods, particularly for file operations.",
-    "confidence": "important",
-    "reason": "Proper error handling ensures the program remains stable and provides useful error messages.",
-    "solution": "Implement try-except blocks to handle potential errors, especially in file operations and network requests.",
-    "file_name": "kaizen/generator/unit_test.py",
+    "category": "Error Handling",
+    "description": "Insufficient error handling in some methods, particularly for file operations.",
+    "impact": "high",
+    "rationale": "Proper error handling ensures the program remains stable and provides useful error messages.",
+    "recommendation": "Implement try-except blocks to handle potential errors, especially in file operations and network requests.",
+    "file_path": "kaizen/generator/unit_test.py",
     "sentiment": "negative",
-    "severity_level": 7
+    "severity": 7
   },
   {
-    "topic": "Logging Configuration",
-    "comment": "The logging configuration might override existing setups and is mixed with import statements.",
-    "confidence": "important",
-    "reason": "Inconsistent logging configuration can lead to loss of important log information and poor code organization.",
-    "solution": "Adjust the logging configuration to respect the LOGLEVEL environment variable and move it to a separate section after all imports.",
-    "file_name": "kaizen/llms/provider.py",
+    "category": "Logging Configuration",
+    "description": "The logging configuration might override existing setups and is mixed with import statements.",
+    "impact": "high",
+    "rationale": "Inconsistent logging configuration can lead to loss of important log information and poor code organization.",
+    "recommendation": "Adjust the logging configuration to respect the LOGLEVEL environment variable and move it to a separate section after all imports.",
+    "file_path": "kaizen/llms/provider.py",
     "sentiment": "negative",
-    "severity_level": 7
+    "severity": 7
   },
   {
-    "topic": "Configuration Update",
-    "comment": "Changes made to sensitive configuration file",
-    "confidence": "critical",
-    "reason": "Changes to config.json may affect system functionality and security",
-    "solution": "Review the changes in config.json carefully, especially the new 'base_model' fields, and ensure that the code using this configuration is updated accordingly.",
-    "file_name": "config.json",
+    "category": "Configuration Update",
+    "description": "Changes made to sensitive configuration file",
+    "impact": "critical",
+    "rationale": "Changes to config.json may affect system functionality and security",
+    "recommendation": "Review the changes in config.json carefully, especially the new 'base_model' fields, and ensure that the code using this configuration is updated accordingly.",
+    "file_path": "config.json",
     "sentiment": "negative",
-    "severity_level": 10
+    "severity": 10
   }
 ]

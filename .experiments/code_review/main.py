@@ -35,7 +35,7 @@ def process_pr(pr_url, reeval_response=False):
     diff_text = get_diff_text(pr_diff, "")
     pr_files = get_pr_files(pr_files, "")
 
-    reviewer = CodeReviewer(llm_provider=LLMProvider(), default_model="best")
+    reviewer = CodeReviewer(llm_provider=LLMProvider(), default_model="default")
     review_data = reviewer.review_pull_request(
         diff_text=diff_text,
         pull_request_title=pr_title,

@@ -1,0 +1,62 @@
+[
+  {
+    "category": "Code Structure",
+    "description": "Inconsistent parameter formatting in function calls.",
+    "impact": "medium",
+    "rationale": "The change to the `generate_linkedin_post` function call introduces a multi-line format, which could reduce readability and consistency in function calls across the codebase.",
+    "recommendation": "Consider keeping function calls in a single line unless they exceed a reasonable length. This will enhance readability and maintainability.",
+    "current_code": "linkedin_post = work_summary_generator.generate_linkedin_post(\n     summary, user=\"oss_example\"\n )",
+    "suggested_code": "linkedin_post = work_summary_generator.generate_linkedin_post(summary, user=\"oss_example\")",
+    "file_path": "examples/work_summarizer/main.py",
+    "start_line": 60,
+    "end_line": 62,
+    "change_type": "modification",
+    "sentiment": "neutral",
+    "severity": 5
+  },
+  {
+    "category": "Error Handling",
+    "description": "Missing error handling for JSON parsing.",
+    "impact": "high",
+    "rationale": "The `json.loads` function in `kaizen/helpers/parser.py` does not handle potential exceptions that may arise from malformed JSON, which could lead to runtime crashes.",
+    "recommendation": "Wrap the JSON parsing in a try-except block to handle possible exceptions and provide meaningful error messages.",
+    "current_code": "parsed_data = json.loads(json_data)",
+    "suggested_code": "try:\n    parsed_data = json.loads(json_data)\nexcept json.JSONDecodeError as e:\n    logging.error(f\"Failed to parse JSON:{e}\")\n    return None",
+    "file_path": "kaizen/helpers/parser.py",
+    "start_line": 47,
+    "end_line": 48,
+    "change_type": "modification",
+    "sentiment": "negative",
+    "severity": 8
+  },
+  {
+    "category": "Documentation",
+    "description": "Lack of docstrings for new functions.",
+    "impact": "medium",
+    "rationale": "New functions like `generate_twitter_post` and `generate_linkedin_post` lack docstrings, making it difficult for future developers to understand their purpose and usage.",
+    "recommendation": "Add docstrings to all new functions to describe their parameters, return types, and functionality.",
+    "current_code": "",
+    "suggested_code": "\"\"\"\nGenerates a Twitter post based on the provided summary.\n\nArgs:\n    summary (Dict): The summary data.\n    user (Optional[str]): The user requesting the post.\n\nReturns:\n    str: The generated Twitter post.\n\"\"\"",
+    "file_path": "kaizen/reviewer/work_summarizer.py",
+    "start_line": 58,
+    "end_line": 66,
+    "change_type": "addition",
+    "sentiment": "positive",
+    "severity": 6
+  },
+  {
+    "category": "Code Consistency",
+    "description": "Inconsistent naming conventions for constants.",
+    "impact": "medium",
+    "rationale": "The constants `TWITTER_POST_PROMPT` and `LINKEDIN_POST_PROMPT` are defined without a consistent naming style compared to other constants in the codebase.",
+    "recommendation": "Ensure all constants follow a consistent naming convention, such as using uppercase letters with underscores.",
+    "current_code": "TWITTER_POST_PROMPT = \"\"\"\nGiven the following work summary, create a concise and engaging Twitter post (max 280 characters) that highlights the key changes or improvements. Format the post as markdown, enclosed in triple backticks:\n\nSummary:\n{SUMMARY}\n\nTwitter Post:\n```\n<Your Twitter post here>\n```\n\"\"\"",
+    "suggested_code": "TWITTER_POST_PROMPT = \"\"\"\nGiven the following work summary, create a concise and engaging Twitter post (max 280 characters) that highlights the key changes or improvements. Format the post as markdown, enclosed in triple backticks:\n\nSummary:\n{SUMMARY}\n\nTwitter Post:\n```\n<Your Twitter post here>\n```\n\"\"\"",
+    "file_path": "kaizen/llms/prompts/work_summary_prompts.py",
+    "start_line": 44,
+    "end_line": 54,
+    "change_type": "modification",
+    "sentiment": "neutral",
+    "severity": 4
+  }
+]

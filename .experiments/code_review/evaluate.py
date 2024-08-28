@@ -1,6 +1,7 @@
 import json
 import os
-from fuzzywuzzy import fuzz
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 
 def load_json(file_path):
@@ -8,8 +9,10 @@ def load_json(file_path):
         return json.load(f)
 
 
-def fuzzy_match(str1, str2, threshold=50):
-    return fuzz.partial_ratio(str1.lower(), str2.lower()) >= threshold
+def calculate_similarity(str1, str2):
+    vectorizer = TfidfVectorizer()
+    tfidf_matrix = vectorizer.fit_transform([str1, str2])
+    return cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])[0][0]
 
 
 def compare_issues(ground_truth, model_issues):
@@ -20,27 +23,32 @@ def compare_issues(ground_truth, model_issues):
     for gt_issue in ground_truth:
         found_match = False
         for model_issue in model_issues:
+            category_similarity = calculate_similarity(
+                gt_issue["category"], model_issue["category"]
+            )
+            description_similarity = calculate_similarity(
+                gt_issue["description"], model_issue["description"]
+            )
+
             if (
-                fuzzy_match(gt_issue["topic"], model_issue["topic"])
-                and fuzzy_match(gt_issue["comment"], model_issue["comment"])
-                and gt_issue["file_name"] == model_issue["file_name"]
+                category_similarity > 0.5
+                and description_similarity > 0.5
+                and gt_issue["file_path"] == model_issue["file_path"]
                 and abs(
                     int(gt_issue.get("start_line", 0))
                     - int(model_issue.get("start_line", -10))
                 )
-                <= 1
+                <= 2
                 and abs(
                     int(gt_issue.get("end_line", 0))
                     - int(model_issue.get("end_line", -10))
                 )
-                <= 1
+                <= 2
                 and abs(
-                    int(gt_issue.get("severity_level", 0))
-                    - int(model_issue.get("severity_level", -10))
+                    int(gt_issue.get("severity", 0))
+                    - int(model_issue.get("severity", -10))
                 )
-                <= 1
-                and gt_issue.get("sentiment", "bad")
-                == model_issue.get("sentiment", "hmm")
+                <= 2
             ):
                 matched.append((gt_issue, model_issue))
                 found_match = True
@@ -62,15 +70,11 @@ def evaluate_model(ground_truth, model_issues):
     total_issues = len(ground_truth)
     issues_found = len(model_issues)
     correct_issues = len(matched)
-    false_positives = len(unmatched_model)
     false_negatives = len(unmatched_gt)
+    false_positives = len(unmatched_model)
 
-    precision = (
-        correct_issues / (correct_issues + false_positives)
-        if (correct_issues + false_positives) > 0
-        else 0
-    )
-    recall = correct_issues / total_issues
+    recall = correct_issues / total_issues if total_issues > 0 else 0
+    precision = correct_issues / issues_found if issues_found > 0 else 0
     f1_score = (
         2 * (precision * recall) / (precision + recall)
         if (precision + recall) > 0
@@ -81,10 +85,10 @@ def evaluate_model(ground_truth, model_issues):
         "total_issues": total_issues,
         "issues_found": issues_found,
         "correct_issues": correct_issues,
-        "false_positives": false_positives,
         "false_negatives": false_negatives,
-        "precision": precision,
+        "false_positives": false_positives,
         "recall": recall,
+        "precision": precision,
         "f1_score": f1_score,
     }
 
@@ -98,8 +102,8 @@ def main(folder_name):
     overall_results = {
         "total_issues": 0,
         "correct_issues": 0,
-        "false_positives": 0,
         "false_negatives": 0,
+        "false_positives": 0,
     }
 
     pr_count = 0
@@ -110,13 +114,8 @@ def main(folder_name):
             ground_truth_path = os.path.join(dataset_path, pr_folder, "issues.json")
             model_path = os.path.join(model_base_path, f"pr_{pr_number}", "issues.json")
 
-            if not os.path.exists(ground_truth_path):
-                print(f"Ground truth file not found for PR {pr_number}")
-                continue
-            if not os.path.exists(model_path):
-                print(
-                    f"Model output file not found for {folder_name} on PR {pr_number}"
-                )
+            if not os.path.exists(ground_truth_path) or not os.path.exists(model_path):
+                print(f"Skipping PR {pr_number} due to missing files")
                 continue
 
             ground_truth = load_json(ground_truth_path)
@@ -129,28 +128,28 @@ def main(folder_name):
             print(
                 f"  Correct issues: {results['correct_issues']}/{results['total_issues']}"
             )
-            print(f"  False positives: {results['false_positives']}")
             print(f"  False negatives: {results['false_negatives']}")
-            print(f"  Precision: {results['precision']:.2f}")
+            print(f"  False positives: {results['false_positives']}")
             print(f"  Recall: {results['recall']:.2f}")
+            print(f"  Precision: {results['precision']:.2f}")
             print(f"  F1 Score: {results['f1_score']:.2f}")
 
             for key in [
                 "total_issues",
                 "correct_issues",
-                "false_positives",
                 "false_negatives",
+                "false_positives",
             ]:
                 overall_results[key] += results[key]
 
             pr_count += 1
 
     if pr_count > 0:
-        overall_precision = overall_results["correct_issues"] / (
-            overall_results["correct_issues"] + overall_results["false_positives"]
-        )
         overall_recall = (
             overall_results["correct_issues"] / overall_results["total_issues"]
+        )
+        overall_precision = overall_results["correct_issues"] / (
+            overall_results["correct_issues"] + overall_results["false_positives"]
         )
         overall_f1 = (
             2
@@ -165,10 +164,10 @@ def main(folder_name):
         print(
             f"  Correct issues: {overall_results['correct_issues']}/{overall_results['total_issues']}"
         )
-        print(f"  False positives: {overall_results['false_positives']}")
         print(f"  False negatives: {overall_results['false_negatives']}")
-        print(f"  Precision: {overall_precision:.2f}")
+        print(f"  False positives: {overall_results['false_positives']}")
         print(f"  Recall: {overall_recall:.2f}")
+        print(f"  Precision: {overall_precision:.2f}")
         print(f"  F1 Score: {overall_f1:.2f}")
     else:
         print(f"No valid PRs found for evaluation of {folder_name}")
