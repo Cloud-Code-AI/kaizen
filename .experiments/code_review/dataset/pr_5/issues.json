@@ -1,0 +1,93 @@
+[
+  {
+    "category": "Unused Import",
+    "description": "The 'random' module is imported but never used in the code.",
+    "impact": "trivial",
+    "rationale": "The 'random' module is imported but not utilized in the code.",
+    "recommendation": "Remove the unused import statement for 'random'.",
+    "suggested_code": "import random  # Unused import",
+    "fixed_code": "",
+    "file_path": "main.py",
+    "start_line": 8,
+    "end_line": 8,
+    "severity": 1
+  },
+  {
+    "category": "API Call Error Handling",
+    "description": "The API call to 'completion' lacks a retry mechanism.",
+    "impact": "critical",
+    "rationale": "API calls can fail due to network issues or server errors, and without a retry mechanism, the function may fail unexpectedly.",
+    "recommendation": "Implement a retry mechanism with exponential backoff for the API call.",
+    "suggested_code": "response = completion(\n    model=os.environ.get(\"model\", \"anyscale/mistralai/Mixtral-8x22B-Instruct-v0.1\"), messages=messages\n)",
+    "fixed_code": "import time\n\nfor attempt in range(3):\n    try:\n        response = completion(\n            model=os.environ.get(\"model\", \"anyscale/mistralai/Mixtral-8x22B-Instruct-v0.1\"), messages=messages\n        )\n        break\n    except Exception as e:\n        if attempt < 2:\n            time.sleep(2 ** attempt)\n        else:\n            raise e",
+    "file_path": "main.py",
+    "start_line": 66,
+    "end_line": 68,
+    "severity": 9
+  },
+  {
+    "category": "Silent Failure in JSON Parsing",
+    "description": "The exception handling for JSON decoding fails silently without logging.",
+    "impact": "critical",
+    "rationale": "Silent failures make it difficult to diagnose issues when they occur.",
+    "recommendation": "Add logging to capture the exception details.",
+    "suggested_code": "except json.JSONDecodeError:\n    result = {",
+    "fixed_code": "except json.JSONDecodeError as e:\n    print(f\"Failed to parse content for applicant: {e}\")\n    result = {",
+    "file_path": "main.py",
+    "start_line": 82,
+    "end_line": 84,
+    "severity": 8
+  },
+  {
+    "category": "Inefficient Progress Printing",
+    "description": "The progress printing method is inefficient.",
+    "impact": "high",
+    "rationale": "Printing progress in this manner can be slow and resource-intensive.",
+    "recommendation": "Use a more efficient method for printing progress, such as updating the progress less frequently or using a dedicated progress reporting library like tqdm.",
+    "suggested_code": "print(f\"\\rProgress:[{'=' * int(50 * progress):<50}]{progress:.0%}\", end=\"\", flush=True)",
+    "fixed_code": "if index % max(1, len(df) // 100) == 0:  # Update every 1%\n    print(f\"\\rProgress:[{'=' * int(50 * progress):<50}]{progress:.0%}\", end=\"\", flush=True)",
+    "file_path": "main.py",
+    "start_line": 121,
+    "end_line": 122,
+    "severity": 5
+  },
+  {
+    "category": "Redundant Code",
+    "description": "The check for an empty DataFrame is redundant.",
+    "impact": "medium",
+    "rationale": "The code already handles an empty DataFrame gracefully, so this check is unnecessary.",
+    "recommendation": "Remove the redundant check for an empty DataFrame.",
+    "suggested_code": "if len(df) == 0:\n    return",
+    "fixed_code": "",
+    "file_path": "main.py",
+    "start_line": 142,
+    "end_line": 143,
+    "severity": 3
+  },
+  {
+    "category": "Division by Zero",
+    "description": "Potential division by zero when calculating total tokens.",
+    "impact": "critical",
+    "rationale": "If 'total_tokens' is zero, it will cause a division by zero error.",
+    "recommendation": "Add a check to ensure 'total_tokens' is not zero before performing the division.",
+    "suggested_code": "print(f\"Total tokens used: {total_tokens:,}\")\nprint(f\"  - Input tokens: {total_input_tokens:,}\")\nprint(f\"  - Output tokens: {total_output_tokens:,}\")",
+    "fixed_code": "print(f\"Total tokens used: {total_tokens:,}\")\nif total_tokens > 0:\n    print(f\"  - Input tokens: {total_input_tokens:,} ({total_input_tokens/total_tokens:.2%})\")\n    print(f\"  - Output tokens: {total_output_tokens:,} ({total_output_tokens/total_tokens:.2%})\")\nelse:\n    print(\"  - No tokens used.\")",
+    "file_path": "main.py",
+    "start_line": 158,
+    "end_line": 163,
+    "severity": 7
+  },
+  {
+    "category": "File Not Found Handling",
+    "description": "No error handling for file not found.",
+    "impact": "high",
+    "rationale": "If the specified file does not exist, the program will crash.",
+    "recommendation": "Add error handling to check if the file exists before processing.",
+    "suggested_code": "main(input_file)",
+    "fixed_code": "try:\n    main(input_file)\nexcept FileNotFoundError:\n    print(f\"Error: The file '{input_file}' does not exist. Please check the file path and try again.\")\nexcept Exception as e:\n    print(f\"An error occurred: {e}\")",
+    "file_path": "main.py",
+    "start_line": 174,
+    "end_line": 175,
+    "severity": 6
+  }
+]

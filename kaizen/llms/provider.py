@@ -13,7 +13,7 @@ DEFAULT_MAX_TOKENS = 8000
 
 
 def set_all_loggers_to_ERROR():
-    print("All Loggers and their levels:")
+    # print("All Loggers and their levels:")
     for name, logger in logging.Logger.manager.loggerDict.items():
         if isinstance(logger, logging.Logger):
             # print(f"Logger: {name}, Level: {logging.getLevelName(logger.level)}")
@@ -265,9 +265,12 @@ class LLMProvider:
     def get_usage_cost(self, total_usage: Dict[str, int], model: str = None) -> float:
         if not model:
             model = self.model
-        return litellm.cost_per_token(
-            model, total_usage["prompt_tokens"], total_usage["completion_tokens"]
-        )
+        try:
+            return litellm.cost_per_token(
+                model, total_usage["prompt_tokens"], total_usage["completion_tokens"]
+            )
+        except Exception:
+            return 0, 0
 
     def get_text_embedding(self, text):
         # for model in self.config["language_model"]["models"]:
