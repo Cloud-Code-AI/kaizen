@@ -166,3 +166,5 @@ node_modules
 
 .cloudcode
 tree_sitter_languages/
+
+.experiments/code_review/.*
