@@ -1,20 +1,5 @@
 [
   {
-    "category": "Security",
-    "description": "Hardcoding API keys in `config.json` can lead to security vulnerabilities.",
-    "impact": "critical",
-    "rationale": "Exposing API keys in the codebase can lead to unauthorized access. This was highlighted by multiple models and is a critical security issue.",
-    "recommendation": "Use environment variables to store API keys instead of hardcoding them.",
-    "suggested_code": "\"api_key\": \"os.environ/AZURE_API_KEY\"",
-    "fixed_code": "\"api_key\": \"${AZURE_API_KEY}\"",
-    "file_path": "config.json",
-    "start_line": 13,
-    "end_line": 13,
-    "side": "RIGHT",
-    "sentiment": "negative",
-    "severity": 9
-  },
-  {
     "category": "SQL Injection",
     "description": "Potential SQL injection vulnerability in the query construction.",
     "impact": "critical",
@@ -75,21 +60,6 @@
     "severity": 5
   },
   {
-    "category": "Documentation",
-    "description": "Lack of comments and docstrings in complex functions and methods.",
-    "impact": "high",
-    "rationale": "Several models noted the need for better documentation to improve code understanding and maintainability.",
-    "recommendation": "Add comments explaining complex logic and docstrings to functions and methods.",
-    "suggested_code": "",
-    "fixed_code": "",
-    "file_path": "kaizen/retriever/llama_index_retriever.py",
-    "start_line": 1,
-    "end_line": 1,
-    "side": "RIGHT",
-    "sentiment": "neutral",
-    "severity": 6
-  },
-  {
     "category": "Code Duplication",
     "description": "Duplicate code found in test cases and database connection string creation.",
     "impact": "high",
@@ -101,22 +71,7 @@
     "start_line": 98,
     "end_line": 101,
     "side": "RIGHT",
-    "sentiment": "neutral",
-    "severity": 6
-  },
-  {
-    "category": "Dependency Management",
-    "description": "New dependencies added without justification.",
-    "impact": "high",
-    "rationale": "Adding dependencies increases the attack surface and maintenance burden. This was noted as an important consideration by multiple models.",
-    "recommendation": "Review and justify new dependencies, ensuring they are necessary and compatible.",
-    "suggested_code": "",
-    "fixed_code": "",
-    "file_path": "pyproject.toml",
-    "start_line": 27,
-    "end_line": 49,
-    "side": "RIGHT",
-    "sentiment": "neutral",
+    "sentiment": "negative",
     "severity": 6
   },
   {

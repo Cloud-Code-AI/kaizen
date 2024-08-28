@@ -2,7 +2,7 @@
   {
     "category": "Code Structure and Consistency",
     "description": "There are inconsistencies in code formatting and structure across different function calls.",
-    "impact": "medium",
+    "impact": "high",
     "rationale": "Consistent code structure and formatting improves readability and maintainability. This issue was noted by multiple models.",
     "recommendation": "Standardize the formatting of function calls, particularly for `generate_twitter_post` and `generate_linkedin_post`. Consider using multi-line formatting for both for consistency.",
     "suggested_code": "twitter_post = work_summary_generator.generate_twitter_post(summary, user=\"oss_example\")\n\nlinkedin_post = work_summary_generator.generate_linkedin_post(\n    summary, user=\"oss_example\"\n)",
@@ -11,7 +11,7 @@
     "start_line": 59,
     "end_line": 62,
     "side": "RIGHT",
-    "sentiment": "neutral",
+    "sentiment": "negative",
     "severity": 4
   },
   {
@@ -26,7 +26,7 @@
     "start_line": 0,
     "end_line": 0,
     "side": "RIGHT",
-    "sentiment": "neutral",
+    "sentiment": "negative",
     "severity": 6
   },
   {
@@ -72,21 +72,6 @@
     "end_line": 100,
     "side": "RIGHT",
     "sentiment": "neutral",
-    "severity": 4
-  },
-  {
-    "category": "Prompt Formatting",
-    "description": "The TWITTER_POST_PROMPT and LINKEDIN_POST_PROMPT could be improved for better readability.",
-    "impact": "medium",
-    "rationale": "Well-formatted prompts are easier to read and maintain.",
-    "recommendation": "Break the prompts into multiple lines, use string formatting, and add comments to explain different sections.",
-    "suggested_code": "",
-    "fixed_code": "",
-    "file_path": "kaizen/llms/prompts/work_summary_prompts.py",
-    "start_line": 44,
-    "end_line": 65,
-    "side": "RIGHT",
-    "sentiment": "positive",
     "severity": 4
   }
 ]

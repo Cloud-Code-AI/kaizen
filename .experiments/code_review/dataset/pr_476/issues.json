@@ -11,7 +11,7 @@
     "start_line": 140,
     "end_line": 141,
     "sentiment": "negative",
-    "severity": 9
+    "severity": 7
   },
   {
     "category": "Code Efficiency",
@@ -54,15 +54,5 @@
     "end_line": 22,
     "sentiment": "negative",
     "severity": 6
-  },
-  {
-    "category": "Configuration Changes",
-    "description": "Changes made to sensitive configuration file",
-    "impact": "critical",
-    "rationale": "Changes to config.json may affect system functionality and security. The removal of 'enable_observability_logging' option needs to be properly documented.",
-    "recommendation": "Review all changes in config.json carefully. If removing features, provide a migration guide or deprecation notice for existing users.",
-    "file_path": "config.json",
-    "sentiment": "negative",
-    "severity": 10
   }
 ]

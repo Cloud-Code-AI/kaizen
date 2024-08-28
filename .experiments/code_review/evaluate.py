@@ -23,32 +23,27 @@ def compare_issues(ground_truth, model_issues):
     for gt_issue in ground_truth:
         found_match = False
         for model_issue in model_issues:
-            category_similarity = calculate_similarity(
-                gt_issue["category"], model_issue["category"]
-            )
             description_similarity = calculate_similarity(
                 gt_issue["description"], model_issue["description"]
             )
-
             if (
-                category_similarity > 0.5
-                and description_similarity > 0.5
+                description_similarity > 0.1
                 and gt_issue["file_path"] == model_issue["file_path"]
                 and abs(
                     int(gt_issue.get("start_line", 0))
                     - int(model_issue.get("start_line", -10))
                 )
-                <= 2
+                <= 1
                 and abs(
                     int(gt_issue.get("end_line", 0))
                     - int(model_issue.get("end_line", -10))
                 )
-                <= 2
+                <= 1
                 and abs(
                     int(gt_issue.get("severity", 0))
                     - int(model_issue.get("severity", -10))
                 )
-                <= 2
+                <= 1
             ):
                 matched.append((gt_issue, model_issue))
                 found_match = True

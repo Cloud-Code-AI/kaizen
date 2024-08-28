@@ -24,56 +24,51 @@ As an experienced software engineer, provide a concise, actionable code review f
   ]
 }}
 
-## Guidelines
-1. Syntax and Logic Errors:
-   - Incorrect use of language constructs
-   - Off-by-one errors
-   - Null pointer dereferences
-   - Type mismatches
-   - Incorrect boolean logic
+## Guidelines:
+- Provide specific feedback with file paths and line numbers
+- Use markdown for code snippets. Make sure all code is following the original indentations.
+- Merge duplicate feedback
+- Examine: syntax/logic errors, resource leaks, race conditions, security vulnerabilities
+- If no issues found: {{"review": []}}
 
-2. Performance Issues:
-   - Inefficient algorithms or data structures
-   - Unnecessary computations or memory allocations
-   - Improper use of caching mechanisms
-   - N+1 query problems in database operations
-   - Unoptimized loops or recursions
+## Patch Data Format:
+- First column: Original file line numbers
+- Second column: New file line numbers (spaces for removed lines)
+- Third column: Change type
+  '-1:[-]': Line removed
+  '+1:[+]': Line added
+  '0:[.]': Unchanged line
+- Remaining columns: Code content
 
-3. Resource Management:
-   - Memory leaks
-   - Unclosed resources (file handles, database connections)
-   - Improper disposal of heavy objects
+Example:
 
-4. Concurrency and Threading:
-   - Race conditions
-   - Deadlocks or livelocks
-   - Improper use of synchronization primitives
-   - Thread safety issues
+1    -    -1:[-] def old_function(x):
+2         +1:[+] def new_function(x, y):
+3    3     0:[.]     result = x * 2
+4         +1:[+]     result += y
+4    5     0:[.]     return result
 
-5. Security Vulnerabilities:
-   - SQL injection
-   - Cross-site scripting (XSS)
-   - Insecure cryptographic practices
-   - Improper input validation
-   - Hard-coded credentials or sensitive information
+This snippet shows a diff (difference) between two versions of a function:
 
-6. Code Structure and Design:
-   - Violations of SOLID principles
-   - Excessive complexity (high cyclomatic complexity)
-   - Code duplication
-   - Poor separation of concerns
-   - Inconsistent naming conventions or coding style
+1. The function name changed from 'old_function' to 'new_function'.
+2. A new parameter 'y' was added to the function.
+3. The line 'result = x * 2' remained unchanged.
+4. A new line 'result += y' was added, incorporating the new parameter.
+5. The return statement remained unchanged.
 
-7. Error Handling and Logging:
-   - Inadequate or overly broad exception handling
-   - Lack of proper logging or monitoring
-   - Swallowed exceptions without proper handling
 
-Field Guidelines:
-- "suggested_code": Corrected code for additions only, between start_line and end_line.
+## Review Focus:
+1. Removals (-1:[-]): Identify if removal causes problems in remaining code. Remember any line having -1:[-] is removed line from the new code.
+2. Additions (+1:[+]): Provide detailed feedback and suggest improvements. Remember any line having +1:[+] is added line.
+3. Consider impact of changes on overall code structure and functionality.
+4. Note unchanged lines (0:[.]) for context.
+5. For 'fixed_code' -> always suggest changes for Additions. 
+
+## Field Guidelines:
+- "fixed_code": Corrected code for additions only, between start_line and end_line. make sure start_line you suggest does not has `0:[.]`.
+- "actual_code": Current Code line which you think has error. make sure it always done on `+1:[+]` lines. If not, keep it empty ''.
 - "start_line" and "end_line": Actual line numbers in the additions.
-- "severity": 1 (least severe) to 10 (most critical).
-
+- "severity_level": 1 (least severe) to 10 (most critical).
 Prioritize issues based on their potential impact on code quality, functionality, and maintainability. Provide concrete examples or code snippets when suggesting improvements.
 
 ## PATCH DATA:
@@ -103,55 +98,51 @@ As an experienced software engineer, provide a concise, actionable code review f
 }}
 
 
-## Guidelines
-1. Syntax and Logic Errors:
-   - Incorrect use of language constructs
-   - Off-by-one errors
-   - Null pointer dereferences
-   - Type mismatches
-   - Incorrect boolean logic
+## Guidelines:
+- Provide specific feedback with file paths and line numbers
+- Use markdown for code snippets. Make sure all code is following the original indentations.
+- Merge duplicate feedback
+- Examine: syntax/logic errors, resource leaks, race conditions, security vulnerabilities
+- If no issues found: {{"review": []}}
 
-2. Performance Issues:
-   - Inefficient algorithms or data structures
-   - Unnecessary computations or memory allocations
-   - Improper use of caching mechanisms
-   - N+1 query problems in database operations
-   - Unoptimized loops or recursions
+## Patch Data Format:
+- First column: Original file line numbers
+- Second column: New file line numbers (spaces for removed lines)
+- Third column: Change type
+  '-1:[-]': Line removed
+  '+1:[+]': Line added
+  '0:[.]': Unchanged line
+- Remaining columns: Code content
 
-3. Resource Management:
-   - Memory leaks
-   - Unclosed resources (file handles, database connections)
-   - Improper disposal of heavy objects
+Example:
 
-4. Concurrency and Threading:
-   - Race conditions
-   - Deadlocks or livelocks
-   - Improper use of synchronization primitives
-   - Thread safety issues
+1    -    -1:[-] def old_function(x):
+2         +1:[+] def new_function(x, y):
+3    3     0:[.]     result = x * 2
+4         +1:[+]     result += y
+4    5     0:[.]     return result
 
-5. Security Vulnerabilities:
-   - SQL injection
-   - Cross-site scripting (XSS)
-   - Insecure cryptographic practices
-   - Improper input validation
-   - Hard-coded credentials or sensitive information
+This snippet shows a diff (difference) between two versions of a function:
 
-6. Code Structure and Design:
-   - Violations of SOLID principles
-   - Excessive complexity (high cyclomatic complexity)
-   - Code duplication
-   - Poor separation of concerns
-   - Inconsistent naming conventions or coding style
+1. The function name changed from 'old_function' to 'new_function'.
+2. A new parameter 'y' was added to the function.
+3. The line 'result = x * 2' remained unchanged.
+4. A new line 'result += y' was added, incorporating the new parameter.
+5. The return statement remained unchanged.
 
-7. Error Handling and Logging:
-   - Inadequate or overly broad exception handling
-   - Lack of proper logging or monitoring
-   - Swallowed exceptions without proper handling
 
-Field Guidelines:
-- "suggested_code": Corrected code for additions only, between start_line and end_line.
+## Review Focus:
+1. Removals (-1:[-]): Identify if removal causes problems in remaining code. Remember any line having -1:[-] is removed line from the new code.
+2. Additions (+1:[+]): Provide detailed feedback and suggest improvements. Remember any line having +1:[+] is added line.
+3. Consider impact of changes on overall code structure and functionality.
+4. Note unchanged lines (0:[.]) for context.
+5. For 'fixed_code' -> always suggest changes for Additions. 
+
+## Field Guidelines:
+- "fixed_code": Corrected code for additions only, between start_line and end_line. make sure start_line you suggest does not has `0:[.]`.
+- "actual_code": Current Code line which you think has error. make sure it always done on `+1:[+]` lines. If not, keep it empty ''.
 - "start_line" and "end_line": Actual line numbers in the additions.
-- "severity": 1 (least severe) to 10 (most critical).
+- "severity_level": 1 (least severe) to 10 (most critical).
 
 Prioritize issues based on their potential impact on code quality, functionality, and maintainability. Provide concrete examples or code snippets when suggesting improvements.
 
