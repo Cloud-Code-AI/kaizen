@@ -21,6 +21,8 @@ class CodeScanOutput:
     issues: List[Dict]
     usage: Dict[str, int]
     model_name: str
+    total_files: int
+    files_processed: int
 
 
 class CodeScanner:
@@ -60,6 +62,7 @@ class CodeScanner:
         self.logger.info(f"Starting code review for directory: {dir_path}")
         self.reevaluate = reevaluate
         issues = []
+        files_processed = 0
         for file_path in Path(dir_path).rglob("*.*"):
             if self.should_ignore(file_path):
                 continue
@@ -68,6 +71,7 @@ class CodeScanner:
                     file_data = f.read()
                 self.logger.debug(f"Reviewing file: {file_path}")
                 code_scan_output = self.review_code(file_data=file_data, user=user)
+                files_processed += 1
                 for issue in code_scan_output.issues:
                     issue["file_path"] = str(file_path)
                     issues.append(issue)
@@ -81,6 +85,8 @@ class CodeScanner:
             usage=self.total_usage,
             model_name=self.provider.model,
             issues=issues,
+            total_files=files_processed,
+            files_processed=files_processed,
         )
 
     def review_code(self, file_data: str, user: Optional[str] = None) -> CodeScanOutput:

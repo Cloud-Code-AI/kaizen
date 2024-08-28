@@ -1,4 +1,4 @@
-from typing import Optional, List, Dict, Generator
+from typing import Optional, List, Dict, Generator, Tuple
 from dataclasses import dataclass
 import logging
 from kaizen.helpers import parser
@@ -105,6 +105,7 @@ class CodeReviewer:
             "completion_tokens": 0,
             "total_tokens": 0,
         }
+        self.ignore_deletions = False
 
     def is_code_review_prompt_within_limit(
         self,
@@ -115,7 +116,9 @@ class CodeReviewer:
         prompt = CODE_REVIEW_PROMPT.format(
             PULL_REQUEST_TITLE=pull_request_title,
             PULL_REQUEST_DESC=pull_request_desc,
-            CODE_DIFF=parser.patch_to_combined_chunks(diff_text),
+            CODE_DIFF=parser.patch_to_combined_chunks(
+                diff_text, ignore_deletions=self.ignore_deletions
+            ),
         )
         return self.provider.is_inside_token_limit(PROMPT=prompt)
 
@@ -128,9 +131,11 @@ class CodeReviewer:
         user: Optional[str] = None,
         reeval_response: bool = False,
         model="default",
+        ignore_deletions=False,
     ) -> ReviewOutput:
+        self.ignore_deletions = ignore_deletions
         prompt = CODE_REVIEW_PROMPT.format(
-            CODE_DIFF=parser.patch_to_combined_chunks(diff_text),
+            CODE_DIFF=parser.patch_to_combined_chunks(diff_text, self.ignore_deletions),
         )
         self.total_usage = {
             "prompt_tokens": 0,
@@ -155,7 +160,7 @@ class CodeReviewer:
 
         reviews.extend(self.check_sensitive_files(pull_request_files))
 
-        topics = self._merge_topics(reviews)
+        categories = self._merge_categories(reviews)
         prompt_cost, completion_cost = self.provider.get_usage_cost(
             total_usage=self.total_usage
         )
@@ -163,7 +168,7 @@ class CodeReviewer:
         return ReviewOutput(
             usage=self.total_usage,
             model_name=self.provider.model,
-            topics=topics,
+            topics=categories,
             issues=reviews,
             code_quality=code_quality,
             cost={"prompt_cost": prompt_cost, "completion_cost": completion_cost},
@@ -192,23 +197,24 @@ class CodeReviewer:
         pull_request_desc: str,
         user: Optional[str],
         reeval_response: bool,
-    ) -> List[Dict]:
+    ) -> Tuple[List[Dict], Optional[float]]:
         self.logger.debug("Processing based on files")
         reviews = []
         code_quality = None
-        for file_review, quality in self._process_files_generator(
+        file_chunks_generator = self._process_files_generator(
             pull_request_files,
             pull_request_title,
             pull_request_desc,
             user,
             reeval_response,
-        ):
-            reviews.extend(file_review)
-            if quality:
-                if code_quality and code_quality > quality:
-                    code_quality = quality
-                else:
-                    code_quality = quality
+        )
+        for result in file_chunks_generator:
+            if result:  # Check if the result is not None
+                file_review, quality = result
+                reviews.extend(file_review)
+                if quality:
+                    if code_quality is None or quality < code_quality:
+                        code_quality = quality
         return reviews, code_quality
 
     def _process_files_generator(
@@ -218,10 +224,9 @@ class CodeReviewer:
         pull_request_desc: str,
         user: Optional[str],
         reeval_response: bool,
-    ) -> Generator[List[Dict], None, None]:
+    ) -> Generator[Optional[Tuple[List[Dict], Optional[float]]], None, None]:
         combined_diff_data = ""
         available_tokens = self.provider.available_tokens(FILE_CODE_REVIEW_PROMPT)
-
         for file in pull_request_files:
             patch_details = file.get("patch")
             filename = file.get("filename", "").replace(" ", "")
@@ -232,7 +237,7 @@ class CodeReviewer:
             ):
                 temp_prompt = (
                     combined_diff_data
-                    + f"\n---->\nFile Name: {filename}\nPatch Details: {parser.patch_to_combined_chunks(patch_details)}"
+                    + f"\n---->\nFile Name: {filename}\nPatch Details: {parser.patch_to_combined_chunks(patch_details, self.ignore_deletions)}"
                 )
 
                 if available_tokens - self.provider.get_token_count(temp_prompt) > 0:
@@ -246,17 +251,18 @@ class CodeReviewer:
                     user,
                     reeval_response,
                 )
-                combined_diff_data = (
-                    f"\n---->\nFile Name: {filename}\nPatch Details: {patch_details}"
-                )
+                combined_diff_data = f"\n---->\nFile Name: {filename}\nPatch Details: {parser.patch_to_combined_chunks(patch_details,  self.ignore_deletions)}"
 
-        yield self._process_file_chunk(
-            combined_diff_data,
-            pull_request_title,
-            pull_request_desc,
-            user,
-            reeval_response,
-        )
+        if combined_diff_data:
+            yield self._process_file_chunk(
+                combined_diff_data,
+                pull_request_title,
+                pull_request_desc,
+                user,
+                reeval_response,
+            )
+        else:
+            yield None  # Yield None if there's no data to process
 
     def _process_file_chunk(
         self,
@@ -265,9 +271,9 @@ class CodeReviewer:
         pull_request_desc: str,
         user: Optional[str],
         reeval_response: bool,
-    ) -> List[Dict]:
+    ) -> Optional[Tuple[List[Dict], Optional[float]]]:
         if not diff_data:
-            return []
+            return None
         prompt = FILE_CODE_REVIEW_PROMPT.format(
             FILE_PATCH=diff_data,
         )
@@ -280,7 +286,7 @@ class CodeReviewer:
         if reeval_response:
             resp = self._reevaluate_response(prompt, resp, user)
 
-        return resp["review"], resp.get("code_quality_percentage", None)
+        return resp.get("review", []), resp.get("code_quality_percentage", None)
 
     def _reevaluate_response(self, prompt: str, resp: str, user: Optional[str]) -> str:
         new_prompt = PR_REVIEW_EVALUATION_PROMPT.format(
@@ -298,11 +304,11 @@ class CodeReviewer:
         return resp
 
     @staticmethod
-    def _merge_topics(reviews: List[Dict]) -> Dict[str, List[Dict]]:
-        topics = {}
+    def _merge_categories(reviews: List[Dict]) -> Dict[str, List[Dict]]:
+        categories = {}
         for review in reviews:
-            topics.setdefault(review["topic"], []).append(review)
-        return topics
+            categories.setdefault(review["category"], []).append(review)
+        return categories
 
     def check_sensitive_files(self, pull_request_files: list):
         reviews = []
@@ -318,18 +324,18 @@ class CodeReviewer:
                             line = patch.split(" ")[2].split(",")[0][1:]
                         reviews.append(
                             {
-                                "topic": category,
-                                "comment": "Changes made to sensitive file",
-                                "confidence": "critical",
-                                "reason": f"Changes were made to {file_name}, which needs review",
-                                "solution": "NA",
+                                "category": category,
+                                "description": "Changes made to sensitive file",
+                                "impact": "critical",
+                                "recommendation": f"Changes were made to {file_name}, which needs review",
+                                "current_code": "NA",
                                 "fixed_code": "",
                                 "start_line": line,
                                 "end_line": line,
                                 "side": "RIGHT",
-                                "file_name": file_name,
+                                "file_path": file_name,
                                 "sentiment": "negative",
-                                "severity_level": 10,
+                                "severity": 10,
                             }
                         )
         return reviews

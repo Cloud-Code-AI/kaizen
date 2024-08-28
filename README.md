@@ -2,7 +2,7 @@
   <img src="/assets/logo.png" alt="Kaizen Logo" width="200"/>
 </p>
 
-<h1 align="center">Kaizen: The Ultimate Code Quality Guardian</h1>
+<h1 align="center">Accelarating Bug Detection</h1>
 
 <p align="center">
   <strong>Unleash the power of AI to find and squash bugs before they reach your customers.</strong>

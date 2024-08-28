@@ -8,19 +8,18 @@ As an experienced software engineer, provide a concise, actionable code review f
   "code_quality_percentage": <0_TO_100>,
   "review": [
     {{
-      "topic": "<SECTION_TOPIC>",
-      "comment": "<CONCISE_ISSUE_DESCRIPTION>",
-      "confidence": "critical|important|moderate|low|trivial",
-      "reason": "<ISSUE_REASONING>",
-      "solution": "<HIGH_LEVEL_SOLUTION>",
-      "actual_code": "<PEICE_OF_CODE_WHICH_HAS_ISSUES>",
-      "fixed_code": "<CORRECTED_CODE>",
-      "file_name": "<FULL_FILE_PATH>",
-      "start_line": <START_LINE_NUMBER>,
-      "end_line": <END_LINE_NUMBER>,
-      "side": "LEFT|RIGHT",
+      "category": "<ISSUE_CATEGORY>",
+      "description": "<CONCISE_ISSUE_DESCRIPTION>",
+      "impact": "critical|high|medium|low|trivial",
+      "rationale": "<DETAILED_EXPLANATION>",
+      "recommendation": "<SPECIFIC_IMPROVEMENT_SUGGESTION>",
+      "current_code": "<PROBLEMATIC_CODE_SNIPPET>",
+      "suggested_code": "<IMPROVED_CODE_SNIPPET>",
+      "file_path": "<FULL_FILE_PATH>",
+      "start_line": <STARTING_LINE_NUMBER>,
+      "end_line": <ENDING_LINE_NUMBER>,
       "sentiment": "positive|negative|neutral",
-      "severity_level": <1_TO_10>
+      "severity": <1_TO_10>
     }}
   ]
 }}
@@ -70,6 +69,7 @@ This snippet shows a diff (difference) between two versions of a function:
 - "actual_code": Current Code line which you think has error. make sure it always done on `+1:[+]` lines. If not, keep it empty ''.
 - "start_line" and "end_line": Actual line numbers in the additions.
 - "severity_level": 1 (least severe) to 10 (most critical).
+Prioritize issues based on their potential impact on code quality, functionality, and maintainability. Provide concrete examples or code snippets when suggesting improvements.
 
 ## PATCH DATA:
 ```{CODE_DIFF}```
@@ -81,22 +81,22 @@ As an experienced software engineer, provide a concise, actionable code review f
   "code_quality_percentage": <0_TO_100>,
   "review": [
     {{
-      "topic": "<SECTION_TOPIC>",
-      "comment": "<CONCISE_ISSUE_DESCRIPTION>",
-      "confidence": "critical|important|moderate|low|trivial",
-      "reason": "<ISSUE_REASONING>",
-      "solution": "<HIGH_LEVEL_SOLUTION>",
-      "actual_code": "<PEICE_OF_CODE_WHICH_HAS_ISSUES>",
-      "fixed_code": "<CORRECTED_CODE>",
-      "file_name": "<FULL_FILE_PATH>",
-      "start_line": <START_LINE_NUMBER>,
-      "end_line": <END_LINE_NUMBER>,
-      "side": "LEFT|RIGHT",
+      "category": "<ISSUE_CATEGORY>",
+      "description": "<CONCISE_ISSUE_DESCRIPTION>",
+      "impact": "critical|high|medium|low|trivial",
+      "rationale": "<DETAILED_EXPLANATION>",
+      "recommendation": "<SPECIFIC_IMPROVEMENT_SUGGESTION>",
+      "current_code": "<PROBLEMATIC_CODE_SNIPPET>",
+      "suggested_code": "<IMPROVED_CODE_SNIPPET>",
+      "file_path": "<FULL_FILE_PATH>",
+      "start_line": <STARTING_LINE_NUMBER>,
+      "end_line": <ENDING_LINE_NUMBER>,
       "sentiment": "positive|negative|neutral",
-      "severity_level": <1_TO_10>
+      "severity": <1_TO_10>
     }}
   ]
 }}
+
 
 ## Guidelines:
 - Provide specific feedback with file paths and line numbers
@@ -130,6 +130,7 @@ This snippet shows a diff (difference) between two versions of a function:
 4. A new line 'result += y' was added, incorporating the new parameter.
 5. The return statement remained unchanged.
 
+
 ## Review Focus:
 1. Removals (-1:[-]): Identify if removal causes problems in remaining code. Remember any line having -1:[-] is removed line from the new code.
 2. Additions (+1:[+]): Provide detailed feedback and suggest improvements. Remember any line having +1:[+] is added line.
@@ -142,6 +143,8 @@ This snippet shows a diff (difference) between two versions of a function:
 - "actual_code": Current Code line which you think has error. make sure it always done on `+1:[+]` lines. If not, keep it empty ''.
 - "start_line" and "end_line": Actual line numbers in the additions.
 - "severity_level": 1 (least severe) to 10 (most critical).
+
+Prioritize issues based on their potential impact on code quality, functionality, and maintainability. Provide concrete examples or code snippets when suggesting improvements.
 
 ## File PATCH Data:
 ```{FILE_PATCH}```

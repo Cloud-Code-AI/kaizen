@@ -119,11 +119,13 @@ class UnitTestGenerator:
         output_path: str = None,
         verbose: bool = False,
         enable_critique: bool = False,
+        temp_dir: str = "",
     ):
         self.max_critique = max_critique
         self.enable_critique = enable_critique
         self.verbose = verbose if verbose else self.verbose
         self.output_folder = output_path if output_path else self.output_folder
+        self.temp_dir = temp_dir
 
         file_extension = file_path.split(".")[-1]
         if file_extension not in self.SUPPORTED_LANGUAGES or file_extension == "pyc":
@@ -172,6 +174,7 @@ class UnitTestGenerator:
         item["full_path"] = file_path
 
         test_code = self.generate_ai_tests(item, item["source"], file_extension)
+        test_code = test_code.replace(self.temp_dir, "")
 
         self._write_test_file(test_file_path, test_code)
 
@@ -277,9 +280,9 @@ class UnitTestGenerator:
     def _create_output_folder(self, folder_name):
         os.makedirs(folder_name, exist_ok=True)
 
-    def run_tests(self):
+    def run_tests(self, test_file=None):
         runner = UnitTestRunner(self.output_folder)
-        return runner.discover_and_run_tests()
+        return runner.discover_and_run_tests(test_file=test_file)
 
     def format_test_scenarios(self, scenarios):
         formatted_scenarios = ""

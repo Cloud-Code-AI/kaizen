@@ -67,7 +67,10 @@ def create_review_comments(topics, confidence_level=4):
     comments = []
     for _, reviews in topics.items():
         for review in reviews:
-            if confidence_mapping[review["confidence"]] > confidence_level:
+            if (
+                confidence_mapping.get(review.get("impact", "low"), 1)
+                > confidence_level
+            ):
                 comments.append(review)
     return comments, topics
 
@@ -144,8 +147,8 @@ def clean_keys(topics, min_confidence=None):
         rev = []
         for review in reviews:
             if not review.get("reasoning"):
-                review["reasoning"] = review["comment"]
-            if confidence_mapping[review["confidence"]] >= min_value:
+                review["reasoning"] = review["description"]
+            if confidence_mapping[review["impact"]] >= min_value:
                 rev.append(review)
         new_topics[topic] = rev
     return new_topics
@@ -159,10 +162,10 @@ def post_pull_request_comments(url, review, installation_id):
         "event": "REQUEST_CHANGES",
         "comments": [
             {
-                "path": review["file_name"],
+                "path": review["file_path"],
                 "start_line": review["start_line"],
                 "line": review["end_line"],
-                "body": review["comment"],
+                "body": review["description"],
             }
         ],
     }

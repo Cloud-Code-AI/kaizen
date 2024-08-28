@@ -35,7 +35,7 @@ def process_pr(pr_url, reeval_response=False):
     diff_text = get_diff_text(pr_diff, "")
     pr_files = get_pr_files(pr_files, "")
 
-    reviewer = CodeReviewer(llm_provider=LLMProvider())
+    reviewer = CodeReviewer(llm_provider=LLMProvider(), default_model="default")
     review_data = reviewer.review_pull_request(
         diff_text=diff_text,
         pull_request_title=pr_title,
@@ -43,7 +43,7 @@ def process_pr(pr_url, reeval_response=False):
         pull_request_files=pr_files,
         user="kaizen/example",
         reeval_response=reeval_response,
-        model="best"
+        model="best",
     )
 
     # topics = clean_keys(review_data.topics, "important")
@@ -51,22 +51,32 @@ def process_pr(pr_url, reeval_response=False):
     review_desc = create_pr_review_text(
         review_data.issues, code_quality=review_data.code_quality
     )
+    review_desc = f"PR URL: {pr_url}\n\n" + review_desc
+    review_desc += f"\n\n----- Cost Usage ({review_data.model_name})\n" + json.dumps(
+        review_data.usage
+    )
     comments, topics = create_review_comments(review_data.topics)
     logger.info(f"Model: {review_data.model_name}\nUsage: {review_data.usage}")
     logger.info(f"Completed processing PR: {pr_url}")
-    return review_desc, comments, topics
+    return review_desc, comments, review_data.issues
 
 
-def save_review(pr_number, review_desc, comments, topics, folder):
+def save_review(pr_number, review_desc, comments, issues, folder):
+    folder = os.path.join(folder, f"pr_{pr_number}")
     logger.info(f"Saving review for PR {pr_number} in {folder}")
-    review_file = os.path.join(folder, f"pr_{pr_number}_review.md")
-    comments_file = os.path.join(folder, f"pr_{pr_number}_comments.json")
+    os.makedirs(folder, exist_ok=True)
+    review_file = os.path.join(folder, "review.md")
+    comments_file = os.path.join(folder, "comments.json")
+    issues_file = os.path.join(folder, "issues.json")
 
     with open(review_file, "w") as f:
         f.write(review_desc)
 
     with open(comments_file, "w") as f:
         json.dump(comments, f, indent=2)
+
+    with open(issues_file, "w") as f:
+        json.dump(issues, f, indent=2)
 
     logger.info(f"Saved review files for PR {pr_number}")
 
@@ -88,12 +98,12 @@ def main(pr_urls):
         logger.info(f"Starting to process PR {pr_number}")
 
         # Without re-evaluation
-        review_desc, comments, topics = process_pr(pr_url, reeval_response=False)
-        save_review(pr_number, review_desc, comments, topics, no_eval_folder)
+        review_desc, comments, issues = process_pr(pr_url, reeval_response=False)
+        save_review(pr_number, review_desc, comments, issues, no_eval_folder)
 
-        # With re-evaluation
-        review_desc, comments, topics = process_pr(pr_url, reeval_response=True)
-        save_review(pr_number, review_desc, comments, topics, with_eval_folder)
+        # # With re-evaluation
+        # review_desc, comments, topics = process_pr(pr_url, reeval_response=True)
+        # save_review(pr_number, review_desc, comments, topics, with_eval_folder)
 
         logger.info(f"Completed processing PR {pr_number}")
 
@@ -102,9 +112,15 @@ def main(pr_urls):
 
 if __name__ == "__main__":
     pr_urls = [
+        "https://github.com/sauravpanda/applicant-screening/pull/5",
         "https://github.com/Cloud-Code-AI/kaizen/pull/335",
         "https://github.com/Cloud-Code-AI/kaizen/pull/440",
-        "https://github.com/Cloud-Code-AI/kaizen/pull/222"
+        "https://github.com/Cloud-Code-AI/kaizen/pull/222",
+        "https://github.com/Cloud-Code-AI/kaizen/pull/476",
+        "https://github.com/Cloud-Code-AI/kaizen/pull/252",
+        "https://github.com/Cloud-Code-AI/kaizen/pull/400",
+        # "https://github.com/supermemoryai/supermemory/pull/164",
+        "https://github.com/supermemoryai/supermemory/pull/232",
         # Add more PR URLs here
     ]
     main(pr_urls)

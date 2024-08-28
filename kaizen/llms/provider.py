@@ -9,9 +9,11 @@ from litellm import Router
 import logging
 from collections import defaultdict
 
+DEFAULT_MAX_TOKENS = 8000
+
 
 def set_all_loggers_to_ERROR():
-    print("All Loggers and their levels:")
+    # print("All Loggers and their levels:")
     for name, logger in logging.Logger.manager.loggerDict.items():
         if isinstance(logger, logging.Logger):
             # print(f"Logger: {name}, Level: {logging.getLevelName(logger.level)}")
@@ -81,6 +83,7 @@ class LLMProvider:
             "model_list": self.models,
             "allowed_fails": 1,
             "enable_pre_call_checks": True,
+            "routing_strategy": "simple-shuffle",
         }
 
         if self.config["language_model"].get("redis_enabled", False):
@@ -160,6 +163,32 @@ class LLMProvider:
         self.model = response["model"]
         return response["choices"][0]["message"]["content"], response["usage"]
 
+    def raw_chat_completion(
+        self,
+        prompt,
+        user: str = None,
+        model="default",
+        custom_model=None,
+        messages=None,
+        n_choices=1,
+    ):
+        custom_model["n"] = n_choices
+        if not messages:
+            messages = [
+                {"role": "system", "content": self.system_prompt},
+                {"role": "user", "content": prompt},
+            ]
+        if not custom_model:
+            custom_model = {"model": model}
+        if "temperature" not in custom_model:
+            custom_model["temperature"] = self.default_temperature
+
+        response = self.provider.completion(
+            messages=messages, user=user, **custom_model
+        )
+        self.model = response["model"]
+        return response, response["usage"]
+
     @retry(max_attempts=3, delay=1)
     def chat_completion_with_json(
         self,
@@ -205,6 +234,8 @@ class LLMProvider:
         ]
         token_count = litellm.token_counter(model=self.model, messages=messages)
         max_tokens = litellm.get_max_tokens(self.model)
+        if not max_tokens:
+            max_tokens = DEFAULT_MAX_TOKENS
         return token_count <= max_tokens * percentage
 
     def available_tokens(
@@ -214,7 +245,10 @@ class LLMProvider:
             model = self.model
         max_tokens = litellm.get_max_tokens(model)
         used_tokens = litellm.token_counter(model=model, text=message)
-        return int(max_tokens * percentage) - used_tokens
+        if max_tokens:
+            return int(max_tokens * percentage) - used_tokens
+        else:
+            return DEFAULT_MAX_TOKENS - used_tokens
 
     def get_token_count(self, message: str, model: str = None) -> int:
         if not model:
@@ -231,9 +265,12 @@ class LLMProvider:
     def get_usage_cost(self, total_usage: Dict[str, int], model: str = None) -> float:
         if not model:
             model = self.model
-        return litellm.cost_per_token(
-            model, total_usage["prompt_tokens"], total_usage["completion_tokens"]
-        )
+        try:
+            return litellm.cost_per_token(
+                model, total_usage["prompt_tokens"], total_usage["completion_tokens"]
+            )
+        except Exception:
+            return 0, 0
 
     def get_text_embedding(self, text):
         # for model in self.config["language_model"]["models"]:

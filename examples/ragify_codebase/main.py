@@ -7,11 +7,21 @@ analyzer = RepositoryAnalyzer()
 analyzer.setup_repository("./github_app/")
 
 # Perform queries (you can do this as many times as you want without calling setup_repository again)
-results = analyzer.query("Find functions that handle authentication")
+results = analyzer.query("jwt token generation")
 for result in results:
     print(f"File: {result['file_path']}")
-    print(f"Abstraction: {result['abstraction']}")
-    print(f"result:\n{result}")
+    # print(f"Abstraction: {result['abstraction']}")
+    # print(f"result:\n{result}")
+    print(f"Relevance Score: {result['relevance_score']}")
+    print("---")
+
+print("....... \n\n")
+
+results = analyzer.query("How do you filter the results?")
+for result in results:
+    print(f"File: {result['file_path']}")
+    # print(f"Abstraction: {result['abstraction']}")
+    # print(f"result:\n{result}")
     print(f"Relevance Score: {result['relevance_score']}")
     print("---")
 
@@ -19,4 +29,4 @@ for result in results:
 # analyzer.setup_repository("/path/to/your/repo")
 
 # Then you can query again with the updated data
-results = analyzer.query("authentication")
+# results = analyzer.query("authentication")
