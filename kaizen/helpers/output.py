@@ -43,6 +43,10 @@ def create_pr_description(desc, original_desc):
     return markdown_output
 
 
+def create_issue_description(desc, original_desc):
+    pass
+
+
 async def get_html(url):
     async with async_playwright() as p:
         subprocess.run(["playwright", "install", "--with-deps"], check=True)

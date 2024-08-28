@@ -168,7 +168,7 @@ class UnitTestGenerator:
         return test_files
 
     def _process_item(self, item, file_extension, file_path, folder_path):
-        print(f"\n{'='*50}\nProcessing Item: {item['name']}\n{'='*50}")
+        print(f"\n{'=' * 50}\nProcessing Item: {item['name']}\n{'=' * 50}")
 
         test_file_path = self._prepare_test_file_path(item, file_extension, folder_path)
         item["full_path"] = file_path
@@ -301,7 +301,7 @@ class UnitTestGenerator:
 
     def log_step(self, step_name, data):
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        log_message = f"[{timestamp}] Step: {step_name}\n{data}\n{'='*50}\n"
+        log_message = f"[{timestamp}] Step: {step_name}\n{data}\n{'=' * 50}\n"
 
         log_file = os.path.join(self.log_dir, "unit_test_generator_steps.log")
         os.makedirs(os.path.dirname(log_file), exist_ok=True)
