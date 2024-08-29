@@ -53,10 +53,13 @@ class RepositoryAnalyzer:
 
     def setup_repository(self, repo_path: str):
         self.total_usage = self.llm_provider.DEFAULT_USAGE
+        self.total_files_processed = 0
+        self.embedding_usage = {"prompt_tokens": 10, "total_tokens": 10}
         logger.info(f"Starting repository setup for: {repo_path}")
         self.parse_repository(repo_path)
         self.store_function_relationships()
         logger.info("Repository setup completed successfully")
+        return self.total_files_processed, self.total_usage, self.embed_model
 
     def parse_repository(self, repo_path: str):
         logger.info(f"Parsing repository: {repo_path}")
@@ -64,6 +67,7 @@ class RepositoryAnalyzer:
             futures = []
             for root, _, files in os.walk(repo_path):
                 for file in files:
+                    self.total_files_processed += 1
                     if file.endswith(
                         (".py", ".js", ".ts", ".rs")
                     ):  # Add more extensions as needed
@@ -130,7 +134,9 @@ class RepositoryAnalyzer:
 
         language = self.get_language_from_extension(file_path)
         abstraction, usage = self.generate_abstraction(code, language)
-
+        self.total_usage = self.llm_provider.update_usage(
+            total_usage=self.total_usage, current_usage=usage
+        )
         function_id = self.store_code_in_db(code, abstraction, file_path, section, name)
         self.store_abstraction_and_embedding(function_id, abstraction)
 
@@ -144,6 +150,9 @@ class RepositoryAnalyzer:
         )
 
         embedding, emb_usage = self.llm_provider.get_text_embedding(abstraction)
+        self.embedding_usage = self.llm_provider.update_usage(
+            total_usage=self.embedding_usage, current_usage=emb_usage
+        )
         embedding = embedding[0]["embedding"]
         # Store the embedding in the database
         # TODO: DONT PUSH DUPLICATE
@@ -416,6 +425,7 @@ Code to analyze:
                         }
                     )
 
-        return sorted(
-            processed_results, key=lambda x: x["relevance_score"], reverse=True
+        return (
+            sorted(processed_results, key=lambda x: x["relevance_score"], reverse=True),
+            emb_usage,
         )
