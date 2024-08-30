@@ -19,7 +19,8 @@ As an experienced software engineer, provide a concise, actionable code review f
       "start_line": <STARTING_LINE_NUMBER>,
       "end_line": <ENDING_LINE_NUMBER>,
       "sentiment": "positive|negative|neutral",
-      "severity": <1_TO_10>
+      "severity": <1_TO_10>,
+      "type": "general|performance|security|refactoring|best_practices|duplication|maintainability|scalability|error_handling|resource_management|concurrency|dependencies|compatibility|accessibility|localization|efficiency|readability|naming"
     }}
   ]
 }}
@@ -38,7 +39,7 @@ As an experienced software engineer, provide a concise, actionable code review f
 - Provide specific feedback with file paths and line numbers
 - Use markdown for code snippets. Make sure all code is following the original indentations.
 - Merge duplicate feedback
-- Examine: syntax/logic errors, resource leaks, race conditions, security vulnerabilities
+- Examine: syntax/logic errors, resource leaks, race conditions, security vulnerabilities, performance issues, scalability concerns, refactoring opportunities, and code duplication
 - If no issues found: {{"review": []}}
 
 ## Patch Data Format:
@@ -78,7 +79,10 @@ This snippet shows a diff (difference) between two versions of a function:
 - "current_code": Current Code line which you think has error. make sure it always done on `+1:[+]` lines. If not, keep it empty ''.
 - "start_line" and "end_line": Actual line numbers in the additions.
 - "severity": 1 (least severe) to 10 (most critical).
+- "type": Use to categorize the feedback (e.g., "performance", "security", "testing", etc.)
+
 Prioritize issues based on their potential impact on code quality, functionality, and maintainability. Provide concrete examples or code snippets when suggesting improvements.
+Be Strict when evaluating for issues, people depend on your reviews, dont let anything slide.
 
 ## PATCH DATA:
 ```{CODE_DIFF}```
@@ -101,7 +105,8 @@ As an experienced software engineer, provide a concise, actionable code review f
       "start_line": <STARTING_LINE_NUMBER>,
       "end_line": <ENDING_LINE_NUMBER>,
       "sentiment": "positive|negative|neutral",
-      "severity": <1_TO_10>
+      "severity": <1_TO_10>,
+      "type": "general|performance|security|refactoring|best_practices|duplication|maintainability|scalability|error_handling|resource_management|concurrency|dependencies|compatibility|accessibility|localization|efficiency|readability|naming"
     }}
   ]
 }}
@@ -120,7 +125,7 @@ As an experienced software engineer, provide a concise, actionable code review f
 - Provide specific feedback with file paths and line numbers
 - Use markdown for code snippets. Make sure all code is following the original indentations.
 - Merge duplicate feedback
-- Examine: syntax/logic errors, resource leaks, race conditions, security vulnerabilities
+- Examine: syntax/logic errors, resource leaks, race conditions, security vulnerabilities, performance issues, scalability concerns, refactoring opportunities, and code duplication
 - If no issues found: {{"review": []}}
 
 ## Patch Data Format:
@@ -162,8 +167,11 @@ This snippet shows a diff (difference) between two versions of a function:
 - "current_code": Current Code line which you think has error. make sure it always done on `+1:[+]` lines. If not, keep it empty ''.
 - "start_line" and "end_line": Actual line numbers in the additions.
 - "severity": 1 (least severe) to 10 (most critical).
+- "type": Use to categorize the feedback (e.g., "performance", "security", "testing", etc.)
+
 
 Prioritize issues based on their potential impact on code quality, functionality, and maintainability. Provide concrete examples or code snippets when suggesting improvements.
+Be Strict when evaluating for issues, people depend on your reviews, dont let anything slide.
 
 ## File PATCH Data:
 ```{FILE_PATCH}```
@@ -190,7 +198,9 @@ Generate a JSON object with the following structure:
       "end_line": <END_LINE_NUMBER>,
       "side": "LEFT|RIGHT",
       "sentiment": "positive|negative|neutral",
-      "severity_level": <1_TO_10>
+      "severity_level": <1_TO_10>,
+      "type": "general|performance|security|testing|documentation|refactoring|best_practices|duplication|maintainability|scalability|error_handling|resource_management|concurrency|dependencies|compatibility|accessibility|localization|efficiency|readability|naming"
+
     }}
   ]
 }}
