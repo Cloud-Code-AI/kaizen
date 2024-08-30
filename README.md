@@ -121,7 +121,7 @@ Kaizen takes a two-pronged approach to help you find and squash bugs, both befor
 You only need to install the GitHub app for code review. Other functionalities don't need a GitHub app.
 For PR review and description updates:
 
-1. Follow our [GitHub App Setup Guide](docs/pages/github_app.md)
+1. Follow our [GitHub App Setup Guide](https://cloudcode.ai/kaizen/docs/self_hosting_guide/setup_github_app)
 2. Deploy the API using Docker:
    ```bash
    docker-compose up
