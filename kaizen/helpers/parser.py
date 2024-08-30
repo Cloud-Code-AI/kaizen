@@ -179,9 +179,11 @@ def patch_to_separate_chunks(patch_text):
     return "\n".join(output)
 
 
-def format_change(old_num, new_num, change_type, content):
-    old_num_str = f"{old_num:<4}" if old_num is not None else "    "
-    new_num_str = f"{new_num:<4}" if new_num is not None else "    "
+def format_change(old_num, new_num, change_type, content, ignore_deletions=False):
+    old_num_str = f"{old_num:<5}" if old_num is not None else "_    "
+    new_num_str = f"{new_num:<5}" if new_num is not None else "_    "
+    if ignore_deletions:
+        old_num_str = "_    "
     return f"{old_num_str} {new_num_str} {change_type} {content}"
 
 
@@ -235,19 +237,31 @@ def patch_to_combined_chunks(patch_text, ignore_deletions=False):
         elif line.startswith("-"):
             content = line[1:]
             if not ignore_deletions:
-                changes.append(format_change(removal_line_num, None, "-1:[-]", content))
+                changes.append(
+                    format_change(
+                        removal_line_num, None, "-1:[-]", content, ignore_deletions
+                    )
+                )
             removal_line_num += 1
             unedited_removal_num = removal_line_num
         elif line.startswith("+"):
             content = line[1:]
-            changes.append(format_change(None, addition_line_num, "+1:[+]", content))
+            changes.append(
+                format_change(
+                    None, addition_line_num, "+1:[+]", content, ignore_deletions
+                )
+            )
             addition_line_num += 1
             unedited_addition_num = addition_line_num
         else:
             content = line
             changes.append(
                 format_change(
-                    unedited_removal_num, unedited_addition_num, " 0:[.]", content
+                    unedited_removal_num,
+                    unedited_addition_num,
+                    " 0:[.]",
+                    content,
+                    ignore_deletions,
                 )
             )
             unedited_removal_num += 1

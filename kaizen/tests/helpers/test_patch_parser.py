@@ -527,4 +527,4 @@ index 0000000..3800d67
 +"""
 '''
 
-print(patch_to_combined_chunks(patch_text=patch_data2))
+print(patch_to_combined_chunks(patch_text=patch_data2, ignore_deletions=True))

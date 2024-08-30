@@ -26,19 +26,23 @@ def compare_issues(ground_truth, model_issues):
             description_similarity = calculate_similarity(
                 gt_issue["description"], model_issue["description"]
             )
+            # actual_code_similarity = calculate_similarity(
+            #     gt_issue.get("current_code",''), model_issue.get("current_code", '')
+            # )
             if (
-                description_similarity > 0.1
+                description_similarity > 0.25
                 and gt_issue["file_path"] == model_issue["file_path"]
-                and abs(
-                    int(gt_issue.get("start_line", 0))
-                    - int(model_issue.get("start_line", -10))
-                )
-                <= 1
-                and abs(
-                    int(gt_issue.get("end_line", 0))
-                    - int(model_issue.get("end_line", -10))
-                )
-                <= 1
+                # and actual_code_similarity > 0.5
+                # and abs(
+                #     int(gt_issue.get("start_line", 0))
+                #     - int(model_issue.get("start_line", -10))
+                # )
+                # <= 1
+                # and abs(
+                #     int(gt_issue.get("end_line", 0))
+                #     - int(model_issue.get("end_line", -10))
+                # )
+                # <= 1
                 and abs(
                     int(gt_issue.get("severity", 0))
                     - int(model_issue.get("severity", -10))

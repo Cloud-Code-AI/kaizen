@@ -24,6 +24,16 @@ As an experienced software engineer, provide a concise, actionable code review f
   ]
 }}
 
+## Code Quality Percentage Guidelines:
+- Consider the following factors when calculating the final percentage:
+  - Code readability and maintainability
+  - Adherence to best practices and coding standards
+  - Presence of comments and documentation
+  - Efficient use of resources
+  - Proper error handling and edge case consideration
+- Adjust the final percentage based on overall code quality assessment
+- Ensure the final percentage is between 0 and 100
+
 ## Guidelines:
 - Provide specific feedback with file paths and line numbers
 - Use markdown for code snippets. Make sure all code is following the original indentations.
@@ -56,7 +66,6 @@ This snippet shows a diff (difference) between two versions of a function:
 4. A new line 'result += y' was added, incorporating the new parameter.
 5. The return statement remained unchanged.
 
-
 ## Review Focus:
 1. Removals (-1:[-]): Identify if removal causes problems in remaining code. Remember any line having -1:[-] is removed line from the new code.
 2. Additions (+1:[+]): Provide detailed feedback and suggest improvements. Remember any line having +1:[+] is added line.
@@ -65,10 +74,10 @@ This snippet shows a diff (difference) between two versions of a function:
 5. For 'fixed_code' -> always suggest changes for Additions. 
 
 ## Field Guidelines:
-- "fixed_code": Corrected code for additions only, between start_line and end_line. make sure start_line you suggest does not has `0:[.]`.
-- "actual_code": Current Code line which you think has error. make sure it always done on `+1:[+]` lines. If not, keep it empty ''.
+- "suggested_code": Corrected code for additions only, between start_line and end_line. make sure start_line you suggest does not has `0:[.]`.
+- "current_code": Current Code line which you think has error. make sure it always done on `+1:[+]` lines. If not, keep it empty ''.
 - "start_line" and "end_line": Actual line numbers in the additions.
-- "severity_level": 1 (least severe) to 10 (most critical).
+- "severity": 1 (least severe) to 10 (most critical).
 Prioritize issues based on their potential impact on code quality, functionality, and maintainability. Provide concrete examples or code snippets when suggesting improvements.
 
 ## PATCH DATA:
@@ -97,6 +106,15 @@ As an experienced software engineer, provide a concise, actionable code review f
   ]
 }}
 
+## Code Quality Percentage Guidelines:
+- Consider the following factors when calculating the final percentage:
+  - Code readability and maintainability
+  - Adherence to best practices and coding standards
+  - Presence of comments and documentation
+  - Efficient use of resources
+  - Proper error handling and edge case consideration
+- Adjust the final percentage based on overall code quality assessment
+- Ensure the final percentage is between 0 and 100
 
 ## Guidelines:
 - Provide specific feedback with file paths and line numbers
@@ -129,6 +147,7 @@ This snippet shows a diff (difference) between two versions of a function:
 3. The line 'result = x * 2' remained unchanged.
 4. A new line 'result += y' was added, incorporating the new parameter.
 5. The return statement remained unchanged.
+6. First number is line number of old file. Second number is line number of new filee
 
 
 ## Review Focus:
@@ -136,13 +155,13 @@ This snippet shows a diff (difference) between two versions of a function:
 2. Additions (+1:[+]): Provide detailed feedback and suggest improvements. Remember any line having +1:[+] is added line.
 3. Consider impact of changes on overall code structure and functionality.
 4. Note unchanged lines (0:[.]) for context.
-5. For 'fixed_code' -> always suggest changes for Additions. 
+5. For 'suggested_code' -> always suggest changes for Additions. 
 
 ## Field Guidelines:
-- "fixed_code": Corrected code for additions only, between start_line and end_line. make sure start_line you suggest does not has `0:[.]`.
-- "actual_code": Current Code line which you think has error. make sure it always done on `+1:[+]` lines. If not, keep it empty ''.
+- "suggested_code": Corrected code for additions only, between start_line and end_line. make sure start_line you suggest does not has `0:[.]`.
+- "current_code": Current Code line which you think has error. make sure it always done on `+1:[+]` lines. If not, keep it empty ''.
 - "start_line" and "end_line": Actual line numbers in the additions.
-- "severity_level": 1 (least severe) to 10 (most critical).
+- "severity": 1 (least severe) to 10 (most critical).
 
 Prioritize issues based on their potential impact on code quality, functionality, and maintainability. Provide concrete examples or code snippets when suggesting improvements.
 
@@ -213,10 +232,10 @@ This snippet shows a diff (difference) between two versions of a function:
 2. Additions (+1:[+]): Provide detailed feedback and suggest improvements. Remember any line having +1:[+] is added line.
 3. Consider impact of changes on overall code structure and functionality.
 4. Note unchanged lines (0:[.]) for context.
-5. For 'fixed_code' -> always suggest changes for Additions. 
+5. For 'suggested_code' -> always suggest changes for Additions. 
 
 ## Field Guidelines:
-- "fixed_code": Corrected code for additions only, between start_line and end_line. make sure start_line you suggest does not has `0:[.]`.
+- "suggested_code": Corrected code for additions only, between start_line and end_line. make sure start_line you suggest does not has `0:[.]`.
 - "actual_code": Current Code line which you think has error. make sure it always done on `+1:[+]` lines. If not, keep it empty ''.
 - "start_line" and "end_line": Actual line numbers in the additions.
 - "severity_level": 1 (least severe) to 10 (most critical).
