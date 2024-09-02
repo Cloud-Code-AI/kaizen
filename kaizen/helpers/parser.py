@@ -103,12 +103,10 @@ def extract_code_from_markdown(text: str) -> str:
     return text
 
 
-def patch_to_separate_chunks(patch_text):
+def patch_to_numbered_lines(patch_text):
     lines = patch_text.split("\n")
-    removals = []
     additions = []
     metadata = []
-    removal_line_num = 0
     addition_line_num = 0
     unedited_count = 0
     current_hunk = None
@@ -119,11 +117,9 @@ def patch_to_separate_chunks(patch_text):
         if "diff --git" in line:
             is_diff = True
             if first_transition:
-                removals = []
                 additions = []
                 first_transition = False
                 continue
-            removals.append("\n</change_block>\n\n")
             additions.append("\n</change_block>\n\n")
 
         elif is_diff:
@@ -134,15 +130,8 @@ def patch_to_separate_chunks(patch_text):
             current_hunk = line
             match = re.match(r"@@ -(\d+),\d+ \+(\d+),\d+ @@", line)
             if match:
-                removal_line_num = int(match.group(1))
                 addition_line_num = int(match.group(2))
-                if removals:
-                    removals.append("</change_block>")
-                if additions:
-                    additions.append("</change_block>")
-                removals.append("\n<change_block>")
-                removals.append(f"Filename: {current_file_name}\n")
-                additions.append("\n<change_block>")
+                additions.append("\n<change_block>\n")
                 additions.append(f"Filename: {current_file_name}\n")
         elif line.startswith("---"):
             line = line.replace("a/", "").replace("b/", "").replace("--- ", "")
@@ -152,27 +141,19 @@ def patch_to_separate_chunks(patch_text):
             current_file_name = line
         elif line.startswith("-"):
             line = "<-> " + line[1:]
-            removals.append(f"{removal_line_num:<4} {line}")
-            removal_line_num += 1
         elif line.startswith("+"):
-            line = "<+> " + line[1:]
-            additions.append(f"{addition_line_num:<4} {line}")
+            line = line[1:]
+            additions.append(f"{addition_line_num:<5} {line}")
             addition_line_num += 1
         else:
-            removals.append(f"{removal_line_num:<4} {line}")
-            additions.append(f"{addition_line_num:<4} {line}")
-            removal_line_num += 1
             addition_line_num += 1
             unedited_count += 1
 
     if current_hunk:
         metadata.append(current_hunk)
-        removals.append("</change_block>\n\n")
-        additions.append("</change_block>\n\n")
+        additions.append("\n</change_block>")
 
     output = []
-    output.append(f"\n##Removals: (including {unedited_count} unedited lines)\n")
-    output.extend(removals)
     output.append(f"\n\n\n##Additions: (including {unedited_count} unedited lines)\n")
     output.extend(additions)
 
@@ -272,8 +253,13 @@ def patch_to_combined_chunks(patch_text, ignore_deletions=False):
 
     if current_hunk:
         metadata.append(current_hunk)
-        changes.append("</change_block>\n\n")
+        changes.append("\n</change_block>\n\n")
 
     output = changes
 
     return "\n".join(output)
+
+
+def format_add_linenum(new_num, content, ignore_deletions=False):
+    new_num_str = f"{new_num:<5}" if new_num is not None else "     "
+    return f"{new_num_str} {content}"
