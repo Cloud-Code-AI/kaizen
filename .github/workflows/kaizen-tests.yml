@@ -43,7 +43,7 @@ jobs:
         npm ci
 
     - name: Run Kaizen Unit Tests
-      uses: Cloud-Code-AI/kaizen-unittest-runner-action@v1.0.2
+      uses: Cloud-Code-AI/kaizen-unittest-runner-action@v1.0.3
 
     - name: Upload test results
       uses: actions/upload-artifact@v2
