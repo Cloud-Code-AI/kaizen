@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "kaizen-cli"
-version = "0.1.5"
+version = "0.2.0"
 description = ""
 authors = ["Saurav Panda <sgp65@cornell.edu>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.8.1"
+python = "^3.9.0"
 click = "^8.1.3"
 
 [tool.poetry.group.dev.dependencies]
