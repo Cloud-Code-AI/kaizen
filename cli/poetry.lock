@@ -301,8 +301,8 @@ files = [
 jmespath = ">=0.7.1,<2.0.0"
 python-dateutil = ">=2.1,<3.0.0"
 urllib3 = [
-    {version = ">=1.25.4,<2.2.0 || >2.2.0,<3", markers = "python_version >= \"3.10\""},
     {version = ">=1.25.4,<1.27", markers = "python_version < \"3.10\""},
+    {version = ">=1.25.4,<2.2.0 || >2.2.0,<3", markers = "python_version >= \"3.10\""},
 ]
 
 [package.extras]
@@ -1425,42 +1425,40 @@ name = "kaizen-cloudcode"
 version = "0.4.8"
 description = "An intelligent coding companion that accelerates your development workflow by providing efficient assistance, enabling you to craft high-quality code more rapidly."
 optional = false
-python-versions = "<4.0.0,>=3.9.0"
-files = [
-    {file = "kaizen_cloudcode-0.4.8-py3-none-any.whl", hash = "sha256:71523768c04b86f94e0e90a64103f370c583a645cc65e6874e1725ccecb3ebc5"},
-    {file = "kaizen_cloudcode-0.4.8.tar.gz", hash = "sha256:31870f62d1c13de6ff1cddad71831dfd9f86fe874eaa22ade86530126a678114"},
-]
+python-versions = "^3.9.0"
+files = []
+develop = true
 
 [package.dependencies]
-black = ">=24.3.0,<25.0.0"
-boto3 = ">=1.35.5,<2.0.0"
-bs4 = ">=0.0.2,<0.0.3"
-cryptography = ">=42.0.5,<43.0.0"
-escodegen = ">=1.0.11,<2.0.0"
-esprima = ">=4.0.1,<5.0.0"
-fastapi = ">=0.110.0,<0.111.0"
-flake8 = ">=7.0.0,<8.0.0"
-fuzzywuzzy = ">=0.18.0,<0.19.0"
-litellm = ">=1.40.29,<2.0.0"
-llama-index = ">=0.10.65,<0.11.0"
+black = "^24.3.0"
+boto3 = "^1.35.5"
+bs4 = "^0.0.2"
+cryptography = "^42.0.5"
+escodegen = "^1.0.11"
+esprima = "^4.0.1"
+fastapi = "^0.110.0"
+flake8 = "^7.0.0"
+fuzzywuzzy = "^0.18.0"
+litellm = "^1.40.29"
+llama-index = "^0.10.65"
 llama-index-core = "0.10.65"
-llama-index-embeddings-litellm = ">=0.1.1,<0.2.0"
-llama-index-llms-litellm = ">=0.1.4,<0.2.0"
-llama-index-readers-file = ">=0.1.25,<0.2.0"
-nest-asyncio = ">=1.6.0,<2.0.0"
-pip = ">=24.0,<25.0"
-pre-commit = ">=3.8.0,<4.0.0"
-psycopg2-binary = ">=2.9.9,<3.0.0"
-pyjwt = ">=2.8.0,<3.0.0"
-pytest-playwright = ">=0.4.4,<0.5.0"
-python-levenshtein = ">=0.25.1,<0.26.0"
-qdrant-client = ">=1.11.0,<2.0.0"
-redis = ">=5.0.7,<6.0.0"
-requests = ">=2.31.0,<3.0.0"
-sqlalchemy = ">=2.0.31,<3.0.0"
-tqdm = ">=4.66.5,<5.0.0"
-tree-sitter = ">=0.22.3,<0.23.0"
-uvicorn = ">=0.29.0,<0.30.0"
+llama-index-embeddings-litellm = "^0.1.1"
+llama-index-llms-litellm = "^0.1.4"
+llama-index-readers-file = "^0.1.25"
+nest-asyncio = "^1.6.0"
+pip = "^24.0"
+pre-commit = "^3.8.0"
+psycopg2-binary = "^2.9.9"
+pyjwt = "^2.8.0"
+pytest-playwright = "^0.4.4"
+python-levenshtein = "^0.25.1"
+qdrant-client = "^1.11.0"
+redis = "^5.0.7"
+requests = "^2.31.0"
+sqlalchemy = "^2.0.31"
+tqdm = "^4.66.5"
+tree-sitter = "^0.22.3"
+uvicorn = "^0.29.0"
 
 [package.extras]
 all = ["tree-sitter-javascript (>=0.21.4,<0.22.0)", "tree-sitter-python (>=0.21.0,<0.22.0)", "tree-sitter-rust (>=0.21.2,<0.22.0)", "tree-sitter-typescript (>=0.21.2,<0.22.0)"]
@@ -1468,6 +1466,10 @@ javascript = ["tree-sitter-javascript (>=0.21.4,<0.22.0)"]
 python = ["tree-sitter-python (>=0.21.0,<0.22.0)"]
 rust = ["tree-sitter-rust (>=0.21.2,<0.22.0)"]
 typescript = ["tree-sitter-typescript (>=0.21.2,<0.22.0)"]
+
+[package.source]
+type = "directory"
+url = ".."
 
 [[package]]
 name = "levenshtein"
@@ -2309,9 +2311,9 @@ files = [
 
 [package.dependencies]
 numpy = [
-    {version = ">=1.26.0", markers = "python_version >= \"3.12\""},
     {version = ">=1.22.4", markers = "python_version < \"3.11\""},
     {version = ">=1.23.2", markers = "python_version == \"3.11\""},
+    {version = ">=1.26.0", markers = "python_version >= \"3.12\""},
 ]
 python-dateutil = ">=2.8.2"
 pytz = ">=2020.1"
@@ -2687,8 +2689,8 @@ files = [
 annotated-types = ">=0.4.0"
 pydantic-core = "2.20.1"
 typing-extensions = [
-    {version = ">=4.12.2", markers = "python_version >= \"3.13\""},
     {version = ">=4.6.1", markers = "python_version < \"3.13\""},
+    {version = ">=4.12.2", markers = "python_version >= \"3.13\""},
 ]
 
 [package.extras]
@@ -3089,8 +3091,8 @@ grpcio = ">=1.41.0"
 grpcio-tools = ">=1.41.0"
 httpx = {version = ">=0.20.0", extras = ["http2"]}
 numpy = [
-    {version = ">=1.26", markers = "python_version >= \"3.12\""},
     {version = ">=1.21", markers = "python_version >= \"3.8\" and python_version < \"3.12\""},
+    {version = ">=1.26", markers = "python_version >= \"3.12\""},
 ]
 portalocker = ">=2.7.0,<3.0.0"
 pydantic = ">=1.10.8"
@@ -4243,4 +4245,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9.0"
-content-hash = "3fe3244fa596b852bc95250dcc35c2ceef57409a7c413eda47be28c3e0469504"
+content-hash = "9dcb91680d43b1de881aa00b947fede78a560ed3e07868615175e470c4b5e165"
