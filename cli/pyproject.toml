@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kaizen-cli"
-version = "0.2.0"
+version = "0.2.1"
 description = ""
 authors = ["Saurav Panda <sgp65@cornell.edu>"]
 readme = "README.md"
