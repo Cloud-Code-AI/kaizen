@@ -3,6 +3,7 @@ import os
 import json
 from kaizen.generator.e2e_tests import E2ETestGenerator
 from kaizen.generator.unit_test import UnitTestGenerator
+from kaizen.actors.unit_test_runner import UnitTestRunner
 
 CONFIG_FILE = os.path.expanduser("~/.myapp_config.json")
 
@@ -132,8 +133,8 @@ def generate_dir(dir_path, output_folder, enable_critique, verbose, max_critique
 @click.option("--file-path", default=None)
 def run_tests(file_path):
     """Run unit tests"""
-    generator = UnitTestGenerator()
-    test_results = generator.run_tests(file_path=file_path)
+    generator = UnitTestRunner()
+    test_results = generator.discover_and_run_tests(test_file=file_path)
     for file_path, result in test_results.items():
         click.echo(f"Results for {file_path}:")
         if "error" in result:
