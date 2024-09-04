@@ -40,7 +40,6 @@ jobs:
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       run: |
         poetry install --no-interaction --no-root
-        npm ci
 
     - name: Run Kaizen Unit Tests
       uses: Cloud-Code-AI/kaizen-unittest-runner-action@v1.0.9
