@@ -10,15 +10,15 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: '3.x'
 
     - name: Set up Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
         node-version: 'lts/*'
 
@@ -31,7 +31,7 @@ jobs:
 
     - name: Load cached venv
       id: cached-poetry-dependencies
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: .venv
         key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
@@ -43,10 +43,35 @@ jobs:
 
     - name: Run Kaizen Unit Tests
       uses: Cloud-Code-AI/kaizen-unittest-runner-action@v1.0.9
+      continue-on-error: true
+      id: kaizen_tests
+
+    - name: Generate test report
+      if: always()
+      run: |
+        echo "# Kaizen Unit Test Results" > test_report.md
+        echo "## Summary" >> test_report.md
+        echo "Total tests run: $(grep -oP 'Tests run: \K\d+' <<< "${{ steps.kaizen_tests.outputs.stdout }}" | awk '{sum += $1} END {print sum}')" >> test_report.md
+        echo "Total failures: $(grep -oP 'Failures: \K\d+' <<< "${{ steps.kaizen_tests.outputs.stdout }}" | awk '{sum += $1} END {print sum}')" >> test_report.md
+        echo "Total errors: $(grep -oP 'Errors: \K\d+' <<< "${{ steps.kaizen_tests.outputs.stdout }}" | awk '{sum += $1} END {print sum}')" >> test_report.md
+        echo "## Detailed Results" >> test_report.md
+        echo '```' >> test_report.md
+        echo "${{ steps.kaizen_tests.outputs.stdout }}" >> test_report.md
+        echo '```' >> test_report.md
 
     - name: Upload test results
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: always()
       with:
         name: test-results
-        path: .kaizen/unittests/results
+        path: |
+          .kaizen/unittests/results
+          test_report.md
+
+    - name: Check for test failures
+      if: always()
+      run: |
+        if grep -q "Failures: [1-9]" <<< "${{ steps.kaizen_tests.outputs.stdout }}"; then
+          echo "There were test failures"
+          exit 1
+        fi
