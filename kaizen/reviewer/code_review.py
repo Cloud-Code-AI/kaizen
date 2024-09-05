@@ -271,6 +271,7 @@ class CodeReviewer:
                 pull_request_desc,
                 user,
                 reeval_response,
+                custom_context,
             )
         else:
             yield None  # Yield None if there's no data to process

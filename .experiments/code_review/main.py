@@ -41,7 +41,6 @@ def process_pr(pr_url, reeval_response=False):
         pull_request_title=pr_title,
         pull_request_desc="",
         pull_request_files=pr_files,
-        user="kaizen/example",
         reeval_response=reeval_response,
         model="best",
     )
