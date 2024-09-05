@@ -8,7 +8,6 @@ from kaizen.llms.provider import LLMProvider
 from kaizen.llms.prompts.pr_desc_prompts import (
     PR_DESCRIPTION_PROMPT,
     MERGE_PR_DESCRIPTION_PROMPT,
-    PR_FILE_DESCRIPTION_PROMPT,
     PR_DESCRIPTION_SYSTEM_PROMPT,
 )
 
@@ -113,7 +112,7 @@ class PRDescriptionGenerator:
     ) -> Generator[List[Dict], None, None]:
         combined_diff_data = ""
         available_tokens = self.provider.available_tokens(
-            PR_FILE_DESCRIPTION_PROMPT.format(
+            PR_DESCRIPTION_PROMPT.format(
                 CODE_DIFF="",
             )
         )
@@ -160,7 +159,7 @@ class PRDescriptionGenerator:
         pull_request_desc: str,
         user: Optional[str],
     ) -> List[Dict]:
-        prompt = PR_FILE_DESCRIPTION_PROMPT.format(
+        prompt = PR_DESCRIPTION_PROMPT.format(
             CODE_DIFF=diff_data,
         )
         resp, usage = self.provider.chat_completion(prompt, user=user)
