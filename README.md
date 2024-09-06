@@ -57,7 +57,7 @@ Kaizen takes a two-pronged approach to help you find and squash bugs, both befor
 
 ### Quick Start with Cloud Platform
 
-1. Visit [https://beta.cloudcode.ai](https://beta.cloudcode.ai)
+1. Visit [https://kaizen.cloudcode.ai](https://kaizen.cloudcode.ai)
 2. Sign up for an account
 3. Follow the on-screen instructions to connect your repository
 
