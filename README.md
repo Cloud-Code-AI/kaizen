@@ -92,7 +92,7 @@ Kaizen takes a two-pronged approach to help you find and squash bugs, both befor
    **Windows**
    ```bash
    set PYTHONPATH=.
-   poetry run python examples/basic/generate.py
+   poetry run python examples/e2e_test/generate.py
    ```
 
 
@@ -106,7 +106,7 @@ Kaizen takes a two-pronged approach to help you find and squash bugs, both befor
    **Windows**
    ```bash
    set PYTHONPATH=.
-   poetry run python examples/basic/execute.py
+   poetry run python examples/e2e_test/execute.py
    ```
    
    or
