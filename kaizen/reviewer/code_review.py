@@ -133,6 +133,7 @@ class CodeReviewer:
         model="default",
         ignore_deletions=False,
         custom_context: str = "",
+        check_sensetive: bool = False,
     ) -> ReviewOutput:
         self.ignore_deletions = ignore_deletions
         prompt = (
@@ -164,8 +165,8 @@ class CodeReviewer:
                 reeval_response,
                 custom_context,
             )
-
-        reviews.extend(self.check_sensitive_files(pull_request_files))
+        if check_sensetive:
+            reviews.extend(self.check_sensitive_files(pull_request_files))
 
         categories = self._merge_categories(reviews)
         prompt_cost, completion_cost = self.provider.get_usage_cost(
