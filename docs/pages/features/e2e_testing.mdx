@@ -1,9 +1,9 @@
+## E2E UI Test Generator
 
-## E2E UI Testing with Playwright
+Streamline the process of creating and maintaining comprehensive end-to-end tests for web applications using the Playwright testing framework.  
+Generate robust and maintainable test scripts that can be seamlessly integrated into a CI/CD pipeline.
 
-The E2E UI Testing feature is designed to streamline the process of creating and maintaining comprehensive end-to-end tests for web applications using the Playwright testing framework. It leverages advanced language models to generate robust and maintainable test scripts that can be seamlessly integrated into a CI/CD pipeline.
-
-### Key Features
+### Key Features:
 
 1. **Test Plan Generation**: The feature analyzes the application requirements or specifications and automatically generates a comprehensive test plan, covering various user flows and scenarios.
 
@@ -15,27 +15,184 @@ The E2E UI Testing feature is designed to streamline the process of creating and
 
 5. **Visual Testing**: The feature utilizes Playwright's capabilities to capture screenshots and videos during test execution, enabling visual validation and debugging.
 
-### Usage
+## Usage Guide:
 
-1. **Provide Web URL**: To generate E2E UI tests, provide the URL of the web application you want to test.
+Here's a detailed step-by-step guide on how to use the E2E UI Test Generator:
 
-2. **Test Generation**: The feature will analyze the web application's content, identify different UI modules, and generate appropriate Playwright test scripts for each module.
+1. Create and activate a virtual environment:
 
-3. **Test Execution**: The generated test scripts can be executed locally or integrated into a CI/CD pipeline for automated testing during the development lifecycle.
+   **Mac/Linux**
 
-4. **Test Reporting**: After test execution, the feature provides detailed reports, including test results, captured screenshots, and videos for failed tests, facilitating debugging and issue resolution.
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
 
-5. **Continuous Integration**: As the web application evolves, the feature can regenerate or update the test scripts to ensure they remain aligned with the latest changes and requirements.
+   **Windows**
+
+   ```bash
+   python -m venv venv
+   .\venv\Scripts\activate
+   ```
+
+2. Install poetry and Kaizen:
+
+   ```bash
+   pip install poetry kaizen-cloudcode
+   ```
+
+3. Create a new Python file and import the E2ETestGenerator module:
+
+   ```python
+   from kaizen.generator.e2e_tests import E2ETestGenerator
+   ```
+
+4. Create an instance of the E2ETestGenerator:
+
+   ```python
+   generator = E2ETestGenerator()
+   ```
+
+5. Generate E2E tests for a specific URL:
+
+   ```python
+   WEBPAGE_URL = "https://example.com"
+   tests, * = generator.generate_e2e_tests(WEBPAGE_URL)
+   ```
+
+6. Display the generated tests:
+
+   ```python
+   for test in tests:
+       print(f'Module Title: {test["module_title"]} || Importance: {test["importance"]}')
+       for t in test["tests"]:
+           print(f'Description: {t["test_description"]}')
+           print(f'Code: \n{t["code"]}')
+           print("-----------------------------------------------------------")
+   ```
+
+7. Run the generated tests:
+
+   ```python
+   results = generator.run_tests()
+   print(f"Test Execution results: \n {results}")
+   ```
+
+8. Review the generated tests and execution results, and integrate them into your development workflow.
+
+### Example:
+
+Here's a complete example to generate and run E2E UI tests:
+
+```python
+from kaizen.generator.e2e_tests import E2ETestGenerator
+import time
+import sys
+import traceback
+
+# Create an instance of the E2E Test Generator
+generator = E2ETestGenerator()
+
+# Set the webpage URL to test
+WEBPAGE_URL = "https://cloudcode.ai"
+
+print(f"Generating UI tests for `{WEBPAGE_URL}`, please wait...")
+start_time = time.time()
+
+try:
+    # Generate E2E tests
+    tests, * = generator.generate_e2e_tests(WEBPAGE_URL)
+except Exception as e:
+    print(f"Error: {e}")
+    print(traceback.format_exc())
+    sys.exit(1)
+
+end_time = time.time()
+elapsed_time = end_time - start_time
+print(f"\nUI tests generated in {elapsed_time:.2f} seconds.")
+
+# Display generated tests
+for test in tests:
+    print(
+        f'#### ======== Module Title: {test["module_title"]} || Importance: {test["importance"]} ========== ####'
+    )
+    for t in test["tests"]:
+        print(f'Desc: {t["test_description"]}')
+        print(f'Code: \n{t["code"]}')
+        print("-----------------------------------------------------------")
+
+# Run the generated tests
+results = generator.run_tests()
+print(f"Test Execution results: \n {results}")
+```
+
+To execute the generated tests:
+
+```python
+import pytest
+
+if __name__ == "__main__":
+    test_dir = ".kaizen/tests"
+    pytest.main(
+        [
+            "--timeout=60",
+            "-v",
+            test_dir,
+        ]
+    )
+```
+
+### Supported Frameworks:
+
+- Playwright
+
+## How it Works:
+
+- Provide the URL of the web application you want to test.
+- The E2E UI Test Generator analyzes the web application's content and structure.
+- It generates comprehensive Playwright test scripts covering various UI modules and user flows.
+- The generated scripts can be executed locally or integrated into a CI/CD pipeline.
+
+![E2E Test Generation Process](/e2e_test_generation_process.png)
 
 You can find an example [here](https://github.com/Cloud-Code-AI/kaizen/tree/main/examples/e2e_test)
 
-### Benefits
+## API Reference:
 
-- **Accelerated Test Development**: By leveraging advanced language models, the feature significantly accelerates the process of creating comprehensive E2E UI tests.
-- **Maintainability**: The generated scripts follow best practices and industry standards, promoting code maintainability and extensibility.
-- **Reusability**: The implementation of the Page Object Model design pattern enhances code reusability and modularization.
-- **Continuous Quality Assurance**: The seamless integration with CI/CD pipelines enables continuous testing and quality assurance throughout the software development lifecycle.
-- **Visual Validation**: The ability to capture screenshots and videos during test execution aids in visual validation and issue identification.
-- **Scalability**: The feature supports data-driven testing and parallelization strategies, enabling scalable and efficient test execution.
+### Class: E2ETestGenerator
 
-With the E2E UI Testing feature, you can streamline the creation and maintenance of robust end-to-end tests for your web applications, ensuring comprehensive coverage, accelerating the testing process, and fostering a culture of continuous quality assurance within your development workflow
+#### Constructor
+
+- `__init__(self)`
+  Initializes the E2ETestGenerator.
+
+#### Methods
+
+##### generate_e2e_tests
+
+- `generate_e2e_tests(self, url: str) -> Tuple[List[Dict], Dict]`
+  Generates E2E UI tests for the given URL.
+  - Parameters:
+    - `url`: URL of the web application to test.
+  - Returns: A tuple containing a list of generated tests and LLM usage statistics.
+
+##### run_tests
+
+- `run_tests(self) -> Dict`
+  Runs the generated E2E UI tests.
+  - Returns: A dictionary containing test execution results.
+
+## Benefits:
+
+- Accelerated Test Development
+- Improved Test Coverage
+- Maintainability and Reusability
+- Continuous Quality Assurance
+- Visual Validation
+- Scalability
+
+## Limitations:
+
+- Dynamic Content: May have limitations with highly dynamic or JavaScript-heavy applications.
+- Complex Interactions: Advanced user interactions might require manual scripting.
+- Test Data Management: Might need additional setup for managing test data across different environments.

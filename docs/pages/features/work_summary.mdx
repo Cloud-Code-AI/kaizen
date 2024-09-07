@@ -1,26 +1,241 @@
-# Work Summary Generator
+## Work Summary Generator
 
-The Work Summary Generator is a tool that creates easy-to-understand summaries of code changes for non-technical stakeholders and founders.
+Create easy-to-understand summaries of code changes for non-technical stakeholders and founders.
 
-### How it works:
-1. Provide a Git diff representing the code changes to be summarized.
-2. The tool uses advanced language models to analyze the diff and generate a detailed summary.
-3. The summary includes a high-level overview, sectional breakdown, plain language explanations, feature highlights, impact analysis, and visual aids.
-4. The tool ensures a consistent, readable structure.
+### Key Features:
+
+1. **Git Diff Analysis**: The feature analyzes Git diffs representing code changes to generate comprehensive summaries.
+
+2. **Natural Language Summaries**: Generates detailed summaries in plain language, making technical changes understandable to non-technical stakeholders.
+
+3. **Sectional Breakdown**: Provides a structured summary including high-level overview, feature highlights, and impact analysis.
+
+4. **Social Media Integration**: Automatically generates Twitter and LinkedIn posts based on the work summary.
+
+5. **Customizable Output**: Allows customization of summary depth and focus areas based on stakeholder needs.
+
+## Usage Guide:
+
+Here's a detailed step-by-step guide on how to use the Work Summary Generator:
+
+1. Create and activate a virtual environment:
+
+   **Mac/Linux**
+
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+
+   **Windows**
+
+   ```bash
+   python -m venv venv
+   .\venv\Scripts\activate
+   ```
+
+2. Install poetry and Kaizen:
+
+   ```bash
+   pip install poetry kaizen-cloudcode
+   ```
+
+3. Create a new Python file and import the necessary modules:
+
+   ```python
+   from kaizen.reviewer.work_summarizer import WorkSummaryGenerator
+   import requests
+   from datetime import datetime, timedelta, timezone
+   ```
+
+4. Set up GitHub repository information and date range:
+
+   ```python
+   GITHUB_OWNER = "YourGitHubUsername"
+   GITHUB_REPO_NAME = "YourRepoName"
+   current_date = datetime.now(timezone.utc).date()
+   since_date = current_date - timedelta(days=14)
+   since_date_iso = since_date.isoformat()
+   ```
+
+5. Fetch commits and generate diff:
+
+   ```python
+   # Fetch commits
+   commits_url = f"https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO_NAME}/commits"
+   params = {"since": since_date_iso}
+   commits_response = requests.get(commits_url, params=params)
+   commits = commits_response.json()
+
+   # Generate diff
+   first_commit_sha = commits[0]["sha"]
+   last_commit_sha = commits[-1]["sha"]
+   diff_url = f"https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO_NAME}/compare/{last_commit_sha}...{first_commit_sha}"
+   diff_response = requests.get(diff_url, headers={"Accept": "application/vnd.github.v3+json"})
+   diff_data = diff_response.json()
+   ```
+
+6. Extract file diffs:
+
+   ```python
+   file_diffs = [
+       {
+           "file": file_dict["filename"],
+           "patch": file_dict["patch"],
+           "status": file_dict["status"],
+       }
+       for file_dict in diff_data["files"]
+       if "patch" in file_dict
+   ]
+   ```
+
+7. Generate work summary and social media posts:
+
+   ```python
+   work_summary_generator = WorkSummaryGenerator()
+   result = work_summary_generator.generate_work_summaries(file_diffs, user="YourUsername")
+   summary = result["summary"]
+
+   twitter_post, * = work_summary_generator.generate_twitter_post(summary, user="YourUsername")
+   linkedin_post, * = work_summary_generator.generate_linkedin_post(summary, user="YourUsername")
+   ```
+
+8. Display the results:
+
+   ```python
+   print(f"Work Summary:\n{summary}\n")
+   print(f"Twitter Post:\n{twitter_post}\n")
+   print(f"LinkedIn Post:\n{linkedin_post}\n")
+   ```
+
+9. Review the generated summary and social media posts, and share them with stakeholders as needed.
+
+### Example:
+
+To try out fast, here's a complete example to generate a work summary from GitHub commits:
+
+```python
+from kaizen.reviewer.work_summarizer import WorkSummaryGenerator
+import requests
+from datetime import datetime, timedelta, timezone
+
+# GitHub repository information
+GITHUB_OWNER = "Cloud-Code-AI"
+GITHUB_REPO_NAME = "kaizen"
+
+# Get the current date and calculate the date 14 days ago
+current_date = datetime.now(timezone.utc).date()
+since_date = current_date - timedelta(days=14)
+since_date_iso = since_date.isoformat()
+
+# GitHub API endpoint for getting commits
+commits_url = f"https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO_NAME}/commits"
+params = {"since": since_date_iso}
+commits_response = requests.get(commits_url, params=params)
+
+if commits_response.status_code != 200:
+    print("ERROR: Could not get GitHub commits")
+    exit(1)
+
+commits = commits_response.json()
+first_commit_sha = commits[0]["sha"]
+last_commit_sha = commits[-1]["sha"]
+
+# Get the diff between the first and last commits
+diff_url = f"https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO_NAME}/compare/{last_commit_sha}...{first_commit_sha}"
+diff_response = requests.get(diff_url, headers={"Accept": "application/vnd.github.v3+json"})
+diff_data = diff_response.json()
+
+# Extract file diffs
+file_diffs = [
+    {
+        "file": file_dict["filename"],
+        "patch": file_dict["patch"],
+        "status": file_dict["status"],
+    }
+    for file_dict in diff_data["files"]
+    if "patch" in file_dict
+]
+
+# Generate work summary
+work_summary_generator = WorkSummaryGenerator()
+result = work_summary_generator.generate_work_summaries(file_diffs, user="oss_example")
+summary = result["summary"]
+
+# Generate social media posts
+twitter_post, * = work_summary_generator.generate_twitter_post(summary, user="oss_example")
+linkedin_post, * = work_summary_generator.generate_linkedin_post(summary, user="oss_example")
+
+# Display results
+print(f"Work Summary:\n{summary}\n")
+print(f"Twitter Post:\n{twitter_post}\n")
+print(f"LinkedIn Post:\n{linkedin_post}\n")
+```
+
+### Supported Input:
+
+- Git diffs
+- GitHub repository information
+
+## How it Works:
+
+- Provide a Git diff representing the code changes to be summarized.
+- The tool uses advanced language models to analyze the diff and generate a detailed summary.
+- The summary includes a high-level overview, sectional breakdown, plain language explanations, feature highlights, and impact analysis.
+- The tool ensures a consistent, readable structure and can generate social media posts based on the summary.
+
+![Work Summary Generation Process](/work_summary_generation_process.png)
 
 You can find an example [here](https://github.com/Cloud-Code-AI/kaizen/tree/main/examples/work_summarizer)
 
+## API Reference:
 
-### Using the Work Summary Generator:
-1. Generate a Git diff representing the code changes.
-2. Trigger the generator to create a user-friendly summary.
-3. Share the summary with stakeholders for better communication and understanding.
-4. Use the summary as a basis for discussions and decision-making.
+### Class: WorkSummaryGenerator
 
-### Benefits:
-- Bridge the gap between technical and non-technical stakeholders.
-- Keep stakeholders engaged and informed about development progress.
-- Provide a user-friendly way for non-technical stakeholders to track development progress.
-- Streamline the reporting process with automatically generated work summaries.
+#### Constructor
 
-With the Work Summary Generator, you can effectively communicate the value and progress of your development efforts to non-technical stakeholders, fostering better collaboration and alignment throughout the project lifecycle.
+- `__init__(self)`
+  Initializes the WorkSummaryGenerator.
+
+#### Methods
+
+##### generate_work_summaries
+
+- `generate_work_summaries(self, file_diffs: List[Dict], user: str) -> Dict`
+  Generates a work summary from the provided file diffs.
+  - Parameters:
+    - `file_diffs`: List of dictionaries containing file diff information.
+    - `user`: Username or identifier for the user generating the summary.
+  - Returns: A dictionary containing the generated summary and other relevant information.
+
+##### generate_twitter_post
+
+- `generate_twitter_post(self, summary: str, user: str) -> Tuple[str, Dict]`
+  Generates a Twitter post based on the work summary.
+  - Parameters:
+    - `summary`: The generated work summary.
+    - `user`: Username or identifier for the user generating the post.
+  - Returns: A tuple containing the generated Twitter post and LLM usage statistics.
+
+##### generate_linkedin_post
+
+- `generate_linkedin_post(self, summary: str, user: str) -> Tuple[str, Dict]`
+  Generates a LinkedIn post based on the work summary.
+  - Parameters:
+    - `summary`: The generated work summary.
+    - `user`: Username or identifier for the user generating the post.
+  - Returns: A tuple containing the generated LinkedIn post and LLM usage statistics.
+
+## Benefits:
+
+- Bridge the gap between technical and non-technical stakeholders
+- Keep stakeholders engaged and informed about development progress
+- Provide a user-friendly way for non-technical stakeholders to track development progress
+- Streamline the reporting process with automatically generated work summaries
+- Facilitate communication across different platforms with integrated social media post generation
+
+## Limitations:
+
+- AI Limitations: May not fully capture complex technical nuances or project-specific context.
+- GitHub API Limitations: Rate limits and authentication requirements may affect large-scale usage.
+- Summary Depth: The level of detail in summaries may vary based on the complexity of code changes.
