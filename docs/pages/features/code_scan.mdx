@@ -28,28 +28,9 @@ You can find an example [here](https://github.com/Cloud-Code-AI/kaizen/tree/main
 
 Here's a detailed step-by-step guide on how to use the Code Scanner:
 
-1. Create and activate a virtual environment:
+1. Follow the initial setup guide [here](../initial_setup_guide).
 
-   **Mac/Linux**
-
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
-
-   **Windows**
-
-   ```bash
-   python -m venv venv
-   .\venv\Scripts\activate
-   ```
-
-2. Install poetry and Kaizen:
-
-   ```bash
-   pip install poetry kaizen-cloudcode
-   ```
-3. Create a new Python file and import the necessary modules from Kaizen:
+2. Create a new Python file and import the necessary modules from Kaizen:
 
    ```python
     from kaizen.reviewer.code_scan import CodeScanner
@@ -57,14 +38,14 @@ Here's a detailed step-by-step guide on how to use the Code Scanner:
     import json
    ```
 
-4. Create an instance of the CodeScanner:  
+3. Create an instance of the CodeScanner:  
 
 
    ```python
    reviewer = CodeScanner(llm_provider=LLMProvider())
    ```
 
-5. Provide the source code file or directory path which you want to scan: 
+4. Provide the source code file or directory path which you want to scan: 
 
    You can scan a single file at a time:
 
@@ -84,13 +65,13 @@ Here's a detailed step-by-step guide on how to use the Code Scanner:
     )
    ```
 
-6. Display the test results:
+5. Display the test results:
 
    ```python
     print(f"Total {len(review_data.issues)} Issues found!!!!")
     print(json.dumps(review_data.issues, indent=2))
    ```
-8. Review the generated report and address the identified issues in your code.
+6. Review the generated report and address the identified issues in your code.
 
 ### Example
 

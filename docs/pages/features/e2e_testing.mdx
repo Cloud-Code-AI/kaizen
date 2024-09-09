@@ -30,48 +30,28 @@ You can find an example [here](https://github.com/Cloud-Code-AI/kaizen/tree/main
 
 Here's a detailed step-by-step guide on how to use the E2E UI Test Generator:
 
-1. Create and activate a virtual environment:
+1. Follow the initial setup guide [here](../initial_setup_guide).
 
-   **Mac/Linux**
-
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
-
-   **Windows**
-
-   ```bash
-   python -m venv venv
-   .\venv\Scripts\activate
-   ```
-
-2. Install poetry and Kaizen:
-
-   ```bash
-   pip install poetry kaizen-cloudcode
-   ```
-
-3. Create a new Python file and import the E2ETestGenerator module:
+2. Create a new Python file and import the E2ETestGenerator module:
 
    ```python
    from kaizen.generator.e2e_tests import E2ETestGenerator
    ```
 
-4. Create an instance of the E2ETestGenerator:
+3. Create an instance of the E2ETestGenerator:
 
    ```python
    generator = E2ETestGenerator()
    ```
 
-5. Generate E2E tests for a specific URL:
+4. Generate E2E tests for a specific URL:
 
    ```python
    WEBPAGE_URL = "https://example.com"
    tests, * = generator.generate_e2e_tests(WEBPAGE_URL)
    ```
 
-6. Display the generated tests:
+5. Display the generated tests:
 
    ```python
    for test in tests:
@@ -82,14 +62,14 @@ Here's a detailed step-by-step guide on how to use the E2E UI Test Generator:
            print("-----------------------------------------------------------")
    ```
 
-7. Run the generated tests:
+6. Run the generated tests:
 
    ```python
    results = generator.run_tests()
    print(f"Test Execution results: \n {results}")
    ```
 
-8. Review the generated tests and execution results, and integrate them into your development workflow.
+7. Review the generated tests and execution results, and integrate them into your development workflow.
 
 ### Example
 

@@ -16,22 +16,37 @@ Replace `<YOUR_LLM_API_KEY>`, `<YOUR_LLM_API_BASE_URL>`, and `<YOUR_LLM_API_VERS
    
 ### Step 2: Update `config.json`  
    
-Next, update your `config.json` file to include the model configuration for LLM. This configuration will specify which model deployment to use and the associated costs per token.  
+Next, update your `config.json` file to include the model configuration for LLM.  
+Kaizen uses litellm under the hood, so your config.json can look something like this.
+This configuration will specify which model deployment to use and the associated costs per token.  
    
 ```json  
-{  
-  ...  
-  "model_config": {  
-    "model": "<NAME_OF_ORGANIZATION>/<NAME_OF_DEPLOYMENT>",  
-    "input_cost_per_token": 0.000005,  
-    "output_cost_per_token": 0.000015  
-  },  
-  ...  
-}  
+{
+  "language_model": {
+    "provider": "litellm",
+    "enable_observability_logging": false,
+    "redis_enabled": false,
+    "models": [
+      {
+        "model_name": "default",
+        "litellm_params": {
+          "model": "<MODEL_NAME>/<NAME_OF_DEPLOYMENT>",
+          "api_key": "os.environ/LLM_API_KEY",
+          "api_base": "os.environ/LLM_API_BASE"
+        }
+      }
+    ]
+  },
+  "github_app": {
+    ...
+  }
+}
 ```  
    
 Replace `<NAME_OF_DEPLOYMENT>` with the name of your LLM model's deployment.  
    
+You can checkout an example [here](https://github.com/Cloud-Code-AI/kaizen/blob/main/config.json)
+
 Feel free to reach out if you have any questions or need further assistance!  
    
 ---  

@@ -29,40 +29,21 @@ You can find an example [here](https://github.com/Cloud-Code-AI/kaizen/tree/main
 
 Here's a detailed step-by-step guide on how to use the UI Reviewer:
 
-1. Create and activate a virtual environment:
+1. Follow the initial setup guide [here](../initial_setup_guide).
 
-   **Mac/Linux**
-
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
-
-   **Windows**
-
-   ```bash
-   python -m venv venv
-   .\venv\Scripts\activate
-   ```
-
-2. Install poetry and Kaizen:
-
-   ```bash
-   pip install poetry kaizen-cloudcode
-   ```
-3. Create a new Python file and import the necessary modules from Kaizen:
+2. Create a new Python file and import the necessary modules from Kaizen:
 
    ```python
     from kaizen.reviewer.ui_review import UIReviewer
     import json
    ```
-4. Create an instance of the UI Reviewer:  
+3. Create an instance of the UI Reviewer:  
 
    ```python
    ui_review = UIReviewer()
    ```
 
-5. Provide the URL or HTML code for which you want to generate UI reviews:
+4. Provide the URL or HTML code for which you want to generate UI reviews:
    
    UI review for a specific URL:
    ```python
@@ -81,7 +62,7 @@ Here's a detailed step-by-step guide on how to use the UI Reviewer:
     reviews = ui_review.generate_ui_review(html_code=html_code)["reviews"]
    ```
 
-6. Display the test results:
+5. Display the test results:
 
    ```python
     print_block = """
@@ -106,7 +87,7 @@ Here's a detailed step-by-step guide on how to use the UI Reviewer:
         )
         print(content)
     ```
-7. Review the generated report and address the identified issues in your code.
+6. Review the generated report and address the identified issues in your code.
 
 ### Example
 

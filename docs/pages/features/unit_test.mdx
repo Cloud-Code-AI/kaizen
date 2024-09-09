@@ -28,35 +28,16 @@ You can find an example [here](https://github.com/Cloud-Code-AI/kaizen/tree/main
 
 Here's a detailed step-by-step guide on how to use the Unit Test Generator:
 
-1. Create and activate a virtual environment:
+1. Follow the initial setup guide [here](../initial_setup_guide).
 
-   **Mac/Linux**
-
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
-
-   **Windows**
-
-   ```bash
-   python -m venv venv
-   .\venv\Scripts\activate
-   ```
-
-2. Install poetry and Kaizen:
-
-   ```bash
-   pip install poetry kaizen-cloudcode
-   ```
-3. Create a new Python file and import the UnitTestGenerator module from Kaizen package :
+2. Create a new Python file and import the UnitTestGenerator module from Kaizen package :
 
    ```python
    from kaizen.generator.unit_test import UnitTestGenerator
    generator = UnitTestGenerator()
    ```
 
-4. Provide the source code file or directory path for which you want to generate unit tests:  
+3. Provide the source code file or directory path for which you want to generate unit tests:  
 
    You can run it for one file at a time:
 
@@ -74,7 +55,7 @@ Here's a detailed step-by-step guide on how to use the Unit Test Generator:
    )
    ```
 
-5. Optionally, you can configure output path, verbosity, and critique settings.
+4. Optionally, you can configure output path, verbosity, and critique settings.
 
    ```python
    ...
@@ -85,11 +66,11 @@ Here's a detailed step-by-step guide on how to use the Unit Test Generator:
    ...
    ```
 
-6. Run the generator to create unit tests.
+5. Run the generator to create unit tests.
    ```python
    generator.run_tests()
    ```
-7. Display the test results:
+6. Display the test results:
    ```python
    for file_path, result in test_results.items():
        print(f"Results for {file_path}:")
@@ -101,7 +82,7 @@ Here's a detailed step-by-step guide on how to use the Unit Test Generator:
            print(f"  Errors: {result.get('errors', 'N/A')}")
        print()
    ```
-8. Review and integrate the generated tests into your test suite.
+7. Review and integrate the generated tests into your test suite.
 
 ### Example
 
