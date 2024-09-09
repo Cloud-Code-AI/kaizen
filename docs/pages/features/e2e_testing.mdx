@@ -3,7 +3,7 @@
 Streamline the process of creating and maintaining comprehensive end-to-end tests for web applications using the Playwright testing framework.  
 Generate robust and maintainable test scripts that can be seamlessly integrated into a CI/CD pipeline.
 
-### Key Features:
+### Key Features
 
 1. **Test Plan Generation**: The feature analyzes the application requirements or specifications and automatically generates a comprehensive test plan, covering various user flows and scenarios.
 
@@ -15,7 +15,18 @@ Generate robust and maintainable test scripts that can be seamlessly integrated 
 
 5. **Visual Testing**: The feature utilizes Playwright's capabilities to capture screenshots and videos during test execution, enabling visual validation and debugging.
 
-## Usage Guide:
+### How it Works
+
+- Provide the URL of the web application you want to test.
+- The E2E UI Test Generator analyzes the web application's content and structure.
+- It generates comprehensive Playwright test scripts covering various UI modules and user flows.
+- The generated scripts can be executed locally or integrated into a CI/CD pipeline.
+
+![E2E Test Generation Process](/e2e_test_generation_process.png)
+
+You can find an example [here](https://github.com/Cloud-Code-AI/kaizen/tree/main/examples/e2e_test)
+
+## Usage Guide
 
 Here's a detailed step-by-step guide on how to use the E2E UI Test Generator:
 
@@ -80,7 +91,7 @@ Here's a detailed step-by-step guide on how to use the E2E UI Test Generator:
 
 8. Review the generated tests and execution results, and integrate them into your development workflow.
 
-### Example:
+### Example
 
 Here's a complete example to generate and run E2E UI tests:
 
@@ -142,47 +153,11 @@ if __name__ == "__main__":
     )
 ```
 
-### Supported Frameworks:
+### Supported Frameworks
 
 - Playwright
 
-## How it Works:
-
-- Provide the URL of the web application you want to test.
-- The E2E UI Test Generator analyzes the web application's content and structure.
-- It generates comprehensive Playwright test scripts covering various UI modules and user flows.
-- The generated scripts can be executed locally or integrated into a CI/CD pipeline.
-
-![E2E Test Generation Process](/e2e_test_generation_process.png)
-
-You can find an example [here](https://github.com/Cloud-Code-AI/kaizen/tree/main/examples/e2e_test)
-
-## API Reference:
-
-### Class: E2ETestGenerator
-
-#### Constructor
-
-- `__init__(self)`
-  Initializes the E2ETestGenerator.
-
-#### Methods
-
-##### generate_e2e_tests
-
-- `generate_e2e_tests(self, url: str) -> Tuple[List[Dict], Dict]`
-  Generates E2E UI tests for the given URL.
-  - Parameters:
-    - `url`: URL of the web application to test.
-  - Returns: A tuple containing a list of generated tests and LLM usage statistics.
-
-##### run_tests
-
-- `run_tests(self) -> Dict`
-  Runs the generated E2E UI tests.
-  - Returns: A dictionary containing test execution results.
-
-## Benefits:
+## Benefits
 
 - Accelerated Test Development
 - Improved Test Coverage
@@ -191,7 +166,7 @@ You can find an example [here](https://github.com/Cloud-Code-AI/kaizen/tree/main
 - Visual Validation
 - Scalability
 
-## Limitations:
+## Limitations
 
 - Dynamic Content: May have limitations with highly dynamic or JavaScript-heavy applications.
 - Complex Interactions: Advanced user interactions might require manual scripting.

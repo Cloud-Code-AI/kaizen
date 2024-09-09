@@ -2,7 +2,7 @@
 
 Create easy-to-understand summaries of code changes for non-technical stakeholders and founders.
 
-### Key Features:
+### Key Features
 
 1. **Git Diff Analysis**: The feature analyzes Git diffs representing code changes to generate comprehensive summaries.
 
@@ -14,7 +14,18 @@ Create easy-to-understand summaries of code changes for non-technical stakeholde
 
 5. **Customizable Output**: Allows customization of summary depth and focus areas based on stakeholder needs.
 
-## Usage Guide:
+### How it Works
+
+- Provide a Git diff representing the code changes to be summarized.
+- The tool uses advanced language models to analyze the diff and generate a detailed summary.
+- The summary includes a high-level overview, sectional breakdown, plain language explanations, feature highlights, and impact analysis.
+- The tool ensures a consistent, readable structure and can generate social media posts based on the summary.
+
+![Work Summary Generation Process](/work_summary_generation_process.png)
+
+You can find an example [here](https://github.com/Cloud-Code-AI/kaizen/tree/main/examples/work_summarizer)
+
+## Usage Guide
 
 Here's a detailed step-by-step guide on how to use the Work Summary Generator:
 
@@ -110,7 +121,7 @@ Here's a detailed step-by-step guide on how to use the Work Summary Generator:
 
 9. Review the generated summary and social media posts, and share them with stakeholders as needed.
 
-### Example:
+### Example
 
 To try out fast, here's a complete example to generate a work summary from GitHub commits:
 
@@ -172,61 +183,13 @@ print(f"Twitter Post:\n{twitter_post}\n")
 print(f"LinkedIn Post:\n{linkedin_post}\n")
 ```
 
-### Supported Input:
+### Supported Input
 
 - Git diffs
 - GitHub repository information
 
-## How it Works:
 
-- Provide a Git diff representing the code changes to be summarized.
-- The tool uses advanced language models to analyze the diff and generate a detailed summary.
-- The summary includes a high-level overview, sectional breakdown, plain language explanations, feature highlights, and impact analysis.
-- The tool ensures a consistent, readable structure and can generate social media posts based on the summary.
-
-![Work Summary Generation Process](/work_summary_generation_process.png)
-
-You can find an example [here](https://github.com/Cloud-Code-AI/kaizen/tree/main/examples/work_summarizer)
-
-## API Reference:
-
-### Class: WorkSummaryGenerator
-
-#### Constructor
-
-- `__init__(self)`
-  Initializes the WorkSummaryGenerator.
-
-#### Methods
-
-##### generate_work_summaries
-
-- `generate_work_summaries(self, file_diffs: List[Dict], user: str) -> Dict`
-  Generates a work summary from the provided file diffs.
-  - Parameters:
-    - `file_diffs`: List of dictionaries containing file diff information.
-    - `user`: Username or identifier for the user generating the summary.
-  - Returns: A dictionary containing the generated summary and other relevant information.
-
-##### generate_twitter_post
-
-- `generate_twitter_post(self, summary: str, user: str) -> Tuple[str, Dict]`
-  Generates a Twitter post based on the work summary.
-  - Parameters:
-    - `summary`: The generated work summary.
-    - `user`: Username or identifier for the user generating the post.
-  - Returns: A tuple containing the generated Twitter post and LLM usage statistics.
-
-##### generate_linkedin_post
-
-- `generate_linkedin_post(self, summary: str, user: str) -> Tuple[str, Dict]`
-  Generates a LinkedIn post based on the work summary.
-  - Parameters:
-    - `summary`: The generated work summary.
-    - `user`: Username or identifier for the user generating the post.
-  - Returns: A tuple containing the generated LinkedIn post and LLM usage statistics.
-
-## Benefits:
+## Benefits
 
 - Bridge the gap between technical and non-technical stakeholders
 - Keep stakeholders engaged and informed about development progress
@@ -234,7 +197,7 @@ You can find an example [here](https://github.com/Cloud-Code-AI/kaizen/tree/main
 - Streamline the reporting process with automatically generated work summaries
 - Facilitate communication across different platforms with integrated social media post generation
 
-## Limitations:
+## Limitations
 
 - AI Limitations: May not fully capture complex technical nuances or project-specific context.
 - GitHub API Limitations: Rate limits and authentication requirements may affect large-scale usage.

@@ -2,7 +2,7 @@
 
 AI-powered analysis and feedback for improving user experience and accessibility of UI components.
 
-### Key Features:
+### Key Features
 
 1. **UI Component Analysis**: The feature analyzes HTML code of UI components to identify areas for improvement.
 
@@ -14,7 +14,18 @@ AI-powered analysis and feedback for improving user experience and accessibility
 
 5. **Continuous Improvement**: Supports iterative development by providing ongoing feedback as UI evolves.
 
-## Usage Guide:
+
+### How it Works
+
+- Input your HTML code or URL for which you want to generate UI reviews.
+- The UI Reviewer leverages advanced language models to analyze the code and generate a detailed report of findings.
+- The scanner identifies potential issues, accessibility issues, and areas for improvement in your UI.
+
+![UI Review Analysis Workflow](/ui_review_analysis_workflow.png.)
+
+You can find an example [here](https://github.com/Cloud-Code-AI/kaizen/tree/main/examples/ui_review/main.py)
+
+## Usage Guide
 
 Here's a detailed step-by-step guide on how to use the UI Reviewer:
 
@@ -97,7 +108,7 @@ Here's a detailed step-by-step guide on how to use the UI Reviewer:
     ```
 7. Review the generated report and address the identified issues in your code.
 
-### Example:
+### Example
 
 Here's a complete example to review the UI of a specific URL:
 
@@ -135,46 +146,18 @@ for review in reviews:
     print(content)
 ```
 
-### Supported Input:
+### Supported Input
+
 - HTML code
 - URLs of web pages
 
-## How it Works:
-
-- Input your HTML code or URL for which you want to generate UI reviews.
-- The UI Reviewer leverages advanced language models to analyze the code and generate a detailed report of findings.
-- The scanner identifies potential issues, accessibility issues, and areas for improvement in your UI.
-
-![UI Review Analysis Workflow](/ui_review_analysis_workflow.png.)
-
-You can find an example [here](https://github.com/Cloud-Code-AI/kaizen/tree/main/examples/ui_review/main.py)
-
-## API Reference:
-
-### Class: UIReviewer  
-
-#### Constructor
-
-- `__init__(self, llm_provider: LLMProvider)`:
-  Initializes the UI Reviewer with the provided LLM provider.
-  
-#### Methods
-
-##### generate_ui_review
-
-- `generate_ui_review(self, url: str = None, html_content: str = None) -> Dict`
-  Performs a UI review on a given URL or HTML code.
-  - Parameters:
-    - `url`: URL of the web page to be reviewed.
-    - `html_code`: HTML code to be reviewed.
-  - Returns: A dictionary containing the review results.
-
-## Benefits:
+## Benefits
 
 - Improved User Experience
 - Accessibility Compliance
 - Continuous Improvement
    
-## Limitations:
+## Limitations
+
 - AI Limitations: Understanding complex UI patterns or context-specific nuances.
 - Human Oversight: AI feedback should complement human review and testing.
