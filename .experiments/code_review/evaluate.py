@@ -57,6 +57,10 @@ def compare_issues(ground_truth, model_issues):
             unmatched_ground_truth.append(gt_issue)
 
     for model_issue in model_issues:
+        if model_issue["severity"] < 5:
+            continue
+        if model_issue["sentiment"] != "negative":
+            continue
         if not any(model_issue in pair for pair in matched):
             unmatched_model.append(model_issue)
 

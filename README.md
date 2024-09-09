@@ -23,7 +23,7 @@
   <a href="https://cloudcode.ai/kaizen/docs"><img src="https://img.shields.io/badge/docs-view%20Kaizen%20Docs" alt="Kaizen Docs"></a>
 </p>
 
-## 🚀 Kaizen: Your Code Quality Guardian
+## 🚀 Kaizen: Accelerating Bug detection with AI
 
 In the ever-evolving world of software development, delivering high-quality code is paramount. Kaizen, an open-source AI-powered suite, is here to revolutionize your code quality assurance process. With its seamless integration into your existing workflows, Kaizen empowers you to enhance software quality and streamline development, ensuring your applications are robust, reliable, and bug-free.
 

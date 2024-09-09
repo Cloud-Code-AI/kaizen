@@ -132,10 +132,17 @@ class CodeReviewer:
         reeval_response: bool = False,
         model="default",
         ignore_deletions=False,
+        custom_context: str = "",
+        check_sensetive: bool = False,
     ) -> ReviewOutput:
         self.ignore_deletions = ignore_deletions
-        prompt = CODE_REVIEW_PROMPT.format(
-            CODE_DIFF=parser.patch_to_combined_chunks(diff_text, self.ignore_deletions),
+        prompt = (
+            CODE_REVIEW_PROMPT.format(
+                CODE_DIFF=parser.patch_to_combined_chunks(
+                    diff_text, self.ignore_deletions
+                ),
+            )
+            + custom_context
         )
         self.total_usage = {
             "prompt_tokens": 0,
@@ -156,9 +163,10 @@ class CodeReviewer:
                 pull_request_desc,
                 user,
                 reeval_response,
+                custom_context,
             )
-
-        reviews.extend(self.check_sensitive_files(pull_request_files))
+        if check_sensetive:
+            reviews.extend(self.check_sensitive_files(pull_request_files))
 
         categories = self._merge_categories(reviews)
         prompt_cost, completion_cost = self.provider.get_usage_cost(
@@ -197,6 +205,7 @@ class CodeReviewer:
         pull_request_desc: str,
         user: Optional[str],
         reeval_response: bool,
+        custom_context: str,
     ) -> Tuple[List[Dict], Optional[float]]:
         self.logger.debug("Processing based on files")
         reviews = []
@@ -207,6 +216,7 @@ class CodeReviewer:
             pull_request_desc,
             user,
             reeval_response,
+            custom_context,
         )
         for result in file_chunks_generator:
             if result:  # Check if the result is not None
@@ -224,6 +234,7 @@ class CodeReviewer:
         pull_request_desc: str,
         user: Optional[str],
         reeval_response: bool,
+        custom_context: str,
     ) -> Generator[Optional[Tuple[List[Dict], Optional[float]]], None, None]:
         combined_diff_data = ""
         available_tokens = self.provider.available_tokens(FILE_CODE_REVIEW_PROMPT)
@@ -250,6 +261,7 @@ class CodeReviewer:
                     pull_request_desc,
                     user,
                     reeval_response,
+                    custom_context,
                 )
                 combined_diff_data = f"\n---->\nFile Name: {filename}\nPatch Details: {parser.patch_to_combined_chunks(patch_details,  self.ignore_deletions)}"
 
@@ -260,6 +272,7 @@ class CodeReviewer:
                 pull_request_desc,
                 user,
                 reeval_response,
+                custom_context,
             )
         else:
             yield None  # Yield None if there's no data to process
@@ -271,11 +284,15 @@ class CodeReviewer:
         pull_request_desc: str,
         user: Optional[str],
         reeval_response: bool,
+        custom_context: str,
     ) -> Optional[Tuple[List[Dict], Optional[float]]]:
         if not diff_data:
             return None
-        prompt = FILE_CODE_REVIEW_PROMPT.format(
-            FILE_PATCH=diff_data,
+        prompt = (
+            FILE_CODE_REVIEW_PROMPT.format(
+                FILE_PATCH=diff_data,
+            )
+            + custom_context
         )
         custom_model = {"model": self.default_model}
         resp, usage = self.provider.chat_completion_with_json(
@@ -284,11 +301,13 @@ class CodeReviewer:
         self.total_usage = self.provider.update_usage(self.total_usage, usage)
 
         if reeval_response:
-            resp = self._reevaluate_response(prompt, resp, user)
+            resp = self._reevaluate_response(prompt, resp, custom_context, user)
 
         return resp.get("review", []), resp.get("code_quality_percentage", None)
 
-    def _reevaluate_response(self, prompt: str, resp: str, user: Optional[str]) -> str:
+    def _reevaluate_response(
+        self, prompt: str, resp: str, custom_context: str, user: Optional[str]
+    ) -> str:
         new_prompt = PR_REVIEW_EVALUATION_PROMPT.format(
             ACTUAL_PROMPT=prompt, LLM_OUTPUT=json.dumps(resp)
         )
