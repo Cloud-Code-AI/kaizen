@@ -1,0 +1,37 @@
+## How to integrate custom LLMs with Kaizen?  
+   
+This post addresses how to setup custom LLMs with Kaizen.
+   
+### Step 1: Set Environment Variables  
+   
+First, you need to add the necessary environment variables in your `.env` file. These variables are essential for authenticating and interacting with the API service of your LLM Provider.  
+   
+```python  
+os.environ["LLM_API_KEY"] = "<YOUR_LLM_API_KEY>"  
+os.environ["LLM_API_BASE"] = "<YOUR_LLM_API_BASE_URL>"  
+os.environ["LLM_API_VERSION"] = "<YOUR_LLM_API_VERSION>"  
+```  
+   
+Replace `<YOUR_LLM_API_KEY>`, `<YOUR_LLM_API_BASE_URL>`, and `<YOUR_LLM_API_VERSION>` with your actual LLM's credentials.  
+   
+### Step 2: Update `config.json`  
+   
+Next, update your `config.json` file to include the model configuration for LLM. This configuration will specify which model deployment to use and the associated costs per token.  
+   
+```json  
+{  
+  ...  
+  "model_config": {  
+    "model": "<NAME_OF_ORGANIZATION>/<NAME_OF_DEPLOYMENT>",  
+    "input_cost_per_token": 0.000005,  
+    "output_cost_per_token": 0.000015  
+  },  
+  ...  
+}  
+```  
+   
+Replace `<NAME_OF_DEPLOYMENT>` with the name of your LLM model's deployment.  
+   
+Feel free to reach out if you have any questions or need further assistance!  
+   
+---  
