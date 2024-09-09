@@ -33,8 +33,13 @@ This configuration will specify which model deployment to use and the associated
           "model": "<MODEL_NAME>/<NAME_OF_DEPLOYMENT>",
           "api_key": "os.environ/LLM_API_KEY",
           "api_base": "os.environ/LLM_API_BASE"
+        },
+        "model_info": {
+          "input_cost_per_token": ...,
+          ...
         }
       }
+
     ]
   },
   "github_app": {
@@ -44,7 +49,7 @@ This configuration will specify which model deployment to use and the associated
 ```  
    
 Replace `<NAME_OF_DEPLOYMENT>` with the name of your LLM model's deployment.  
-   
+For more information on model token pricing, check out [here](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json).   
 You can checkout an example [here](https://github.com/Cloud-Code-AI/kaizen/blob/main/config.json)
 
 Feel free to reach out if you have any questions or need further assistance!  
