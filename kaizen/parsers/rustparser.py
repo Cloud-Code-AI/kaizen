@@ -12,8 +12,16 @@ class RustParser:
         function_pattern = r"(async\s+)?fn\s+(\w+)\s*\((.*?)\)\s*{([^}]*)}"
         impl_pattern = r"impl\s*(\w+)\s*{([^}]*)}"
         mod_pattern = r"mod\s+(\w+)\s*{([^}]*)}"
+        use_pattern = r"use\s+(.*?);"
+        const_pattern = r"const\s+(\w+)\s*:\s*(\w+)\s*=\s*([^;]+);"
+        static_pattern = r"static\s+(\w+)\s*:\s*(\w+)\s*=\s*([^;]+);"
 
         parsed_data = []
+
+        imports = re.findall(use_pattern, source)
+        consts = re.findall(const_pattern, source)
+        statics = re.findall(static_pattern, source)
+        global_vars = consts + statics
 
         for mod_match in re.finditer(mod_pattern, source):
             mod_name = mod_match.group(1)
@@ -24,6 +32,8 @@ class RustParser:
                     "name": mod_name,
                     "contents": mod_body,
                     "source": mod_match.group(0),
+                    "imports": imports,
+                    "global_vars": global_vars,
                 }
             )
 
@@ -39,6 +49,8 @@ class RustParser:
                     "name": struct_name,
                     "fields": fields,
                     "source": struct_match.group(0),
+                    "imports": imports,
+                    "global_vars": global_vars,
                 }
             )
 
@@ -54,6 +66,8 @@ class RustParser:
                     "name": enum_name,
                     "variants": variants,
                     "source": enum_match.group(0),
+                    "imports": imports,
+                    "global_vars": global_vars,
                 }
             )
 
@@ -67,6 +81,8 @@ class RustParser:
                     "args": func_match.group(3).split(","),
                     "body": func_match.group(4).strip(),
                     "source": f"{async_keyword or ''}fn {func_match.group(2)}({func_match.group(3)}) {{{func_match.group(4)}}}",
+                    "imports": imports,
+                    "global_vars": global_vars,
                 }
             )
 
@@ -88,10 +104,14 @@ class RustParser:
                             "args": m[2].split(","),
                             "body": m[3].strip(),
                             "source": f"{m[0] or ''}fn {m[1]}({m[2]}) {{{m[3]}}}",
+                            "imports": imports,
+                            "global_vars": global_vars,
                         }
                         for m in methods
                     ],
                     "source": impl_match.group(0),
+                    "imports": imports,
+                    "global_vars": global_vars,
                 }
             )
 
