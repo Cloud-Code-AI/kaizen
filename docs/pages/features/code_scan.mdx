@@ -2,7 +2,7 @@
 
 Comprehensive static code analysis to identify potential issues, vulnerabilities, and areas for improvement in your codebase.
 
-### Key Features:
+### Key Features
 
 1. **Static Analysis**: The feature performs in-depth analysis of your code to identify potential issues, vulnerabilities, and areas for improvement.
 
@@ -14,32 +14,23 @@ Comprehensive static code analysis to identify potential issues, vulnerabilities
 
 5. **Code Quality Metrics**: Provides metrics and insights on code quality and maintainability.
 
-## Usage Guide:
+### How it Works
+
+- Input your source code or provide access to your repository.
+- The Code Scanner employs advanced algorithms and AI to analyze the code and generate a detailed report of findings.
+- The scanner identifies potential issues, vulnerabilities, and areas for improvement in your codebase.
+
+![Code Scan Analysis Workflow](/code_scan_analysis_workflow.png.)
+
+You can find an example [here](https://github.com/Cloud-Code-AI/kaizen/tree/main/examples/code_scan/main.py)
+
+## Usage Guide
 
 Here's a detailed step-by-step guide on how to use the Code Scanner:
 
-1. Create and activate a virtual environment:
+1. Follow the initial setup guide [here](../initial_setup_guide).
 
-   **Mac/Linux**
-
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
-
-   **Windows**
-
-   ```bash
-   python -m venv venv
-   .\venv\Scripts\activate
-   ```
-
-2. Install poetry and Kaizen:
-
-   ```bash
-   pip install poetry kaizen-cloudcode
-   ```
-3. Create a new Python file and import the necessary modules from Kaizen:
+2. Create a new Python file and import the necessary modules from Kaizen:
 
    ```python
     from kaizen.reviewer.code_scan import CodeScanner
@@ -47,14 +38,14 @@ Here's a detailed step-by-step guide on how to use the Code Scanner:
     import json
    ```
 
-4. Create an instance of the CodeScanner:  
+3. Create an instance of the CodeScanner:  
 
 
    ```python
    reviewer = CodeScanner(llm_provider=LLMProvider())
    ```
 
-5. Provide the source code file or directory path which you want to scan: 
+4. Provide the source code file or directory path which you want to scan: 
 
    You can scan a single file at a time:
 
@@ -74,15 +65,15 @@ Here's a detailed step-by-step guide on how to use the Code Scanner:
     )
    ```
 
-6. Display the test results:
+5. Display the test results:
 
    ```python
     print(f"Total {len(review_data.issues)} Issues found!!!!")
     print(json.dumps(review_data.issues, indent=2))
    ```
-8. Review the generated report and address the identified issues in your code.
+6. Review the generated report and address the identified issues in your code.
 
-### Example:
+### Example
 
 Here's a complete example to generate unit tests for a specific file:
 
@@ -111,51 +102,11 @@ Here's a complete example to generate unit tests for a specific file:
     print(json.dumps(review_data.issues, indent=2))
 ```
 
-### Supported Languages:
+### Supported Languages
 
 - All programming languages
 
-## How it Works:
-
-- Input your source code or provide access to your repository.
-- The Code Scanner employs advanced algorithms and AI to analyze the code and generate a detailed report of findings.
-- The scanner identifies potential issues, vulnerabilities, and areas for improvement in your codebase.
-
-![Code Scan Analysis Workflow](/code_scan_analysis_workflow.png.)
-
-You can find an example [here](https://github.com/Cloud-Code-AI/kaizen/tree/main/examples/code_scan/main.py)
-
-## API Reference:
-
-### Class: CodeScanner  
-
-#### Constructor
-
-- `__init__(self, llm_provider: LLMProvider)`
-  Initializes the CodeScanner with the provided LLM provider.
-
-#### Methods
-
-##### review_code
-
-- `review_code(self, file_data: str, user: str) -> ReviewData`
-  Performs a code review on a single file.
-  - Parameters:
-    - `file_data`: Content of the file to be reviewed.
-    - `user`: Username or project identifier.
-  - Returns: ReviewData object containing the review results.
-
-##### review_code_dir
-
-- `review_code_dir(self, dir_path: str, reevaluate: bool = False, user: str) -> ReviewData`
-  Performs a code review on all files in a directory.
-  - Parameters:
-    - `dir_path`: Path to the directory containing the files to be reviewed.
-    - `reevaluate`: Whether to reevaluate previously scanned files.
-    - `user`: Username or project identifier.
-  - Returns: ReviewData object containing the review results for all files.
-
-## Benefits:
+## Benefits
 
 - Early Bug Detection
 - Security Vulnerability Identification
@@ -163,7 +114,7 @@ You can find an example [here](https://github.com/Cloud-Code-AI/kaizen/tree/main
 - Coding Standard Enforcement
 - Technical Debt Reduction
 
-## Limitations:
+## Limitations
 
 - False Positives: Some identified issues may not be actual problems in certain contexts.
 - Language Coverage: Effectiveness may vary depending on programming language and framework.

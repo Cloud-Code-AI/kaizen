@@ -4,7 +4,5 @@
     "setup_github_app": "Setup GitHub App",
     "prepare_configuration": "Prepare Configuration",
     "deploy_api": "Deploy API",
-    "generating_tests": "Generating Tests",
-    "executing_tests": "Executing Tests",
-    "using_azure_openai_with_kaizen": "Using Azure OpenAI with Kaizen"
+    "using_custom_llms_with_kaizen": "Using Custom LLMs with Kaizen"
 }

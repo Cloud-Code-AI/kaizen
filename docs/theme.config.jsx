@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
 
+
 export default {
     logo: (
         <>
@@ -110,5 +111,4 @@ export default {
             </span>
           )
         }
-    // ... other theme options
   }

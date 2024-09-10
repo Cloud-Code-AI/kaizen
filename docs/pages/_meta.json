@@ -1,9 +1,10 @@
 {
-    "index": "Introduction",
-    "getting_started": "Getting Started",
+    "index": "Kaizen",
+    "initial_setup_guide": "Initial Setup Guide",
     "features": "Features",
     "configuration": "Configuring Models",
     "cloud_platform": "Web App",
+    "api_reference": "API Reference",
     "self_hosting_guide": "Self Hosting Guide",
     "contributing": "Contributing",
     "contact_us": "Contact Us"

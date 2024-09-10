@@ -5,7 +5,7 @@ Streamline code reviews and ensure high code quality commit messages across your
 
 ![Code Review in Action](/code_review.gif)
 
-### Key Features:
+### Key Features
 
 1. **Automated Code Analysis**: Analyzes code changes in pull requests and generates detailed feedback.
 
@@ -17,7 +17,23 @@ Streamline code reviews and ensure high code quality commit messages across your
 
 5. **Continuous Learning**: Improves review quality over time based on user interactions.
 
-## Usage Guide:
+### How it Works
+
+1. **Diff Analysis**: When you create or update a pull request, the Kaizen Bot analyzes the code changes (diff) and generates detailed feedback based on the modified code snippets.
+
+2. **Organized Feedback**: The bot's feedback is organized into topics or categories like performance, security, code style, or documentation, making it easier to navigate and prioritize the comments.
+
+3. **Confidence Levels**: Each review comment includes a confidence level (critical, high, medium, low), indicating the perceived importance or severity of the issue.
+
+4. **Contextual Information**: The reviews provide context-specific details like file names, line numbers, code snippets, and explanations for the suggested changes.
+
+5. **PR Description Generation**: The bot can generate a descriptive summary of the code changes, helping you better document your pull requests.
+
+![Code Review Process](/code_review_process.png)
+
+You can find an example [here](https://github.com/Cloud-Code-AI/kaizen/tree/main/examples/code_review)
+
+## Usage Guide
 
 1. **Getting Started**: For a quickstart you can use the cloud hosted web application that we provide by following [this](../cloud_platform/getting_started). You can also choose to self host the Kaizen Github Bot locally by following the advanced guide [here](../self_hosting_guide).  
 The next given steps explore the latter approach in details.
@@ -26,7 +42,7 @@ The next given steps explore the latter approach in details.
 4. **Engage with the Bot**: You can interact with the bot, provide additional context, or request clarification on its feedback.
 5. **Iterate and Improve**: As you work with the bot, it will learn from your responses and improve the quality of its reviews over time.
 
-### Example:
+### Example
 
 Here's a complete example to review a pull request:
 
@@ -88,71 +104,11 @@ desc_data = pr_desc.generate_pull_request_desc(
 print(desc_data)
 ```
 
-### Supported Input:
+### Supported Input
 
 - GitHub pull request information (diff, files, title, description)
 
-## How it Works:
-
-1. **Diff Analysis**: When you create or update a pull request, the Kaizen Bot analyzes the code changes (diff) and generates detailed feedback based on the modified code snippets.
-
-2. **Organized Feedback**: The bot's feedback is organized into topics or categories like performance, security, code style, or documentation, making it easier to navigate and prioritize the comments.
-
-3. **Confidence Levels**: Each review comment includes a confidence level (critical, high, medium, low), indicating the perceived importance or severity of the issue.
-
-4. **Contextual Information**: The reviews provide context-specific details like file names, line numbers, code snippets, and explanations for the suggested changes.
-
-5. **PR Description Generation**: The bot can generate a descriptive summary of the code changes, helping you better document your pull requests.
-
-![Code Review Process](/code_review_process.png)
-
-You can find an example [here](https://github.com/Cloud-Code-AI/kaizen/tree/main/examples/code_review)
-
-## API Reference:
-
-### Class: CodeReviewer
-
-#### Constructor
-
-- `__init__(self, llm_provider: LLMProvider)`
-  Initializes the CodeReviewer with the provided LLM provider.
-
-#### Methods
-
-##### review_pull_request
-
-- `review_pull_request(self, diff_text: str, pull_request_title: str, pull_request_desc: str, pull_request_files: List[Dict], reeval_response: bool = False) -> ReviewData`
-  Reviews a pull request and generates feedback.
-  - Parameters:
-    - `diff_text`: The diff text of the pull request.
-    - `pull_request_title`: The title of the pull request.
-    - `pull_request_desc`: The description of the pull request.
-    - `pull_request_files`: List of files changed in the pull request.
-    - `reeval_response`: Whether to re-evaluate the response.
-  - Returns: ReviewData object containing the review results.
-
-### Class: PRDescriptionGenerator
-
-#### Constructor
-
-- `__init__(self, llm_provider: LLMProvider)`
-  Initializes the PRDescriptionGenerator with the provided LLM provider.
-
-#### Methods
-
-##### generate_pull_request_desc
-
-- `generate_pull_request_desc(self, diff_text: str, pull_request_title: str, pull_request_desc: str, pull_request_files: List[Dict], user: str) -> str`
-  Generates a description for a pull request.
-  - Parameters:
-    - `diff_text`: The diff text of the pull request.
-    - `pull_request_title`: The title of the pull request.
-    - `pull_request_desc`: The existing description of the pull request.
-    - `pull_request_files`: List of files changed in the pull request.
-    - `user`: The user or context for generating the description.
-  - Returns: A string containing the generated pull request description.
-
-## Benefits:
+## Benefits
 
 - Improved Code Quality
 - Time Savings
@@ -160,7 +116,7 @@ You can find an example [here](https://github.com/Cloud-Code-AI/kaizen/tree/main
 - Knowledge Sharing
 - Automated Documentation
 
-## Limitations:
+## Limitations
 
 - AI Limitations: While advanced, the bot may still have limitations in understanding complex code or context-specific nuances.
 - Human Oversight: The bot's feedback should be considered a complementary tool to human code reviews, not a complete replacement.
