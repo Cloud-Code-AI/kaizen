@@ -29,8 +29,8 @@ for file_path, result in test_results.items():
         print(f"  Error: {result['error']}")
     else:
         print(f"  Tests run: {result.get('tests_run', 'N/A')}")
-        print(f"  Failures: {result.get('failures', 'N/A')}")
-        print(f"  Errors: {result.get('errors', 'N/A')}")
+        print(f"  Failures: {result.get('failed_tests', 'N/A')}")
+        print(f"  Errors: {result.get('error_tests', 'N/A')}")
     print()
 
 

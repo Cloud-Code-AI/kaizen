@@ -77,6 +77,7 @@ class UnitTestGenerator:
         max_critique: int = 3,
         verbose: bool = False,
         enable_critique: bool = False,
+        max_actions: int = 100000,
     ):
         """
         dir_path: (str) - path of the directory containing source files
@@ -88,13 +89,18 @@ class UnitTestGenerator:
         files = []
         tests = {}
         failed = []
+        actions_used = 0
         for file_path in Path(dir_path).rglob("*.*"):
+            if actions_used >= max_actions:
+                self.logger.info(f"Max actions used: {actions_used}/{self.max_actions}")
+                break
             files.append(file_path)
             try:
-                test_files, _ = self.generate_tests(
+                test_files, _, actions = self.generate_tests(
                     file_path=str(file_path), output_path=output_path
                 )
                 tests.update(test_files)
+                actions_used += actions
             except Exception as e:
                 failed.append(file_path)
                 print(f"Error: Could not generate tests for {file_path}: {e}")
@@ -120,12 +126,14 @@ class UnitTestGenerator:
         verbose: bool = False,
         enable_critique: bool = False,
         temp_dir: str = "",
+        max_actions: int = 100000,
     ):
         self.max_critique = max_critique
         self.enable_critique = enable_critique
         self.verbose = verbose if verbose else self.verbose
         self.output_folder = output_path if output_path else self.output_folder
         self.temp_dir = temp_dir
+        self.max_actions = max_actions
 
         file_extension = file_path.split(".")[-1]
         if file_extension not in self.SUPPORTED_LANGUAGES or file_extension == "pyc":
@@ -135,8 +143,10 @@ class UnitTestGenerator:
         content = content or self._read_file_content(file_path)
         parsed_data = parser.parse(content)
 
-        test_files = self.generate_test_files(parsed_data, file_extension, file_path)
-        return test_files, self.total_usage
+        test_files, count = self.generate_test_files(
+            parsed_data, file_extension, file_path
+        )
+        return test_files, self.total_usage, count
 
     def _get_parser(self, file_extension):
         parser_class_name = self.SUPPORTED_LANGUAGES[file_extension]
@@ -153,19 +163,24 @@ class UnitTestGenerator:
     def generate_test_files(self, parsed_data, file_extension, file_path):
         folder_path = "/".join(file_path.split("/")[:-1])
         test_files = {}
+        actions_used = 0
         for item in tqdm(parsed_data, desc="Processing Items", unit="item"):
+            if actions_used >= self.max_actions:
+                self.logger.info(f"Max actions used: {actions_used}/{self.max_actions}")
+                break
             try:
-                test_code = self._process_item(
+                test_code, count = self._process_item(
                     item, file_extension, file_path, folder_path
                 )
                 test_files[file_path] = test_code
+                actions_used += count
             except Exception:
                 self.logger.error(f"Failed to generate test case for item: {item}")
 
         print(
             f"\nAll items processed successfully!\n Total Tokens Spent: {self.total_usage}"
         )
-        return test_files
+        return test_files, actions_used
 
     def _process_item(self, item, file_extension, file_path, folder_path):
         print(f"\n{'=' * 50}\nProcessing Item: {item['name']}\n{'=' * 50}")
@@ -173,13 +188,27 @@ class UnitTestGenerator:
         test_file_path = self._prepare_test_file_path(item, file_extension, folder_path)
         item["full_path"] = file_path
 
-        test_code = self.generate_ai_tests(item, item["source"], file_extension)
+        test_code, count = self.generate_ai_tests(item, item["source"], file_extension)
         test_code = test_code.replace(self.temp_dir, "")
+        test_code = self._correct_imports(test_code)
 
         self._write_test_file(test_file_path, test_code)
 
         print("\n✓ Item processing complete")
-        return test_code
+        return test_code, count
+
+    def _correct_imports(self, test_code):
+        # Split the test_code into lines
+        lines = test_code.split("\n")
+        corrected_lines = []
+        for line in lines:
+            if line.startswith("from /"):
+                # Remove the leading slash and change to relative import
+                corrected_line = "from " + line[6:]
+                corrected_lines.append(corrected_line)
+            else:
+                corrected_lines.append(line)
+        return "\n".join(corrected_lines)
 
     def _prepare_test_file_path(self, item, file_extension, folder_path):
         test_file_name = f"test_{item['name'].lower()}.{file_extension}"
@@ -199,7 +228,7 @@ class UnitTestGenerator:
         self.log_step(
             "Generated Test Scenario", f"Generated Test Scenario:\n{plan_response}"
         )
-        test_scenarios = self.format_test_scenarios(plan_response)
+        test_scenarios, count = self.format_test_scenarios(plan_response)
         print("• Generating AI tests...")
 
         response, usage = self._generate_actual_tests(
@@ -212,7 +241,7 @@ class UnitTestGenerator:
         if self.enable_critique:
             test_code = self._review_tests_by_critique(item, source_code, test_code)
 
-        return test_code
+        return test_code, count
 
     def _generate_test_scenarios(self, item, source_code):
         analysis_prompt = UNIT_TEST_PLAN_PROMPT.format(
@@ -285,19 +314,21 @@ class UnitTestGenerator:
         return runner.discover_and_run_tests(test_file=test_file)
 
     def format_test_scenarios(self, scenarios):
+        count = 0
         formatted_scenarios = ""
         for category in [
-            "normal_cases",
+            "critical_cases",
             "edge_cases",
             "error_handling",
             "boundary_conditions",
         ]:
+            count += 1
             cases = scenarios.get(category, [])
             if cases:
                 formatted_scenarios += f"{category.replace('_', ' ').title()}:\n"
                 formatted_scenarios += "\n".join(f"- {case}" for case in cases)
                 formatted_scenarios += "\n\n"
-        return formatted_scenarios.strip()
+        return formatted_scenarios.strip(), count
 
     def log_step(self, step_name, data):
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")

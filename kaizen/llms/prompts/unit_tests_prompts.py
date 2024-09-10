@@ -12,22 +12,23 @@ SOURCE CODE:
 {SOURCE_CODE}
 ```
 
-1. IDENTIFY TEST SCENARIOS:
-   - List normal cases
-   - Identify edge cases
-   - Determine error handling scenarios
-   - Define boundary conditions
+1. IDENTIFY ESSENTIAL TEST SCENARIOS:
+   - List critical normal cases that validate core functionality
+   - Identify key edge cases that could potentially break the code
+   - Determine crucial error handling scenarios
+   - Define important boundary conditions, if applicable
 
 2. OUTPUT FORMAT:
    Provide your analysis in the following JSON format:
    {{
         "test_file_name": "<TEST_FILE_NAME>",
         "test_file_content": "<CONTENT_OF_TEST_FILE>"
-        "normal_cases": ["case1", "case2", ...],
+        "critical_cases": ["case1", "case2", ...],
         "edge_cases": ["case1", "case2", ...],
         "error_handling": ["case1", "case2", ...],
         "boundary_conditions": ["case1", "case2", ...]
    }}
+Note: Focus only on the most important scenarios that are necessary to ensure the reliability and correctness of the code. Avoid redundant or low-impact test cases.
 """
 
 PYTHON_UNIT_TEST_PROMPT = """
