@@ -175,11 +175,25 @@ class UnitTestGenerator:
 
         test_code = self.generate_ai_tests(item, item["source"], file_extension)
         test_code = test_code.replace(self.temp_dir, "")
+        test_code = self._correct_imports(test_code)
 
         self._write_test_file(test_file_path, test_code)
 
         print("\n✓ Item processing complete")
         return test_code
+
+    def _correct_imports(self, test_code):
+        # Split the test_code into lines
+        lines = test_code.split("\n")
+        corrected_lines = []
+        for line in lines:
+            if line.startswith("from /"):
+                # Remove the leading slash and change to relative import
+                corrected_line = "from " + line[6:]
+                corrected_lines.append(corrected_line)
+            else:
+                corrected_lines.append(line)
+        return "\n".join(corrected_lines)
 
     def _prepare_test_file_path(self, item, file_extension, folder_path):
         test_file_name = f"test_{item['name'].lower()}.{file_extension}"

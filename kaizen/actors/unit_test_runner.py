@@ -77,7 +77,7 @@ class UnitTestRunner:
         results = {}
         for root, dirs, files in os.walk(self.test_directory):
             for file in files:
-                if file.startswith("test_"):
+                if file.startswith("test_") and file.endswith(".py"):
                     file_path = safe_path_join(root, file)
                     extension = file.split(".")[-1]
                     self.logger.debug(f"Found test file: {file_path}")
@@ -111,23 +111,37 @@ class UnitTestRunner:
         if code != 0 and code != 1:
             self.logger.error(f"pytest exited with code {code} for {file_path}")
             return {"error": f"pytest exited with code {code}. Stderr: {stderr}"}
-
+        self.logger.info(f"pytest output: {stdout}")
         # Parse pytest output
-        tests_run = stdout.count("PASSED") + stdout.count("FAILED")
-        failures = stdout.count("FAILED")
-        errors = stderr.count("ERROR")
+
+        # Get failed test details
+        passed_tests = re.findall(r"(.*?) PASSED", stdout)
+        failed_tests = re.findall(r"(.*?) FAILED", stdout)
+        error_tests = re.findall(r"(.*?) ERROR", stderr)
+        tests_run = len(passed_tests) + len(failed_tests) + len(error_tests)
 
         # Extract failure and error details
-        failure_details = re.findall(r"FAILED.*?\n(.*?)\n\n", stdout, re.DOTALL)
-        error_details = re.findall(r"ERROR.*?\n(.*?)\n\n", stderr, re.DOTALL)
+        # Extract failure and error details
+        failure_details = {}
+        for match in re.findall(
+            r"FAILED (.*?) - Failed:(.*?)(?:\n|$)", stdout + stderr, re.MULTILINE
+        ):
+            test_path, reason = match
+            file_name = test_path.split("::")[0]
+            test_name = test_path.split("::")[-1]
+            failure_details[file_name] = failure_details.get(file_name, {})
+            failure_details[file_name][test_name] = reason.strip()
+
+        error_details = re.findall(r"_{20,}\n(.*?)\n\n", stderr, re.DOTALL)
 
         self.logger.info(
-            f"Python tests completed. Tests run: {tests_run}, Failures: {failures}, Errors: {errors}"
+            f"Python tests completed. Tests run: {tests_run}, Failures: {len(failed_tests)}, Errors: {len(error_tests)}"
         )
         return {
             "tests_run": tests_run,
-            "failures": failures,
-            "errors": errors,
+            "passed_tests": passed_tests,
+            "failed_tests": failed_tests,
+            "error_tests": error_tests,
             "failure_details": failure_details,
             "error_details": error_details,
         }
