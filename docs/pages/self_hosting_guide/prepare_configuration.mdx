@@ -1,13 +1,27 @@
 To prepare for deployment, follow these steps to configure the necessary files:
 
 1. **Copy Environment File**:  
-Create a `.env` file by duplicating `.env.example`. This file will store environment variables required for the deployment process.
+Create a `.env` file by duplicating `.env.example`. This file will store environment variables required for the deployment process. Add the values of the key and base you are using based on your LLM.
 
-2. **Store GitHub App PEM File**:  
-Ensure the PEM file for the GitHub app is stored as `GITHUB_APP_KEY.pem`. This file is necessary for authentication and interaction with the GitHub platform during deployment.
+2. **Set the Environment Variables Values in your System**:
+In order to use an LLM model's API they environment variables must be defined and saved in the local system for the next step. Open your terminal in the root directory of Kaizen and then do the following:
+
+**Mac/Linux**
+   ```bash
+   export VARIABLE_NAME="value"
+   ```
+
+   **Windows**
+   ```bash
+   setx VARIABLE_NAME "value"
+   ```
+
+
+3. **Store GitHub App PEM File**:  
+Ensure the PEM file for the GitHub app is stored as `GITHUB_APP_KEY.pem` within the Kaizen root path. This file is necessary for authentication and interaction with the GitHub platform during deployment.
 
 ### Configuring Features
 
 You can adjust additional features by modifying the `config.json` file. This JSON file controls specific configurations related to the deployment process and application behavior.
 
-Make sure to update these files appropriately before proceeding with deployment.
+Note : Make sure to update these files appropriately before proceeding with deployment. Check whether the environment variables are defined properly.
