@@ -1,8 +1,8 @@
-To install dependencies for CloudCode, follow these steps:
+To install dependencies for Kaizen, follow these steps:
 
-1. Change directory to the CloudCode project directory:
+1. Change directory to the Kaizen project directory:
 ```bash copy
-   cd cloudcode
+   cd kaizen
 ```
 
 2. Use Poetry to install the project dependencies:
@@ -10,4 +10,20 @@ To install dependencies for CloudCode, follow these steps:
    poetry install
 ```
 
-These commands will navigate you into the CloudCode project directory and then use Poetry to install the required dependencies specified in the project's pyproject.toml file.
+These commands will navigate you into the Kaizen project directory and then use Poetry to install the required dependencies specified in the project's pyproject.toml file.
+
+Note: It is reccommended to create a virtual environment before installing modules, so as to manage installation of API specific modules with ease.
+
+To set up a virtual environment:
+
+   **Mac/Linux**
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+
+   **Windows**
+   ```bash
+   python -m venv venv
+   .\venv\Scripts\activate
+   ```

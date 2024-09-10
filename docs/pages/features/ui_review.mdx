@@ -1,26 +1,180 @@
 ## UI Reviewer
 
-The UI Reviewer feature is powered by kaizen and provides feedback to improve the user experience and accessibility of UI components.
+AI-powered analysis and feedback for improving user experience and accessibility of UI components.
 
-### How it Works:
-- Input the HTML code of your UI components.
-- The UI Reviewer leverages advanced language models to analyze the code and generate actionable feedback organized in a JSON format.
+### Key Features:
 
-You can find an example [here](https://github.com/Cloud-Code-AI/kaizen/tree/main/examples/ui_review)
+1. **UI Component Analysis**: The feature analyzes HTML code of UI components to identify areas for improvement.
 
-### Using the UI Reviewer:
-- Gather and input the HTML code of the UI components you want to review.
-- Trigger the UI Reviewer to receive organized feedback.
-- Implement the suggested solutions to enhance user experience and accessibility.
+2. **UX Feedback**: Provides actionable feedback to enhance user experience.
 
-### Benefits:
+3. **Accessibility Evaluation**: Identifies accessibility issues and suggests improvements for better compliance.
+
+4. **Organized Reporting**: Generates feedback in a structured JSON format for easy interpretation and implementation.
+
+5. **Continuous Improvement**: Supports iterative development by providing ongoing feedback as UI evolves.
+
+## Usage Guide:
+
+Here's a detailed step-by-step guide on how to use the UI Reviewer:
+
+1. Create and activate a virtual environment:
+
+   **Mac/Linux**
+
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+
+   **Windows**
+
+   ```bash
+   python -m venv venv
+   .\venv\Scripts\activate
+   ```
+
+2. Install poetry and Kaizen:
+
+   ```bash
+   pip install poetry kaizen-cloudcode
+   ```
+3. Create a new Python file and import the necessary modules from Kaizen:
+
+   ```python
+    from kaizen.reviewer.ui_review import UIReviewer
+    import json
+   ```
+4. Create an instance of the UI Reviewer:  
+
+   ```python
+   ui_review = UIReviewer()
+   ```
+
+5. Provide the URL or HTML code for which you want to generate UI reviews:
+   
+   UI review for a specific URL:
+   ```python
+    url = "https://cloudcode.ai"
+    reviews = ui_review.generate_ui_review(url=url)["reviews"]
+   ```
+
+   UI review for HTML code:
+   ```python
+    html_code = """
+    <div class="container">
+        <h1>Welcome to CloudCode.ai</h1>
+        <p>This is a sample HTML code for UI review.</p>
+    </div>
+    """
+    reviews = ui_review.generate_ui_review(html_code=html_code)["reviews"]
+   ```
+
+6. Display the test results:
+
+   ```python
+    print_block = """
+    -----------------------------------------------
+    Topic: {topic}
+    Review: {review}
+    Confidence: {confidence}
+    Solution: {solution}
+    Code Block:
+    ```html
+    {code_block}
+    ```\n\n
+    """
+
+    for review in reviews:
+        content = print_block.format(
+            topic=review["topic"],
+            review=review["comment"],
+            confidence=review["confidence"],
+            code_block=review["code_block"],
+            solution=review["solution"],
+        )
+        print(content)
+    ```
+7. Review the generated report and address the identified issues in your code.
+
+### Example:
+
+Here's a complete example to review the UI of a specific URL:
+
+```python
+from kaizen.reviewer.ui_review import UIReviewer
+
+# Create an instance of the UI Reviewer
+ui_review = UIReviewer()
+
+# Generate UI review for a specific URL
+url = "https://cloudcode.ai"
+reviews = ui_review.generate_ui_review(url=url)["reviews"]
+
+# Display the results
+print_block = """
+-----------------------------------------------
+Topic: {topic}
+Review: {review}
+Confidence: {confidence}
+Solution: {solution}
+Code Block:
+```html
+{code_block}
+```\n\n
+"""
+
+for review in reviews:
+    content = print_block.format(
+        topic=review["topic"],
+        review=review["comment"],
+        confidence=review["confidence"],
+        code_block=review["code_block"],
+        solution=review["solution"],
+    )
+    print(content)
+```
+
+### Supported Input:
+- HTML code
+- URLs of web pages
+
+## How it Works:
+
+- Input your HTML code or URL for which you want to generate UI reviews.
+- The UI Reviewer leverages advanced language models to analyze the code and generate a detailed report of findings.
+- The scanner identifies potential issues, accessibility issues, and areas for improvement in your UI.
+
+![UI Review Analysis Workflow](/ui_review_analysis_workflow.png.)
+
+You can find an example [here](https://github.com/Cloud-Code-AI/kaizen/tree/main/examples/ui_review/main.py)
+
+## API Reference:
+
+### Class: UIReviewer  
+
+#### Constructor
+
+- `__init__(self, llm_provider: LLMProvider)`:
+  Initializes the UI Reviewer with the provided LLM provider.
+  
+#### Methods
+
+##### generate_ui_review
+
+- `generate_ui_review(self, url: str = None, html_content: str = None) -> Dict`
+  Performs a UI review on a given URL or HTML code.
+  - Parameters:
+    - `url`: URL of the web page to be reviewed.
+    - `html_code`: HTML code to be reviewed.
+  - Returns: A dictionary containing the review results.
+
+## Benefits:
+
 - Improved User Experience
 - Accessibility Compliance
-- Streamlined Review Process
 - Continuous Improvement
-
-### Limitations:
+   
+## Limitations:
 - AI Limitations: Understanding complex UI patterns or context-specific nuances.
 - Human Oversight: AI feedback should complement human review and testing.
-
-The UI Reviewer uses AI to enhance the user experience and accessibility of UI components and fosters continuous improvement in your development workflow.
