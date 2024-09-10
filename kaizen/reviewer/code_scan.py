@@ -57,10 +57,15 @@ class CodeScanner:
         return should_ignore
 
     def review_code_dir(
-        self, dir_path: str, reevaluate: bool = False, user: Optional[str] = None
+        self,
+        dir_path: str,
+        reevaluate: bool = False,
+        user: Optional[str] = None,
+        max_files: Optional[int] = None,
     ):
         self.logger.info(f"Starting code review for directory: {dir_path}")
         self.reevaluate = reevaluate
+
         issues = []
         files_processed = 0
         for file_path in Path(dir_path).rglob("*.*"):
@@ -69,6 +74,9 @@ class CodeScanner:
             try:
                 with open(str(file_path), "r") as f:
                     file_data = f.read()
+                if max_files and files_processed >= max_files:
+                    self.logger.info(f"Max files processed: {max_files}")
+                    break
                 self.logger.debug(f"Reviewing file: {file_path}")
                 code_scan_output = self.review_code(file_data=file_data, user=user)
                 files_processed += 1
@@ -110,6 +118,8 @@ class CodeScanner:
             usage=self.total_usage,
             model_name=self.provider.model,
             issues=issues,
+            total_files=1,
+            files_processed=1,
         )
 
     def _process_file_data(self, prompt: str, user: Optional[str]) -> List[Dict]:
