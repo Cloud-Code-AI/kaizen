@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 
 
 export default {
@@ -110,5 +111,11 @@ export default {
               .
             </span>
           )
-        }
+        },
+        head: (
+            <Head>
+                <link rel="icon" href="/public/favicon.svg" type="image/svg+xml" />
+                <link rel="icon" href="/public/favicon.png" type="image/png" />
+            </Head>
+        )
   }
