@@ -9,7 +9,7 @@
   justify-content: left;
 }
 
-a.button-box {
+.button-box {
   display: inline-block;
   padding: 20px; 
   margin: 20px;
@@ -24,19 +24,19 @@ a.button-box {
   text-align: left; 
 }
 
-a.button-box h3 {
+.button-box h3 {
   margin: 0 0 10px 0;
   font-size: 20px;
   color: #fff;
 }
 
-a.button-box p {
+.button-box p {
   margin: 0;
   font-size: 14px;
   color: #ccc; 
 }
 
-a.button-box:hover {
+.button-box:hover {
   box-shadow: 0px 0px 8px rgba(84, 84, 84, 0.5); 
   background-color: #2b2b2b; 
 }

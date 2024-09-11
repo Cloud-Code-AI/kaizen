@@ -2,7 +2,7 @@
     "language_model": {
         "provider": "litellm",
         "enable_observability_logging": false,
-        "redis_enabled": true,
+        "redis_enabled": false,
         "models": [
             {
                 "model_name": "embedding",
