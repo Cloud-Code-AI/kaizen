@@ -96,9 +96,12 @@ class PRDescriptionGenerator:
         ):
             file_descs.extend(file_review)
 
-        prompt = MERGE_PR_DESCRIPTION_PROMPT.format(DESCS=json.dumps(file_descs))
-        resp, usage = self.provider.chat_completion(prompt, user=user)
-        desc = parser.extract_code_from_markdown(resp)
+        if len(file_descs) > 1:
+            prompt = MERGE_PR_DESCRIPTION_PROMPT.format(DESCS=json.dumps(file_descs))
+            resp, usage = self.provider.chat_completion(prompt, user=user)
+            desc = parser.extract_code_from_markdown(resp)
+        else:
+            desc = parser.extract_code_from_markdown(file_descs[0])
         self.total_usage = self.provider.update_usage(self.total_usage, usage)
 
         return desc

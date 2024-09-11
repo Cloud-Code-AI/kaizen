@@ -28,7 +28,7 @@ Analyze the information and generate a concise summary based on the most importa
 """
 
 MERGE_PR_DESCRIPTION_PROMPT = """
-Synthesize multiple PR descriptions into a single, concise summary. Focus on the most critical information.
+Merge multiple PR descriptions into a single, comprehensive summary. Focus on the most critical information.
 
 Output Format:
 ```markdown
@@ -42,13 +42,13 @@ Output Format:
 
 Instructions:
 - Create a brief, focused summary that encapsulates all PRs.
-- Limit to 3-5 bullet points for key changes across all PRs.
+- Limit to max 10 bullet points for key changes across all PRs.
 - Prioritize the most significant modifications and features.
 - Eliminate redundancies and minor details.
 - Keep all descriptions concise and actionable.
 
 Analyze the provided PR descriptions and generate a unified, compact summary. Use your judgment to highlight the most important aspects across all changes.
 
-Here is the information:
+Here is list of PR descriptions in json format:
 {DESCS}
 """
