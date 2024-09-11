@@ -1,7 +1,6 @@
-version: '3'
 services:
   app:
-    image: cloudcodeai/kaizen-app:latest
+    image: cloudcodeai/kaizen-app:v0.4.9
     ports:
       - "8000:8000"
     env_file:

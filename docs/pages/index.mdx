@@ -1,96 +1,113 @@
-import Head from 'next/head';
-import Link from 'next/link';
+import Head from 'next/head'; 
+import Link from 'next/link'; 
 
-<Head>
-  <link rel="stylesheet" href="styles/styles.css" />
-</Head>
+<Head> 
+  <link rel="stylesheet" href="styles/styles.css" /> 
+</Head> 
 
 ## Welcome to Kaizen Docs
 
-Kaizen is an open source SDK and Github Bot that aims to simplify QA work using AI.
-Using Kaizen you can streamline your software quality process by automating code review, test generation, and end-to-end testing, all integrated with your existing code repositories and workflows.  
+Kaizen is an open source SDK and Github Bot that aims to simplify QA work using AI. Using Kaizen you can streamline your software quality process by automating code review, test generation, and end-to-end testing, all integrated with your existing code repositories and workflows. 
 
-## Getting Started
+## Getting Started 
 
-<div class="button-container">
-  <a class="button-box" href="docs/cloud_platform">
-    <h3>Kaizen Web App</h3>
-    <p>To get started quickly, without any setup, checkout this video guide.</p>
-  </a>
+<div className="button-container"> 
+  <Link href="/cloud_platform"> 
+    <div className="button-box"> 
+      <h3>Kaizen Web App</h3> 
+      <p>To get started quickly, without any setup, checkout this video guide.</p> 
+    </div> 
+  </Link> 
+  <Link href="/initial_setup_guide"> 
+    <div className="button-box"> 
+      <h3>Initial Setup Guide</h3> 
+      <p>To use Kaizen SDK hosted using pip, follow this guide.</p> 
+    </div> 
+  </Link> 
+  <Link href="/self_hosting_guide"> 
+    <div className="button-box"> 
+      <h3>Self-Hosting Guide</h3> 
+      <p>To setup your own instance of Kaizen, follow this guide.</p> 
+    </div> 
+  </Link> 
+</div> 
 
-  <a class="button-box" href="docs/self_hosting_guide">
-    <h3>Initial Setup Guide</h3>
-    <p>To use Kaizen SDK hosted using pip, follow this guide.</p>
-  </a>
+## Features 
 
-  <a class="button-box" href="docs/self_hosting_guide">
-    <h3>Self-Hosting Guide</h3>
-    <p>To setup your own instance of Kaizen, follow this guide.</p>
-  </a>
-</div>
+<div className="button-container"> 
+  <Link href="/features/code_review"> 
+    <div className="button-box"> 
+      <h3>Code Review</h3> 
+      <p>Automatically get reviews and feedback on code changes in your pull requests on GitHub.</p> 
+    </div> 
+  </Link> 
+  <Link href="/features/unit_test"> 
+    <div className="button-box"> 
+      <h3>Unit Tests Generation</h3> 
+      <p>Automatically create comprehensive unit tests for your code, improving code quality and test coverage.</p> 
+    </div> 
+  </Link> 
+  <Link href="/features/code_scan"> 
+    <div className="button-box"> 
+      <h3>Code Scanning</h3> 
+      <p>Comprehensive static code analysis to identify potential issues and areas for improvement in your codebase.</p> 
+    </div> 
+  </Link> 
+  <Link href="/features/ui_review"> 
+    <div className="button-box"> 
+      <h3>UI Review</h3> 
+      <p>AI-powered analysis and feedback for improving user experience and accessibility of UI components.</p> 
+    </div> 
+  </Link> 
+  <Link href="/features/e2e_testing"> 
+    <div className="button-box"> 
+      <h3>End to End Testing</h3> 
+      <p>Streamline E2E testing for web apps using the Playwright testing framework.</p> 
+    </div> 
+  </Link> 
+  <Link href="/features/work_summary"> 
+    <div className="button-box"> 
+      <h3>Work Summary Generation</h3> 
+      <p>Create easy-to-understand summaries of code changes for non-technical stakeholders and founders.</p> 
+    </div> 
+  </Link> 
+</div> 
 
-## Features
+## API Reference 
 
-<div class="button-container">
-  <a class="button-box" href="docs/features/code_review">
-    <h3>Code Review</h3>
-    <p>Automatically get reviews and feedback on code changes in your pull requests on GitHub.</p>
-  </a>
-
-  <a class="button-box" href="docs/features/unit_test">
-    <h3>Unit Tests Generation</h3>
-    <p>Automatically create comprehensive unit tests for your code, improving code quality and test coverage.</p>
-  </a>
-
-  <a class="button-box" href="docs/features/code_scan">
-    <h3>Code Scanning</h3>
-    <p>Comprehensive static code analysis to identify potential issues and areas for improvement in your codebase.</p>
-  </a>
-
-  <a class="button-box" href="docs/features/ui_review">
-    <h3>UI Review</h3>
-    <p>AI-powered analysis and feedback for improving user experience and accessibility of UI components.</p>
-  </a>
-
-  <a class="button-box" href="docs/features/e2e_testing">
-    <h3>End to End Testing</h3>
-    <p>Streamline E2E testing for web apps using the Playwright testing framework.</p>
-  </a>
-
-  <a class="button-box" href="docs/features/work_summary">
-    <h3>Work Summary Generation</h3>
-    <p>Create easy-to-understand summaries of code changes for non-technical stakeholders and founders.</p>
-  </a>
-</div>
-
-## API Reference
-
-<div class="button-container">
-  <a class="button-box" href="docs/api_reference">
-    <h3>API Reference</h3>
-    <p>Explore the API reference for Kaizen SDK.</p>
-  </a>
-</div>
+<div className="button-container"> 
+  <Link href="/api_reference"> 
+    <div className="button-box"> 
+      <h3>API Reference</h3> 
+      <p>Explore the API reference for Kaizen SDK.</p> 
+    </div> 
+  </Link> 
+</div> 
 
 ## Contribution Guide 
 
-<div class="button-container">
-  <a class="button-box" href="docs/contributing/overview">
-    <h3>Contibution</h3>
-    <p>Given the open-source nature of Kaizen, we welcome contributions from the community.</p>
-  </a>
+<div className="button-container"> 
+  <Link href="/contributing/overview"> 
+    <div className="button-box"> 
+      <h3>Contribution</h3> 
+      <p>Given the open-source nature of Kaizen, we welcome contributions from the community.</p> 
+    </div> 
+  </Link> 
+  <Link href="/feature_requests"> 
+    <div className="button-box"> 
+      <h3>Feature Requests</h3> 
+      <p>Alternatively, you can also raise feature requests or bugs in our GitHub repository.</p> 
+    </div> 
+  </Link> 
+</div> 
 
-  <a class="button-box" href="docs/feature_requests">
-    <h3>Feature Requests</h3>
-    <p>Alternatively, you can also raise feature requests or bugs in our GitHub repository.</p>
-  </a>
-</div>
+## Contact Us 
 
-## Contact Us
-<div>
-  <a class="button-box" href="docs/contact_us">
-    <h3>Contact Us</h3>
-    <p>For any other inquiries, please contact us here.</p>
-  </a>
-  
+<div className="button-container"> 
+  <Link href="/contact_us"> 
+    <div className="button-box"> 
+      <h3>Contact Us</h3> 
+      <p>For any other inquiries, please contact us here.</p> 
+    </div> 
+  </Link> 
 </div>
