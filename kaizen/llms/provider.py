@@ -1,6 +1,6 @@
 import litellm
 import os
-from typing import Dict, Optional, Any
+from typing import Dict, Optional, Any, Tuple
 from kaizen.llms.prompts.general_prompts import BASIC_SYSTEM_PROMPT
 from kaizen.utils.config import ConfigData
 from kaizen.helpers.general import retry
@@ -146,7 +146,7 @@ class LLMProvider:
         model="default",
         custom_model=None,
         messages=None,
-    ):
+    ) -> Tuple[str, Dict[str, int]]:
         if not messages:
             messages = [
                 {"role": "system", "content": self.system_prompt},
@@ -171,7 +171,7 @@ class LLMProvider:
         custom_model=None,
         messages=None,
         n_choices=1,
-    ):
+    ) -> Tuple[Dict, Dict[str, int]]:
         custom_model["n"] = n_choices
         if not messages:
             messages = [
@@ -262,7 +262,9 @@ class LLMProvider:
             return {key: total_usage[key] + current_usage[key] for key in total_usage}
         return {key: current_usage[key] for key in current_usage}
 
-    def get_usage_cost(self, total_usage: Dict[str, int], model: str = None) -> float:
+    def get_usage_cost(
+        self, total_usage: Dict[str, int], model: str = None
+    ) -> Tuple[float, float]:
         if not model:
             model = self.model
         try:
