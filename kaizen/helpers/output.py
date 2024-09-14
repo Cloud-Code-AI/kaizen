@@ -105,7 +105,7 @@ def get_parent_folder():
 
 def create_folder(folder_path):
     if not folder_path:
-        raise ValueError(f"Folder path cannot be empty")
+        raise ValueError("Folder path cannot be empty")
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
         logger.debug(f"Folder '{folder_path}' created successfully.")
@@ -129,7 +129,7 @@ def create_test_files(json_tests, folder_path):
             with open(file_path, "w") as f:
                 cleaned_code = general.clean_python_code(test["code"])
                 if not cleaned_code:
-                    logger.info(f"Failed to clean code")
+                    logger.info("Failed to clean code")
                 else:
                     cleaned_code = (
                         f"'''Importance: {module['importance']}\

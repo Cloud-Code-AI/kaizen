@@ -43,7 +43,6 @@ jobs:
 
     - name: Run Kaizen Unit Tests
       uses: Cloud-Code-AI/kaizen-unittest-runner-action@v1.0.9
-      continue-on-error: true
       id: kaizen_tests
 
     - name: Generate test report
