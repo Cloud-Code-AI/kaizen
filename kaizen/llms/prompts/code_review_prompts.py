@@ -3,7 +3,7 @@ As a senior software developer reviewing code submissions, provide thorough, con
 """
 
 CODE_REVIEW_PROMPT = """
-As an experienced software engineer, provide a concise, actionable code review for the given pull request. Generate a JSON object with the following structure:
+Provide a concise, actionable code review for the given pull request. Generate a JSON object with the following structure:
 {{
   "code_quality_percentage": <0_TO_100>,
   "review": [
@@ -11,6 +11,7 @@ As an experienced software engineer, provide a concise, actionable code review f
       "category": "<ISSUE_CATEGORY>",
       "description": "<CONCISE_ISSUE_DESCRIPTION>",
       "impact": "critical|high|medium|low|trivial",
+      "priority": "critical|high|medium|low",
       "rationale": "<DETAILED_EXPLANATION>",
       "recommendation": "<SPECIFIC_IMPROVEMENT_SUGGESTION>",
       "current_code": "<PROBLEMATIC_CODE_SNIPPET>",
@@ -20,20 +21,27 @@ As an experienced software engineer, provide a concise, actionable code review f
       "end_line": <ENDING_LINE_NUMBER>,
       "sentiment": "positive|negative|neutral",
       "severity": <1_TO_10>,
-      "type": "general|performance|security|refactoring|best_practices|duplication|maintainability|scalability|error_handling|resource_management|concurrency|dependencies|compatibility|accessibility|localization|efficiency|readability|naming"
+      "type": "general|performance|security|refactoring|best_practices|duplication|maintainability|scalability|error_handling|resource_management|concurrency|dependencies|compatibility|accessibility|localization|efficiency|readability|naming",
+      "technical_debt": "<POTENTIAL_FUTURE_ISSUES>|empty",
+      "alternatives": "<ALTERNATIVE_SOLUTIONS>|empty"
     }}
   ]
 }}
 
-## Code Quality Percentage Guidelines:
-- Consider the following factors when calculating the final percentage:
-  - Code readability and maintainability
-  - Adherence to best practices and coding standards
-  - Presence of comments and documentation
-  - Efficient use of resources
-  - Proper error handling and edge case consideration
-- Adjust the final percentage based on overall code quality assessment
-- Ensure the final percentage is between 0 and 100
+## Code Quality Parameters:
+When reviewing code and calculating the code quality percentage, consider:
+1. Correctness: Does the code function as intended?
+2. Security: Are there any potential vulnerabilities?
+3. Performance: Is the code optimized for speed and resource usage?
+4. Maintainability: Is the code easy to understand and modify?
+5. Testability: Can the code be easily tested?
+6. Code style: Does it adhere to established coding standards?
+7. Documentation: Is the code well-commented and documented?
+8. Error handling: Are errors and edge cases properly managed?
+9. Modularity: Is the code organized into logical, reusable components?
+10. Scalability: Can the code handle increased load or data volume?
+
+Score each parameter 1-10, then calculate the overall percentage.
 
 ## Guidelines:
 - Provide specific feedback with file paths and line numbers
@@ -43,53 +51,44 @@ As an experienced software engineer, provide a concise, actionable code review f
 - If no issues found: {{"review": []}}
 
 ## Patch Data Format:
-- First column: Original file line numbers
-- Second column: New file line numbers (spaces for removed lines)
-- Third column: Change type
-  '-1:[-]': Line removed
-  '+1:[+]': Line added
-  '0:[.]': Unchanged line
+- First column: Line number in the context
+- Second column: Change type
+  '[CONTEXT]': Unchanged line providing context
+  '[REMOVED]': Line removed from the original code
+  '[UPDATED]': Line updated or added in the new code
 - Remaining columns: Code content
 
 Example:
+[LINE 23] [CONTEXT] def register_user(username, password):
+[LINE 24] [REMOVED]     hashed_password = md5(password.encode()).hexdigest()
+[LINE 24] [UPDATED]     hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
 
-1    -    -1:[-] def old_function(x):
-2         +1:[+] def new_function(x, y):
-3    3     0:[.]     result = x * 2
-4         +1:[+]     result += y
-4    5     0:[.]     return result
+## Review Guidelines:
+1. Analyze [REMOVED] and [UPDATED] lines for impact on code quality and functionality.
+2. Use [CONTEXT] lines for understanding surrounding code.
+3. Provide specific feedback with file paths and line numbers.
+4. Suggest improvements for [UPDATED] lines in 'suggested_code'.
+5. Examine: syntax/logic errors, resource leaks, race conditions, security vulnerabilities, performance issues, scalability, refactoring opportunities, and code duplication.
+6. Consider: overall system architecture, coding standards, best practices, dependencies, performance impact, and security implications.
+7. Identify code duplication and suggest refactoring.
+8. Prioritize issues based on impact. Be strict; don't let issues slide.
+9. If no issues found: {{"review": []}}
 
-This snippet shows a diff (difference) between two versions of a function:
+## Additional Considerations:
+- Language-specific best practices and common pitfalls
+- Impact of changes on project dependencies
+- Potential performance implications
+- Security vulnerabilities introduced by changes
+- Opportunities for code reuse and design pattern application
 
-1. The function name changed from 'old_function' to 'new_function'.
-2. A new parameter 'y' was added to the function.
-3. The line 'result = x * 2' remained unchanged.
-4. A new line 'result += y' was added, incorporating the new parameter.
-5. The return statement remained unchanged.
-
-## Review Focus:
-1. Removals (-1:[-]): Identify if removal causes problems in remaining code. Remember any line having -1:[-] is removed line from the new code.
-2. Additions (+1:[+]): Provide detailed feedback and suggest improvements. Remember any line having +1:[+] is added line.
-3. Consider impact of changes on overall code structure and functionality.
-4. Note unchanged lines (0:[.]) for context.
-5. For 'fixed_code' -> always suggest changes for Additions. 
-
-## Field Guidelines:
-- "suggested_code": Corrected code for additions only, between start_line and end_line. make sure start_line you suggest does not has `0:[.]`.
-- "current_code": Current Code line which you think has error. make sure it always done on `+1:[+]` lines. If not, keep it empty ''.
-- "start_line" and "end_line": Actual line numbers in the additions.
-- "severity": 1 (least severe) to 10 (most critical).
-- "type": Use to categorize the feedback (e.g., "performance", "security", "testing", etc.)
-
-Prioritize issues based on their potential impact on code quality, functionality, and maintainability. Provide concrete examples or code snippets when suggesting improvements.
-Be Strict when evaluating for issues, people depend on your reviews, dont let anything slide.
+Provide concrete examples or code snippets when suggesting improvements.
 
 ## PATCH DATA:
 ```{CODE_DIFF}```
 """
 
 FILE_CODE_REVIEW_PROMPT = """
-As an experienced software engineer, provide a concise, actionable code review for the given pull request. Generate a JSON object with the following structure:
+Provide a concise, actionable code review for the given pull request. Generate a JSON object with the following structure:
 {{
   "code_quality_percentage": <0_TO_100>,
   "review": [
@@ -97,6 +96,7 @@ As an experienced software engineer, provide a concise, actionable code review f
       "category": "<ISSUE_CATEGORY>",
       "description": "<CONCISE_ISSUE_DESCRIPTION>",
       "impact": "critical|high|medium|low|trivial",
+      "priority": "critical|high|medium|low",
       "rationale": "<DETAILED_EXPLANATION>",
       "recommendation": "<SPECIFIC_IMPROVEMENT_SUGGESTION>",
       "current_code": "<PROBLEMATIC_CODE_SNIPPET>",
@@ -106,20 +106,27 @@ As an experienced software engineer, provide a concise, actionable code review f
       "end_line": <ENDING_LINE_NUMBER>,
       "sentiment": "positive|negative|neutral",
       "severity": <1_TO_10>,
-      "type": "general|performance|security|refactoring|best_practices|duplication|maintainability|scalability|error_handling|resource_management|concurrency|dependencies|compatibility|accessibility|localization|efficiency|readability|naming"
+      "type": "general|performance|security|refactoring|best_practices|duplication|maintainability|scalability|error_handling|resource_management|concurrency|dependencies|compatibility|accessibility|localization|efficiency|readability|naming",
+      "technical_debt": "<POTENTIAL_FUTURE_ISSUES>|empty",
+      "alternatives": "<ALTERNATIVE_SOLUTIONS>|empty"
     }}
   ]
 }}
 
-## Code Quality Percentage Guidelines:
-- Consider the following factors when calculating the final percentage:
-  - Code readability and maintainability
-  - Adherence to best practices and coding standards
-  - Presence of comments and documentation
-  - Efficient use of resources
-  - Proper error handling and edge case consideration
-- Adjust the final percentage based on overall code quality assessment
-- Ensure the final percentage is between 0 and 100
+## Code Quality Parameters:
+When reviewing code and calculating the code quality percentage, consider:
+1. Correctness: Does the code function as intended?
+2. Security: Are there any potential vulnerabilities?
+3. Performance: Is the code optimized for speed and resource usage?
+4. Maintainability: Is the code easy to understand and modify?
+5. Testability: Can the code be easily tested?
+6. Code style: Does it adhere to established coding standards?
+7. Documentation: Is the code well-commented and documented?
+8. Error handling: Are errors and edge cases properly managed?
+9. Modularity: Is the code organized into logical, reusable components?
+10. Scalability: Can the code handle increased load or data volume?
+
+Score each parameter 1-10, then calculate the overall percentage.
 
 ## Guidelines:
 - Provide specific feedback with file paths and line numbers
@@ -129,49 +136,39 @@ As an experienced software engineer, provide a concise, actionable code review f
 - If no issues found: {{"review": []}}
 
 ## Patch Data Format:
-- First column: Original file line numbers
-- Second column: New file line numbers (spaces for removed lines)
-- Third column: Change type
-  '-1:[-]': Line removed
-  '+1:[+]': Line added
-  '0:[.]': Unchanged line
+- First column: Line number in the context
+- Second column: Change type
+  '[CONTEXT]': Unchanged line providing context
+  '[REMOVED]': Line removed from the original code
+  '[UPDATED]': Line updated or added in the new code
 - Remaining columns: Code content
 
 Example:
+[FILE_START] auth.py
+[LINE 23] [CONTEXT] def register_user(username, password):
+[LINE 24] [REMOVED]     hashed_password = md5(password.encode()).hexdigest()
+[LINE 24] [UPDATED]     hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+[FILE_END]
 
-1    -    -1:[-] def old_function(x):
-2         +1:[+] def new_function(x, y):
-3    3     0:[.]     result = x * 2
-4         +1:[+]     result += y
-4    5     0:[.]     return result
+## Review Guidelines:
+1. Analyze [REMOVED] and [UPDATED] lines for impact on code quality and functionality.
+2. Use [CONTEXT] lines for understanding surrounding code.
+3. Provide specific feedback with file paths and line numbers.
+4. Suggest improvements for [UPDATED] lines in 'suggested_code'.
+5. Examine: syntax/logic errors, resource leaks, race conditions, security vulnerabilities, performance issues, scalability, refactoring opportunities, and code duplication.
+6. Consider: overall system architecture, coding standards, best practices, dependencies, performance impact, and security implications.
+7. Identify code duplication and suggest refactoring.
+8. Prioritize issues based on impact. Be strict; don't let issues slide.
+9. If no issues found: {{"review": []}}
 
-This snippet shows a diff (difference) between two versions of a function:
+## Additional Considerations:
+- Language-specific best practices and common pitfalls
+- Impact of changes on project dependencies
+- Potential performance implications
+- Security vulnerabilities introduced by changes
+- Opportunities for code reuse and design pattern application
 
-1. The function name changed from 'old_function' to 'new_function'.
-2. A new parameter 'y' was added to the function.
-3. The line 'result = x * 2' remained unchanged.
-4. A new line 'result += y' was added, incorporating the new parameter.
-5. The return statement remained unchanged.
-6. First number is line number of old file. Second number is line number of new filee
-
-
-## Review Focus:
-1. Removals (-1:[-]): Identify if removal causes problems in remaining code. Remember any line having -1:[-] is removed line from the new code.
-2. Additions (+1:[+]): Provide detailed feedback and suggest improvements. Remember any line having +1:[+] is added line.
-3. Consider impact of changes on overall code structure and functionality.
-4. Note unchanged lines (0:[.]) for context.
-5. For 'suggested_code' -> always suggest changes for Additions. 
-
-## Field Guidelines:
-- "suggested_code": Corrected code for additions only, between start_line and end_line. make sure start_line you suggest does not has `0:[.]`.
-- "current_code": Current Code line which you think has error. make sure it always done on `+1:[+]` lines. If not, keep it empty ''.
-- "start_line" and "end_line": Actual line numbers in the additions.
-- "severity": 1 (least severe) to 10 (most critical).
-- "type": Use to categorize the feedback (e.g., "performance", "security", "testing", etc.)
-
-
-Prioritize issues based on their potential impact on code quality, functionality, and maintainability. Provide concrete examples or code snippets when suggesting improvements.
-Be Strict when evaluating for issues, people depend on your reviews, dont let anything slide.
+Provide concrete examples or code snippets when suggesting improvements.
 
 ## File PATCH Data:
 ```{FILE_PATCH}```
@@ -179,76 +176,89 @@ Be Strict when evaluating for issues, people depend on your reviews, dont let an
 
 
 PR_REVIEW_EVALUATION_PROMPT = """
-As an experienced software engineer, evaluate and improve your previous code review for the given pull request. Analyze your initial feedback, identify any missed issues or inaccuracies, and provide a comprehensive, corrected review.
 
-Generate a JSON object with the following structure:
+As an experienced software engineer, evaluate and improve your previous code review for the given pull request. Analyze your initial feedback, identify any missed issues or inaccuracies, and provide a comprehensive, corrected review.
 {{
   "code_quality_percentage": <0_TO_100>,
   "review": [
     {{
-      "topic": "<SECTION_TOPIC>",
-      "comment": "<CONCISE_ISSUE_DESCRIPTION>",
-      "confidence": "critical|important|moderate|low|trivial",
-      "reason": "<ISSUE_REASONING>",
-      "solution": "<HIGH_LEVEL_SOLUTION>",
-      "actual_code": "<PEICE_OF_CODE_WHICH_HAS_ISSUES>",
-      "fixed_code": "<CORRECTED_CODE>",
-      "file_name": "<FULL_FILE_PATH>",
-      "start_line": <START_LINE_NUMBER>,
-      "end_line": <END_LINE_NUMBER>,
-      "side": "LEFT|RIGHT",
+      "category": "<ISSUE_CATEGORY>",
+      "description": "<CONCISE_ISSUE_DESCRIPTION>",
+      "impact": "critical|high|medium|low|trivial",
+      "priority": "critical|high|medium|low",
+      "rationale": "<DETAILED_EXPLANATION>",
+      "recommendation": "<SPECIFIC_IMPROVEMENT_SUGGESTION>",
+      "current_code": "<PROBLEMATIC_CODE_SNIPPET>",
+      "suggested_code": "<IMPROVED_CODE_SNIPPET>",
+      "file_path": "<FULL_FILE_PATH>",
+      "start_line": <STARTING_LINE_NUMBER>,
+      "end_line": <ENDING_LINE_NUMBER>,
       "sentiment": "positive|negative|neutral",
-      "severity_level": <1_TO_10>,
-      "type": "general|performance|security|testing|documentation|refactoring|best_practices|duplication|maintainability|scalability|error_handling|resource_management|concurrency|dependencies|compatibility|accessibility|localization|efficiency|readability|naming"
-
+      "severity": <1_TO_10>,
+      "type": "general|performance|security|refactoring|best_practices|duplication|maintainability|scalability|error_handling|resource_management|concurrency|dependencies|compatibility|accessibility|localization|efficiency|readability|naming",
+      "testing_considerations": "<TEST_SUGGESTIONS>",
+      "technical_debt": "<POTENTIAL_FUTURE_ISSUES>|empty",
+      "alternatives": "<ALTERNATIVE_SOLUTIONS>|empty"
     }}
   ]
 }}
 
+## Code Quality Parameters:
+When reviewing code and calculating the code quality percentage, consider:
+1. Correctness: Does the code function as intended?
+2. Security: Are there any potential vulnerabilities?
+3. Performance: Is the code optimized for speed and resource usage?
+4. Maintainability: Is the code easy to understand and modify?
+5. Testability: Can the code be easily tested?
+6. Code style: Does it adhere to established coding standards?
+7. Documentation: Is the code well-commented and documented?
+8. Error handling: Are errors and edge cases properly managed?
+9. Modularity: Is the code organized into logical, reusable components?
+10. Scalability: Can the code handle increased load or data volume?
+
+Score each parameter 1-10, then calculate the overall percentage.
+
 ## Guidelines:
-- Thoroughly review your previous output and the original code changes
-- Identify any missed issues, inaccuracies, or areas for improvement
 - Provide specific feedback with file paths and line numbers
 - Use markdown for code snippets. Make sure all code is following the original indentations.
-- If no issues found or no changes needed: {{"review": []}}
+- Merge duplicate feedback
+- Examine: syntax/logic errors, resource leaks, race conditions, security vulnerabilities, performance issues, scalability concerns, refactoring opportunities, and code duplication
+- If no issues found: {{"review": []}}
 
 ## Patch Data Format:
-- First column: Original file line numbers
-- Second column: New file line numbers (spaces for removed lines)
-- Third column: Change type
-  '-1:[-]': Line removed
-  '+1:[+]': Line added
-  '0:[.]': Unchanged line
+- First column: Line number in the context
+- Second column: Change type
+  '[CONTEXT]': Unchanged line providing context
+  '[REMOVED]': Line removed from the original code
+  '[UPDATED]': Line updated or added in the new code
 - Remaining columns: Code content
 
 Example:
+[FILE_START] auth.py
+[LINE 23] [CONTEXT] def register_user(username, password):
+[LINE 24] [REMOVED]     hashed_password = md5(password.encode()).hexdigest()
+[LINE 24] [UPDATED]     hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+[FILE_END]
 
-1    -    -1:[-] def old_function(x):
-2         +1:[+] def new_function(x, y):
-3    3     0:[.]     result = x * 2
-4         +1:[+]     result += y
-4    5     0:[.]     return result
+## Review Guidelines:
+1. Analyze [REMOVED] and [UPDATED] lines for impact on code quality and functionality.
+2. Use [CONTEXT] lines for understanding surrounding code.
+3. Provide specific feedback with file paths and line numbers.
+4. Suggest improvements for [UPDATED] lines in 'suggested_code'.
+5. Examine: syntax/logic errors, resource leaks, race conditions, security vulnerabilities, performance issues, scalability, refactoring opportunities, and code duplication.
+6. Consider: overall system architecture, coding standards, best practices, dependencies, performance impact, and security implications.
+7. Identify code duplication and suggest refactoring.
+8. Prioritize issues based on impact. Be strict; don't let issues slide.
+9. If no issues found: {{"review": []}}
 
-This snippet shows a diff (difference) between two versions of a function:
+## Additional Considerations:
+- Language-specific best practices and common pitfalls
+- Impact of changes on project dependencies
+- Potential performance implications
+- Security vulnerabilities introduced by changes
+- Opportunities for code reuse and design pattern application
 
-1. The function name changed from 'old_function' to 'new_function'.
-2. A new parameter 'y' was added to the function.
-3. The line 'result = x * 2' remained unchanged.
-4. A new line 'result += y' was added, incorporating the new parameter.
-5. The return statement remained unchanged.
-
-## Review Focus:
-1. Removals (-1:[-]): Identify if removal causes problems in remaining code. Remember any line having -1:[-] is removed line from the new code.
-2. Additions (+1:[+]): Provide detailed feedback and suggest improvements. Remember any line having +1:[+] is added line.
-3. Consider impact of changes on overall code structure and functionality.
-4. Note unchanged lines (0:[.]) for context.
-5. For 'suggested_code' -> always suggest changes for Additions. 
-
-## Field Guidelines:
-- "suggested_code": Corrected code for additions only, between start_line and end_line. make sure start_line you suggest does not has `0:[.]`.
-- "actual_code": Current Code line which you think has error. make sure it always done on `+1:[+]` lines. If not, keep it empty ''.
-- "start_line" and "end_line": Actual line numbers in the additions.
-- "severity_level": 1 (least severe) to 10 (most critical).
+Provide concrete examples or code snippets when suggesting improvements.
 
 ORIGINAL PROMPT:
 {ACTUAL_PROMPT}

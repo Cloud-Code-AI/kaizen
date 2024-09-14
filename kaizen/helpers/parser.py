@@ -161,99 +161,94 @@ def patch_to_numbered_lines(patch_text):
 
 
 def format_change(old_num, new_num, change_type, content, ignore_deletions=False):
-    old_num_str = f"{old_num:<5}" if old_num is not None else "_    "
     new_num_str = f"{new_num:<5}" if new_num is not None else "_    "
-    if ignore_deletions:
-        old_num_str = "_    "
-    return f"{old_num_str} {new_num_str} {change_type} {content}"
+    return f"[LINE {new_num_str}] [{change_type}] {content}"
 
 
 def patch_to_combined_chunks(patch_text, ignore_deletions=False):
-    lines = patch_text.split("\n")
+    patch_text = patch_text.replace("\r\n", "\n")
+    lines = patch_text.splitlines(keepends=True)
     changes = []
-    metadata = []
     removal_line_num = 0
     addition_line_num = 0
-    unedited_removal_num = 0
-    unedited_addition_num = 0
-    unedited_count = 0
-    current_hunk = None
     is_diff = False
-    first_transition = True
+    removed_hunk = False
     current_file_name = ""
 
     for line in lines:
+        line = line.rstrip("\n")
         if "diff --git" in line:
             is_diff = True
-            if not first_transition:
-                changes.append("\n</change_block>\n\n")
-            first_transition = False
-
+            if not removed_hunk:
+                changes = []
+                removed_hunk = True
+            changes.append("\n")
         elif is_diff:
             is_diff = False
-        elif line.startswith("@"):
-            if current_hunk:
-                metadata.append(current_hunk)
-            current_hunk = line
-            match = re.match(r"@@ -(\d+),\d+ \+(\d+),\d+ @@", line)
+        elif line.startswith("@@"):
+            match = re.match(r"@@ -(\d+),\d+ \+(\d+),\d+ @@ (.*)", line)
             if match:
                 removal_line_num = int(match.group(1))
                 addition_line_num = int(match.group(2))
-                unedited_removal_num = removal_line_num
-                unedited_addition_num = addition_line_num
-                if changes and "\n<change_block>" not in changes:
-                    changes = []
-                changes.append("\n<change_block>")
+                content = match.group(3)
+                changes.append("\n")
                 changes.append(
-                    f"\n<file_start>\nFilename: {current_file_name}\n<file_end>\n"
+                    format_change(
+                        None, addition_line_num, "CONTEXT", content, ignore_deletions
+                    )
                 )
         elif line.startswith("index "):
             continue
-        elif line.startswith("---"):
-            line = line.replace("a/", "").replace("b/", "").replace("--- ", "")
+        elif line.startswith("--- a"):
+            line = line.replace("--- a/", "")
             current_file_name = line
-        elif line.startswith("+++"):
-            line = line.replace("a/", "").replace("b/", "").replace("+++ ", "")
+            if (
+                current_file_name != "/dev/null"
+                and changes
+                and "[FILE_START]" not in changes[-1]
+            ):
+                changes.append("\n[FILE_END]\n")
+                changes.append(f"\n[FILE_START] {current_file_name}\n")
+        elif line.startswith("+++ b"):
+            line = line.replace("+++ b/", "")
             current_file_name = line
+            if (
+                current_file_name != "/dev/null"
+                and changes
+                and "[FILE_START]" not in changes[-1]
+            ):
+                changes.append("\n[FILE_END]\n")
+                changes.append(f"\n[FILE_START] {current_file_name}\n")
         elif line.startswith("-"):
             content = line[1:]
             if not ignore_deletions:
                 changes.append(
                     format_change(
-                        removal_line_num, None, "-1:[-]", content, ignore_deletions
+                        None, removal_line_num, "REMOVED", content, ignore_deletions
                     )
                 )
             removal_line_num += 1
-            unedited_removal_num = removal_line_num
         elif line.startswith("+"):
             content = line[1:]
             changes.append(
                 format_change(
-                    None, addition_line_num, "+1:[+]", content, ignore_deletions
+                    None, addition_line_num, "UPDATED", content, ignore_deletions
                 )
             )
             addition_line_num += 1
-            unedited_addition_num = addition_line_num
         else:
             content = line
             changes.append(
                 format_change(
-                    unedited_removal_num,
-                    unedited_addition_num,
-                    " 0:[.]",
+                    None,
+                    addition_line_num,
+                    "CONTEXT",
                     content,
                     ignore_deletions,
                 )
             )
-            unedited_removal_num += 1
-            unedited_addition_num += 1
             removal_line_num += 1
             addition_line_num += 1
-            unedited_count += 1
-
-    if current_hunk:
-        metadata.append(current_hunk)
-        changes.append("\n</change_block>\n\n")
 
     output = changes
 
