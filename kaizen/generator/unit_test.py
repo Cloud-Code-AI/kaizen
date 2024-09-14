@@ -346,7 +346,7 @@ class UnitTestGenerator:
         print("• Writing test file...")
         with open(test_file_path, "w") as test_file:
             test_file.write(test_code)
-        print(f"  ✓ Test file written successfully")
+        print("  ✓ Test file written successfully")
         self.log_step("Write test file", f"Test file written to: {test_file_path}")
 
     def update_usage(self, usage):
