@@ -64,12 +64,16 @@ def traverse_tree(node, code_bytes: bytes) -> Dict[str, Any]:
                 else "anonymous"
             ),
             "code": code_bytes[node.start_byte : node.end_byte].decode("utf8"),
+            "start_line": node.start_point[0],
+            "end_line": node.end_point[0],
         }
     elif node.type in ["class_definition", "class_declaration"]:
         return {
             "type": "class",
             "name": node.child_by_field_name("name").text.decode("utf8"),
             "code": code_bytes[node.start_byte : node.end_byte].decode("utf8"),
+            "start_line": node.start_point[0],
+            "end_line": node.end_point[0],
         }
     elif node.type in ["jsx_element", "jsx_self_closing_element"]:
         return {
@@ -82,12 +86,16 @@ def traverse_tree(node, code_bytes: bytes) -> Dict[str, Any]:
                 else node.child_by_field_name("name").text.decode("utf8")
             ),
             "code": code_bytes[node.start_byte : node.end_byte].decode("utf8"),
+            "start_line": node.start_point[0],
+            "end_line": node.end_point[0],
         }
     elif node.type == "impl_item":
         return {
             "type": "impl",
             "name": node.child_by_field_name("type").text.decode("utf8"),
             "code": code_bytes[node.start_byte : node.end_byte].decode("utf8"),
+            "start_line": node.start_point[0],
+            "end_line": node.end_point[0],
         }
     else:
         return None

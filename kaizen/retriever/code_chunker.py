@@ -20,9 +20,17 @@ def chunk_code(code: str, language: str) -> ParsedBody:
     def process_node(node):
         result = parse_code(code, language)
         if result:
+            # Assuming parse_code is modified to return line numbers
+            start_line = result.get("start_line", 0)
+            end_line = result.get("end_line", 0)
+
             if result["type"] == "function":
                 if is_react_hook(result["name"]):
-                    body["hooks"][result["name"]] = result["code"]
+                    body["hooks"][result["name"]] = {
+                        "code": result["code"],
+                        "start_line": start_line,
+                        "end_line": end_line,
+                    }
                 elif is_react_component(result["code"]):
                     body["components"][result["name"]] = result["code"]
                 else:

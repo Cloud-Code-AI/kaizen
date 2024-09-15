@@ -21,7 +21,9 @@ class QdrantVectorStore:
     def _connect_with_retry(self):
         for attempt in range(self.max_retries):
             try:
-                client = QdrantClient(self.HOST, port=self.PORT)
+                client = QdrantClient(
+                    self.HOST, port=self.PORT, api_key=self.QDRANT_API_KEY
+                )
                 # Test the connection
                 client.get_collections()
                 return client
