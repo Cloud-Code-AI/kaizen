@@ -12,65 +12,31 @@
                     "output_cost_per_token": 0.0000006,
                     "api_key": "os.environ/AZURE_API_KEY",
                     "api_base": "os.environ/AZURE_API_BASE"
-                },
-                "model_info": {
-                    "max_tokens": 8191,
-                    "max_input_tokens": 8191,
-                    "output_vector_size": 1536, 
-                    "input_cost_per_token": 0.00000002,
-                    "output_cost_per_token": 0.000000,
-                    "litellm_provider": "openai",
-                    "mode": "embedding"
                 }
             },
             {
                 "model_name": "small",
                 "litellm_params": {
                     "model": "azure/gpt-4o-mini",
-                    "input_cost_per_token": 0.000000015,
-                    "output_cost_per_token": 0.0000006,
                     "api_key": "os.environ/AZURE_API_KEY",
-                    "api_base": "os.environ/AZURE_API_BASE",
-                    "base_model": "azure/gpt-4o-mini"
+                    "api_base": "os.environ/AZURE_API_BASE"
                 }
             },
             {
                 "model_name": "default",
                 "litellm_params": {
                     "model": "azure/gpt-4o-mini",
-                    "input_cost_per_token": 0.000000015,
-                    "output_cost_per_token": 0.0000006,
                     "api_key": "os.environ/AZURE_API_KEY",
-                    "api_base": "os.environ/AZURE_API_BASE",
-                    "base_model": "azure/gpt-4o-mini"
+                    "api_base": "os.environ/AZURE_API_BASE"
                 }
             },
             {
                 "model_name": "best",
                 "litellm_params": {
                     "model": "azure/gpt-4o",
-                    "input_cost_per_token": 0.000005,
-                    "output_cost_per_token": 0.000015,
                     "api_key": "os.environ/AZURE_API_KEY",
                     "api_base": "os.environ/AZURE_API_BASE",
                     "base_model": "azure/gpt-4o"
-                }
-            },
-            {
-                "model_name": "CUSTOM_MODEL",
-                "litellm_params": {
-                    "model": "azure_ai/MODEL_NAME",
-                    "api_key": "os.environ/CUSTOM_API_KEY",
-                    "api_base": "os.environ/CUSTOM_API_BASE"
-                },
-                "model_info": {
-                    "max_tokens": 4096,
-                    "input_cost_per_token": 0.000015,
-                    "output_cost_per_token": 0.000015,
-                    "max_input_tokens": 128000,
-                    "max_output_tokens": 4096,
-                    "litellm_provider": "openai",
-                    "mode": "chat"
                 }
             }
         ]
