@@ -1,33 +1,38 @@
-from functools import lru_cache
+import tree_sitter_python
+import tree_sitter_javascript
+import tree_sitter_typescript
+import tree_sitter_rust
 from tree_sitter import Language, Parser
 from typing import Dict, Any
 import logging
-import importlib
+from functools import lru_cache
+
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+PY_LANGUAGE = Language(tree_sitter_python.language())
+JS_LANGUAGE = Language(tree_sitter_javascript.language())
+TS_LANGUAGE = Language(tree_sitter_typescript.language_typescript())
+TSX_LANGUAGE = Language(tree_sitter_typescript.language_tsx())
+RUST_LANGUAGE = Language(tree_sitter_rust.language())
 
 
 class LanguageLoader:
     @staticmethod
     @lru_cache(maxsize=None)
     def load_language(language: str) -> Language:
-        try:
-            # Remove 'tree-sitter-' prefix if present
-            lang = language.replace("tree-sitter-", "")
-
-            # Dynamically import the language module
-            module_name = f"tree_sitter_{lang}"
-            try:
-                module = importlib.import_module(module_name)
-            except ImportError:
-                raise ValueError(f"Language module not found: {module_name}")
-
-            return Language(module.language())
-        except Exception as e:
-            logger.error(f"Failed to load language {language}: {str(e)}")
-            raise
+        language_map = {
+            "python": PY_LANGUAGE,
+            "javascript": JS_LANGUAGE,
+            "typescript": TS_LANGUAGE,
+            "rust": RUST_LANGUAGE,
+        }
+        lang = language.replace("tree-sitter-", "")
+        if lang not in language_map:
+            raise ValueError(f"Unsupported language: {language}")
+        return language_map[lang]
 
 
 class ParserFactory:
@@ -37,7 +42,7 @@ class ParserFactory:
         try:
             parser = Parser()
             lang = LanguageLoader.load_language(language)
-            parser.set_language(lang)
+            parser.language = lang
             return parser
         except Exception as e:
             logger.error(f"Failed to create parser for {language}: {str(e)}")

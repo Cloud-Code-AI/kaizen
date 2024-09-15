@@ -1,13 +1,6 @@
 import os
 import logging
-from llama_index.core import (
-    StorageContext,
-)
 from uuid import uuid4
-
-from llama_index.core.schema import TextNode
-from kaizen.retriever.qdrant_vector_store import QdrantVectorStore
-from sqlalchemy import create_engine, text
 from llama_index.llms.litellm import LiteLLM
 import networkx as nx
 from typing import List, Dict, Any
@@ -17,6 +10,8 @@ from kaizen.llms.provider import LLMProvider
 from kaizen.retriever.code_chunker import chunk_code
 import traceback
 from llama_index.embeddings.litellm import LiteLLMEmbedding
+from sqlalchemy import create_engine, text
+from kaizen.retriever.qdrant_vector_store import QdrantVectorStore
 
 
 # Set up logging
@@ -45,9 +40,6 @@ class RepositoryAnalyzer:
         # embed_llm = LiteLLM(model_name="embedding", router=self.llm_provider.provider)
         self.embed_model = LiteLLMEmbedding(
             model_name="azure/text-embedding-3-small", router=self.llm_provider.provider
-        )
-        self.storage_context = StorageContext.from_defaults(
-            vector_store=self.vector_store
         )
         logger.info("RepositoryAnalyzer initialized successfully")
 
@@ -172,18 +164,15 @@ class RepositoryAnalyzer:
                 },
             )
 
-        # Create a TextNode for the vector store
-        # Include repo_id in the metadata
-        metadata = {"repo_id": self.repo_id, "function_id": function_id}
-        node_id = str(uuid4())
-        node = TextNode(
-            text=abstraction,
-            id_=node_id,
-            embedding=embedding,
-            metadata=metadata,
-        )
+        # Create a dictionary instead of TextNode
+        node = {
+            "id": str(uuid4()),
+            "text": abstraction,
+            "embedding": embedding,
+            "metadata": {"repo_id": self.repo_id, "function_id": function_id},
+        }
 
-        # Add the node to the vector store
+        # Add the node to the vector store directly
         self.vector_store.add(nodes=[node])
 
         logger.debug(f"Abstraction and embedding stored for function_id: {function_id}")

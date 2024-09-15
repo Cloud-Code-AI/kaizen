@@ -5,7 +5,7 @@ from kaizen.llms.prompts.general_prompts import BASIC_SYSTEM_PROMPT
 from kaizen.utils.config import ConfigData
 from kaizen.helpers.general import retry
 from kaizen.helpers.parser import extract_json
-from litellm import Router
+from litellm import Router, embedding
 import logging
 from collections import defaultdict
 
@@ -275,10 +275,11 @@ class LLMProvider:
             return 0, 0
 
     def get_text_embedding(self, text):
-        # for model in self.config["language_model"]["models"]:
-        #     if model["model_name"] == "embedding":
-        #         break
-        response = self.provider.embedding(
-            model="embedding", input=[text], dimensions=1536, encoding_format="float"
+        for model in self.config["language_model"]["models"]:
+            if model["model_name"] == "embedding":
+                model_name = model["litellm_params"]["model"]
+                break
+        response = embedding(
+            model=model_name, input=[text], dimensions=1536, encoding_format="float"
         )
         return response["data"], response["usage"]
