@@ -9,6 +9,7 @@ from kaizen.llms.prompts.pr_desc_prompts import (
     PR_DESCRIPTION_PROMPT,
     MERGE_PR_DESCRIPTION_PROMPT,
     PR_DESCRIPTION_SYSTEM_PROMPT,
+    PR_COMMIT_MESSAGE_PROMPT,
 )
 
 
@@ -170,3 +171,14 @@ class PRDescriptionGenerator:
         self.total_usage = self.provider.update_usage(self.total_usage, usage)
 
         return desc
+
+    def generate_pr_commit_message(
+        self,
+        desc: str,
+        user: Optional[str] = None,
+    ) -> str:
+        prompt = PR_COMMIT_MESSAGE_PROMPT.format(
+            DESC=desc,
+        )
+        resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
+        return resp, usage
