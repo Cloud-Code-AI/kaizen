@@ -1,0 +1,8 @@
+#!/bin/sh
+# hooks/prepare-commit-msg
+
+# Run your CLI command and capture the output
+commit_msg=$(kaizen-cli generate-commit-msg)
+
+# Overwrite the commit message file with the generated message
+echo "$commit_msg" > "$1"
