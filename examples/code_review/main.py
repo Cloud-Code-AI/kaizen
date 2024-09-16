@@ -52,3 +52,5 @@ desc_data = pr_desc.generate_pull_request_desc(
     user="kaizen/example",
 )
 print(desc_data)
+
+comit_message = pr_desc.generate_pr_commit_message(desc_data.desc)
