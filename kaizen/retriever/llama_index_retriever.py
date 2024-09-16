@@ -12,7 +12,7 @@ import traceback
 from llama_index.embeddings.litellm import LiteLLMEmbedding
 from sqlalchemy import create_engine, text
 from kaizen.retriever.qdrant_vector_store import QdrantVectorStore
-
+import json
 
 # Set up logging
 logging.basicConfig(
@@ -43,10 +43,18 @@ class RepositoryAnalyzer:
         )
         logger.info("RepositoryAnalyzer initialized successfully")
 
-    def setup_repository(self, repo_path: str, node_query: str = None):
+    def setup_repository(
+        self,
+        repo_path: str,
+        node_query: str = None,
+        file_query: str = None,
+        function_query: str = None,
+    ):
         self.total_usage = self.llm_provider.DEFAULT_USAGE
         self.total_files_processed = 0
         self.node_query = node_query
+        self.file_query = file_query
+        self.function_query = function_query
         self.embedding_usage = {"prompt_tokens": 10, "total_tokens": 10}
         logger.info(f"Starting repository setup for: {repo_path}")
         self.parse_repository(repo_path)
@@ -130,7 +138,7 @@ class RepositoryAnalyzer:
             return  # Skip this code block
 
         language = self.get_language_from_extension(file_path)
-        abstraction, usage = self.generate_abstraction(code, language)
+        abstraction, usage = self.generate_abstraction(code, language, section)
         self.total_usage = self.llm_provider.update_usage(
             total_usage=self.total_usage, current_usage=usage
         )
@@ -185,70 +193,85 @@ class RepositoryAnalyzer:
         logger.debug(f"Abstraction and embedding stored for function_id: {function_id}")
 
     def generate_abstraction(
-        self, code_block: str, language: str, max_tokens: int = 300
+        self, code_block: str, language: str, section: str, max_tokens: int = 300
     ) -> str:
         prompt = f"""Analyze the following {language} code block and generate a structured abstraction. 
-Your response should be in YAML format and include the following sections:
+Your response should be in JSON format and include the following sections:
 
-summary: A concise one-sentence summary of the function's primary purpose.
+{{
+  "summary": "A concise one-sentence summary of the function's primary purpose.",
 
-functionality: |
-  A detailed explanation of what the function does, including its main steps and logic.
-  Use multiple lines if needed for clarity.
+  "functionality": "A detailed explanation of what the function does, including its main steps and logic. Use multiple lines if needed for clarity.",
 
-inputs:
-  - name: The parameter name
-    type: The parameter type
-    description: A brief description of the parameter's purpose
-    default_value: The default value, if any (or null if not applicable)
+  "inputs": [
+    {{
+      "name": "The parameter name",
+      "type": "The parameter type",
+      "description": "A brief description of the parameter's purpose",
+      "default_value": "The default value, if any (or null if not applicable)"
+    }}
+  ],
 
-output:
-  type: The return type of the function
-  description: |
-    A description of what is returned and under what conditions.
-    Use multiple lines if needed.
+  "output": {{
+    "type": "The return type of the function",
+    "description": "A description of what is returned and under what conditions. Use multiple lines if needed."
+  }},
 
-dependencies:
-  - name: Name of the external library or module
-    purpose: Brief explanation of its use in this function
+  "dependencies": [
+    {{
+      "name": "Name of the external library or module",
+      "purpose": "Brief explanation of its use in this function"
+    }}
+  ],
 
-algorithms:
-  - name: Name of the algorithm or data structure
-    description: Brief explanation of its use and importance
+  "algorithms": [
+    {{
+      "name": "Name of the algorithm or data structure",
+      "description": "Brief explanation of its use and importance"
+    }}
+  ],
 
-edge_cases:
-  - A list of potential edge cases or special conditions the function handles or should handle
+  "edge_cases": [
+    "A list of potential edge cases or special conditions the function handles or should handle"
+  ],
 
-error_handling: |
-  A description of how errors are handled or propagated.
-  Include specific error types if applicable.
+  "error_handling": "A description of how errors are handled or propagated. Include specific error types if applicable.",
 
-usage_context: |
-  A brief explanation of how this function might be used by parent functions or in a larger system.
-  Include typical scenarios and any important considerations for its use.
+  "usage_context": "A brief explanation of how this function might be used by parent functions or in a larger system. Include typical scenarios and any important considerations for its use.",
 
-complexity:
-  time: Estimated time complexity (e.g., O(n))
-  space: Estimated space complexity (e.g., O(1))
+  "complexity": {{
+    "time": "Estimated time complexity (e.g., O(n))",
+    "space": "Estimated space complexity (e.g., O(1))",
+    "explanation": "Brief explanation of the complexity analysis"
+  }},
 
-code_snippet: |
-  ```{language}
-  {code_block}
-  ```
+  "tags": ["List", "of", "relevant", "tags"],
 
-Provide your analysis in this clear, structured YAML format. If any section is not applicable, use an empty list [] or null value as appropriate. Ensure that multi-line descriptions are properly indented under their respective keys.
+  "testing_considerations": "Suggestions for unit tests or test cases to cover key functionality and edge cases",
+
+  "version_compatibility": "Information about language versions or dependency versions this code is compatible with",
+
+  "performance_considerations": "Any notes on performance optimizations or potential bottlenecks",
+
+  "security_considerations": "Any security-related notes or best practices relevant to this code",
+
+  "maintainability_score": "A subjective score from 1-10 on how easy the code is to maintain, with a brief explanation"
+}}
+
+Provide your analysis in this clear, structured JSON format. If any section is not applicable, use an empty list [] or null value as appropriate. Ensure that multi-line descriptions are properly formatted as strings.
 
 Code to analyze:
-```{language}
-{code_block}
-```
+Language: {language}
+Block Type: {section}
+Code Block: 
+```{code_block}```
         """
 
         estimated_prompt_tokens = len(tokenizer.encode(prompt))
         adjusted_max_tokens = min(max(150, estimated_prompt_tokens), 1000)
 
         try:
-            abstraction, usage = self.llm_provider.chat_completion(
+            abstraction, usage = self.llm_provider.chat_completion_with_json(
                 prompt="",
                 messages=[
                     {
@@ -259,7 +282,7 @@ Code to analyze:
                 ],
                 custom_model={"max_tokens": adjusted_max_tokens, "model": "small"},
             )
-            return abstraction, usage
+            return json.dumps(abstraction), usage
 
         except Exception as e:
             raise e
@@ -272,21 +295,19 @@ Code to analyze:
         section: str,
         name: str,
         start_line: int,
-        file_query: str = None,
-        function_query: str = None,
     ) -> int:
         logger.debug(f"Storing code in DB: {file_path} - {section} - {name}")
         with self.engine.begin() as connection:
             # Insert into files table (assuming this part is already correct)
-            if not file_query:
-                file_query = """
+            if not self.file_query:
+                self.file_query = """
                         INSERT INTO files (repo_id, file_path, file_name, file_ext, programming_language)
                     VALUES (:repo_id, :file_path, :file_name, :file_ext, :programming_language)
                     ON CONFLICT (repo_id, file_path) DO UPDATE SET file_path = EXCLUDED.file_path
                     RETURNING file_id
                     """
             file_id = connection.execute(
-                text(file_query),
+                text(self.file_query),
                 {
                     "repo_id": self.repo_id,
                     "file_path": file_path,
@@ -297,15 +318,15 @@ Code to analyze:
             ).scalar_one()
 
             # Insert into function_abstractions table
-            if not function_query:
-                function_query = """
+            if not self.function_query:
+                self.function_query = """
                     INSERT INTO function_abstractions 
                     (file_id, function_name, function_signature, abstract_functionality, start_line, end_line)
                     VALUES (:file_id, :function_name, :function_signature, :abstract_functionality, :start_line, :end_line)
                     RETURNING function_id
                         """
             function_id = connection.execute(
-                text(function_query),
+                text(self.function_query),
                 {
                     "file_id": file_id,
                     "function_name": name,

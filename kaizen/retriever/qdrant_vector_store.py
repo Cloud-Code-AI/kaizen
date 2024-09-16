@@ -11,6 +11,7 @@ class QdrantVectorStore:
     def __init__(self, collection_name, vector_size, max_retries=3, retry_delay=2):
         self.HOST = os.getenv("QDRANT_HOST", "localhost")
         self.PORT = os.getenv("QDRANT_PORT", "6333")
+        self.QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
         self.collection_name = collection_name
         self.max_retries = max_retries
         self.retry_delay = retry_delay
@@ -49,7 +50,9 @@ class QdrantVectorStore:
 
     def add(self, nodes):
         points = [
-            PointStruct(id=node.id_, vector=node.embedding, payload=node.metadata)
+            PointStruct(
+                id=node["id"], vector=node["embedding"], payload=node["metadata"]
+            )
             for node in nodes
         ]
         self.client.upsert(collection_name=self.collection_name, points=points)

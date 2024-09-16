@@ -101,13 +101,11 @@ def traverse_tree(node, code_bytes: bytes) -> Dict[str, Any]:
         return None
 
 
-def parse_code(code: str, language: str) -> Dict[str, Any]:
+def parse_code(node: Any, code_bytes: bytes) -> Dict[str, Any]:
     try:
-        parser = ParserFactory.get_parser(language)
-        tree = parser.parse(bytes(code, "utf8"))
-        return traverse_tree(tree.root_node, code.encode("utf8"))
+        return traverse_tree(node, code_bytes)
     except Exception as e:
-        logger.error(f"Failed to parse {language} code: {str(e)}")
+        logger.error(f"Failed to parse code: {str(e)}")
         raise
 
 

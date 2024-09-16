@@ -3,6 +3,7 @@ from .config.manager import load_config
 from .commands.config_commands import config
 from .commands.unit_test_commands import unit_test
 from .commands.reviewer_commands import reviewer
+from .hooks.setup import hooks
 from kaizen.generator.e2e_tests import E2ETestGenerator
 
 
@@ -23,6 +24,7 @@ def ui_tests(url):
 cli.add_command(config)
 cli.add_command(unit_test)
 cli.add_command(reviewer)
+cli.add_command(hooks)
 
 if __name__ == "__main__":
     cli()

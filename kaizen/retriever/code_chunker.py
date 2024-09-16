@@ -7,24 +7,55 @@ ParsedBody = Dict[str, Dict[str, Any]]
 def chunk_code(code: str, language: str) -> ParsedBody:
     parser = ParserFactory.get_parser(language)
     tree = parser.parse(code.encode("utf8"))
-
+    code_bytes = code.encode("utf8")
     body: ParsedBody = {
+        "imports": [],
+        "global_variables": [],
+        "type_definitions": [],
         "functions": {},
+        "async_functions": {},
         "classes": {},
         "hooks": {},
         "components": {},
+        "jsx_elements": [],
         "other_blocks": [],
     }
-    # code_bytes = code.encode("utf8")
 
     def process_node(node):
-        result = parse_code(code, language)
+        result = parse_code(node, code_bytes)
         if result:
-            # Assuming parse_code is modified to return line numbers
             start_line = result.get("start_line", 0)
             end_line = result.get("end_line", 0)
 
-            if result["type"] == "function":
+            if result["type"] == "import_statement":
+                body["imports"].append(
+                    {
+                        "code": result["code"],
+                        "start_line": start_line,
+                        "end_line": end_line,
+                    }
+                )
+            elif (
+                result["type"] == "variable_declaration"
+                and node.parent.type == "program"
+            ):
+                body["global_variables"].append(
+                    {
+                        "code": result["code"],
+                        "start_line": start_line,
+                        "end_line": end_line,
+                    }
+                )
+            elif result["type"] in ["type_alias", "interface_declaration"]:
+                body["type_definitions"].append(
+                    {
+                        "name": result["name"],
+                        "code": result["code"],
+                        "start_line": start_line,
+                        "end_line": end_line,
+                    }
+                )
+            elif result["type"] == "function":
                 if is_react_hook(result["name"]):
                     body["hooks"][result["name"]] = {
                         "code": result["code"],
@@ -32,18 +63,44 @@ def chunk_code(code: str, language: str) -> ParsedBody:
                         "end_line": end_line,
                     }
                 elif is_react_component(result["code"]):
-                    body["components"][result["name"]] = result["code"]
+                    body["components"][result["name"]] = {
+                        "code": result["code"],
+                        "start_line": start_line,
+                        "end_line": end_line,
+                    }
+                elif "async" in result["code"].split()[0]:
+                    body["async_functions"][result["name"]] = {
+                        "code": result["code"],
+                        "start_line": start_line,
+                        "end_line": end_line,
+                    }
                 else:
-                    body["functions"][result["name"]] = result["code"]
+                    body["functions"][result["name"]] = {
+                        "code": result["code"],
+                        "start_line": start_line,
+                        "end_line": end_line,
+                    }
             elif result["type"] == "class":
                 if is_react_component(result["code"]):
-                    body["components"][result["name"]] = result["code"]
+                    body["components"][result["name"]] = {
+                        "code": result["code"],
+                        "start_line": start_line,
+                        "end_line": end_line,
+                    }
                 else:
-                    body["classes"][result["name"]] = result["code"]
-            elif result["type"] == "component":
-                body["components"][result["name"]] = result["code"]
-            elif result["type"] == "impl":
-                body["classes"][result["name"]] = result["code"]
+                    body["classes"][result["name"]] = {
+                        "code": result["code"],
+                        "start_line": start_line,
+                        "end_line": end_line,
+                    }
+            elif result["type"] == "jsx_element":
+                body["jsx_elements"].append(
+                    {
+                        "code": result["code"],
+                        "start_line": start_line,
+                        "end_line": end_line,
+                    }
+                )
         else:
             for child in node.children:
                 process_node(child)
@@ -55,8 +112,14 @@ def chunk_code(code: str, language: str) -> ParsedBody:
     for section in body.values():
         if isinstance(section, dict):
             for code_block in section.values():
-                start = code.index(code_block)
-                collected_ranges.append((start, start + len(code_block)))
+                collected_ranges.append(
+                    (code_block["start_line"], code_block["end_line"])
+                )
+        elif isinstance(section, list):
+            for code_block in section:
+                collected_ranges.append(
+                    (code_block["start_line"], code_block["end_line"])
+                )
 
     collected_ranges.sort()
     last_end = 0
@@ -76,5 +139,10 @@ def is_react_hook(name: str) -> bool:
 
 def is_react_component(code: str) -> bool:
     return (
-        "React" in code or "jsx" in code.lower() or "tsx" in code.lower() or "<" in code
+        "React" in code
+        or "jsx" in code.lower()
+        or "tsx" in code.lower()
+        or "<" in code
+        or "props" in code
+        or "render" in code
     )

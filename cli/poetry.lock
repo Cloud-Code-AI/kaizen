@@ -1454,7 +1454,7 @@ referencing = ">=0.31.0"
 
 [[package]]
 name = "kaizen-cloudcode"
-version = "0.4.11"
+version = "0.4.12"
 description = "An intelligent coding companion that accelerates your development workflow by providing efficient assistance, enabling you to craft high-quality code more rapidly."
 optional = false
 python-versions = "^3.9.0"
@@ -4370,4 +4370,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9.0"
-content-hash = "7751c3aba479207989d1f2f49251c8daed3adc5170f9abb7eece699436ff135b"
+content-hash = "d8dd0866cce15fa13755cf421b868b7e7fe5509dc7af511b18b210198ffeb8de"
