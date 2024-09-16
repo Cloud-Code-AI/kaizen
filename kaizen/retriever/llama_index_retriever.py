@@ -43,9 +43,10 @@ class RepositoryAnalyzer:
         )
         logger.info("RepositoryAnalyzer initialized successfully")
 
-    def setup_repository(self, repo_path: str):
+    def setup_repository(self, repo_path: str, node_query: str = None):
         self.total_usage = self.llm_provider.DEFAULT_USAGE
         self.total_files_processed = 0
+        self.node_query = node_query
         self.embedding_usage = {"prompt_tokens": 10, "total_tokens": 10}
         logger.info(f"Starting repository setup for: {repo_path}")
         self.parse_repository(repo_path)
@@ -116,8 +117,12 @@ class RepositoryAnalyzer:
 
         if isinstance(code_info, str):
             code = code_info
+            start_line = 1  # Default to 1 if no position information is available
         elif isinstance(code_info, dict) and "code" in code_info:
             code = code_info["code"]
+            start_line = code_info.get(
+                "start_line", 1
+            )  # Get start_line if available, default to 1
         else:
             logger.error(
                 f"Unexpected code_info format for {section} - {name}: {type(code_info)}"
@@ -129,7 +134,9 @@ class RepositoryAnalyzer:
         self.total_usage = self.llm_provider.update_usage(
             total_usage=self.total_usage, current_usage=usage
         )
-        function_id = self.store_code_in_db(code, abstraction, file_path, section, name)
+        function_id = self.store_code_in_db(
+            code, abstraction, file_path, section, name, start_line
+        )
         self.store_abstraction_and_embedding(function_id, abstraction)
 
         if section == "functions":
@@ -257,47 +264,29 @@ Code to analyze:
         except Exception as e:
             raise e
 
-    def ensure_repository_exists(
-        self, repo_name, repo_owner, repo_url, repo_description=""
-    ):
-        with self.engine.begin() as connection:
-            repo_query = text(
-                """
-                INSERT INTO repositories (repo_name, repo_owner, repo_url, repo_description)
-                VALUES (:repo_name, :repo_owner, :repo_url, :repo_description)
-                ON CONFLICT (repo_name, repo_owner) DO UPDATE SET
-                    repo_url = EXCLUDED.repo_url,
-                    repo_description = EXCLUDED.repo_description
-                RETURNING repo_id
-            """
-            )
-            repo_id = connection.execute(
-                repo_query,
-                {
-                    "repo_name": repo_name,
-                    "repo_owner": repo_owner,
-                    "repo_url": repo_url,
-                    "repo_description": repo_description,
-                },
-            ).scalar_one()
-        return repo_id
-
     def store_code_in_db(
-        self, code: str, abstraction: str, file_path: str, section: str, name: str
+        self,
+        code: str,
+        abstraction: str,
+        file_path: str,
+        section: str,
+        name: str,
+        start_line: int,
+        file_query: str = None,
+        function_query: str = None,
     ) -> int:
         logger.debug(f"Storing code in DB: {file_path} - {section} - {name}")
         with self.engine.begin() as connection:
             # Insert into files table (assuming this part is already correct)
-            file_query = text(
-                """
-                INSERT INTO files (repo_id, file_path, file_name, file_ext, programming_language)
-                VALUES (:repo_id, :file_path, :file_name, :file_ext, :programming_language)
-                ON CONFLICT (repo_id, file_path) DO UPDATE SET file_path = EXCLUDED.file_path
-                RETURNING file_id
-                """
-            )
+            if not file_query:
+                file_query = """
+                        INSERT INTO files (repo_id, file_path, file_name, file_ext, programming_language)
+                    VALUES (:repo_id, :file_path, :file_name, :file_ext, :programming_language)
+                    ON CONFLICT (repo_id, file_path) DO UPDATE SET file_path = EXCLUDED.file_path
+                    RETURNING file_id
+                    """
             file_id = connection.execute(
-                file_query,
+                text(file_query),
                 {
                     "repo_id": self.repo_id,
                     "file_path": file_path,
@@ -308,23 +297,22 @@ Code to analyze:
             ).scalar_one()
 
             # Insert into function_abstractions table
-            function_query = text(
-                """
-                INSERT INTO function_abstractions 
-                (file_id, function_name, function_signature, abstract_functionality, start_line, end_line)
-                VALUES (:file_id, :function_name, :function_signature, :abstract_functionality, :start_line, :end_line)
-                RETURNING function_id
-                """
-            )
+            if not function_query:
+                function_query = """
+                    INSERT INTO function_abstractions 
+                    (file_id, function_name, function_signature, abstract_functionality, start_line, end_line)
+                    VALUES (:file_id, :function_name, :function_signature, :abstract_functionality, :start_line, :end_line)
+                    RETURNING function_id
+                        """
             function_id = connection.execute(
-                function_query,
+                text(function_query),
                 {
                     "file_id": file_id,
                     "function_name": name,
                     "function_signature": "",  # You might want to extract this from the code
                     "abstract_functionality": abstraction,
-                    "start_line": 1,  # You might want to calculate actual start and end lines
-                    "end_line": len(code.splitlines()),
+                    "start_line": start_line,
+                    "end_line": start_line + len(code.splitlines()) - 1,
                 },
             ).scalar_one()
 
@@ -335,43 +323,22 @@ Code to analyze:
         logger.info("Storing function relationships")
         with self.engine.begin() as connection:
             for caller, callee in self.graph.edges():
-                query = text(
+                if not self.node_query:
+                    self.node_query = """
+                        INSERT INTO node_relationships (parent_node_id, child_node_id, relationship_type)
+                        VALUES (
+                            (SELECT node_id FROM syntax_nodes WHERE node_content LIKE :caller),
+                            (SELECT node_id FROM syntax_nodes WHERE node_content LIKE :callee),
+                            'calls'
+                        )
+                        ON CONFLICT DO NOTHING
                     """
-                    INSERT INTO node_relationships (parent_node_id, child_node_id, relationship_type)
-                    VALUES (
-                        (SELECT node_id FROM syntax_nodes WHERE node_content LIKE :caller),
-                        (SELECT node_id FROM syntax_nodes WHERE node_content LIKE :callee),
-                        'calls'
-                    )
-                    ON CONFLICT DO NOTHING
-                """
-                )
+
                 connection.execute(
-                    query, {"caller": f"%{caller}%", "callee": f"%{callee}%"}
+                    text(self.node_query),
+                    {"caller": f"%{caller}%", "callee": f"%{callee}%"},
                 )
         logger.info("Function relationships stored successfully")
-
-    # def query(self, query_text: str, num_results: int = 5) -> List[Dict[str, Any]]:
-    #     logger.info(f"Performing query: '{query_text}' for repo_id: {self.repo_id}")
-
-    #     embedding, emb_usage = self.llm_provider.get_text_embedding(query_text)
-    #     embedding = embedding[0]["embedding"]
-
-    #     # Use the custom query method
-    #     results = self.vector_store.custom_query(embedding, self.repo_id, num_results)
-
-    #     processed_results = []
-    #     for result in results:
-    #         processed_results.append({
-    #             "function_name": result["metadata"].get("function_name", ""),
-    #             "abstraction": result["text"],
-    #             "file_path": result["metadata"].get("file_path", ""),
-    #             "function_signature": result["metadata"].get("function_signature", ""),
-    #             "relevance_score": result["similarity"],
-    #         })
-
-    #     logger.info(f"Query completed. Found {len(processed_results)} results.")
-    #     return processed_results
 
     def query(
         self, query_text: str, num_results: int = 5, repo_id=None
