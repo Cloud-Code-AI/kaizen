@@ -1,5 +1,6 @@
 from typing import Dict, Any
 from kaizen.retriever.tree_sitter_utils import parse_code, ParserFactory
+import os
 
 ParsedBody = Dict[str, Dict[str, Any]]
 
@@ -146,3 +147,20 @@ def is_react_component(code: str) -> bool:
         or "props" in code
         or "render" in code
     )
+
+
+def clean_filename(filepath):
+    # Split the path into components
+    path_components = filepath.split(os.sep)
+
+    # Find the index of 'tmp' in the path
+    try:
+        tmp_index = path_components.index("tmp")
+    except ValueError:
+        # If 'tmp' is not found, return the original filepath
+        return filepath
+
+    # Join the components after 'tmp' to create the cleaned filename
+    cleaned_filename = os.sep.join(path_components[tmp_index + 2 :])
+
+    return cleaned_filename
