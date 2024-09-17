@@ -7,7 +7,7 @@ from typing import List, Dict, Any
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import tiktoken
 from kaizen.llms.provider import LLMProvider
-from kaizen.retriever.code_chunker import chunk_code
+from kaizen.retriever.code_chunker import chunk_code, clean_filename
 import traceback
 from llama_index.embeddings.litellm import LiteLLMEmbedding
 from sqlalchemy import create_engine, text
@@ -147,8 +147,6 @@ class RepositoryAnalyzer:
         )
         self.store_abstraction_and_embedding(function_id, abstraction)
 
-        if section == "functions":
-            self.analyze_function_calls(name, code)
         logger.debug(f"Finished processing code block: {section} - {name}")
 
     def store_abstraction_and_embedding(self, function_id: int, abstraction: str):
@@ -297,6 +295,7 @@ Code Block:
         start_line: int,
     ) -> int:
         logger.debug(f"Storing code in DB: {file_path} - {section} - {name}")
+        clean_file_path = clean_filename(file_path)
         with self.engine.begin() as connection:
             # Insert into files table (assuming this part is already correct)
             if not self.file_query:
@@ -310,9 +309,9 @@ Code Block:
                 text(self.file_query),
                 {
                     "repo_id": self.repo_id,
-                    "file_path": file_path,
-                    "file_name": os.path.basename(file_path),
-                    "file_ext": os.path.splitext(file_path)[1],
+                    "file_path": clean_file_path,
+                    "file_name": os.path.basename(clean_file_path),
+                    "file_ext": os.path.splitext(clean_file_path)[1],
                     "programming_language": self.get_language_from_extension(file_path),
                 },
             ).scalar_one()
