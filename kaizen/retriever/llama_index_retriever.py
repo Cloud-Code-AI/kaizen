@@ -55,12 +55,12 @@ class RepositoryAnalyzer:
         self.node_query = node_query
         self.file_query = file_query
         self.function_query = function_query
-        self.embedding_usage = {"prompt_tokens": 10, "total_tokens": 10}
+        self.embedding_usage = {"prompt_tokens": 0, "total_tokens": 0}
         logger.info(f"Starting repository setup for: {repo_path}")
         self.parse_repository(repo_path)
         self.store_function_relationships()
         logger.info("Repository setup completed successfully")
-        return self.total_files_processed, self.total_usage, self.embed_model
+        return self.total_files_processed, self.total_usage, self.embedding_usage
 
     def parse_repository(self, repo_path: str):
         logger.info(f"Parsing repository: {repo_path}")
