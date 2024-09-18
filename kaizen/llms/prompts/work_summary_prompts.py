@@ -15,46 +15,65 @@ Your role is to communicate technical work effectively to non-technical stakehol
 """
 
 WORK_SUMMARY_PROMPT = """  
-Generate a user-friendly summary of the provided git diff for non-technical stakeholders.  
+Generate a concise summary of the provided git diff for daily/weekly standup reports.  
   
 OUTPUT Format:  
 {{
-    "summary": "<SUMMARY_OF_WORK_DONE>",  
-    "details": ["<IMPORTANT_DETAILS>", ...],  
-    "todo": ["<TODO_ITEMS>", ...],  
-    "future_considerations": ["<THINGS_TO_CONSIDER_IN_FUTURE>", ...],  
-    "estimated_time": <ESTIMATED_TIME_IN_HOURS>  
+    "summary": "<BRIEF_SUMMARY_OF_WORK_DONE>",  
+    "details": ["<COMPLETED_TASK>", ...],
+    "in_progress": ["<IN_PROGRESS_TASK>", ...],
+    "blockers": ["<BLOCKER>", ...],
+    "future_considerations": ["<NEXT_STEP>", ...],
+    "estimated_time": "<ESTIMATED_TIME_IN_HOURS>"
 }}
 
-estimated_time: its the range of time you think the above work might have taken for a developer. example "10-15hrs"
-details: its list of changes in human readable term so that anyone can understand how the software has been impacted.
+estimated_time_spent: Range of time spent on the work in hours, e.g., "5-7hrs"
+completed_tasks: List of tasks completed, described concisely
+in_progress: List of tasks currently being worked on
+blockers: Any issues or dependencies preventing progress
+next_steps: Immediate next actions or tasks to be tackled
   
 Guidelines:  
-1. Give a high-level overview of the goal.  
-2. Break down changes by file or area.  
-3. Explain in plain language, avoiding jargon.  
-4. Highlight new features, improvements, bug fixes, or optimizations.  
-5. Discuss impacts or benefits to the user or system.  
-6. Use examples or analogies for clarity.  
-7. Maintain a consistent, readable tone.  
+1. Provide a brief overview of the work done.
+2. Focus on key accomplishments and progress.
+3. Highlight any challenges or blockers encountered.
+4. Keep descriptions concise and relevant to team updates.
+5. Avoid technical jargon where possible.
+6. Keep summaries concise and to the point.
+7. All the points should be in human readable term.
+8. Output should be in JSON format.
   
 PATCH DATA: {PATCH_DATA}  
 """
 
 MERGE_WORK_SUMMARY_PROMPT = """  
-Merge all this information into the following output format.
+Merge all this information into a consolidated standup report format.
 
 OUTPUT Format:  
 {{
-    "summary": "<SUMMARY_OF_WORK_DONE>",  
-    "details": ["<IMPORTANT_DETAILS>", ...],  
-    "todo": ["<TODO_ITEMS>", ...],  
-    "future_considerations": ["<THINGS_TO_CONSIDER_IN_FUTURE>", ...],  
-    "estimated_time": <ESTIMATED_TIME_IN_HOURS>  
+    "summary": "<BRIEF_SUMMARY_OF_WORK_DONE>",  
+    "details": ["<COMPLETED_TASK>", ...],
+    "in_progress": ["<IN_PROGRESS_TASK>", ...],
+    "blockers": ["<BLOCKER>", ...],
+    "future_considerations": ["<NEXT_STEP>", ...],
+    "estimated_time": "<ESTIMATED_TIME_IN_HOURS>"
 }}
 
-estimated_time: its the range of time you think the above work might have taken for a developer in hours, be little generous. example "10-15hrs"
-details: its list of changes in human readable term so that anyone can understand how the software has been impacted.
+estimated_time_spent: Range of time spent on the work in hours, e.g., "5-7hrs"
+completed_tasks: List of tasks completed, described concisely
+in_progress: List of tasks currently being worked on
+blockers: Any issues or dependencies preventing progress
+next_steps: Immediate next actions or tasks to be tackled
+  
+Guidelines:  
+1. Provide a brief overview of the work done.
+2. Focus on key accomplishments and progress.
+3. Highlight any challenges or blockers encountered.
+4. Keep descriptions concise and relevant to team updates.
+5. Avoid technical jargon where possible.
+6. Keep summaries concise and to the point.
+7. All the points should be in human readable term.
+8. Output should be in JSON format.
   
 All the summaries: 
 
