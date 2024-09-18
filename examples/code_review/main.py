@@ -12,8 +12,8 @@ from kaizen.formatters.code_review_formatter import create_pr_review_text
 
 logging.basicConfig(level="DEBUG")
 
-pr_diff = "https://github.com/Cloud-Code-AI/kaizen/pull/559.patch"
-pr_files = "https://api.github.com/repos/Cloud-Code-AI/kaizen/pulls/559/files"
+pr_diff = "https://github.com/Cloud-Code-AI/kaizen/pull/335.patch"
+pr_files = "https://api.github.com/repos/Cloud-Code-AI/kaizen/pulls/335/files"
 pr_title = "feat: updated the prompt to provide solution"
 
 diff_text = get_diff_text(pr_diff, "")
@@ -31,7 +31,7 @@ review_data = reviewer.review_pull_request(
     reeval_response=False,
 )
 
-topics = clean_keys(review_data.topics, "high")
+topics = clean_keys(review_data.topics, "important")
 review_desc = create_pr_review_text(
     review_data.issues, code_quality=review_data.code_quality
 )
@@ -54,4 +54,3 @@ desc_data = pr_desc.generate_pull_request_desc(
 print(desc_data)
 
 comit_message = pr_desc.generate_pr_commit_message(desc_data.desc)
-print(comit_message)

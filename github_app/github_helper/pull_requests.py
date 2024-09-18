@@ -19,8 +19,8 @@ ACTIONS_TO_UPDATE_DESC = ["opened", "reopened"]
 
 confidence_mapping = {
     "critical": 5,
-    "high": 4,
-    "medium": 3,
+    "important": 4,
+    "moderate": 3,
     "low": 2,
     "trivial": 1,
 }
