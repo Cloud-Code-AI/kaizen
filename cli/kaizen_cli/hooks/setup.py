@@ -15,8 +15,7 @@ def hooks():
 @click.argument("hook_type", type=click.Choice(HOOK_TYPES))
 def install(hook_type):
     """Install a specific git hook"""
-    source = os.path.join(os.path.dirname(__file__), hook_type)
-    print(source)
+    source = os.path.join(os.path.dirname(__file__), "hooks", hook_type)
     destination = os.path.join(".git", "hooks", hook_type)
 
     if not os.path.exists(source):
@@ -24,8 +23,6 @@ def install(hook_type):
         return
 
     try:
-        # Create the destination directory if it doesn't exist
-        os.makedirs(os.path.dirname(destination), exist_ok=True)
         shutil.copy(source, destination)
         os.chmod(destination, 0o755)
         click.echo(f"{hook_type} hook installed successfully")

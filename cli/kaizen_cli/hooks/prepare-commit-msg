@@ -1,14 +1,8 @@
 #!/bin/sh
 # hooks/prepare-commit-msg
 
-# Change to the repository root directory
-cd "$(git rev-parse --show-toplevel)" || exit 1
-
-# Get the staged changes
-staged_diff=$(git diff --cached)
-
 # Run your CLI command and capture the output
-commit_info=$(kaizen-cli generate-commit-msg "$staged_diff")
+commit_msg=$(kaizen-cli generate-commit-msg)
 
-# Write the commit info to the commit message file
-echo "$commit_info" > "$1"
+# Overwrite the commit message file with the generated message
+echo "$commit_msg" > "$1"

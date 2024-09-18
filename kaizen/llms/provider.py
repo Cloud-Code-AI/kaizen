@@ -9,7 +9,7 @@ from litellm import Router, embedding
 import logging
 from collections import defaultdict
 
-DEFAULT_MAX_TOKENS = 4000
+DEFAULT_MAX_TOKENS = 8000
 
 
 def set_all_loggers_to_ERROR():
@@ -36,7 +36,7 @@ logging.basicConfig(
 
 
 class LLMProvider:
-    DEFAULT_MODEL = "gpt-4o-mini"
+    DEFAULT_MODEL = "gpt-3.5-turbo-1106"
     DEFAULT_MAX_TOKENS = 4000
     DEFAULT_TEMPERATURE = 0
     DEFAULT_MODEL_CONFIG = {"model": DEFAULT_MODEL}
@@ -233,12 +233,7 @@ class LLMProvider:
             {"role": "user", "content": PROMPT},
         ]
         token_count = litellm.token_counter(model=self.model, messages=messages)
-        if token_count is None:
-            token_count = litellm.token_counter(model=self.DEFAULT_MODEL, text=PROMPT)
-        try:
-            max_tokens = litellm.get_max_tokens(self.model)
-        except Exception:
-            max_tokens = DEFAULT_MAX_TOKENS
+        max_tokens = litellm.get_max_tokens(self.model)
         if not max_tokens:
             max_tokens = DEFAULT_MAX_TOKENS
         return token_count <= max_tokens * percentage
@@ -248,10 +243,7 @@ class LLMProvider:
     ) -> int:
         if not model:
             model = self.model
-        try:
-            max_tokens = litellm.get_max_tokens(model)
-        except Exception:
-            max_tokens = DEFAULT_MAX_TOKENS
+        max_tokens = litellm.get_max_tokens(model)
         used_tokens = litellm.token_counter(model=model, text=message)
         if max_tokens:
             return int(max_tokens * percentage) - used_tokens
