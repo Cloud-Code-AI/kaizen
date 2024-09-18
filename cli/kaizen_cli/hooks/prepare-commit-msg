@@ -8,7 +8,16 @@ cd "$(git rev-parse --show-toplevel)" || exit 1
 staged_diff=$(git diff --cached)
 
 # Run your CLI command and capture the output
-commit_info=$(kaizen-cli generate-commit-msg "$staged_diff")
+commit_info=$(kaizen-cli generate-commit-msg "$staged_diff" 2>/dev/null)
 
-# Write the commit info to the commit message file
-echo "$commit_info" > "$1"
+# Check if the command was successful
+if [ $? -eq 0 ] && [ -n "$commit_info" ]; then
+    # Write the commit info to the commit message file
+    echo "$commit_info" > "$1"
+else
+    # If there was an error or empty output, log it and exit successfully
+    echo "Warning: Failed to generate commit message. Using default." >&2
+fi
+
+# Always exit with success to allow the commit to proceed
+exit 0
