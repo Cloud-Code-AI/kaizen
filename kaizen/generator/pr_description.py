@@ -181,4 +181,4 @@ class PRDescriptionGenerator:
             DESC=desc,
         )
         resp, usage = self.provider.chat_completion_with_json(prompt, user=user)
-        return resp, usage
+        return resp, usage, self.provider.model
