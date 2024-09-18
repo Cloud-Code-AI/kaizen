@@ -24,7 +24,7 @@ def load_config():
 
     # Override with environment variables
     for key, value in os.environ.items():
-        if key.startswith("MYAPP_"):
+        if key.startswith("KAIZEN_"):
             config_key = key[6:].lower().split("__")
             try:
                 parsed_value = json.loads(value)
