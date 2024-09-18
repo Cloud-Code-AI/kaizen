@@ -104,7 +104,7 @@ export default {
     footer: {
         text: (
             <span>
-                AGPL {new Date().getFullYear()} ©{' '}
+                MIT {new Date().getFullYear()} ©{' '}
               <a href="https://cloudcode.ai" target="_blank">
                 Cloud Code AI
               </a>
