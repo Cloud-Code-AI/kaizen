@@ -12,11 +12,16 @@ class ConfigData:
             with open("~/.kaizen_config.json", "r") as f:
                 self.config_data = json.loads(f.read())
         else:
-            print(f"Couldnt find config at {config_file} loading default vals")
             self.config_data = {
                 "language_model": {
                     "provider": "litellm",
                     "enable_observability_logging": False,
+                    "models": [
+                        {
+                            "model_name": "default",
+                            "litellm_params": {"model": "gpt-4o-mini"},
+                        },
+                    ],
                 },
                 "github_app": {
                     "check_signature": False,

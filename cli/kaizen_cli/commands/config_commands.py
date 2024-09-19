@@ -56,8 +56,8 @@ def show(obj):
 @config.command()
 @click.option("--name", required=True, help="Name of the model")
 @click.option("--model", required=True, help="LiteLLM model identifier")
-@click.option("--api-key", required=True, help="API key for the model")
-@click.option("--api-base", required=True, help="API base URL for the model")
+@click.option("--api-key", required=False, help="API key for the model", default=None)
+@click.option("--api-base", required=False, help="API base URL for the model", default=None)
 @click.pass_obj
 def add_model(obj, name, model, api_key, api_base):
     """Add or replace a model in the configuration."""
