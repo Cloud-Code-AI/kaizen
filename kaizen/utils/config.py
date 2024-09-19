@@ -1,15 +1,17 @@
 import json
 from pathlib import Path
+import os
 
 
 class ConfigData:
     def __init__(self, config_data=None):
-        config_file = "config.json"
-        if Path(config_file).is_file():
-            with open(config_file, "r") as f:
+        config_local_path = "config.json"
+        config_file_path = os.path.expanduser("~/.kaizen_config.json")
+        if Path(config_local_path).is_file():
+            with open(config_local_path, "r") as f:
                 self.config_data = json.loads(f.read())
-        elif Path("~/.kaizen_config.json").is_file():
-            with open("~/.kaizen_config.json", "r") as f:
+        elif Path(config_file_path).is_file():
+            with open(config_file_path, "r") as f:
                 self.config_data = json.loads(f.read())
         else:
             self.config_data = {
