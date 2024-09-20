@@ -1,0 +1,43 @@
+## Code Reviewer
+
+### Class: CodeReviewer
+
+#### Constructor
+
+- `__init__(self, llm_provider: LLMProvider)`
+  Initializes the CodeReviewer with the provided LLM provider.
+
+#### Methods
+
+##### review_pull_request
+
+- `review_pull_request(self, diff_text: str, pull_request_title: str, pull_request_desc: str, pull_request_files: List[Dict], reeval_response: bool = False) -> ReviewData`
+  Reviews a pull request and generates feedback.
+  - Parameters:
+    - `diff_text`: The diff text of the pull request.
+    - `pull_request_title`: The title of the pull request.
+    - `pull_request_desc`: The description of the pull request.
+    - `pull_request_files`: List of files changed in the pull request.
+    - `reeval_response`: Whether to re-evaluate the response.
+  - Returns: ReviewData object containing the review results.
+
+### Class: PRDescriptionGenerator
+
+#### Constructor
+
+- `__init__(self, llm_provider: LLMProvider)`
+  Initializes the PRDescriptionGenerator with the provided LLM provider.
+
+#### Methods
+
+##### generate_pull_request_desc
+
+- `generate_pull_request_desc(self, diff_text: str, pull_request_title: str, pull_request_desc: str, pull_request_files: List[Dict], user: str) -> str`
+  Generates a description for a pull request.
+  - Parameters:
+    - `diff_text`: The diff text of the pull request.
+    - `pull_request_title`: The title of the pull request.
+    - `pull_request_desc`: The existing description of the pull request.
+    - `pull_request_files`: List of files changed in the pull request.
+    - `user`: The user or context for generating the description.
+  - Returns: A string containing the generated pull request description.

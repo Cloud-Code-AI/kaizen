@@ -1,0 +1,37 @@
+## Work Summary Generator
+
+### Class: WorkSummaryGenerator
+
+#### Constructor
+
+- `__init__(self)`
+  Initializes the WorkSummaryGenerator.
+
+#### Methods
+
+##### generate_work_summaries
+
+- `generate_work_summaries(self, file_diffs: List[Dict], user: str) -> Dict`
+  Generates a work summary from the provided file diffs.
+  - Parameters:
+    - `file_diffs`: List of dictionaries containing file diff information.
+    - `user`: Username or identifier for the user generating the summary.
+  - Returns: A dictionary containing the generated summary and other relevant information.
+
+##### generate_twitter_post
+
+- `generate_twitter_post(self, summary: str, user: str) -> Tuple[str, Dict]`
+  Generates a Twitter post based on the work summary.
+  - Parameters:
+    - `summary`: The generated work summary.
+    - `user`: Username or identifier for the user generating the post.
+  - Returns: A tuple containing the generated Twitter post and LLM usage statistics.
+
+##### generate_linkedin_post
+
+- `generate_linkedin_post(self, summary: str, user: str) -> Tuple[str, Dict]`
+  Generates a LinkedIn post based on the work summary.
+  - Parameters:
+    - `summary`: The generated work summary.
+    - `user`: Username or identifier for the user generating the post.
+  - Returns: A tuple containing the generated LinkedIn post and LLM usage statistics.

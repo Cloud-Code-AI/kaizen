@@ -1,0 +1,24 @@
+## End to End Test Generator
+
+### Class: E2ETestGenerator
+
+#### Constructor
+
+- `__init__(self)`
+  Initializes the E2ETestGenerator.
+
+#### Methods
+
+##### generate_e2e_tests
+
+- `generate_e2e_tests(self, url: str) -> Tuple[List[Dict], Dict]`
+  Generates E2E UI tests for the given URL.
+  - Parameters:
+    - `url`: URL of the web application to test.
+  - Returns: A tuple containing a list of generated tests and LLM usage statistics.
+
+##### run_tests
+
+- `run_tests(self) -> Dict`
+  Runs the generated E2E UI tests.
+  - Returns: A dictionary containing test execution results.

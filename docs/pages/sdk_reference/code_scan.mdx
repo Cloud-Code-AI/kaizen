@@ -1,0 +1,29 @@
+## Code Scanner
+
+### Class: CodeScanner  
+
+#### Constructor
+
+- `__init__(self, llm_provider: LLMProvider)`
+  Initializes the CodeScanner with the provided LLM provider.
+
+#### Methods
+
+##### review_code
+
+- `review_code(self, file_data: str, user: str) -> ReviewData`
+  Performs a code review on a single file.
+  - Parameters:
+    - `file_data`: Content of the file to be reviewed.
+    - `user`: Username or project identifier.
+  - Returns: ReviewData object containing the review results.
+
+##### review_code_dir
+
+- `review_code_dir(self, dir_path: str, reevaluate: bool = False, user: str) -> ReviewData`
+  Performs a code review on all files in a directory.
+  - Parameters:
+    - `dir_path`: Path to the directory containing the files to be reviewed.
+    - `reevaluate`: Whether to reevaluate previously scanned files.
+    - `user`: Username or project identifier.
+  - Returns: ReviewData object containing the review results for all files.
