@@ -9,6 +9,7 @@ from github_app.github_helper.pull_requests import (
 from github_app.github_helper.utils import is_github_signature_valid
 from kaizen.utils.config import ConfigData
 import logging
+from kaizen.kaizenlog.service import analyze_logs
 
 # from cloudcode.generator.ui import E2ETestGenerator
 
@@ -18,6 +19,17 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
+
+
+@app.route("/analyze-logs", methods=["POST"])
+async def analyze_logs_endpoint(request: Request):
+    payload = await request.json()
+    log_data = payload.get("log_data")
+    if log_data:
+        analysis_result = analyze_logs(log_data)
+        return JSONResponse(content={"analysis": analysis_result})
+    else:
+        return JSONResponse(content={"error": "Missing log data"}, status_code=400)
 
 
 @app.post("/github-webhook")

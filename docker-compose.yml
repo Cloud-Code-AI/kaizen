@@ -31,6 +31,15 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
     ports:
       - "6379:6379"
+  
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    volumes:
+      - ollama:/root/.ollama
+    ports:
+      - 11434:11434
+    restart: unless-stopped
 
   qdrant:
     image: qdrant/qdrant:latest
