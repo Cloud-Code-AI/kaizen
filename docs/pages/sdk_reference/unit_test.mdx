@@ -1,0 +1,40 @@
+## Unit Test Generator
+
+### Class: UnitTestGenerator
+
+#### Constructor
+
+- `__init__(self, verbose=False)`
+  Initializes the UnitTestGenerator with optional verbosity setting.
+
+#### Methods
+
+##### generate_tests_from_dir
+
+- `generate_tests_from_dir(self, dir_path: str, output_path: str = None)`
+  Generates unit tests for all supported files in a given directory.
+  - Parameters:
+    - `dir_path`: Path of the directory containing source files.
+    - `max_critique`: Maximum number of critique iterations.
+    - `output_path`: (Optional) Custom output path for generated tests.
+    - `verbose`: Enable verbose logging.
+    - `enable_critique`: Enable AI critique and improvement of generated tests.
+  - Returns: A tuple containing an empty dictionary and llm usage statistics.
+
+##### generate_tests
+
+- `generate_tests(self, file_path: str, content: str = None, max_critique: int = 3, output_path: str = None, verbose: bool = False, enable_critique: bool = False)`
+  Generates unit tests for a given file with various configuration options.
+  - Parameters:
+    - `file_path`: Path of the file relative to the project root.
+    - `content`: (Optional) File content.
+    - `max_critique`: Maximum number of critique iterations.
+    - `output_path`: (Optional) Custom output path for generated tests.
+    - `verbose`: Enable verbose logging.
+    - `enable_critique`: Enable AI critique and improvement of generated tests.
+  - Returns: A tuple containing an empty dictionary and llm usage statistics.
+
+##### run_tests
+
+- `run_tests(self) -> Dict`
+  Runs the generated unit tests and returns the results.
