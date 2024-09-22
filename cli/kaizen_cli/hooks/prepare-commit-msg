@@ -1,19 +1,48 @@
 #!/bin/sh
 # hooks/prepare-commit-msg
 
+# Function to display a loading animation
+show_loading() {
+    pid=$1
+    spin='-\|/'
+    i=0
+    while kill -0 $pid 2>/dev/null
+    do
+        i=$(( (i+1) %4 ))
+        printf "\r[%c] Generating commit message..." "${spin:$i:1}"
+        sleep .1
+    done
+    printf "\r%s\n" "$(printf ' %.0s' {1..40})"
+}
+
 # Change to the repository root directory
 cd "$(git rev-parse --show-toplevel)" || exit 1
 
 # Get the staged changes
 staged_diff=$(git diff --cached)
 
-# Run your CLI command and capture the output
-commit_info=$(kaizen-cli generate-commit-msg "$staged_diff" 2>/dev/null)
+# Run your CLI command in the background and capture the output
+commit_info=$(kaizen-cli generate-commit-msg "$staged_diff" 2>/dev/null &)
+pid=$!
+
+# Show loading animation
+show_loading $pid
+
+# Wait for the command to finish
+wait $pid
 
 # Check if the command was successful
 if [ $? -eq 0 ] && [ -n "$commit_info" ]; then
-    # Write the commit info to the commit message file
-    echo "$commit_info" > "$1"
+    # Filter out error messages and keep only the commit message
+    filtered_commit_info=$(echo "$commit_info" | sed -n '/^[a-z]\+:/,$p' | sed '/^$/d')
+    
+    # If there's content after filtering, use it; otherwise, use the original output
+    if [ -n "$filtered_commit_info" ]; then
+        echo "$filtered_commit_info" > "$1"
+    else
+        echo "$commit_info" > "$1"
+    fi
+    echo "Commit message generated successfully."
 else
     # If there was an error or empty output, log it and exit successfully
     echo "Warning: Failed to generate commit message. Using default." >&2
