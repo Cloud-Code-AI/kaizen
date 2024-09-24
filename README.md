@@ -66,6 +66,8 @@ Kaizen takes a holistic approach to automating development tasks, freeing up you
 ### Using Kaizen SDK
 
 1. Create and activate a virtual environment:
+   
+   **NOTE : You will need Python 3.9.x+ for running all the features of Kaizen.**
 
    **Mac/Linux**
    ```bash
@@ -79,12 +81,12 @@ Kaizen takes a holistic approach to automating development tasks, freeing up you
    .\venv\Scripts\activate
    ```
 
-2. Install poetry and Kaizen:
+1. Install poetry and Kaizen:
    ```bash
    pip install poetry kaizen-cloudcode
    ```
    
-3. Generate tests:
+2. Generate tests:
    
    **Mac/Linux**
    ```bash
@@ -97,7 +99,7 @@ Kaizen takes a holistic approach to automating development tasks, freeing up you
    poetry run python examples/e2e_test/generate.py
    ```
 
-4. Execute tests:
+3. Execute tests:
    
    **Mac/Linux**
    ```bash
