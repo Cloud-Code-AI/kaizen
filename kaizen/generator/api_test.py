@@ -1,5 +1,4 @@
 import os
-import importlib
 import logging
 from datetime import datetime
 from tqdm import tqdm
@@ -12,7 +11,8 @@ from kaizen.llms.provider import LLMProvider
 from kaizen.helpers.parser import extract_code_from_markdown
 from kaizen.actors.api_test_runner import APITestRunner
 from kaizen.llms.prompts.API_tests_prompts import (
-    API_TEST_SYSTEM_PROMPT
+    API_TEST_SYSTEM_PROMPT,
+    API_METHOD_PROMPT
 )
 
 
@@ -53,6 +53,7 @@ class APITestGenerator:
     def generate_tests(
         self,
         file_path: str,
+        base_url: str,
         content: str = None,
         max_critique: int = 3,
         output_path: str = None,
@@ -67,9 +68,10 @@ class APITestGenerator:
         self.output_folder = output_path if output_path else self.output_folder
         self.temp_dir = temp_dir
         self.max_actions = max_actions
+        self.base_url = base_url if base_url else "https://api.example.com"
 
         #file_extension = file_path.split(".")[-1]
-        print("file path",file_path)
+        #print("file path",file_path)
         #parser = self._get_parser(file_extension)
         content = content or self._read_file_content(file_path)
         #parsed_data = parser.parse(content)
@@ -86,11 +88,11 @@ class APITestGenerator:
 
     def generate_test_files(self, file_data, file_path):
         folder_path = "/".join(file_path.split("/")[:-1])
-        print(folder_path)
+        #print(folder_path)
         test_files = {}
         actions_used = 0
         for path, path_item in tqdm(file_data['paths'].items(), desc="Processing Endpoints(Paths)", unit="paths"):
-            print("path",path,"path item",path_item)
+            #print("path",path,"path item",path_item)
             try:
                 test_code, count = self._process_item(
                     path, path_item, folder_path
@@ -111,7 +113,7 @@ class APITestGenerator:
         print(f"\n{'=' * 50}\nProcessing Item: {path}\n{'=' * 50}")
         file_path=path.replace('/', '_').replace('{', '').replace('}', '')
         test_file_path = self._prepare_test_file_path(file_path, folder_path)
-        print("***********\ntest file path",test_file_path)
+        #print("***********\ntest file path",test_file_path)
         #####
         test_code=""
         totalcount=0
@@ -132,7 +134,7 @@ class APITestGenerator:
 
     def _prepare_test_file_path(self, path, folder_path):
         print("Preparing test file path")
-        print('output folder',self.output_folder)
+        #print('output folder',self.output_folder)
         test_file_name = f"test_{path.lower()}.py"
         test_file_path = os.path.join(self.output_folder, test_file_name)
         self._create_output_folder("/".join(test_file_path.split("/")[:-1]))
@@ -141,9 +143,9 @@ class APITestGenerator:
 
     def generate_ai_tests(self, path, method, method_code):
         print(f"• Generating AI tests for {method.upper()} {path} ...")
-        #not creating plan
         
-        test_generation_prompt = API_TEST_SYSTEM_PROMPT.format(path=path, method=method, method_code=method_code)
+        
+        test_generation_prompt = API_METHOD_PROMPT.format(path=path, method=method, method_code=method_code, base_url=self.base_url)
         #print("test gen prompt",test_generation_prompt)
         response, usage = self.provider.chat_completion_with_json(test_generation_prompt, model="default")
         print("-----",response)
