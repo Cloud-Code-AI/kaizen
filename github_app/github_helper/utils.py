@@ -5,6 +5,8 @@ import requests
 import logging
 import hmac
 import hashlib
+from bs4 import BeautifulSoup
+from typing import List, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -91,3 +93,41 @@ def is_github_signature_valid(headers, body):
 
     mac = hmac.new(github_secret, msg=body, digestmod=hashlib.sha256)
     return hmac.compare_digest(mac.hexdigest(), signature)
+
+
+def scrape_labels(labels_url) -> List[Tuple[str, str]]:
+    """
+    Scrape the label names and descriptions of a repository
+    """
+    response = requests.get(labels_url)
+    if response.status_code == 200:
+        html_content = response.text
+    else:
+        logger.error(
+            f"Unable to fetch labels page with error: {response.status_code} url: {labels_url}"
+        )
+    soup = BeautifulSoup(html_content, 'html.parser')
+    label_elem = soup.find_all('div', class_='js-label-preview')
+    label_with_desc = []
+    for label in label_elem:
+        labels = label.find_all('span', class_='IssueLabel')
+        for label in labels:
+            name = label.text.strip()
+            desc_elem = label.find_text('div')
+            desc_str = desc_elem.text.strip()
+            label_desc = desc_str if desc_str else "N/A"
+            label_with_desc.append((name, label_desc))
+    return label_with_desc
+
+
+def scrape_labels_all_pages(base_label_url) -> List[Tuple[str, str]]:
+    all_labels = []
+    page_number = 1
+    while True:
+        url = f"{base_label_url}?page={page_number}"
+        _labels = scrape_labels(url)
+        if not _labels:
+            break
+        all_labels += _labels
+        page_number += 1
+    return all_labels
