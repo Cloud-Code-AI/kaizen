@@ -4,7 +4,7 @@ from typing import Dict, Optional, Any, Tuple
 from kaizen.llms.prompts.general_prompts import BASIC_SYSTEM_PROMPT
 from kaizen.utils.config import ConfigData
 from kaizen.helpers.general import retry
-from kaizen.helpers.parser import extract_json
+from kaizen.helpers.parser import extract_code_from_markdown
 from litellm import Router, embedding
 import logging
 from collections import defaultdict
@@ -197,6 +197,7 @@ class LLMProvider:
         custom_model=None,
         messages=None,
     ):
+        #print("chat completion with json")
         response, usage = self.chat_completion(
             prompt=prompt,
             user=user,
@@ -204,7 +205,9 @@ class LLMProvider:
             custom_model=custom_model,
             messages=messages,
         )
-        response = extract_json(response)
+        #print("chat completion response:",response)
+        response = extract_code_from_markdown(response)
+        #print("response after extract json",response)
         return response, usage
 
     @retry(max_attempts=3, delay=1)
