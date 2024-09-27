@@ -168,3 +168,8 @@ node_modules
 tree_sitter_languages/
 
 .experiments/code_review/.*
+
+out
+node_modules
+.vscode-test/
+*.vsix

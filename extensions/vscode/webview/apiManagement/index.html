@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Management</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>API Management</h1>
+    <button id="add-api">Add New API</button>
+    <ul id="api-list"></ul>
+
+    <script>
+        const vscode = acquireVsCodeApi();
+        const apiList = document.getElementById('api-list');
+        document.getElementById('add-api').addEventListener('click', () => {
+            vscode.postMessage({ command: 'addApi' });
+        });
+        // You would typically populate this list from your extension
+    </script>
+</body>
+</html>
