@@ -9,13 +9,48 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
-  "main": "./dist/extension.js",
+"activationEvents": [
+  "onView:kaizen-cloudcode-sidebar",
+  "onCommand:kaizen-cloudcode.openSidebar"
+],
+  "main": "./out/extension.js",
   "contributes": {
+    "menus": {
+        "webview/context": [{
+            "command": "kaizen-cloudcode.inspectWebview",
+            "when": "webviewId == 'kaizen-cloudcode-sidebar'"
+        }]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "kaizen-cloudcode-view",
+          "title": "Your Extension",
+             "icon": "media/logo.png"
+        }
+      ]
+    },
+    "views": {
+      "kaizen-cloudcode-view": [
+        {
+          "id": "kaizen-cloudcode-sidebar",
+          "name": "Sidebar",
+          "type": "webview"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "kaizen-cloudcode.openApiRequest",
         "title": "Open API Request"
+      },
+      {
+        "command": "kaizen-cloudcode.refreshWebview",
+        "title": "Refresh Kaizen CloudCode Webview"
+      },
+      {
+        "command": "kaizen-cloudcode.inspectWebview",
+        "title": "Inspect Webview"
       }
     ]
   },

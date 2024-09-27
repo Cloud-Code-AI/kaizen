@@ -2,38 +2,58 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { ApiRequestProvider } from './apiRequest/apiRequestProvider';
+import { SidebarProvider } from './SidebarProvider';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
-// export function activate(context: vscode.ExtensionContext) {
-
-// 	// Use the console to output diagnostic information (console.log) and errors (console.error)
-// 	// This line of code will only be executed once when your extension is activated
-// 	console.log('Congratulations, your extension "kaizen-cloudcode" is now active!');
-
-// 	// The command has been defined in the package.json file
-// 	// Now provide the implementation of the command with registerCommand
-// 	// The commandId parameter must match the command field in package.json
-// 	const disposable = vscode.commands.registerCommand('kaizen-cloudcode.helloWorld', () => {
-// 		// The code you place here will be executed every time your command is executed
-// 		// Display a message box to the user
-// 		vscode.window.showInformationMessage('Hello World from kaizen-cloudcode!');
-// 	});
-
-// 	context.subscriptions.push(disposable);
-// }
+let outputChannel: vscode.OutputChannel;
 
 export function activate(context: vscode.ExtensionContext) {
-    console.log('Congratulations, your extension "kaizen-cloudcode" is now active!');
-  
-    const apiRequestProvider = new ApiRequestProvider(context);
-  
-    context.subscriptions.push(
-      vscode.commands.registerCommand('kaizen-cloudcode.openApiRequest', () => {
-        apiRequestProvider.openApiRequestView();
-      })
-    );
-  }
-  
+    outputChannel = vscode.window.createOutputChannel("Kaizen CloudCode");
+    
+    outputChannel.appendLine("Kaizen CloudCode extension is activating!!!");
+    console.log("Kaizen CloudCode extension is activating");
 
-export function deactivate() {}
+  
+	const sidebarProvider = new SidebarProvider(context.extensionUri, context);
+	const apiRequestProvider = new ApiRequestProvider(context);
+
+	context.subscriptions.push(
+	  vscode.window.registerWebviewViewProvider(
+		"kaizen-cloudcode-sidebar",
+		sidebarProvider
+	  )
+	);
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand('kaizen-cloudcode.refreshWebview', () => {
+		  console.log('Refreshing webview');
+		  sidebarProvider.refresh();
+		})
+	  );
+
+	  context.subscriptions.push(
+		vscode.commands.registerCommand('kaizen-cloudcode.inspectWebview', () => {
+		  // Implement your inspect webview logic here
+		  console.log('Inspecting webview');
+		})
+	  );
+
+	  // You might want to add a command to open the API Request view directly
+	  let disposable = vscode.commands.registerCommand('kaizen-cloudcode.openApiRequest', () => {
+		apiRequestProvider.openApiRequestView();
+	  });
+	  context.subscriptions.push(disposable);
+  
+	context.subscriptions.push(
+	  vscode.commands.registerCommand('kaizen-cloudcode.openSidebar', () => {
+		vscode.commands.executeCommand('workbench.view.extension.kaizen-cloudcode-view');
+	  })
+	);
+  }
+
+  export function log(message: string) {
+    if (outputChannel) {
+        outputChannel.appendLine(message);
+    }
+    console.log(message);
+}
+  export function deactivate() {}

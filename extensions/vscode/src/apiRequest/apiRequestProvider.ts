@@ -13,11 +13,9 @@ export class ApiRequestProvider {
     }
 
     public openApiRequestView() {
-        if (!this.view) {
-            this.view = new ApiRequestView(this.context, this.handleApiRequest.bind(this));
-        }
-        this.view.show();
-    }
+        // Implementation to open the API Management view
+        vscode.commands.executeCommand('kaizen-cloudcode.openApiRequest');
+      }
 
     private async handleApiRequest(method: string, url: string, headers: string, body: string) {
         try {
