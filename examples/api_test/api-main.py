@@ -3,11 +3,11 @@ from kaizen.generator.api_test import APITestGenerator
 generator = APITestGenerator()
 
 generator.generate_tests(
-     file_path="./examples/api_test/api-schema.json", 
-     base_url="http://api.weatherbit.io/v2.0/",
-     enable_critique=True, 
-     verbose=True,
-     max_critique=1
+    file_path="./examples/api_test/api-schema.json", 
+    base_url="http://api.weatherbit.io/v2.0/",
+    enable_critique=True, 
+    verbose=True,
+    max_critique=1
 )
 
 test_results = generator.run_tests()

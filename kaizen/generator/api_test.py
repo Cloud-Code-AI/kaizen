@@ -1,13 +1,10 @@
 import os
-import importlib
 import logging
 from datetime import datetime
 from tqdm import tqdm
 import json
-import yaml
 from dataclasses import dataclass
 from typing import List, Dict
-from pathlib import Path
 from kaizen.llms.provider import LLMProvider
 from kaizen.helpers.parser import extract_code_from_markdown
 from kaizen.actors.api_test_runner import APITestRunner
@@ -70,12 +67,7 @@ class APITestGenerator:
         self.temp_dir = temp_dir
         self.max_actions = max_actions
         self.base_url = base_url if base_url else "https://api.example.com"
-
-        #file_extension = file_path.split(".")[-1]
-        #print("file path",file_path)
-        #parser = self._get_parser(file_extension)
         content = content or self._read_file_content(file_path)
-        #parsed_data = parser.parse(content)
         self.generate_test_files(content, file_path)
         return {}, self.total_usage
 
@@ -89,16 +81,13 @@ class APITestGenerator:
 
     def generate_test_files(self, file_data, file_path):
         folder_path = "/".join(file_path.split("/")[:-1])
-        #print(folder_path)
         test_files = {}
         actions_used = 0
         for path, path_item in tqdm(file_data['paths'].items(), desc="Processing Endpoints(Paths)", unit="paths"):
-            #print("path",path,"path item",path_item)
             try:
                 test_code, count = self._process_item(
                     path, path_item, folder_path
                 )
-                #print("process item done")
                 test_files[file_path] = test_code
                 actions_used += count
             except Exception as e:
@@ -112,18 +101,15 @@ class APITestGenerator:
 
     def _process_item(self, path, path_item, folder_path):
         print(f"\n{'=' * 50}\nProcessing Item: {path}\n{'=' * 50}")
-        file_path=path.replace('/', '_').replace('{', '').replace('}', '')
+        file_path = path.replace('/', '_').replace('{', '').replace('}', '')
         test_file_path = self._prepare_test_file_path(file_path, folder_path)
-        #print("***********\ntest file path",test_file_path)
-        #####
-        test_code=""
-        totalcount=0
+        test_code = ""
+        totalcount = 0
         for method, method_code in path_item.items():
-            #print("method, method_operation",method,'\n', method_code)
-            print("Processing method:",method)
+            print("Processing method:", method)
             individual_test_code, count = self.generate_ai_tests(path, method, method_code)
-            test_code+=individual_test_code
-            totalcount+=count
+            test_code += individual_test_code
+            totalcount += count
         
         test_code = test_code.replace(self.temp_dir, "")
         test_code = self._correct_imports(test_code)
@@ -135,7 +121,6 @@ class APITestGenerator:
 
     def _prepare_test_file_path(self, path, folder_path):
         print("Preparing test file path")
-        #print('output folder',self.output_folder)
         test_file_name = f"test_{path.lower()}.py"
         test_file_path = os.path.join(self.output_folder, test_file_name)
         self._create_output_folder("/".join(test_file_path.split("/")[:-1]))
@@ -143,20 +128,15 @@ class APITestGenerator:
         return test_file_path
 
     def generate_ai_tests(self, path, method, method_code):
-        print(f"• Generating AI tests for {method.upper()} {path} ...")
-        
-        
+        print(f"• Generating AI tests for {method.upper()} {path} ...")     
         test_generation_prompt = API_METHOD_PROMPT.format(path=path, method=method, method_code=method_code, base_url=self.base_url)
-        #print("test gen prompt",test_generation_prompt)
         response, usage = self.provider.chat_completion_with_json(test_generation_prompt, model="default")
-        print("-----",response)
         self.update_usage(usage)
         test_code = extract_code_from_markdown(response)
         print(f"  ✓ AI tests generated successfully for {method.upper()} {path}")
-        self.log_step("Generate AI tests", f"Generated test code:\n{response}")
-        
-        return test_code, 1  #generating only one set of tests per method
-
+        self.log_step("Generate AI tests", f"Generated test code:\n{response}")        
+        #generating only one set of tests per method
+        return test_code, 1  
 
     def run_tests(self, test_file=None):
         runner = APITestRunner(self.output_folder)
