@@ -9,24 +9,26 @@
   "categories": [
     "Other"
   ],
-"activationEvents": [
-  "onView:kaizen-cloudcode-sidebar",
-  "onCommand:kaizen-cloudcode.openSidebar"
-],
+  "activationEvents": [
+    "onView:kaizen-cloudcode-sidebar",
+    "onCommand:kaizen-cloudcode.openSidebar"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "menus": {
-        "webview/context": [{
-            "command": "kaizen-cloudcode.inspectWebview",
-            "when": "webviewId == 'kaizen-cloudcode-sidebar'"
-        }]
+      "webview/context": [
+        {
+          "command": "kaizen-cloudcode.inspectWebview",
+          "when": "webviewId == 'kaizen-cloudcode-sidebar'"
+        }
+      ]
     },
     "viewsContainers": {
       "activitybar": [
         {
           "id": "kaizen-cloudcode-view",
           "title": "Your Extension",
-             "icon": "media/logo.png"
+          "icon": "media/logo.png"
         }
       ]
     },
@@ -56,7 +58,7 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
-    "compile": "npm run check-types && npm run lint && node esbuild.js",
+    "compile": "npm run check-types && npm run lint && tsc -p ./ && node esbuild.js",
     "watch": "npm-run-all -p watch:*",
     "watch:esbuild": "node esbuild.js --watch",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
@@ -70,16 +72,17 @@
     "start": "code --extensionDevelopmentPath=$PWD"
   },
   "devDependencies": {
-    "@types/vscode": "^1.93.0",
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
+    "@types/vscode": "^1.93.0",
+    "@types/vscode-webview": "^1.57.5",
     "@typescript-eslint/eslint-plugin": "^8.3.0",
     "@typescript-eslint/parser": "^8.3.0",
-    "eslint": "^9.9.1",
-    "esbuild": "^0.23.1",
-    "npm-run-all": "^4.1.5",
-    "typescript": "^5.5.4",
     "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.4.1"
+    "@vscode/test-electron": "^2.4.1",
+    "esbuild": "^0.23.1",
+    "eslint": "^9.9.1",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.5.4"
   }
 }
