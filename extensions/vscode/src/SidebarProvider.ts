@@ -2,8 +2,6 @@ import * as vscode from 'vscode';
 import { ApiRequestProvider } from './apiRequest/apiRequestProvider';
 import { log } from './extension';
 
-console.log("Sidebar.ts is loaded");
-
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -47,10 +45,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           vscode.window.showErrorMessage(data.value);
           break;
         }
-        case "openWebview": {
-          console.log("Received openWebview event", data);
+        case "openApiManagement": {
+          log("Received openWebview event");
           if (!data.value) {
-            console.log("No value provided for openWebview");
+            log("No value provided for openWebview");
             return;
           }
           this.openWebview(data.value);
@@ -114,9 +112,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   }
 
   private async openWebview(webviewType: string) {
-    log("Webview Opened");
     if (webviewType === 'apiManagement') {
       if (this.apiRequestProvider) {
+        console.log("Opening API Request View");
         this.apiRequestProvider.openApiRequestView();
       } else {
         console.error("apiRequestProvider is not initialized");

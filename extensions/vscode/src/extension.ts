@@ -23,20 +23,6 @@ export function activate(context: vscode.ExtensionContext) {
 	  )
 	);
 
-	context.subscriptions.push(
-		vscode.commands.registerCommand('kaizen-cloudcode.refreshWebview', () => {
-		  console.log('Refreshing webview');
-		  sidebarProvider.refresh();
-		})
-	  );
-
-	  context.subscriptions.push(
-		vscode.commands.registerCommand('kaizen-cloudcode.inspectWebview', () => {
-		  // Implement your inspect webview logic here
-		  console.log('Inspecting webview');
-		})
-	  );
-
 	  // You might want to add a command to open the API Request view directly
 	  let disposable = vscode.commands.registerCommand('kaizen-cloudcode.openApiRequest', () => {
 		apiRequestProvider.openApiRequestView();

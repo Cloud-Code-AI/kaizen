@@ -10,22 +10,33 @@ export class ApiRequestProvider {
     constructor(context: vscode.ExtensionContext) {
         this.context = context;
         this.httpClient = new HttpClient();
+        this.handleApiRequest = this.handleApiRequest.bind(this);
     }
 
     public openApiRequestView() {
         // Implementation to open the API Management view
-        vscode.commands.executeCommand('kaizen-cloudcode.openApiRequest');
+        if (!this.view) {
+            this.view = new ApiRequestView(this.context, this.handleApiRequest);
+        }
+        this.view.show();
       }
 
-    private async handleApiRequest(method: string, url: string, headers: string, body: string) {
+      private async handleApiRequest(method: string, url: string, headers: string, body: string) {
         try {
+            console.log(url, method, headers, body);
             const parsedHeaders = JSON.parse(headers);
             const startTime = Date.now();
-            const response = await this.httpClient.sendRequest(url, method, parsedHeaders, body);
+            const response = await this.httpClient.sendRequest(
+                url, 
+                method, 
+                parsedHeaders, 
+                ['GET', 'HEAD'].includes(method.toUpperCase()) ? undefined : body
+            );
+            console.log("Working!");
             const endTime = Date.now();
             const responseTime = endTime - startTime;
             const responseSize = JSON.stringify(response).length;
-
+    
             this.view?.postMessage({
                 command: 'receiveResponse',
                 response: response,

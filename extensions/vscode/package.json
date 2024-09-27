@@ -53,6 +53,10 @@
       {
         "command": "kaizen-cloudcode.inspectWebview",
         "title": "Inspect Webview"
+      },
+      {
+        "command": "kaizen-cloudcode.openApiRequestView",
+        "title": "Open API Request View"
       }
     ]
   },
