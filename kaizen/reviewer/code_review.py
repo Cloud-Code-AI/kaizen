@@ -241,6 +241,7 @@ class CodeReviewer:
     ) -> Generator[Optional[Tuple[List[Dict], Optional[float]]], None, None]:
         combined_diff_data = ""
         available_tokens = self.provider.available_tokens(FILE_CODE_REVIEW_PROMPT)
+        diff_parts = []
         for file in pull_request_files:
             patch_details = file.get("patch")
             filename = file.get("filename", "").replace(" ", "")
@@ -250,13 +251,10 @@ class CodeReviewer:
                 and patch_details is not None
             ):
                 self.files_processed += 1
-                temp_prompt = (
-                    combined_diff_data
-                    + f"\n---->\nFile Name: {filename}\nPatch Details:\n{parser.patch_to_combined_chunks(patch_details, self.ignore_deletions)}"
-                )
+                diff_parts.append(f"\n---->\nFile Name: {filename}\nPatch Details:\n{parser.patch_to_combined_chunks(patch_details, self.ignore_deletions)}")
 
-                if available_tokens - self.provider.get_token_count(temp_prompt) > 0:
-                    combined_diff_data = temp_prompt
+                if available_tokens - self.provider.get_token_count("".join(diff_parts)) > 0:
+                    combined_diff_data = "".join(diff_parts)
                     continue
 
                 yield self._process_file_chunk(
@@ -267,11 +265,11 @@ class CodeReviewer:
                     reeval_response,
                     custom_context,
                 )
-                combined_diff_data = f"\n---->\nFile Name: {filename}\nPatch Details: {parser.patch_to_combined_chunks(patch_details,  self.ignore_deletions)}"
+                diff_parts = [f"\n---->\nFile Name: {filename}\nPatch Details: {parser.patch_to_combined_chunks(patch_details,  self.ignore_deletions)}"]
 
-        if combined_diff_data:
+        if diff_parts:
             yield self._process_file_chunk(
-                combined_diff_data,
+                "".join(diff_parts),
                 pull_request_title,
                 pull_request_desc,
                 user,
