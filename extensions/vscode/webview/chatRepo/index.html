@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with Repo</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        #chat-box { height: 300px; border: 1px solid #ccc; overflow-y: auto; margin-bottom: 10px; padding: 10px; }
+        #user-input { width: 80%; }
+    </style>
+</head>
+<body>
+    <h1>Chat with Repo</h1>
+    <div id="chat-box"></div>
+    <input type="text" id="user-input" placeholder="Type your message...">
+    <button id="send">Send</button>
+
+    <script>
+        const vscode = acquireVsCodeApi();
+        const chatBox = document.getElementById('chat-box');
+        const userInput = document.getElementById('user-input');
+        document.getElementById('send').addEventListener('click', () => {
+            const message = userInput.value;
+            chatBox.innerHTML += `<p><strong>You:</strong> ${message}</p>`;
+            userInput.value = '';
+            vscode.postMessage({ command: 'sendChatMessage', message });
+        });
+    </script>
+</body>
+</html>
