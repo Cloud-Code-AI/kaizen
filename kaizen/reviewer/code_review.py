@@ -92,6 +92,7 @@ class ReviewOutput:
     usage: Dict[str, int]
     model_name: str
     cost: Dict[str, float]
+    file_count: int
 
 
 class CodeReviewer:
@@ -136,6 +137,7 @@ class CodeReviewer:
         check_sensetive: bool = False,
     ) -> ReviewOutput:
         self.ignore_deletions = ignore_deletions
+        self.files_processed = 0
         prompt = (
             CODE_REVIEW_PROMPT.format(
                 CODE_DIFF=parser.patch_to_combined_chunks(
@@ -180,6 +182,7 @@ class CodeReviewer:
             issues=reviews,
             code_quality=code_quality,
             cost={"prompt_cost": prompt_cost, "completion_cost": completion_cost},
+            file_count=self.files_processed
         )
 
     def _process_full_diff(
@@ -243,12 +246,13 @@ class CodeReviewer:
             filename = file.get("filename", "").replace(" ", "")
 
             if (
-                filename.split(".")[-1] not in parser.EXCLUDED_FILETYPES
+                not parser.should_ignore_file(filename)
                 and patch_details is not None
             ):
+                self.files_processed += 1
                 temp_prompt = (
                     combined_diff_data
-                    + f"\n---->\nFile Name: {filename}\nPatch Details: {parser.patch_to_combined_chunks(patch_details, self.ignore_deletions)}"
+                    + f"\n---->\nFile Name: {filename}\nPatch Details:\n{parser.patch_to_combined_chunks(patch_details, self.ignore_deletions)}"
                 )
 
                 if available_tokens - self.provider.get_token_count(temp_prompt) > 0:

@@ -3,6 +3,7 @@ import json
 import datetime
 import logging
 from tqdm import tqdm
+from kaizen.helpers import parser
 from kaizen.reviewer.code_review import CodeReviewer
 from kaizen.llms.provider import LLMProvider
 from github_app.github_helper.utils import get_diff_text, get_pr_files
@@ -45,6 +46,15 @@ def process_pr(pr_url, reeval_response=False):
         model="best",
     )
 
+    combined_diff_data = ""
+    for file in pr_files:
+        patch_details = file.get("patch")
+        filename = file.get("filename", "").replace(" ", "")
+        combined_diff_data = (
+            combined_diff_data
+            + f"\n---->\nFile Name: {filename}\nPatch Details: {parser.patch_to_combined_chunks(patch_details)}"
+        )
+
     # topics = clean_keys(review_data.topics, "important")
     logger.info(review_data.topics)
     review_desc = create_pr_review_text(
@@ -57,16 +67,17 @@ def process_pr(pr_url, reeval_response=False):
     comments, topics = create_review_comments(review_data.topics)
     logger.info(f"Model: {review_data.model_name}\nUsage: {review_data.usage}")
     logger.info(f"Completed processing PR: {pr_url}")
-    return review_desc, comments, review_data.issues
+    return review_desc, comments, review_data.issues, combined_diff_data
 
 
-def save_review(pr_number, review_desc, comments, issues, folder):
+def save_review(pr_number, review_desc, comments, issues, folder, combined_diff_data):
     folder = os.path.join(folder, f"pr_{pr_number}")
     logger.info(f"Saving review for PR {pr_number} in {folder}")
     os.makedirs(folder, exist_ok=True)
     review_file = os.path.join(folder, "review.md")
     comments_file = os.path.join(folder, "comments.json")
     issues_file = os.path.join(folder, "issues.json")
+    combined_diff = os.path.join(folder, "combined_diff.txt")
 
     with open(review_file, "w") as f:
         f.write(review_desc)
@@ -76,6 +87,9 @@ def save_review(pr_number, review_desc, comments, issues, folder):
 
     with open(issues_file, "w") as f:
         json.dump(issues, f, indent=2)
+    
+    with open(combined_diff, 'w') as f:
+        f.write(combined_diff_data)
 
     logger.info(f"Saved review files for PR {pr_number}")
 
@@ -97,8 +111,8 @@ def main(pr_urls):
         logger.info(f"Starting to process PR {pr_number}")
 
         # Without re-evaluation
-        review_desc, comments, issues = process_pr(pr_url, reeval_response=False)
-        save_review(pr_number, review_desc, comments, issues, no_eval_folder)
+        review_desc, comments, issues, combined_diff_data = process_pr(pr_url, reeval_response=False)
+        save_review(pr_number, review_desc, comments, issues, no_eval_folder, combined_diff_data)
 
         # # With re-evaluation
         # review_desc, comments, topics = process_pr(pr_url, reeval_response=True)
