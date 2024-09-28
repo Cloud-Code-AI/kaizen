@@ -21,8 +21,8 @@
     "suggested_code": "response = completion(\n    model=os.environ.get(\"model\", \"anyscale/mistralai/Mixtral-8x22B-Instruct-v0.1\"), messages=messages\n)",
     "fixed_code": "import time\n\nfor attempt in range(3):\n    try:\n        response = completion(\n            model=os.environ.get(\"model\", \"anyscale/mistralai/Mixtral-8x22B-Instruct-v0.1\"), messages=messages\n        )\n        break\n    except Exception as e:\n        if attempt < 2:\n            time.sleep(2 ** attempt)\n        else:\n            raise e",
     "file_path": "main.py",
-    "start_line": 66,
-    "end_line": 68,
+    "start_line": 69,
+    "end_line": 71,
     "severity": 9
   },
   {
@@ -37,19 +37,6 @@
     "start_line": 82,
     "end_line": 84,
     "severity": 8
-  },
-  {
-    "category": "Inefficient Progress Printing",
-    "description": "The progress printing method is inefficient.",
-    "impact": "high",
-    "rationale": "Printing progress in this manner can be slow and resource-intensive.",
-    "recommendation": "Use a more efficient method for printing progress, such as updating the progress less frequently or using a dedicated progress reporting library like tqdm.",
-    "suggested_code": "print(f\"\\rProgress:[{'=' * int(50 * progress):<50}]{progress:.0%}\", end=\"\", flush=True)",
-    "fixed_code": "if index % max(1, len(df) // 100) == 0:  # Update every 1%\n    print(f\"\\rProgress:[{'=' * int(50 * progress):<50}]{progress:.0%}\", end=\"\", flush=True)",
-    "file_path": "main.py",
-    "start_line": 121,
-    "end_line": 122,
-    "severity": 5
   },
   {
     "category": "Redundant Code",
@@ -88,6 +75,6 @@
     "file_path": "main.py",
     "start_line": 174,
     "end_line": 175,
-    "severity": 6
+    "severity": 8
   }
 ]

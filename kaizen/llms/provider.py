@@ -9,7 +9,7 @@ from litellm import Router, embedding
 import logging
 from collections import defaultdict
 
-DEFAULT_MAX_TOKENS = 4000
+DEFAULT_MAX_TOKENS = 8000
 
 
 def set_all_loggers_to_ERROR():
@@ -188,7 +188,7 @@ class LLMProvider:
         self.model = response["model"]
         return response, response["usage"]
 
-    @retry(max_attempts=3, delay=1)
+    @retry(max_attempts=3, delay=0.1)
     def chat_completion_with_json(
         self,
         prompt,
@@ -207,7 +207,7 @@ class LLMProvider:
         response = extract_json(response)
         return response, usage
 
-    @retry(max_attempts=3, delay=1)
+    @retry(max_attempts=3, delay=0.1)
     def chat_completion_with_retry(
         self,
         prompt,

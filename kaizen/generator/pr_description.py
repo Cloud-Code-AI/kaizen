@@ -120,7 +120,7 @@ class PRDescriptionGenerator:
                 CODE_DIFF="",
             )
         )
-
+        diff_parts = []
         for file in pull_request_files:
             patch_details = file.get("patch")
             filename = file.get("filename", "")
@@ -129,13 +129,11 @@ class PRDescriptionGenerator:
                 filename.split(".")[-1] not in parser.EXCLUDED_FILETYPES
                 and patch_details is not None
             ):
-                temp_prompt = (
-                    combined_diff_data
-                    + f"\n---->\nFile Name: {filename}\nPatch Details: \n{patch_details}"
-                )
+                
+                diff_parts.append(f"\n---->\nFile Name: {filename}\nPatch Details: \n{patch_details}")
 
-                if available_tokens - self.provider.get_token_count(temp_prompt) > 0:
-                    combined_diff_data = temp_prompt
+                if available_tokens - self.provider.get_token_count("".join(diff_parts)) > 0:
+                    combined_diff_data = "".join(diff_parts)
                     continue
 
                 yield self._process_file_chunk(
@@ -144,13 +142,11 @@ class PRDescriptionGenerator:
                     pull_request_desc,
                     user,
                 )
-                combined_diff_data = (
-                    f"\n---->\nFile Name: {filename}\nPatch Details: {patch_details}"
-                )
+                diff_parts = [f"\n---->\nFile Name: {filename}\nPatch Details: {patch_details}"]
 
-        if combined_diff_data:
+        if diff_parts:
             yield self._process_file_chunk(
-                combined_diff_data,
+                "".join(diff_parts),
                 pull_request_title,
                 pull_request_desc,
                 user,
