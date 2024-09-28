@@ -3,6 +3,11 @@
   "displayName": "kaizen-cloudcode",
   "description": "AI powered tool to automate your day to day development tasks",
   "version": "0.0.1",
+  "publisher": "CloudCodeAI",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Clouod-Code-AI/kaizen.git"
+  },
   "engines": {
     "vscode": "^1.93.0"
   },
@@ -27,7 +32,7 @@
       "activitybar": [
         {
           "id": "kaizen-cloudcode-view",
-          "title": "Your Extension",
+          "title": "Kaizen by CloudCode AI",
           "icon": "media/logo.png"
         }
       ]
