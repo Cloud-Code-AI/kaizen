@@ -44,7 +44,8 @@ export class ApiRequestProvider {
         headers: Record<string, string>, 
         queryParams: Record<string, string>, 
         formData: Record<string, string>, 
-        body: string
+        body: string,
+        bodyType: string
     ): Promise<void> {
         try {
             // Append query params to URL
@@ -55,12 +56,12 @@ export class ApiRequestProvider {
 
             // Prepare body
             let requestBody: string | FormData | undefined;
-            if (Object.keys(formData).length > 0) {
+            if (bodyType === 'form-data') {
                 requestBody = new FormData();
                 Object.entries(formData).forEach(([key, value]) => {
                     (requestBody as FormData).append(key, value);
                 });
-            } else if (body) {
+            } else if (bodyType === 'raw' && body) {
                 requestBody = body;
             }
 

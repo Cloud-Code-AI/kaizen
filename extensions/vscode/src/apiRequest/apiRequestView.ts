@@ -1,30 +1,24 @@
 import * as vscode from 'vscode';
 
+// Update the type definition for the callback
+type ApiRequestCallback = (
+    method: string,
+    url: string,
+    headers: Record<string, string>,
+    queryParams: Record<string, string>,
+    formData: Record<string, string>,
+    body: string,
+    bodyType: string
+) => Promise<void>;
+
 export class ApiRequestView {
     private panel: vscode.WebviewPanel | undefined;
     private context: vscode.ExtensionContext;
-    private handleApiRequest: (
-        method: string, 
-        url: string, 
-        headers: Record<string, string>, 
-        queryParams: Record<string, string>, 
-        formData: Record<string, string>, 
-        body: string
-    ) => Promise<void>;
+    private apiRequestCallback: ApiRequestCallback;
 
-    constructor(
-        context: vscode.ExtensionContext, 
-        handleApiRequest: (
-            method: string, 
-            url: string, 
-            headers: Record<string, string>, 
-            queryParams: Record<string, string>, 
-            formData: Record<string, string>, 
-            body: string
-        ) => Promise<void>
-    ) {
+    constructor(context: vscode.ExtensionContext, apiRequestCallback: ApiRequestCallback) {
         this.context = context;
-        this.handleApiRequest = handleApiRequest;
+        this.apiRequestCallback = apiRequestCallback;
     }
 
     public show() {
@@ -47,7 +41,7 @@ export class ApiRequestView {
                 message => {
                     switch (message.command) {
                         case 'sendRequest':
-                            this.handleApiRequest(message.method, message.url, message.headers,message.queryParams, message.formData, message.body);
+                            this.apiRequestCallback(message.method, message.url, message.headers,message.queryParams, message.formData, message.body, message.bodyType);
                             return;
                     }
                 },
@@ -156,7 +150,7 @@ export class ApiRequestView {
             padding: 0;
         }
         .params-table input {
-            width: 100%;
+            width: 95%;
             padding: 8px;
             background-color: var(--vscode-input-background);
             color: var(--vscode-input-foreground);
@@ -176,7 +170,7 @@ export class ApiRequestView {
             opacity: 0.7;
             transition: opacity 0.3s ease;
             width: 100%;
-            text-align: center;
+            text-align: end;
         }
         .action-button:hover {
             opacity: 1;
@@ -247,8 +241,9 @@ export class ApiRequestView {
             display: block;
         }
         #body-content {
-            width: 100%;
+            width: 95%;
             padding: 8px;
+            margin-top: 15px;  // Add this line for top margin
             margin-bottom: 15px;
             background-color: var(--vscode-input-background);
             color: var(--vscode-input-foreground);
@@ -348,20 +343,27 @@ export class ApiRequestView {
                 </div>
             </div>
             <div id="body" class="tab-content request-tab-content">
-                <textarea id="body-content" rows="10"></textarea>
-                <h3>Form Data</h3>
-                <table class="params-table" id="form-data">
-                    <tr>
-                        <th style="padding-left: 8px;">Key</th>
-                        <th style="padding-left: 8px;">Value</th>
-                        <th style="width: 30px;"></th>
-                    </tr>
-                    <tr>
-                        <td><input type="text" placeholder="Key"></td>
-                        <td><input type="text" placeholder="Value"></td>
-                        <td><button class="action-button" onclick="addRow(this, 'form-data')">+</button></td>
-                    </tr>
-                </table>
+                <div class="body-type-selector">
+                    <label><input type="radio" name="body-type" value="none" checked> None</label>
+                    <label><input type="radio" name="body-type" value="form-data"> Form Data</label>
+                    <label><input type="radio" name="body-type" value="raw"> Raw</label>
+                </div>
+                <textarea id="body-content" rows="10" style="display: none;"></textarea>
+                <div id="form-data-container" style="display: none;">
+                    <h3>Form Data</h3>
+                    <table class="params-table" id="form-data">
+                        <tr>
+                            <th style="padding-left: 8px;">Key</th>
+                            <th style="padding-left: 8px;">Value</th>
+                            <th style="width: 30px;"></th>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="Key"></td>
+                            <td><input type="text" placeholder="Value"></td>
+                            <td><button class="action-button" onclick="addRow(this, 'form-data')">+</button></td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
         <div class="response-panel">
@@ -448,14 +450,27 @@ export class ApiRequestView {
             document.getElementById('bearer-auth').style.display = this.value === 'bearer' ? 'block' : 'none';
         });
 
-        // Modify the send request function to include auth and form data
+        // Add this new function to handle body type selection
+        function handleBodyTypeChange() {
+            const bodyType = document.querySelector('input[name="body-type"]:checked').value;
+            document.getElementById('body-content').style.display = bodyType === 'raw' ? 'block' : 'none';
+            document.getElementById('form-data-container').style.display = bodyType === 'form-data' ? 'block' : 'none';
+        }
+
+        // Add event listeners for body type radio buttons
+        document.querySelectorAll('input[name="body-type"]').forEach(radio => {
+            radio.addEventListener('change', handleBodyTypeChange);
+        });
+
+        // Modify the send request function to include body type
         document.getElementById('send').addEventListener('click', () => {
             const method = document.getElementById('method').value;
             const url = document.getElementById('url').value;
             const headers = collectTableData('headers-table');
             const queryParams = collectTableData('query-params');
-            const formData = collectTableData('form-data');
-            const body = document.getElementById('body-content').value;
+            const bodyType = document.querySelector('input[name="body-type"]:checked').value;
+            const formData = bodyType === 'form-data' ? collectTableData('form-data') : {};
+            const body = bodyType === 'raw' ? document.getElementById('body-content').value : '';
             
             // Collect auth data
             const authType = document.getElementById('auth-type').value;
@@ -483,6 +498,7 @@ export class ApiRequestView {
                 queryParams,
                 formData,
                 body,
+                bodyType,
                 auth: {
                     type: authType,
                     data: authData
