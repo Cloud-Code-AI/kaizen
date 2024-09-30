@@ -76,10 +76,56 @@ export class ApiRequestView {
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; display: flex; height: 100vh; color: var(--vscode-foreground); background-color: var(--vscode-editor-background); }
         .main-container { display: flex; width: 100%; height: 100vh; }
-        .request-panel { flex: 2; padding: 20px; display: flex; flex-direction: column; }
+        .request-panel { 
+            flex: 2; 
+            padding: 10px; 
+            display: flex; 
+            flex-direction: column; 
+        }
         .response-panel { flex: 1; padding: 20px; border-left: 1px solid var(--vscode-panel-border); display: flex; flex-direction: column; }
-        .request-bar { display: flex; padding: 10px; background-color: var(--vscode-editor-background); }
-        select, input, button { margin-right: 5px; background-color: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--vscode-input-border); }
+        .request-bar { 
+            display: flex; 
+            margin-bottom: 10px;
+            background-color: var(--vscode-input-background);
+            border: 1px solid var(--vscode-input-border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .method-select {
+            padding: 8px 12px;
+            min-width: 100px;
+            border: none;
+            border-right: 1px solid var(--vscode-input-border);
+            background-color: var(--vscode-input-background);
+            color: var(--vscode-input-foreground);
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            padding-right: 30px; /* Increased padding on the right side */
+        }
+        .url-input {
+            flex-grow: 1;
+            padding: 8px 12px;
+            border: none;
+            background-color: var(--vscode-input-background);
+            color: var(--vscode-input-foreground);
+        }
+        .send-button {
+            padding: 8px 16px;
+            border: none;
+            border-left: 1px solid var(--vscode-input-border);
+            background-color: var(--vscode-button-background);
+            color: var(--vscode-button-foreground);
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .send-button:hover {
+            background-color: var(--vscode-button-hoverBackground);
+        }
         .tab { display: inline-block; padding: 5px 10px; cursor: pointer; }
         .tab.active { border-bottom: 2px solid var(--vscode-focusBorder); }
         .tab-content { display: none; overflow-y: auto; flex-grow: 1; }
