@@ -1,0 +1,4182 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Weatherbit - Interactive Swagger UI Documentation",
+        "description": "This an interactive version of the documentation for the Weatherbit API.  The base URL for the API is [http://api.weatherbit.io/v2.0/](http://api.weatherbit.io/v2.0/) or [https://api.weatherbit.io/v2.0/](http://api.weatherbit.io/v2.0/). Below is the Swagger UI documentation for the API. All API requests require the `key` parameter.        An Example for a 48 hour forecast for London, UK would be `http://api.weatherbit.io/v2.0/forecast/hourly?lat=51.5072`&`lon=-0.1276`. See our [Weather API description page](https://www.weatherbit.io/api) for the full documentation.",
+        "version": "2.0.0"
+    },
+    "host": "api.weatherbit.io",
+    "schemes": [
+        "https",
+        "http"
+    ],
+    "basePath": "/v2.0",
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/alerts": {
+            "get": {
+                "summary": "Returns severe weather alerts issued by meteorological agencies - Given a lat/lon.",
+                "description": "Returns severe weather alerts issued by meteorological agencies - given a lat, and a lon.",
+                "parameters": [
+                    {
+                        "name": "lat",
+                        "in": "query",
+                        "description": "Latitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "lon",
+                        "in": "query",
+                        "description": "Longitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "city_id",
+                        "in": "query",
+                        "description": "City ID. Example: 4487042",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "postal_code",
+                        "in": "query",
+                        "description": "Postal Code. Example: 28546",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "country",
+                        "in": "query",
+                        "description": "Country Code (2 letter) - to be used with postal_code.",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "station",
+                        "in": "query",
+                        "description": "Station Call ID.",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "key",
+                        "in": "query",
+                        "description": "Your registered API key.",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    }
+                ],
+                "tags": [
+                    "Alerts"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Weather Alert Object.",
+                        "schema": {
+                            "$ref": "#/definitions/WeatherAlert"
+                        }
+                    },
+                    "default": {
+                        "description": "No Data.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/current": {
+            "get": {
+                "summary": "Returns a Current Observation - Given a lat/lon.",
+                "description": "Returns a Current Observation - given a lat, and a lon.",
+                "parameters": [
+                    {
+                        "name": "lat",
+                        "in": "query",
+                        "description": "Latitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "lon",
+                        "in": "query",
+                        "description": "Longitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "description": "Include 1 hour - minutely precip forecast in the response, or severe weather alerts",
+                        "required": false,
+                        "enum": ["minutely", "alerts"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "city_id",
+                        "in": "query",
+                        "description": "City ID. Example: 4487042",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "postal_code",
+                        "in": "query",
+                        "description": "Postal Code. Example: 28546",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "country",
+                        "in": "query",
+                        "description": "Country Code (2 letter) - to be used with postal_code.",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "station",
+                        "in": "query",
+                        "description": "Station Call ID.",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "stations",
+                        "in": "query",
+                        "description": "Comma separated list of Station Call ID's. Example: KRDU,KBFI,KVNY",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "points",
+                        "in": "query",
+                        "description": "Comma separated list of points. Example: (35.5, -75.5),(45, 65),(45.12, -130.5)",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "cities",
+                        "in": "query",
+                        "description": "Comma separated list of City ID's. Example: 4487042, 4494942, 4504871",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "units",
+                        "in": "query",
+                        "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>",
+                        "required": false,
+                        "enum":["S","I"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "lang",
+                        "in": "query",
+                        "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>",
+                        "required": false,
+                        "enum": ["ar", "az","be","bg","bs","ca","cs","de","fi","fr","el","es","et","hr","hu","id","it","is","kw","nb","nl","pl","pt","ro","ru","sk","sl","sr","sv","tr","uk","zh","zh-tw"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "key",
+                        "in": "query",
+                        "description": "Your registered API key.",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    }
+                ],
+                "tags": [
+                    "Current Weather Data"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An Observation Group object.",
+                        "schema": {
+                            "$ref": "#/definitions/CurrentObsGroup"
+                        }
+                    },
+                    "default": {
+                        "description": "No Data.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/current/lightning": {
+            "get": {
+                "summary": "Returns nearest and most recent lightning observations - Given a lat/lon.",
+                "description": "Returns nearest and most recent lightning observations - Given a lat/lon.",
+                "parameters": [
+                    {
+                        "name": "lat",
+                        "in": "query",
+                        "description": "Latitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "lon",
+                        "in": "query",
+                        "description": "Longitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Limit result lightning. (Default 20)",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "search_dist_km",
+                        "in": "query",
+                        "description": "Radial search distance from point in KM. (Default 50 - Max 150)",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "search_mins",
+                        "in": "query",
+                        "description": "Search time backwards from current time in minutes. (Default 30 - Max 240)",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sort results by either most recent occurrence, or least distance from point. (Default distance)",
+                        "required": false,
+                        "enum":["distance","time"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "key",
+                        "in": "query",
+                        "description": "Your registered API key.",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    }
+                ],
+                "tags": [
+                    "Lightning"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lightning data.",
+                        "schema": {
+                            "$ref": "#/definitions/LightningObsGroup"
+                        }
+                    },
+                    "default": {
+                        "description": "No Data.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/forecast/daily": {
+            "get": {
+                "summary": "Returns a daily forecast - Given Lat/Lon.",
+                "description": "Returns a daily forecast, where each point represents one day (24hr) period. Every point has a datetime string in the format \"YYYY-MM-DD\". One day begins at 00:00 UTC, and ends at 23:59 UTC. \n",
+                "parameters": [
+                    {
+                        "name": "lat",
+                        "in": "query",
+                        "description": "Latitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "lon",
+                        "in": "query",
+                        "description": "Longitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "city_id",
+                        "in": "query",
+                        "description": "City ID. Example: 4487042",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "postal_code",
+                        "in": "query",
+                        "description": "Postal Code. Example: 28546",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "country",
+                        "in": "query",
+                        "description": "Country Code (2 letter) - to be used with postal_code.",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "station",
+                        "in": "query",
+                        "description": "Station Call ID.",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "days",
+                        "in": "query",
+                        "description": "Number of days to return. Default 16.",
+                        "required": false,
+                        "type": "number",
+                        "format": "integer"
+                    },
+                    {
+                        "name": "units",
+                        "in": "query",
+                        "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>",
+                        "required": false,
+                        "enum":["S","I"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "lang",
+                        "in": "query",
+                        "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>",
+                        "required": false,
+                        "enum": ["ar", "az","be","bg","bs","ca","cs","de","fi","fr","el","es","et","hr","hu","id","it","is","kw","nb","nl","pl","pt","ro","ru","sk","sl","sr","sv","tr","uk","zh","zh-tw"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "key",
+                        "in": "query",
+                        "description": "Your registered API key.",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    }
+                ],
+                "tags": [
+                    "16 day / daily Forecast"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A forecast object.",
+                        "schema": {
+                            "$ref": "#/definitions/ForecastDay"
+                        }
+                    },
+                    "default": {
+                        "description": "No Data.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/forecast/minutely": {
+            "get": {
+                "summary": "Returns a 60 minute precipitation forecast - Given Lat/Lon.",
+                "description": "Returns a 60 minute precipitation forecast, where each point represents one minute (1 min) period.",
+                "parameters": [
+                    {
+                        "name": "lat",
+                        "in": "query",
+                        "description": "Latitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "lon",
+                        "in": "query",
+                        "description": "Longitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "city_id",
+                        "in": "query",
+                        "description": "City ID. Example: 4487042",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "postal_code",
+                        "in": "query",
+                        "description": "Postal Code. Example: 28546",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "country",
+                        "in": "query",
+                        "description": "Country Code (2 letter) - to be used with postal_code.",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "station",
+                        "in": "query",
+                        "description": "Station Call ID.",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "units",
+                        "in": "query",
+                        "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>",
+                        "required": false,
+                        "enum":["S","I"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "key",
+                        "in": "query",
+                        "description": "Your registered API key.",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    }
+                ],
+                "tags": [
+                    "60 Minute Rain/Snow Nowcast"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A forecast object.",
+                        "schema": {
+                            "$ref": "#/definitions/FCMinutely"
+                        }
+                    },
+                    "default": {
+                        "description": "No Data.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/forecast/airquality": {
+            "get": {
+                "summary": "Returns 72 hour (hourly) Air Quality forecast - Given a geolocation.",
+                "description": "Returns 72 hour (hourly) Air Quality forecast, where each point represents a one hour period.",
+                "parameters": [
+                    {
+                        "name": "lat",
+                        "in": "query",
+                        "description": "Latitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "lon",
+                        "in": "query",
+                        "description": "Longitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "city_id",
+                        "in": "query",
+                        "description": "City ID. Example: 4487042",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "postal_code",
+                        "in": "query",
+                        "description": "Postal Code. Example: 28546",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "country",
+                        "in": "query",
+                        "description": "Country Code (2 letter) - to be used with postal_code.",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "key",
+                        "in": "query",
+                        "description": "Your registered API key.",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "hours",
+                        "in": "query",
+                        "description": "Number of hours to return.",
+                        "required": false,
+                        "type": "integer",
+                        "format": "integer"
+                    }
+                ],
+                "tags": [
+                    "Air Quality Forecast"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A forecast object.",
+                        "schema": {
+                            "$ref": "#/definitions/AQHourly"
+                        }
+                    },
+                    "default": {
+                        "description": "No Data.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/history/airquality": {
+            "get": {
+                "summary": "Returns 72 hours of historical air quality conditions - Given a geolocation.",
+                "description": "Returns historical air quality conditions. See https://www.weatherbit.io/api for API specific rate limits.",
+                "parameters": [
+                    {
+                        "name": "lat",
+                        "in": "query",
+                        "description": "Latitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "lon",
+                        "in": "query",
+                        "description": "Longitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "city_id",
+                        "in": "query",
+                        "description": "City ID. Example: 4487042",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "postal_code",
+                        "in": "query",
+                        "description": "Postal Code. Example: 28546",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "country",
+                        "in": "query",
+                        "description": "Country Code (2 letter) - to be used with postal_code.",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "key",
+                        "in": "query",
+                        "description": "Your registered API key.",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    }
+                ],
+                "tags": [
+                    "Historical Air Quality"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Historical air quality conditions",
+                        "schema": {
+                            "$ref": "#/definitions/AQCurrentGroup"
+                        }
+                    },
+                    "default": {
+                        "description": "No Data.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/current/airquality": {
+            "get": {
+                "summary": "Returns current air quality conditions - Given a geolocation.",
+                "description": "Returns current air quality conditions.",
+                "parameters": [
+                    {
+                        "name": "lat",
+                        "in": "query",
+                        "description": "Latitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "lon",
+                        "in": "query",
+                        "description": "Longitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "city_id",
+                        "in": "query",
+                        "description": "City ID. Example: 4487042",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "postal_code",
+                        "in": "query",
+                        "description": "Postal Code. Example: 28546",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "country",
+                        "in": "query",
+                        "description": "Country Code (2 letter) - to be used with postal_code.",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "key",
+                        "in": "query",
+                        "description": "Your registered API key.",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    }
+                ],
+                "tags": [
+                    "Current Air Quality"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Current air quality conditions",
+                        "schema": {
+                            "$ref": "#/definitions/AQCurrentGroup"
+                        }
+                    },
+                    "default": {
+                        "description": "No Data.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/forecast/hourly": {
+            "get": {
+                "summary": "Returns an hourly forecast - Given a lat/lon.",
+                "description": "Returns an hourly forecast, where each point represents a one hour period. Every point has a datetime string in the format \"YYYY-MM-DD:HH\". Time is UTC. \n",
+                "parameters": [
+                    {
+                        "name": "lat",
+                        "in": "query",
+                        "description": "Latitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "lon",
+                        "in": "query",
+                        "description": "Longitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "city_id",
+                        "in": "query",
+                        "description": "City ID. Example: 4487042",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "postal_code",
+                        "in": "query",
+                        "description": "Postal Code. Example: 28546",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "country",
+                        "in": "query",
+                        "description": "Country Code (2 letter) - to be used with postal_code.",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "station",
+                        "in": "query",
+                        "description": "Station Call ID.",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "units",
+                        "in": "query",
+                        "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>",
+                        "required": false,
+                        "enum":["S","I"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "lang",
+                        "in": "query",
+                        "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>",
+                        "required": false,
+                        "enum": ["ar", "az","be","bg","bs","ca","cs","de","fi","fr","el","es","et","hr","hu","id","it","is","kw","nb","nl","pl","pt","ro","ru","sk","sl","sr","sv","tr","uk","zh","zh-tw"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "hours",
+                        "in": "query",
+                        "description": "Number of hours to return.",
+                        "required": false,
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    {
+                        "name": "key",
+                        "in": "query",
+                        "description": "Your registered API key.",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    }
+                ],
+                "tags": [
+                    "240 hour / hourly Forecast"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A forecast object.",
+                        "schema": {
+                            "$ref": "#/definitions/ForecastHourly"
+                        }
+                    },
+                    "default": {
+                        "description": "No Data.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/forecast/agweather": {
+            "get": {
+                "summary": "Returns Agweather Forecast - Given a lat/lon.",
+                "description": "Returns Agweather Forecast  - Given a lat, and lon. See https://www.weatherbit.io/api for API specific rate limits.",
+                "parameters": [
+                    {
+                        "name": "lat",
+                        "in": "query",
+                        "description": "Latitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "lon",
+                        "in": "query",
+                        "description": "Longitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH).",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH).",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "units",
+                        "in": "query",
+                        "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>",
+                        "required": false,
+                        "enum":["S","I"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "key",
+                        "in": "query",
+                        "description": "Your registered API key.",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    }
+                ],
+                "tags": [
+                    "AgWeather Forecast"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An AGWeather Forecast Data Object.",
+                        "schema": {
+                            "$ref": "#/definitions/ForecastAG"
+                        }
+                    },
+                    "default": {
+                        "description": "No Data.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/history/agweather": {
+            "get": {
+                "summary": "Returns Historical Agweather - Given a lat/lon.",
+                "description": "Returns Historical Agweather Observations - Given a lat, and lon. See https://www.weatherbit.io/api for API specific rate limits.",
+                "parameters": [
+                    {
+                        "name": "lat",
+                        "in": "query",
+                        "description": "Latitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "lon",
+                        "in": "query",
+                        "description": "Longitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH).",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH).",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "tp",
+                        "in": "query",
+                        "description": "Time period of calculation (daily [DEFAULT], or hourly).",
+                        "required": true,
+                        "enum":["daily","hourly"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "units",
+                        "in": "query",
+                        "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>",
+                        "required": false,
+                        "enum":["S","I"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "key",
+                        "in": "query",
+                        "description": "Your registered API key.",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    }
+                ],
+                "tags": [
+                    "Historical AgWeather Data"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An AGWeather Historical Data Object.",
+                        "schema": {
+                            "$ref": "#/definitions/HistoryAG"
+                        }
+                    },
+                    "default": {
+                        "description": "No Data.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/normals": {
+            "get": {
+                "summary": "Returns Historical Climate Normals (Averages) - Given a lat/lon.",
+                "description": "Returns Historical Climate Normals (Averages) - Given a lat, and lon. See https://www.weatherbit.io/api for API specific rate limits.",
+                "parameters": [
+                    {
+                        "name": "lat",
+                        "in": "query",
+                        "description": "Latitude component of location.",
+                        "required": true,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "lon",
+                        "in": "query",
+                        "description": "Longitude component of location.",
+                        "required": true,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "start_day",
+                        "in": "query",
+                        "description": "Start Day (MM-DD).",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "end_day",
+                        "in": "query",
+                        "description": "End Day (MM-DD).",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "tp",
+                        "in": "query",
+                        "description": "Time period of calculation (daily, monthly, or hourly).",
+                        "required": true,
+                        "enum":["daily","hourly","monthly"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "units",
+                        "in": "query",
+                        "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>",
+                        "required": false,
+                        "enum":["S","I"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "series_year",
+                        "in": "query",
+                        "description": "Series year for calculation. 2020 for 1991-2020. 2010 for 1981-2010.",
+                        "required": true,
+                        "type": "number",
+                        "format": "number"
+                    },
+                    {
+                        "name": "key",
+                        "in": "query",
+                        "description": "Your registered API key.",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    }
+                ],
+                "tags": [
+                    "Climate Normals (Averages)"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An Normals Data Object.",
+                        "schema": {
+                            "$ref": "#/definitions/Normals"
+                        }
+                    },
+                    "default": {
+                        "description": "No Data.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/history/daily": {
+            "get": {
+                "summary": "Returns Historical Observations - Given a lat/lon.",
+                "description": "Returns Historical Observations - Given a lat, and lon. See https://www.weatherbit.io/api for API specific rate limits.",
+                "parameters": [
+                    {
+                        "name": "lat",
+                        "in": "query",
+                        "description": "Latitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "lon",
+                        "in": "query",
+                        "description": "Longitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "city_id",
+                        "in": "query",
+                        "description": "City ID. Example: 4487042",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "postal_code",
+                        "in": "query",
+                        "description": "Postal Code. Example: 28546",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "country",
+                        "in": "query",
+                        "description": "Country Code (2 letter) - to be used with postal_code.",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "station",
+                        "in": "query",
+                        "description": "Station Call ID.",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH).",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH).",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "units",
+                        "in": "query",
+                        "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>",
+                        "required": false,
+                        "enum":["S","I"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "lang",
+                        "in": "query",
+                        "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>",
+                        "required": false,
+                        "enum": ["ar", "az","be","bg","bs","ca","cs","de","fi","fr","el","es","et","hr","hu","id","it","is","kw","nb","nl","pl","pt","ro","ru","sk","sl","sr","sv","tr","uk","zh","zh-tw"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "key",
+                        "in": "query",
+                        "description": "Your registered API key.",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    }
+                ],
+                "tags": [
+                    "Daily Historical Weather Data"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An Historical Day Data Object.",
+                        "schema": {
+                            "$ref": "#/definitions/HistoryDay"
+                        }
+                    },
+                    "default": {
+                        "description": "No Data.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/history/hourly": {
+            "get": {
+                "summary": "Returns Historical Observations - Given a lat/lon.",
+                "description": "Returns Historical Observations - Given a lat, and lon. See https://www.weatherbit.io/api for API specific rate limits.",
+                "parameters": [
+                    {
+                        "name": "lat",
+                        "in": "query",
+                        "description": "Latitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "lon",
+                        "in": "query",
+                        "description": "Longitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "city_id",
+                        "in": "query",
+                        "description": "City ID. Example: 4487042",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "postal_code",
+                        "in": "query",
+                        "description": "Postal Code. Example: 28546",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "country",
+                        "in": "query",
+                        "description": "Country Code (2 letter) - to be used with postal_code.",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "station",
+                        "in": "query",
+                        "description": "Station Call ID.",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH).",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH).",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "units",
+                        "in": "query",
+                        "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>",
+                        "required": false,
+                        "enum":["S","I"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "lang",
+                        "in": "query",
+                        "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>",
+                        "required": false,
+                        "enum": ["ar", "az","be","bg","bs","ca","cs","de","fi","fr","el","es","et","hr","hu","id","it","is","kw","nb","nl","pl","pt","ro","ru","sk","sl","sr","sv","tr","uk","zh","zh-tw"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "tz",
+                        "in": "query",
+                        "description": "Assume utc (default) or local time for start_date, end_date",
+                        "required": false,
+                        "enum": ["local", "utc"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "key",
+                        "in": "query",
+                        "description": "Your registered API key.",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    }
+                ],
+                "tags": [
+                    "Hourly Historical Weather Data"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An Historical Data Object.",
+                        "schema": {
+                            "$ref": "#/definitions/History"
+                        }
+                    },
+                    "default": {
+                        "description": "No Data.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/history/subhourly": {
+            "get": {
+                "summary": "Returns Historical Observations - Given a lat/lon.",
+                "description": "Returns Historical Observations - Given a lat, and lon. See https://www.weatherbit.io/api for API specific rate limits.",
+                "parameters": [
+                    {
+                        "name": "lat",
+                        "in": "query",
+                        "description": "Latitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "lon",
+                        "in": "query",
+                        "description": "Longitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "city_id",
+                        "in": "query",
+                        "description": "City ID. Example: 4487042",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "postal_code",
+                        "in": "query",
+                        "description": "Postal Code. Example: 28546",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "country",
+                        "in": "query",
+                        "description": "Country Code (2 letter) - to be used with postal_code.",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "station",
+                        "in": "query",
+                        "description": "Station Call ID.",
+                        "required": false,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH).",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH).",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "units",
+                        "in": "query",
+                        "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>",
+                        "required": false,
+                        "enum":["S","I"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "lang",
+                        "in": "query",
+                        "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>",
+                        "required": false,
+                        "enum": ["ar", "az","be","bg","bs","ca","cs","de","fi","fr","el","es","et","hr","hu","id","it","is","kw","nb","nl","pl","pt","ro","ru","sk","sl","sr","sv","tr","uk","zh","zh-tw"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "tz",
+                        "in": "query",
+                        "description": "Assume utc (default) or local time for start_date, end_date",
+                        "required": false,
+                        "enum": ["local", "utc"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "key",
+                        "in": "query",
+                        "description": "Your registered API key.",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    }
+                ],
+                "tags": [
+                    "Sub-Hourly Historical Weather Data"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An Historical Data Object.",
+                        "schema": {
+                            "$ref": "#/definitions/HistorySubhourly"
+                        }
+                    },
+                    "default": {
+                        "description": "No Data.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/forecast/energy": {
+            "get": {
+                "summary": "Returns Energy Forecast API response  - Given a single lat/lon. ",
+                "description": "Retrieve an 8 day forecast relevant to te Energy Sector (degree days, solar radiation, precipitation, wind).",
+                "parameters": [
+                    {
+                        "name": "lat",
+                        "in": "query",
+                        "description": "Latitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "lon",
+                        "in": "query",
+                        "description": "Longitude component of location.",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "threshold",
+                        "in": "query",
+                        "description": "Temperature threshold to use to calculate degree days (default 18 C) ",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "units",
+                        "in": "query",
+                        "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>",
+                        "required": false,
+                        "enum":["S","I"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "tp",
+                        "in": "query",
+                        "description": "Time period (default: daily)",
+                        "required": false,
+                        "enum":["hourly","daily"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "key",
+                        "in": "query",
+                        "description": "Your registered API key.",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    }
+                ],
+                "tags": [
+                    "Forecast Degree Day API"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An Energy Data Object.",
+                        "schema": {
+                            "$ref": "#/definitions/EnergyObsGroupForecast"
+                        }
+                    },
+                    "default": {
+                        "description": "No Data.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/history/energy": {
+            "get": {
+                "summary": "Returns Energy API response  - Given a single lat/lon. ",
+                "description": "Returns aggregate energy specific historical weather fields, over a specified time period. See https://www.weatherbit.io/api for API specific rate limits.",
+                "parameters": [
+                    {
+                        "name": "lat",
+                        "in": "query",
+                        "description": "Latitude component of location.",
+                        "required": true,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "lon",
+                        "in": "query",
+                        "description": "Longitude component of location.",
+                        "required": true,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH).",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH).",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "tp",
+                        "in": "query",
+                        "description": "Time period to aggregate by (daily, monthly)",
+                        "required": false,
+                        "enum":["hourly", "daily","monthly"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "threshold",
+                        "in": "query",
+                        "description": "Temperature threshold to use to calculate degree days (default 18 C) ",
+                        "required": false,
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "name": "units",
+                        "in": "query",
+                        "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>",
+                        "required": false,
+                        "enum":["S","I"],
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "key",
+                        "in": "query",
+                        "description": "Your registered API key.",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    }
+                ],
+                "tags": [
+                    "Historical Degree Day API"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An Energy Data Object.",
+                        "schema": {
+                            "$ref": "#/definitions/EnergyObsGroup"
+                        }
+                    },
+                    "default": {
+                        "description": "No Data.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/bulk/files": {
+            "get": {
+                "summary": "Download pre-generated bulk datasets",
+                "description": "Downloads bulk data files - OPTIONS: ( current.csv.gz, forecast_hourly.csv.gz, forecast_daily.csv.gz). Units are Metric (Celcius, m/s, etc).",
+                "parameters": [
+                    {
+                        "name": "file",
+                        "in": "path",
+                        "description": "Filename (ie. current.csv.gz)",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "key",
+                        "in": "query",
+                        "description": "Your registered API key.",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    }
+                ],
+                "tags": [
+                    "Bulk Downloads"
+                ],
+                "responses": {
+                    "default": {
+                        "description": "No Data.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        }
+    },
+
+    "definitions": {
+        "ForecastHour": {
+            "type": "object",
+            "properties": {
+                "ts": {
+                    "type": "number",
+                    "description": "Unix Timestamp",
+                    "example":"1551718800"
+                },
+                "timestamp_local": {
+                    "type": "string",
+                    "description": "Timestamp in local time",
+                    "example":"2019-03-04T12:00:00"
+                },
+                "timestamp_utc": {
+                    "type": "string",
+                    "description": "Timestamp UTC",
+                    "example":"2019-03-04T17:00:00"
+                },
+                "datetime": {
+                    "type": "string",
+                    "description": "Date in format \"YYYY-MM-DD:HH\". All datetime is in (UTC)",
+                    "example":"2019-03-04:17"
+                },
+                "snow": {
+                    "type": "number",
+                    "description": "Accumulated snowfall since last forecast point - Default (mm)",
+                    "example":10.45
+                },
+                "snow_depth": {
+                    "type": ["number", "null"],
+                    "description": "Snow depth - Default (mm)",
+                    "example":45,
+                    "nullable": true
+                },
+                "precip": {
+                    "type": "number",
+                    "description": "Accumulated precipitation since last forecast point. Default (mm)",
+                    "example":1.1
+                },
+                "temp": {
+                    "type": "number",
+                    "description": "Temperature - Default (C)",
+                    "example": -1.5
+                },
+                "dewpt": {
+                    "type": "number",
+                    "description": "Dewpoint - Default (C)",
+                    "example":-4.0
+                },
+                "app_temp": {
+                    "type": "number",
+                    "description": "Apparent Temperature - Default (C)",
+                    "example":4.5
+                },
+                "rh": {
+                    "type": "integer",
+                    "description": "Relative Humidity as a percentage (%)",
+                    "example":95
+                },
+                "clouds": {
+                    "type": "integer",
+                    "description": "Cloud cover as a percentage (%)",
+                    "example": 100
+                },
+                "weather": {
+                    "type": "object",
+                    "properties": {
+                        "icon": {
+                            "type": "string",
+                            "description": "Icon code for forecast image display",
+                            "example":"s02d"
+                        },
+                        "code": {
+                            "type": "integer",
+                            "description": "Weather Condition code",
+                            "example":601
+                        },
+                        "description": {
+                            "type": "string",
+                            "description": "Weather Condition description",
+                            "example":"Snow"
+                        }
+                    }
+                },
+                "slp": {
+                    "type": "number",
+                    "description": "Mean Sea level pressure (mb)",
+                    "example": 1012.89
+                },
+                "pres": {
+                    "type": "number",
+                    "description": "Pressure (mb)",
+                    "example": 1005
+                },
+                "uv": {
+                    "type": "number",
+                    "description": "UV Index",
+                    "example": 6.5
+                },
+                "solar_rad": {
+                    "type": "number",
+                    "description": "Estimated solar radiation (W/m^2)",
+                    "example":300
+                },
+                "ghi": {
+                    "type": "number",
+                    "description": "Global horizontal solar irradiance (W/m^2)",
+                    "example":1000
+                },
+                "dhi": {
+                    "type": "number",
+                    "description": "Diffuse normal solar irradiance (W/m^2)",
+                    "example":200
+                },
+                "dni": {
+                    "type": "number",
+                    "description": "Direct normal solar irradiance (W/m^2)",
+                    "example":400
+                },
+                "vis": {
+                    "type": "number",
+                    "description": "Visibility - Default (KM)",
+                    "example": 1
+                },
+                "pod": {
+                    "type": "string",
+                    "description": "Part of day (d = day, n = night)",
+                    "example":"d"
+                },
+                "pop": {
+                    "type": "number",
+                    "description": "Chance of Precipitation as a percentage (%)",
+                    "example": 75
+                },
+                "wind_spd": {
+                    "type": "number",
+                    "description": "Wind Speed - Default (m/s)",
+                    "example": 13.85
+                },
+                "wind_gust_spd": {
+                    "type": "number",
+                    "description": "Wind Gust Speed - Default (m/s)",
+                    "example": 16.85
+                },
+                "wind_dir": {
+                    "type": "integer",
+                    "description": "Wind direction",
+                    "example": 105
+                },
+                "wind_cdir": {
+                    "type": "string",
+                    "description": "Cardinal wind direction",
+                    "example":"ENE"
+                },
+                "wind_cdir_full": {
+                    "type": "string",
+                    "description": "Cardinal wind direction (text)",
+                    "example":"East-North-East"
+                }
+            }
+        },
+        "Forecast": {
+            "type": "object",
+            "properties": {
+                "ts": {
+                    "type": "number",
+                    "description": "Unix Timestamp",
+                    "example":"1551718800"
+                },
+                "timestamp_local": {
+                    "type": "string",
+                    "description": "Timestamp in local time",
+                    "example":"2019-03-04T12:00:00"
+                },
+                "timestamp_utc": {
+                    "type": "string",
+                    "description": "Timestamp UTC",
+                    "example":"2019-03-04T17:00:00"
+                },
+                "datetime": {
+                    "type": "string",
+                    "description": "Date in format \"YYYY-MM-DD:HH\". All datetime is in (UTC)",
+                    "example":"2019-03-04:17"
+                },
+                "snow": {
+                    "type": "number",
+                    "description": "Accumulated snowfall since last forecast point - default (mm)",
+                    "example": 10.45
+                },
+                "snow_depth": {
+                    "type": ["number", "null"],
+                    "description": "Snow Depth - default (mm)",
+                    "example": 45,
+                    "nullable": true
+                },
+                "precip": {
+                    "type": "number",
+                    "description": "Accumulated precipitation since last forecast point - default (mm)",
+                    "example": 1.1
+                },
+                "temp": {
+                    "type": "number",
+                    "description": "Temperature (Average) - default (C)",
+                    "example": 1.0
+                },
+                "dewpt": {
+                    "type": "number",
+                    "description": "Dewpoint (Average) - default (C)",
+                    "example": 1.0
+                },
+                "max_temp": {
+                    "type": "number",
+                    "description": "Maximum daily Temperature - default (C)",
+                    "example": 1.5
+                },
+                "min_temp": {
+                    "type": "number",
+                    "description": "Minimum daily Temperature - default (C)",
+                    "example": -1.23
+                },
+                "app_max_temp": {
+                    "type": "number",
+                    "description": "Apparent Maximum daily Temperature - default (C)",
+                    "example": 4
+                },
+                "app_min_temp": {
+                    "type": "number",
+                    "description": "Apparent Minimum daily Temperature - default (C)",
+                    "example": -2
+                },
+                "rh": {
+                    "type": "integer",
+                    "description": "Relative Humidity as a percentage (%)",
+                    "example": 95
+                },
+                "clouds": {
+                    "type": "integer",
+                    "description": "Cloud cover as a percentage (%)",
+                    "example": 100
+                },
+                "weather": {
+                    "type": "object",
+                    "properties": {
+                        "icon": {
+                            "type": "string",
+                            "description": "Icon code for forecast image display",
+                            "example":"s02n"
+                        },
+                        "code": {
+                            "type": "integer",
+                            "description": "Weather Condition code",
+                            "example":601
+                        },
+                        "description": {
+                            "type": "string",
+                            "description": "Weather Condition description",
+                            "example":"Snow"
+                        }
+                    }
+                },
+                "slp": {
+                    "type": "number",
+                    "description": "Mean Sea level pressure (mb)",
+                    "example": 1012.89
+                },
+                "pres": {
+                    "type": "number",
+                    "description": "Pressure (mb)",
+                    "example": 1005
+                },
+                "uv": {
+                    "type": "number",
+                    "description": "UV Index",
+                    "example":6.5
+                },
+                "max_dhi": {
+                    "type": ["number", "null"],
+                    "description": "[Deprecated] Max direct component of solar insolation (W/m^2)",
+                    "example":"655",
+                    "nullable": true
+                },
+                "vis": {
+                    "type": "number",
+                    "description": "Average Visibility default (KM)",
+                    "example": 3.0
+                },
+                "pop": {
+                    "type": "number",
+                    "description": "Chance of Precipitation as a percentage (%)",
+                    "example": 75
+                },
+                "moon_phase": {
+                    "type": "number",
+                    "description": "Moon phase",
+                    "example": 0.87
+                },
+                "sunrise_ts": {
+                    "type": "integer",
+                    "description": "Sunrise unix timestamp",
+                    "example": 1530331260
+                },
+                "sunset_ts": {
+                    "type": "integer",
+                    "description": "Sunset unix timestamp",
+                    "example": 1530331260
+                },
+                "moonrise_ts": {
+                    "type": "integer",
+                    "description": "Moonrise unix timestamp",
+                    "example": 1530331260
+                },
+                "moonset_ts": {
+                    "type": "integer",
+                    "description": "Moonset unix timestamp",
+                    "example": 1530331260
+                },
+                "pod": {
+                    "type": "string",
+                    "description": "Part of the day (d = day, n = night)",
+                    "example":"n"
+                },
+                "wind_spd": {
+                    "type": "number",
+                    "description": "Wind Speed (default m/s)",
+                    "example": 13.85
+                },
+                "wind_dir": {
+                    "type": "integer",
+                    "description": "Wind direction",
+                    "example": 105
+                },
+                "wind_cdir": {
+                    "type": "string",
+                    "description": "Cardinal wind direction",
+                    "example":"ENE"
+                },
+                "wind_cdir_full": {
+                    "type": "string",
+                    "description": "Cardinal wind direction (text)",
+                    "example":"East-North-East"
+                }
+            }
+        },
+
+        "HistoryObj": {
+            "type": "object",
+            "properties": {
+                "ts": {
+                    "type": "number",
+                    "description": "Unix Timestamp",
+                    "example":"1551718800"
+                },
+                "timestamp_local": {
+                    "type": "string",
+                    "description": "Timestamp in local time",
+                    "example":"2019-03-04T12:00:00"
+                },
+                "timestamp_utc": {
+                    "type": "string",
+                    "description": "Timestamp UTC",
+                    "example":"2019-03-04T17:00:00"
+                },
+                "revision_status": {
+                    "type": "string",
+                    "description": "Data revision status (interim or final)",
+                    "example":"final"
+                },
+                "datetime": {
+                    "type": "string",
+                    "description": "Date in format \"YYYY-MM-DD:HH\". All datetime is in (UTC)",
+                    "example":"2019-03-04:17"
+                },
+                "slp": {
+                    "type": "number",
+                    "description": "Sea level pressure (mb)",
+                    "example": 1020.10
+                },
+                "pres": {
+                    "type": "number",
+                    "description": "Pressure (mb)",
+                    "example": 845
+                },
+                "rh": {
+                    "type": "integer",
+                    "description": "Relative Humidity as a percentage (%)",
+                    "example": 85
+                },
+                "dewpt": {
+                    "type": "number",
+                    "description": "Dew point (Default Celcius)",
+                    "example": -1.5
+                },
+                "temp": {
+                    "type": "number",
+                    "description": "Temperature (Default Celcius)",
+                    "example": -1.2
+                },
+                "app_temp": {
+                    "type": "number",
+                    "description": "Apparent Temperature or Wind Chill/Heat Index (Default Celcius)",
+                    "example": -1.5
+                },
+                "wind_spd": {
+                    "type": "number",
+                    "description": "Wind Speed (Default m/s)",
+                    "example": 14.7
+                },
+                "wind_gust_spd": {
+                    "type": "number",
+                    "description": "Wind Gust Speed - Default (m/s)",
+                    "example": 16.85
+                },
+                "wind_dir": {
+                    "type": "integer",
+                    "description": "Wind direction (Degrees)",
+                    "example": 325
+                },
+                "uv": {
+                    "type": "number",
+                    "description": "UV Index (1-11+)",
+                    "example": 4
+                },
+                "solar_rad": {
+                    "type": "number",
+                    "description": "Estimated solar radiation (W/m^2)",
+                    "example":300
+                },
+                "ghi": {
+                    "type": "number",
+                    "description": "Global horizontal solar irradiance (W/m^2)",
+                    "example":1500
+                },
+                "dhi": {
+                    "type": "number",
+                    "description": "Diffuse normal solar irradiance (W/m^2)",
+                    "example":200
+                },
+                "dni": {
+                    "type": "number",
+                    "description": "Direct normal solar irradiance (W/m^2)",
+                    "example":400
+                },
+                "h_angle": {
+                    "type": ["number", "null"],
+                    "description": "Solar hour angle (Degrees)",
+                    "example": 15.0,
+                    "nullable": true
+                },
+                "elev_angle": {
+                    "type": "number",
+                    "description": "Solar elevation angle (Degrees)",
+                    "example": 27.5
+                },
+                "azimuth": {
+                    "type": "number",
+                    "description": "Azimuth angle (Degrees)",
+                    "example": 50.5
+                },
+                "vis": {
+                    "type": "number",
+                    "description": "Visibility (KM)",
+                    "example": 10
+                },
+                "pod": {
+                    "type": "string",
+                    "description": "Part of the day (d = day, n = night)",
+                    "example":"n"
+                },
+                "weather": {
+                    "type": "object",
+                    "properties": {
+                        "icon": {
+                            "type": "string",
+                            "description": "Icon code for forecast image display",
+                            "example":"s01n"
+                        },
+                        "code": {
+                            "type": "integer",
+                            "description": "Weather Condition code",
+                            "example":601
+                        },
+                        "description": {
+                            "type": "string",
+                            "description": "Weather Condition description",
+                            "example":"Light Snow"
+                        }
+                    }
+                },
+                "clouds": {
+                    "type": "integer",
+                    "description": "Cloud Cover 0-100 (%)",
+                    "example": 50
+                },
+                "precip": {
+                    "type": "number",
+                    "description": "Liquid equivalent precipitation - Default (mm)",
+                    "example": 3
+                },
+                "snow": {
+                    "type": "number",
+                    "description": "Snowfall - Default (mm)",
+                    "example": 30
+                }
+            }
+        },
+
+        "ForecastAG": {
+            "type": "object",
+            "properties": {
+                "lat": {
+                    "type": "number",
+                    "description": "Latitude",
+                    "example": 47.61
+                },
+                "lon": {
+                    "type": "number",
+                    "description": "Longitude",
+                    "example": -122.33
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/HistoryAGObj"
+                    }
+                }
+            }
+        },
+        "HistoryAG": {
+            "type": "object",
+            "properties": {
+                "lat": {
+                    "type": "number",
+                    "description": "Latitude",
+                    "example": 47.61
+                },
+                "lon": {
+                    "type": "number",
+                    "description": "Longitude",
+                    "example": -122.33
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/HistoryAGObj"
+                    }
+                }
+            }
+        },
+        "HistoryAGObj": {
+                "type": "object",
+                "properties": {
+                  "bulk_soil_density": {
+                    "type": "number",
+                    "description": "Bulk Soil Density",
+                    "example": 1370
+                  },
+                  "dlwrf_avg": {
+                    "type": "number",
+                    "description": "Average Downward Longwave Radiation Flux",
+                    "example": 418.656
+                  },
+                  "dlwrf_max": {
+                    "type": "number",
+                    "description": "Maximum Downward Longwave Radiation Flux",
+                    "example": 440.25
+                  },
+                  "dlwrf_net": {
+                    "type": "number",
+                    "description": "Net Downward Longwave Radiation Flux",
+                    "example": 143
+                  },
+                  "dswrf_avg": {
+                    "type": "number",
+                    "description": "Average Downward Shortwave Radiation Flux",
+                    "example": 158.848
+                  },
+                  "dswrf_max": {
+                    "type": "number",
+                    "description": "Maximum Downward Shortwave Radiation Flux",
+                    "example": 492.25
+                  },
+                  "dswrf_net": {
+                    "type": "number",
+                    "description": "Net Downward Shortwave Radiation Flux",
+                    "example": -50.832
+                  },
+                  "evapotranspiration": {
+                    "type": "number",
+                    "description": "Evapotranspiration",
+                    "example": 4.247
+                  },
+                  "precip": {
+                    "type": "number",
+                    "description": "Precipitation",
+                    "example": 18.5
+                  },
+                  "pres_avg": {
+                    "type": "number",
+                    "description": "Average Pressure",
+                    "example": 1011.644
+                  },
+                  "revision_status": {
+                    "type": "string",
+                    "description": "Data revision status",
+                    "example": "final"
+                  },
+                  "skin_temp_avg": {
+                    "type": "number",
+                    "description": "Average Skin Temperature",
+                    "example": 29.4
+                  },
+                  "skin_temp_max": {
+                    "type": "number",
+                    "description": "Maximum Skin Temperature",
+                    "example": 40.4
+                  },
+                  "skin_temp_min": {
+                    "type": "number",
+                    "description": "Minimum Skin Temperature",
+                    "example": 25.4
+                  },
+                  "soilm_0_10cm": {
+                    "type": "number",
+                    "description": "Soil Moisture (0-10cm depth)",
+                    "example": 25.697
+                  },
+                  "soilm_100_200cm": {
+                    "type": "number",
+                    "description": "Soil Moisture (100-200cm depth)",
+                    "example": 273.625
+                  },
+                  "soilm_10_40cm": {
+                    "type": "number",
+                    "description": "Soil Moisture (10-40cm depth)",
+                    "example": 72.813
+                  },
+                  "soilm_40_100cm": {
+                    "type": "number",
+                    "description": "Soil Moisture (40-100cm depth)",
+                    "example": 152.203
+                  },
+                  "soilt_0_10cm": {
+                    "type": "number",
+                    "description": "Soil Temperature (0-10cm depth)",
+                    "example": 29.5
+                  },
+                  "soilt_100_200cm": {
+                    "type": "number",
+                    "description": "Soil Temperature (100-200cm depth)",
+                    "example": 24.4
+                  },
+                  "soilt_10_40cm": {
+                    "type": "number",
+                    "description": "Soil Temperature (10-40cm depth)",
+                    "example": 29.8
+                  },
+                  "soilt_40_100cm": {
+                    "type": "number",
+                    "description": "Soil Temperature (40-100cm depth)",
+                    "example": 27.7
+                  },
+                  "specific_humidity": {
+                    "type": "number",
+                    "description": "Specific Humidity",
+                    "example": 0.014513969421387
+                  },
+                  "timestamp_local": {
+                    "type": "string",
+                    "description": "Timestamp in local time",
+                    "example":"2023-09-08T00:00:00"
+                  },
+                  "timestamp_utc": {
+                    "type": "string",
+                    "description": "Timestamp UTC",
+                    "example":"2023-09-08T00:00:00"
+                  },
+                  "temp_2m_avg": {
+                    "type": "number",
+                    "description": "Average Temperature at 2 meters",
+                    "example": 26.6
+                  },
+                  "v_soilm_0_10cm": {
+                    "type": "number",
+                    "description": "Volumetric Soil Moisture (0-10cm depth)",
+                    "example": 0.257
+                  },
+                  "v_soilm_100_200cm": {
+                    "type": "number",
+                    "description": "Volumetric Soil Moisture (100-200cm depth)",
+                    "example": 0.274
+                  },
+                  "v_soilm_10_40cm": {
+                    "type": "number",
+                    "description": "Volumetric Soil Moisture (10-40cm depth)",
+                    "example": 0.243
+                  },
+                  "v_soilm_40_100cm": {
+                    "type": "number",
+                    "description": "Volumetric Soil Moisture (40-100cm depth)",
+                    "example": 0.254
+                  },
+                  "valid_date": {
+                    "type": "string",
+                    "description": "Valid Date",
+                    "example": "2023-09-08"
+                  },
+                  "wind_10m_spd_avg": {
+                    "type": "number",
+                    "description": "Average Wind Speed at 10 meters",
+                    "example": 2.505
+                  }
+                }
+              },
+        "ForecastAGObj": {
+                "type": "object",
+                "properties": {
+                  "bulk_soil_density": {
+                    "type": "number",
+                    "description": "Bulk Soil Density",
+                    "example": 1370
+                  },
+                  "dlwrf_avg": {
+                    "type": "number",
+                    "description": "Average Downward Longwave Radiation Flux",
+                    "example": 418.656
+                  },
+                  "dlwrf_max": {
+                    "type": "number",
+                    "description": "Maximum Downward Longwave Radiation Flux",
+                    "example": 440.25
+                  },
+                  "dlwrf_net": {
+                    "type": "number",
+                    "description": "Net Downward Longwave Radiation Flux",
+                    "example": 143
+                  },
+                  "dswrf_avg": {
+                    "type": "number",
+                    "description": "Average Downward Shortwave Radiation Flux",
+                    "example": 158.848
+                  },
+                  "dswrf_max": {
+                    "type": "number",
+                    "description": "Maximum Downward Shortwave Radiation Flux",
+                    "example": 492.25
+                  },
+                  "dswrf_net": {
+                    "type": "number",
+                    "description": "Net Downward Shortwave Radiation Flux",
+                    "example": -50.832
+                  },
+                  "evapotranspiration": {
+                    "type": "number",
+                    "description": "Evapotranspiration",
+                    "example": 4.247
+                  },
+                  "precip": {
+                    "type": "number",
+                    "description": "Precipitation",
+                    "example": 18.5
+                  },
+                  "pres_avg": {
+                    "type": "number",
+                    "description": "Average Pressure",
+                    "example": 1011.644
+                  },
+                  "revision_status": {
+                    "type": "string",
+                    "description": "Data revision status",
+                    "example": "final"
+                  },
+                  "skin_temp_avg": {
+                    "type": "number",
+                    "description": "Average Skin Temperature",
+                    "example": 29.4
+                  },
+                  "skin_temp_max": {
+                    "type": "number",
+                    "description": "Maximum Skin Temperature",
+                    "example": 40.4
+                  },
+                  "skin_temp_min": {
+                    "type": "number",
+                    "description": "Minimum Skin Temperature",
+                    "example": 25.4
+                  },
+                  "soilm_0_10cm": {
+                    "type": "number",
+                    "description": "Soil Moisture (0-10cm depth)",
+                    "example": 25.697
+                  },
+                  "soilm_100_200cm": {
+                    "type": "number",
+                    "description": "Soil Moisture (100-200cm depth)",
+                    "example": 273.625
+                  },
+                  "soilm_10_40cm": {
+                    "type": "number",
+                    "description": "Soil Moisture (10-40cm depth)",
+                    "example": 72.813
+                  },
+                  "soilm_40_100cm": {
+                    "type": "number",
+                    "description": "Soil Moisture (40-100cm depth)",
+                    "example": 152.203
+                  },
+                  "soilt_0_10cm": {
+                    "type": "number",
+                    "description": "Soil Temperature (0-10cm depth)",
+                    "example": 29.5
+                  },
+                  "soilt_100_200cm": {
+                    "type": "number",
+                    "description": "Soil Temperature (100-200cm depth)",
+                    "example": 24.4
+                  },
+                  "soilt_10_40cm": {
+                    "type": "number",
+                    "description": "Soil Temperature (10-40cm depth)",
+                    "example": 29.8
+                  },
+                  "soilt_40_100cm": {
+                    "type": "number",
+                    "description": "Soil Temperature (40-100cm depth)",
+                    "example": 27.7
+                  },
+                  "specific_humidity": {
+                    "type": "number",
+                    "description": "Specific Humidity",
+                    "example": 0.014513969421387
+                  },
+                  "temp_2m_avg": {
+                    "type": "number",
+                    "description": "Average Temperature at 2 meters",
+                    "example": 26.6
+                  },
+                  "v_soilm_0_10cm": {
+                    "type": "number",
+                    "description": "Volumetric Soil Moisture (0-10cm depth)",
+                    "example": 0.257
+                  },
+                  "v_soilm_100_200cm": {
+                    "type": "number",
+                    "description": "Volumetric Soil Moisture (100-200cm depth)",
+                    "example": 0.274
+                  },
+                  "v_soilm_10_40cm": {
+                    "type": "number",
+                    "description": "Volumetric Soil Moisture (10-40cm depth)",
+                    "example": 0.243
+                  },
+                  "v_soilm_40_100cm": {
+                    "type": "number",
+                    "description": "Volumetric Soil Moisture (40-100cm depth)",
+                    "example": 0.254
+                  },
+                  "valid_date": {
+                    "type": "string",
+                    "description": "Valid Date",
+                    "example": "2023-09-08"
+                  },
+                  "wind_10m_spd_avg": {
+                    "type": "number",
+                    "description": "Average Wind Speed at 10 meters",
+                    "example": 2.505
+                  }
+                }
+              },
+        "HistorySubhourlyObj": {
+            "type": "object",
+            "properties": {
+                "ts": {
+                    "type": "number",
+                    "description": "Unix Timestamp",
+                    "example":"1551718800"
+                },
+                "timestamp_local": {
+                    "type": "string",
+                    "description": "Timestamp in local time",
+                    "example":"2019-03-04T12:15:00"
+                },
+                "timestamp_utc": {
+                    "type": "string",
+                    "description": "Timestamp UTC",
+                    "example":"2019-03-04T17:15:00"
+                },
+                "revision_status": {
+                    "type": "string",
+                    "description": "Data revision status (interim or final)",
+                    "example":"final"
+                },
+                "slp": {
+                    "type": "number",
+                    "description": "Sea level pressure (mb)",
+                    "example": 1020.10
+                },
+                "pres": {
+                    "type": "number",
+                    "description": "Pressure (mb)",
+                    "example": 845
+                },
+                "rh": {
+                    "type": "integer",
+                    "description": "Relative Humidity as a percentage (%)",
+                    "example": 85
+                },
+                "dewpt": {
+                    "type": "number",
+                    "description": "Dew point (Default Celcius)",
+                    "example": -1.5
+                },
+                "temp": {
+                    "type": "number",
+                    "description": "Temperature (Default Celcius)",
+                    "example": -1.2
+                },
+                "app_temp": {
+                    "type": "number",
+                    "description": "Apparent Temperature or Wind Chill/Heat Index (Default Celcius)",
+                    "example": -1.5
+                },
+                "wind_spd": {
+                    "type": "number",
+                    "description": "Wind Speed (Default m/s)",
+                    "example": 14.7
+                },
+                "wind_gust_spd": {
+                    "type": "number",
+                    "description": "Wind Gust Speed - Default (m/s)",
+                    "example": 16.85
+                },
+                "wind_dir": {
+                    "type": "integer",
+                    "description": "Wind direction (Degrees)",
+                    "example": 325
+                },
+                "uv": {
+                    "type": "number",
+                    "description": "UV Index (1-11+)",
+                    "example": 4
+                },
+                "solar_rad": {
+                    "type": "number",
+                    "description": "Estimated solar radiation (W/m^2)",
+                    "example":300
+                },
+                "ghi": {
+                    "type": "number",
+                    "description": "Global horizontal solar irradiance (W/m^2)",
+                    "example":1500
+                },
+                "dhi": {
+                    "type": "number",
+                    "description": "Diffuse normal solar irradiance (W/m^2)",
+                    "example":200
+                },
+                "dni": {
+                    "type": "number",
+                    "description": "Direct normal solar irradiance (W/m^2)",
+                    "example":400
+                },
+                "elev_angle": {
+                    "type": "number",
+                    "description": "Solar elevation angle (Degrees)",
+                    "example": 27.5
+                },
+                "azimuth": {
+                    "type": "number",
+                    "description": "Solar azimuth angle (Degrees)",
+                    "example": 40.5
+                },
+                "vis": {
+                    "type": "number",
+                    "description": "Visibility (KM)",
+                    "example": 10
+                },
+                "pod": {
+                    "type": "string",
+                    "description": "Part of the day (d = day, n = night)",
+                    "example":"n"
+                },
+                "weather": {
+                    "type": "object",
+                    "properties": {
+                        "icon": {
+                            "type": "string",
+                            "description": "Icon code for forecast image display",
+                            "example":"s01n"
+                        },
+                        "code": {
+                            "type": "integer",
+                            "description": "Weather Condition code",
+                            "example":601
+                        },
+                        "description": {
+                            "type": "string",
+                            "description": "Weather Condition description",
+                            "example":"Light Snow"
+                        }
+                    }
+                },
+                "clouds": {
+                    "type": "integer",
+                    "description": "Cloud Cover 0-100 (%)",
+                    "example": 50
+                },
+                "precip_rate": {
+                    "type": "number",
+                    "description": "Liquid equivalent precipitation rate - Default (mm/hr)",
+                    "example": 3
+                },
+                "snow_rate": {
+                    "type": "number",
+                    "description": "Snowfall Rate - Default (mm/hr)",
+                    "example": 30
+                }
+            }
+        },
+        "HistoryDayObj": {
+            "type": "object",
+            "properties": {
+                "datetime": {
+                    "type": "string",
+                    "description": "Date in format \"YYYY-MM-DD\". All datetime is in (UTC)",
+                    "example":"2015-01-03"
+                },
+                "ts": {
+                    "type": "integer",
+                    "description": "Unix timestamp of datetime (Midnight UTC)",
+                    "example": 1501970516
+                },
+                "revision_status": {
+                    "type": "string",
+                    "description": "Data revision status (interim or final)",
+                    "example":"final"
+                },
+                "slp": {
+                    "type": "number",
+                    "description": "Average sea level pressure (mb)",
+                    "example": 1020.1
+                },
+                "pres": {
+                    "type": "number",
+                    "description": "Average pressure (mb)",
+                    "example": 885.1
+                },
+                "rh": {
+                    "type": "number",
+                    "description": "Average relative humidity as a percentage (%)",
+                    "example": 85
+                },
+                "dewpt": {
+                    "type": "number",
+                    "description": "Average dewpoint - Default (C)",
+                    "example": -1.5
+                },
+                "temp": {
+                    "type": "number",
+                    "description": "Average temperature - Default (C)",
+                    "example": 1.0
+                },
+                "max_temp": {
+                    "type": "number",
+                    "description": "Max temperature - Default (C)",
+                    "example": 1.5
+                },
+                "max_temp_ts": {
+                    "type": "number",
+                    "description": "Time of max memperature - Unix Timestamp",
+                    "example": 1501970816
+                },
+                "min_temp": {
+                    "type": "number",
+                    "description": "Min temperature - Default (C)",
+                    "example": 11.7
+                },
+                "min_temp_ts": {
+                    "type": "number",
+                    "description": "Time of max temperature - unix timestamp",
+                    "example": 1501970516
+                },
+                "wind_spd": {
+                    "type": "number",
+                    "description": "Average wind speed - default (m/s)",
+                    "example": 14.98
+                },
+                "wind_dir": {
+                    "type": "integer",
+                    "description": "Average wind direction (degrees)",
+                    "example": 325
+                },
+                "wind_gust_spd": {
+                    "type": "number",
+                    "description": "Wind gust speed - default (m/s)",
+                    "example": 40.98
+                },
+                "max_wind_spd": {
+                    "type": "number",
+                    "description": "Max 2min Wind Speed - default (m/s)",
+                    "example": 19.98
+                },
+                "max_wind_dir": {
+                    "type": "integer",
+                    "description": "Direction of wind at time of max 2min wind (degrees)",
+                    "example": 325
+                },
+                "max_wind_spd_ts": {
+                    "type": "number",
+                    "description": "Time of max 2min wind - unix timestamp",
+                    "example": 1501970516
+                },
+                "ghi": {
+                    "type": "integer",
+                    "description": "Average hourly global horizontal solar irradiance (W/m^2)",
+                    "example": 125
+                },
+                "t_ghi": {
+                    "type": "integer",
+                    "description": "Total global horizontal solar irradiance (W/m^2)",
+                    "example": 4500
+                },
+                "dni": {
+                    "type": "integer",
+                    "description": "Average direct normal solar irradiance (W/m^2)",
+                    "example": 125
+                },
+                "t_dni": {
+                    "type": "integer",
+                    "description": "Total direct normal solar irradiance (W/m^2)",
+                    "example": 4500
+                },
+                "dhi": {
+                    "type": "integer",
+                    "description": "Average hourly diffuse horizontal solar irradiance (W/m^2)",
+                    "example": 125
+                },
+                "t_dhi": {
+                    "type": "integer",
+                    "description": "Total diffuse horizontal solar irradiance (W/m^2)",
+                    "example": 4500
+                },
+                "max_uv": {
+                    "type": "number",
+                    "description": "Max UV Index (1-11+)",
+                    "example": 6
+                },
+                "precip": {
+                    "type": "number",
+                    "description": "Liquid equivalent precipitation - default (mm)",
+                    "example": 3
+                },
+                "precip_gpm": {
+                    "type": "number",
+                    "description": "Satellite estimated liquid equivalent precipitation - default (mm)",
+                    "example": 3
+                },
+                "snow": {
+                    "type": "number",
+                    "description": "Snowfall - default (mm)",
+                    "example": 30
+                },
+                "snow_depth": {
+                    "type": ["number", "null"],
+                    "description": "Snow Depth - default (mm)",
+                    "example": 60,
+                    "nullable": true
+                }
+            }
+        },
+        "NormalsObj": {
+            "type": "object",
+            "properties": {
+                "day": {
+                    "type": ["number", "null"],
+                    "description": "Day number",
+                    "example":5,
+                    "nullable": true
+                },
+                "month": {
+                    "type": "number",
+                    "description": "Month number",
+                    "example":2
+                },
+                "hour": {
+                    "type": ["number", "null"],
+                    "description": "Hour number",
+                    "example":23,
+                    "nullable": true
+                },
+                "temp": {
+                    "type": "number",
+                    "description": "Average temperature",
+                    "example": 30.0
+                },
+                "dewpt": {
+                    "type": "number",
+                    "description": "Average dew point",
+                    "example": 25.0
+                },
+                "max_wind_spd": {
+                    "type": "number",
+                    "description": "Maximum wind speed",
+                    "example": 5.0
+                },
+                "min_wind_spd": {
+                    "type": "number",
+                    "description": "Minimum wind speed",
+                    "example": 0.0
+                },
+                "wind_spd": {
+                    "type": "number",
+                    "description": "Average wind speed",
+                    "example": 2.0
+                },
+                "wind_dir": {
+                    "type": "number",
+                    "description": "Average wind direction",
+                    "example": 200.0
+                },
+                "precip": {
+                    "type": "number",
+                    "description": "Average Liquid equivalent precipitation - Default (mm)",
+                    "example": 3.1
+                },
+                "snow": {
+                    "type": "number",
+                    "description": "Average Snowfall - Default (mm)",
+                    "example": 30.5
+                }
+            }
+        },
+        "Normals": {
+            "type": "object",
+            "properties": {
+                "timezone": {
+                    "type": "string",
+                    "description": "Local IANA time zone",
+                    "example":"America/New_York"
+                },
+                "sources": {
+                    "type": "array",
+                    "description": "List of data sources used in response",
+                    "items": {
+                        "type": "string",
+                        "example": "era5"
+                    }
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/NormalsObj"
+                    }
+                }
+            }
+        },
+        "ForecastDay": {
+            "type": "object",
+            "properties": {
+                "city_name": {
+                    "type": "string",
+                    "description": "City Name",
+                    "example":"Raleigh"
+                },
+                "state_code": {
+                    "type": "string",
+                    "description": "State Abbreviation",
+                    "example":"NC"
+                },
+                "country_code": {
+                    "type": "string",
+                    "description": "Country Abbreviation",
+                    "example":"US"
+                },
+                "lat": {
+                    "type": "number",
+                    "description": "Latitude",
+                    "example":38.25
+                },
+                "lon": {
+                    "type": "number",
+                    "description": "Longitude",
+                    "example":-78.00
+                },
+                "timezone": {
+                    "type": "string",
+                    "description": "Local IANA time zone",
+                    "example":"America/New_York"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Forecast"
+                    }
+                }
+            }
+        },
+        "ForecastHourly": {
+            "type": "object",
+            "properties": {
+                "city_name": {
+                    "type": "string",
+                    "description": "City Name",
+                    "example":"Raleigh"
+                },
+                "state_code": {
+                    "type": "string",
+                    "description": "State Abbreviation",
+                    "example":"NC"
+                },
+                "country_code": {
+                    "type": "string",
+                    "description": "Country Abbreviation",
+                    "example":"US"
+                },
+                "lat": {
+                    "type": "number",
+                    "description": "Latitude",
+                    "example":38.25
+                },
+                "lon": {
+                    "type": "number",
+                    "description": "Longitude",
+                    "example":-78.00
+                },
+                "timezone": {
+                    "type": "string",
+                    "description": "Local IANA time zone",
+                    "example":"America/New_York"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ForecastHour"
+                    }
+                }
+            }
+        },
+
+        "AQCurrent": {
+            "type": "object",
+            "properties": {
+                "aqi": {
+                    "type": "integer",
+                    "description": "Cloud cover as a percentage (%)",
+                    "example": 100
+                },
+                "so2": {
+                    "type": "number",
+                    "description": "Concentration of SO2 (µg/m³)",
+                    "example": 50
+                },
+                "no2": {
+                    "type": "number",
+                    "description": "Concentration of NO2 (µg/m³)",
+                    "example": 25.0
+                },
+                "o3": {
+                    "type": "number",
+                    "description": "Concentration of O3 (µg/m³)",
+                    "example": 2
+                },
+                "pm25": {
+                    "type": "number",
+                    "description": "Concentration of PM 2.5 (µg/m³)",
+                    "example": 230
+                },
+                "pm10": {
+                    "type": "number",
+                    "description": "Concentration of PM 10 (µg/m³)",
+                    "example": 150
+                }   
+            }
+        },
+        "AQCurrentGroup": {
+            "type": "object",
+            "properties": {
+                "city_name": {
+                    "type": "string",
+                    "description": "City Name",
+                    "example":"Raleigh"
+                },
+                "state_code": {
+                    "type": "string",
+                    "description": "State Abbreviation",
+                    "example":"NC"
+                },
+                "country_code": {
+                    "type": "string",
+                    "description": "Country Abbreviation",
+                    "example":"US"
+                },
+                "lat": {
+                    "type": "number",
+                    "description": "Latitude",
+                    "example":38.25
+                },
+                "lon": {
+                    "type": "number",
+                    "description": "Longitude",
+                    "example":-78.00
+                },
+                "timezone": {
+                    "type": "string",
+                    "description": "Local IANA time zone",
+                    "example":"America/New_York"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/AQCurrent"
+                    }
+                }
+            }
+        },
+
+        "AQHour": {
+            "type": "object",
+            "properties": {
+                "ts": {
+                    "type": "number",
+                    "description": "Unix Timestamp",
+                    "example":"1551718800"
+                },
+                "timestamp_local": {
+                    "type": "string",
+                    "description": "Timestamp in local time",
+                    "example":"2019-03-04T12:00:00"
+                },
+                "timestamp_utc": {
+                    "type": "string",
+                    "description": "Timestamp UTC",
+                    "example":"2019-03-04T17:00:00"
+                },
+                "aqi": {
+                    "type": "integer",
+                    "description": "Cloud cover as a percentage (%)",
+                    "example": 100
+                },
+                "so2": {
+                    "type": "number",
+                    "description": "Concentration of SO2 (µg/m³)",
+                    "example": 50
+                },
+                "no2": {
+                    "type": "number",
+                    "description": "Concentration of NO2 (µg/m³)",
+                    "example": 25.0
+                },
+                "o3": {
+                    "type": "number",
+                    "description": "Concentration of O3 (µg/m³)",
+                    "example": 2
+                },
+                "pm25": {
+                    "type": "number",
+                    "description": "Concentration of PM 2.5 (µg/m³)",
+                    "example": 230
+                },
+                "pm10": {
+                    "type": "number",
+                    "description": "Concentration of PM 10 (µg/m³)",
+                    "example": 150
+                }   
+            }
+        },
+        "AQHourly": {
+            "type": "object",
+            "properties": {
+                "city_name": {
+                    "type": "string",
+                    "description": "City Name",
+                    "example":"Raleigh"
+                },
+                "state_code": {
+                    "type": "string",
+                    "description": "State Abbreviation",
+                    "example":"NC"
+                },
+                "country_code": {
+                    "type": "string",
+                    "description": "Country Abbreviation",
+                    "example":"US"
+                },
+                "lat": {
+                    "type": "number",
+                    "description": "Latitude",
+                    "example":38.25
+                },
+                "lon": {
+                    "type": "number",
+                    "description": "Longitude",
+                    "example":-78.00
+                },
+                "timezone": {
+                    "type": "string",
+                    "description": "Local IANA time zone",
+                    "example":"America/New_York"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/AQHour"
+                    }
+                }
+            }
+        },
+        "FCMinutelyOb": {
+            "type": "object",
+            "properties": {
+                "timestamp_utc": {
+                    "type": "string",
+                    "description": "Full time (UTC) of forecast point (YYYY-MM-DD HH:MM)",
+                    "example":"2017-03-15 13:11"
+                },
+                "timestamp_local": {
+                    "type": "string",
+                    "description": "Full local time of forecast point (YYYY-MM-DD HH:MM)",
+                    "example":"2017-03-15 13:11"
+                },
+                "ts": {
+                    "type": "number",
+                    "description": "Unix Timestamp",
+                    "example":"1551718800"
+                },
+                "precip": {
+                    "type": "number",
+                    "description": "Precipitation rate - Default (mm/hr)",
+                    "example": 2
+                },
+                "temp": {
+                    "type": "number",
+                    "description": "Temperature - Default (C)",
+                    "example": 13.85
+                },
+                "snow": {
+                    "type": "number",
+                    "description": "Snowfall rate - Default (mm/hr)",
+                    "example": 10
+                }
+            }
+        },
+        "FCMinutely": {
+            "type": "object",
+            "properties": {
+                "city_name": {
+                    "type": "string",
+                    "description": "City Name",
+                    "example":"Raleigh"
+                },
+                "state_code": {
+                    "type": "string",
+                    "description": "State Abbreviation",
+                    "example":"NC"
+                },
+                "country_code": {
+                    "type": "string",
+                    "description": "Country Abbreviation",
+                    "example":"US"
+                },
+                "lat": {
+                    "type": "number",
+                    "description": "Latitude",
+                    "example":38.25
+                },
+                "lon": {
+                    "type": "number",
+                    "description": "Longitude",
+                    "example":-78.00
+                },
+                "timezone": {
+                    "type": "string",
+                    "description": "Local IANA time zone",
+                    "example":"America/New_York"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/FCMinutelyOb"
+                    }
+                }
+            }
+        },
+        "CurrentObs": {
+            "type": "object",
+            "properties": {
+                "city_name": {
+                    "type": "string",
+                    "description": "City name (closest)",
+                    "example":"Raleigh"
+                },
+                "state_code": {
+                    "type": "string",
+                    "description": "State abbreviation",
+                    "example":"NC"
+                },
+                "country_code": {
+                    "type": "string",
+                    "description": "Country abbreviation",
+                    "example":"US"
+                },
+                "timezone": {
+                    "type": "string",
+                    "description": "Local IANA time zone",
+                    "example":"America/New_York"
+                },
+                "lat": {
+                    "type": "number",
+                    "description": "Latitude",
+                    "example": 38.00
+                },
+                "lon": {
+                    "type": "number",
+                    "description": "Longitude",
+                    "example": -78.25
+                },
+                "station": {
+                    "type": "string",
+                    "description": "Source Station ID",
+                    "example":"KRDU"
+                },
+
+                "sources": {
+                    "type": "array",
+                    "description": "List of data sources used in response",
+                    "items": {
+                        "type": "string",
+                        "example": "rtma"
+                    }
+                },
+                
+                "vis": {
+                    "type": "integer",
+                    "description": "Visibility - default (M)",
+                    "example": 10000
+                },
+                "rh": {
+                    "type": "integer",
+                    "description": "Relative humidity (%)",
+                    "example": 75
+                },
+                "dewpt": {
+                    "type": "number",
+                    "description": "Dew point temperature - default (C)",
+                    "example": 12.0
+                },
+                "wind_dir": {
+                    "type": "integer",
+                    "description": "Wind direction (degrees)",
+                    "example": 125
+                },
+                "wind_cdir": {
+                    "type": "string",
+                    "description": "Cardinal wind direction",
+                    "example":"ENE"
+                },
+                "wind_cdir_full": {
+                    "type": "string",
+                    "description": "Cardinal wind direction (text)",
+                    "example":"East-North-East"
+                },
+                "wind_speed": {
+                    "type": "number",
+                    "description": "Wind speed - Default (m/s)",
+                    "example": 5.85
+                },
+                "gust": {
+                    "type": ["number", "null"],
+                    "description": "Wind gust speed - Default (m/s)",
+                    "example": 9.0,
+                    "nullable": true
+                },
+                "temp": {
+                    "type": "number",
+                    "description": "Temperature - Default (C)",
+                    "example": 13.85
+                },
+                "app_temp": {
+                    "type": "number",
+                    "description": "Apparent temperature - Default (C)",
+                    "example": 14.85
+                },
+                "clouds": {
+                    "type": "integer",
+                    "description": "Cloud cover (%)",
+                    "example": 42
+                },
+                "weather": {
+                    "type": "object",
+                    "properties": {
+                        "icon": {
+                            "type": "string",
+                            "description": "Icon code for forecast image display",
+                            "example":"c02"
+                        },
+                        "code": {
+                            "type": "integer",
+                            "description": "Weather Condition code",
+                            "example": 802
+                        },
+                        "description": {
+                            "type": "string",
+                            "description": "Weather Condition description",
+                            "example":"Broken clouds"
+                        }
+                    }
+                },
+                "datetime": {
+                    "type": "string",
+                    "description": "Cycle Hour (UTC) of observation",
+                    "example":"2017-03-15:13"
+                },
+                "ob_time": {
+                    "type": "string",
+                    "description": "Full time (UTC) of observation (YYYY-MM-DD HH:MM)",
+                    "example":"2017-03-15 13:11"
+                },
+                "ts": {
+                    "type": "number",
+                    "description": "Unix Timestamp",
+                    "example": 1490990400
+                },
+                "sunrise": {
+                    "type": "string",
+                    "description": "Time (UTC) of Sunrise (HH:MM)",
+                    "example":"06:22"
+                },
+                "sunset": {
+                    "type": "string",
+                    "description": "Time (UTC) of Sunset (HH:MM)",
+                    "example":"19:34"
+                },
+                "slp": {
+                    "type": "number",
+                    "description": "Mean sea level pressure in millibars (mb)",
+                    "example": 1013.12
+                },
+                "pres": {
+                    "type": "number",
+                    "description": "Pressure (mb)",
+                    "example": 1010
+                },
+                "aqi": {
+                    "type": "number",
+                    "description": "Air quality index (US EPA standard 0 to +500)",
+                    "example": 50
+                },
+                "uv": {
+                    "type": "number",
+                    "description": "UV Index",
+                    "example": 6.5
+                },
+                "solar_rad": {
+                    "type": "number",
+                    "description": "Estimated solar radiation (W/m^2)",
+                    "example": 300.4
+                },
+                "ghi": {
+                    "type": "number",
+                    "description": "Global horizontal irradiance (W/m^2)",
+                    "example": 450.4
+                },
+                "dni": {
+                    "type": "number",
+                    "description": "Direct normal irradiance (W/m^2)",
+                    "example": 450.4
+                },
+                "dhi": {
+                    "type": "number",
+                    "description": "Diffuse horizontal irradiance (W/m^2)",
+                    "example": 450.4
+                },
+                "elev_angle": {
+                    "type": "number",
+                    "description": "Current solar elevation angle (Degrees)",
+                    "example": 37
+                },
+                "hour_angle": {
+                    "type": ["number", "null"],
+                    "description": "Current solar hour angle (Degrees)",
+                    "example": 45,
+                    "nullable": true
+                },
+                "pod": {
+                    "type":"string",
+                    "description": "Part of the day (d = day, n = night)"
+                },
+                "precip": {
+                    "type": "number",
+                    "description": "Precipitation in last hour - Default (mm)",
+                    "example": 2
+                },
+                "snow": {
+                    "type": "number",
+                    "description": "Snowfall in last hour - Default (mm)",
+                    "example": 10
+                }
+            }
+        },
+        "LightningObs": {
+            "type": "object",
+            "properties": {
+                "lat": {
+                    "type": "number",
+                    "description": "Latitude of lightning",
+                    "example": 36.00
+                },
+                "lon": {
+                    "type": "number",
+                    "description": "Longitude of lightning",
+                    "example": -78.25
+                },
+                "bearing_cardinal": {
+                    "type": "string",
+                    "description": "Cardinal direction of lightning relative to point",
+                    "example": "WSW"
+                },
+                "bearing_degrees": {
+                    "type": "integer",
+                    "description": "Direction of lightning relative to point in degrees",
+                    "example": 258
+                },
+                "distance_km": {
+                    "type": "number",
+                    "description": "Distance of lightning from point in kilometers",
+                    "example": 19.21
+                },
+                "distance_mi": {
+                    "type": "number",
+                    "description": "Distance of lightning from point in miles",
+                    "example": 11.94
+                },
+                "id": {
+                    "type": "integer",
+                    "description": "Internal identifier of lightning",
+                    "example": 61326
+                },
+                "timestamp_utc": {
+                    "type": "string",
+                    "description": "Timestamp of lightning at UTC timezone (YYYY-MM-DDTHH:MM:SS)",
+                    "example":"2024-08-17T15:35:52"
+                },
+                "timestamp_local": {
+                    "type": "string",
+                    "description": "Timestamp of lightning at local timezone (YYYY-MM-DDTHH:MM:SS)",
+                    "example":"2024-08-17T10:35:52"
+                },
+                "past_mins": {
+                    "type": "number",
+                    "description": "Amount of time passed since lightning lightning (in minutes).",
+                    "example":20.5
+                },
+                "type": {
+                    "type": "string",
+                    "description": "Type of lightning data",
+                    "example":"flash"
+                },
+                "source": {
+                    "type": "string",
+                    "description": "Source of lightning data",
+                    "example":"sat"
+                }
+            }
+        },
+        "CurrentObsGroup": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer",
+                    "description": "Count of found observations",
+                    "example":"1"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/CurrentObs"
+                    }
+                }
+            }
+        },
+        "LightningObsGroup": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer",
+                    "description": "Count of lightning events.",
+                    "example": 20
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Count of results in response (determined by limit parameter).",
+                    "example": 100
+                },
+                "lat": {
+                    "type": "number",
+                    "description": "Latitude of point.",
+                    "example":35.5
+                },
+                "lon": {
+                    "type": "number",
+                    "description": "Longitude of point.",
+                    "example":-78.5
+                },
+                "search_distance_km": {
+                    "type": "integer",
+                    "description": "Distance searched for lightning (radially) in KM.",
+                    "example": 100
+                },
+                "search_mins": {
+                    "type": "integer",
+                    "description": "Time backwards from current time searched for lightning.",
+                    "example": 15
+                },
+                "sort": {
+                    "type": "string",
+                    "description": "Ascending sort key of data (time or distance).",
+                    "example": "distance"
+                },
+                "lightning": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/LightningObs"
+                    }
+                }
+            }
+        },
+        "EnergyObsSeries": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string",
+                    "description": "Date",
+                    "example":"2018-06-01"
+                },
+                "cdd": {
+                    "type": "number",
+                    "description": "Cooling degree days",
+                    "example": 10
+                },  
+                "hdd": {
+                    "type": "number",
+                    "description": "Heating degree days",
+                    "example": 120
+                },    
+                "rh": {
+                    "type": "integer",
+                    "description": "Average Relative humidity (%)",
+                    "example": 75
+                },
+                "dewpt": {
+                    "type": "number",
+                    "description": "Average dew point temperature - Default (C)",
+                    "example": 12
+                },
+                "wind_dir": {
+                    "type": "integer",
+                    "description": "Average wind direction (Degrees)",
+                    "example": 125
+                },
+                "wind_spd": {
+                    "type": "number",
+                    "description": "Average wind speed - Default (m/s)",
+                    "example": 5.85
+                },
+                "temp": {
+                    "type": "number",
+                    "description": "Average temperature - Default (C)",
+                    "example": 13.85
+                },
+                "clouds": {
+                    "type": "integer",
+                    "description": "Average cloud cover (%)",
+                    "example": 42
+                },
+                "t_ghi": {
+                    "type": "number",
+                    "description": "Total global horizontal solar irradiance (W/m^2)",
+                    "example": 3000
+                },
+                "t_dhi": {
+                    "type": "number",
+                    "description": "Total diffuse horizontal solar irradiance (W/m^2)",
+                    "example": 450
+                },
+                "t_dni": {
+                    "type": "number",
+                    "description": "Total direct normal solar irradiance (W/m^2)",
+                    "example": 1200
+                },
+                "sun_hours": {
+                    "type": "number",
+                    "description": "Average number of daily sun hours - # hours where Solar GHI > 1000 W/m^2",
+                    "example": 4.5
+                },
+                "precip": {
+                    "type": "number",
+                    "description": "Total precipitation in period - Default (mm)",
+                    "example": 2
+                },
+                "snow": {
+                    "type": "number",
+                    "description": "Total snowfall in period - Default (mm)",
+                    "example": 10
+                }   
+            }
+        },
+        "EnergyObs": {
+            "type": "object",
+            "properties": {
+                "city_name": {
+                    "type": "string",
+                    "description": "City name (closest)",
+                    "example":"Raleigh"
+                },
+                "state_code": {
+                    "type": "string",
+                    "description": "State abbreviation",
+                    "example":"NC"
+                },
+                "country_code": {
+                    "type": "string",
+                    "description": "Country abbreviation",
+                    "example":"US"
+                },
+                "timezone": {
+                    "type": "string",
+                    "description": "Local IANA time zone",
+                    "example":"America/New_York"
+                },
+                "lat": {
+                    "type": "number",
+                    "description": "Latitude",
+                    "example":38.00
+                },
+                "lon": {
+                    "type": "number",
+                    "description": "Longitude",
+                    "example":-78.25
+                },
+                "station_id": {
+                    "type": "string",
+                    "description": "Nearest Station ID [DEPRECATED]",
+                    "example":"12345-999999"
+                },
+                "sources": {
+                    "type": "array",
+                    "description": "List of data sources used in response",
+                    "items": {
+                        "type": "string",
+                        "example": "12345-89083"
+                    }
+                },
+                "cdd": {
+                    "type": "number",
+                    "description": "Cooling degree days",
+                    "example": 10
+                },  
+                "hdd": {
+                    "type": "number",
+                    "description": "Heating degree days",
+                    "example": 120
+                },    
+                "rh": {
+                    "type": "integer",
+                    "description": "Average Relative humidity (%)",
+                    "example": 75
+                },
+                "dewpt": {
+                    "type": "number",
+                    "description": "Average dew point temperature - Default (C)",
+                    "example": 12
+                },
+                "wind_dir": {
+                    "type": "integer",
+                    "description": "Average wind direction (Degrees)",
+                    "example": 125
+                },
+                "wind_spd": {
+                    "type": "number",
+                    "description": "Average wind speed - Default (m/s)",
+                    "example": 5.85
+                },
+                "temp": {
+                    "type": "number",
+                    "description": "Average temperature - Default (C)",
+                    "example": 13.85
+                },
+                "clouds": {
+                    "type": "integer",
+                    "description": "Average cloud cover (%)",
+                    "example": 42
+                },
+                "t_ghi": {
+                    "type": "number",
+                    "description": "Total global horizontal solar irradiance (W/m^2)",
+                    "example": 3000
+                },
+                "t_dhi": {
+                    "type": "number",
+                    "description": "Total diffuse horizontal solar irradiance (W/m^2)",
+                    "example": 450
+                },
+                "t_dni": {
+                    "type": "number",
+                    "description": "Total direct normal solar irradiance (W/m^2)",
+                    "example": 1200
+                },
+                "sun_hours": {
+                    "type": "number",
+                    "description": "Average number of daily sun hours - # hours where Solar GHI > 1000 W/m^2",
+                    "example": 4.5
+                },
+                "precip": {
+                    "type": "number",
+                    "description": "Total precipitation in period - Default (mm)",
+                    "example": 2
+                },
+                "snow": {
+                    "type": "number",
+                    "description": "Total snowfall in period - Default (mm)",
+                    "example": 10
+                }   
+            }
+        },
+        "WeatherAlert": {
+            "type": "object",
+            "properties": {
+                "lat": {
+                    "type": "number",
+                    "description": "Latitude",
+                    "example": 38.00
+                },
+                "lon": {
+                    "type": "number",
+                    "description": "Longitude",
+                    "example": -78.25
+                },
+                "alerts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/WeatherAlertGroup"
+                    }
+                }
+            }
+        },
+        "WeatherAlertGroup": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "description": "Brief description of weather alert",
+                    "example":"Flood Warning issued February 8 at 8:51PM CST expiring February 12 at 8:24AM CST by NWS St Louis MO"
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Full description of weather alert",
+                    "example":"Mississippi River at Chester\n\n.This Flood Warning is a result of 1-2 inches of rainfall across\nthe basin earlier this week...\nThe Flood Warning continues for\nthe Mississippi River at Chester\n* until Tuesday morning.\n* At  8:30 PM Friday the stage was 26.8 feet.\n* Flood stage is 27.0 feet.\n* Minor flooding is forecast.\n* The river is forecast to rise above flood stage by tonight and to\ncrest near 29.0 feet by Saturday evening. The river is forecast to\nfall below flood stage by Monday morning.\n* Impact:  At 28.0 feet...Unleveed islands near Chester and the prison\nfarm floods.\n* Impact:  At 27.0 feet...Flood Stage.  Unprotected farmland on right\nbank begins to flood."
+                },
+                "severity": {
+                    "type": "string",
+                    "description": "Severity of weather. (Advisory | Watch | Warning)",
+                    "example":"Warning"
+                },
+                "effective_utc": {
+                    "type": "string",
+                    "description": "Issued time UTC",
+                    "example":"2019-02-09T02:51:00"
+                },
+                "effective_local": {
+                    "type": "string",
+                    "description": "Issued time local",
+                    "example":"2019-02-08T21:51:00"
+                },
+                "expires_utc": {
+                    "type": "string",
+                    "description": "Expiration time UTC",
+                    "example":"2019-02-10T02:51:00"
+                },
+                "expires_local": {
+                    "type": "string",
+                    "description": "Expiration time local",
+                    "example":"2019-02-09T21:51:00"
+                },
+                "uri": {
+                    "type": "string",
+                    "description": "URI to weather alert",
+                    "example":"https://api.weather.gov/alerts/NWS-IDP-PROD-3361975-2942026"
+                },
+                "alerts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/AlertRegionGroup"
+                    }
+                }
+                
+            }
+        },
+        "AlertRegionGroup": {
+            "type": "string",
+            "description": "List of impacted regions",
+            "example": "St Louis, MO"
+        },
+        "EnergyObsGroup": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer",
+                    "description": "Count of found observations",
+                    "example":"1"
+                },
+                "start_date": {
+                    "type": "integer",
+                    "description": "Start Date",
+                    "example":"2017-01-01"
+                },
+                "end_date": {
+                    "type": "integer",
+                    "description": "End Date",
+                    "example":"2017-01-30"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/EnergyObs"
+                    }
+                }
+            }
+        },
+        "EnergyObsGroupForecast": {
+            "type": "object",
+            "properties": {
+                "city_name": {
+                    "type": "string",
+                    "description": "City name (closest)",
+                    "example":"Raleigh"
+                },
+                "state_code": {
+                    "type": "string",
+                    "description": "State abbreviation",
+                    "example":"NC"
+                },
+                "country_code": {
+                    "type": "string",
+                    "description": "Country abbreviation",
+                    "example":"US"
+                },
+                "timezone": {
+                    "type": "string",
+                    "description": "Local IANA time zone",
+                    "example":"America/New_York"
+                },
+                "lat": {
+                    "type": "number",
+                    "description": "Latitude",
+                    "example":38.00
+                },
+                "lon": {
+                    "type": "number",
+                    "description": "Longitude",
+                    "example":-78.25
+                },
+                "threshold_units": {
+                    "type": "string",
+                    "description": "Degree day threshold units",
+                    "example":"C"
+                },
+                "threshold_value": {
+                    "type": "string",
+                    "description": "Degree day threshold",
+                    "example":"18"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/EnergyObsSeries"
+                    }
+                }
+            }
+        },
+        "History": {
+            "type": "object",
+            "properties": {
+                "city_name": {
+                    "type": "string",
+                    "description": "City name (Closest)",
+                    "example":"Seattle"
+                },
+                "state_code": {
+                    "type": "string",
+                    "description": "State abbreviation",
+                    "example":"WA"
+                },
+                "country_code": {
+                    "type": "string",
+                    "description": "Country abbreviation",
+                    "example":"US"
+                },
+                "timezone": {
+                    "type": "string",
+                    "description": "Local IANA time zone",
+                    "example":"America/New_York"
+                },
+                "lat": {
+                    "type": "number",
+                    "description": "Latitude",
+                    "example": 47.61
+                },
+                "lon": {
+                    "type": "number",
+                    "description": "Longitude",
+                    "example": -122.33
+                },
+                "sources": {
+                    "type": "array",
+                    "description": "List of data sources used in response",
+                    "items": {
+                        "type": "string",
+                        "example": "12345-89083"
+                    }
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/HistoryObj"
+                    }
+                }
+            }
+        },
+        "HistorySubhourly": {
+            "type": "object",
+            "properties": {
+                "city_name": {
+                    "type": "string",
+                    "description": "City name (Closest)",
+                    "example":"Seattle"
+                },
+                "state_code": {
+                    "type": "string",
+                    "description": "State abbreviation",
+                    "example":"WA"
+                },
+                "country_code": {
+                    "type": "string",
+                    "description": "Country abbreviation",
+                    "example":"US"
+                },
+                "timezone": {
+                    "type": "string",
+                    "description": "Local IANA time zone",
+                    "example":"America/New_York"
+                },
+                "lat": {
+                    "type": "number",
+                    "description": "Latitude",
+                    "example": 47.61
+                },
+                "lon": {
+                    "type": "number",
+                    "description": "Longitude",
+                    "example": -122.33
+                },
+                "sources": {
+                    "type": "array",
+                    "description": "List of data sources used in response",
+                    "items": {
+                        "type": "string",
+                        "example": "12345-89083"
+                    }
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/HistoryObj"
+                    }
+                }
+            }
+        },
+        "HistoryDay": {
+            "type": "object",
+            "properties": {
+                "city_name": {
+                    "type": "string",
+                    "description": "City name (Closest)",
+                    "example":"Seattle"
+                },
+                "state_code": {
+                    "type": "string",
+                    "description": "State abbreviation",
+                    "example":"WA"
+                },
+                "country_code": {
+                    "type": "string",
+                    "description": "Country abbreviation",
+                    "example":"US"
+                },
+                "timezone": {
+                    "type": "string",
+                    "description": "Local IANA time zone",
+                    "example":"America/New_York"
+                },
+                "lat": {
+                    "type": "number",
+                    "description": "Latitude",
+                    "example": 47.61
+                },
+                "lon": {
+                    "type": "number",
+                    "description": "Longitude",
+                    "example": -122.33
+                },
+                "sources": {
+                    "type": "array",
+                    "description": "List of data sources used in response",
+                    "items": {
+                        "type": "string",
+                        "example": "12345-89083"
+                    }
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/HistoryDayObj"
+                    }
+                }
+            }
+        },
+        "Error": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
