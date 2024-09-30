@@ -74,59 +74,29 @@ export class ApiRequestView {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>API Client</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; display: flex; height: 100vh; color: #e0e0e0; background-color: #1e1e1e; }
-        .sidebar { width: 200px; background-color: #252526; padding: 10px; }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; display: flex; height: 100vh; color: var(--vscode-foreground); background-color: var(--vscode-editor-background); }
         .main { flex-grow: 1; display: flex; flex-direction: column; }
-        .request-bar { display: flex; padding: 10px; background-color: #333333; }
+        .request-bar { display: flex; padding: 10px; background-color: var(--vscode-editor-background); }
         .content { display: flex; flex-grow: 1; }
         .request-panel { flex: 1; padding: 10px; display: flex; flex-direction: column; }
-        .response-panel { flex: 1; padding: 10px; background-color: #2d2d2d; }
-        select, input, button { margin-right: 5px; background-color: #3c3c3c; color: #e0e0e0; border: 1px solid #555; }
-        .collections { margin-top: 20px; }
-        .collection-item { cursor: pointer; padding: 5px; }
-        .collection-item:hover { background-color: #2a2a2a; }
+        .response-panel { flex: 1; padding: 10px; background-color: var(--vscode-editor-background); }
+        select, input, button { margin-right: 5px; background-color: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--vscode-input-border); }
         .tab { display: inline-block; padding: 5px 10px; cursor: pointer; }
-        .tab.active { border-bottom: 2px solid #007acc; }
+        .tab.active { border-bottom: 2px solid var(--vscode-focusBorder); }
         .tab-content { display: none; overflow-y: auto; }
         .tab-content.active { display: block; }
         #response { white-space: pre-wrap; }
         .params-table { width: 100%; border-collapse: collapse; }
-        .params-table th, .params-table td { border: 1px solid #555; padding: 5px; }
+        .params-table th, .params-table td { border: 1px solid var(--vscode-panel-border); padding: 5px; }
         .params-table input { width: 100%; box-sizing: border-box; }
         .params-section { margin-bottom: 10px; }
-        .main-container {
-            display: flex;
-            height: 100vh;
-        }
-        .request-panel {
-            flex: 1;
-            padding: 20px;
-            border-right: 1px solid var(--border-color);
-        }
-        .response-panel {
-            flex: 1;
-            padding: 20px;
-        }
-        .status-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            background-color: var(--tab-active);
-            border-bottom: 1px solid var(--border-color);
-        }
+        .main-container { display: flex; height: 100vh; }
+        .request-panel { flex: 1; padding: 20px; border-right: 1px solid var(--vscode-panel-border); }
+        .response-panel { flex: 1; padding: 20px; }
+        .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px; background-color: var(--vscode-statusBar-background); border-bottom: 1px solid var(--vscode-panel-border); }
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <div>
-            <button id="new-request">New Request</button>
-        </div>
-        <div class="collections">
-            <h3>Collections</h3>
-            <div id="collection-list"></div>
-        </div>
-    </div>
     <div class="main-container">
         <div class="request-panel">
             <div class="request-bar">
@@ -240,7 +210,6 @@ export class ApiRequestView {
             const url = document.getElementById('url').value;
             const headers = collectTableData('headers-table');
             const queryParams = collectTableData('query-params');
-            const formData = collectTableData('form-data');
             const body = document.getElementById('body-content').value;
             
             vscode.postMessage({ 
@@ -249,7 +218,6 @@ export class ApiRequestView {
                 url, 
                 headers, 
                 queryParams,
-                formData,
                 body 
             });
         });
@@ -259,25 +227,13 @@ export class ApiRequestView {
             const message = event.data;
             switch (message.command) {
                 case 'receiveResponse':
-                    document.getElementById('response-stats').textContent = \`Status: \${message.response.status} | Size: \${message.size} Bytes | Time: \${message.time} ms\`;
+                    document.getElementById('response-status').textContent = \`Status: \${message.response.status}\`;
+                    document.getElementById('response-time').textContent = \`Time: \${message.time} ms\`;
+                    document.getElementById('response-size').textContent = \`Size: \${message.size} Bytes\`;
                     document.getElementById('response').textContent = message.response.body;
                     document.getElementById('response-headers').textContent = JSON.stringify(message.response.headers, null, 2);
                     break;
             }
-        });
-
-        // New request button
-        document.getElementById('new-request').addEventListener('click', () => {
-            document.getElementById('url').value = '';
-            document.getElementById('body-content').value = '';
-            document.getElementById('response').textContent = '';
-            document.getElementById('response-headers').textContent = '';
-            document.getElementById('response-stats').textContent = '';
-            ['query-params', 'headers-table', 'form-data'].forEach(tableId => {
-                const table = document.getElementById(tableId);
-                table.querySelectorAll('tr:not(:first-child):not(:nth-child(2))').forEach(row => row.remove());
-                table.querySelector('tr:nth-child(2)').querySelectorAll('input').forEach(input => input.value = '');
-            });
         });
     </script>
 </body>
