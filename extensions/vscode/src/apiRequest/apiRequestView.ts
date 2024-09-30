@@ -90,6 +90,8 @@ export class ApiRequestView {
         .params-table input { width: 100%; box-sizing: border-box; }
         .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px; background-color: var(--vscode-statusBar-background); border-bottom: 1px solid var(--vscode-panel-border); }
         .placeholder { display: flex; justify-content: center; align-items: center; height: 100%; color: var(--vscode-descriptionForeground); }
+        .params-section { margin-top: 20px; }
+        .params-section h3 { margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -109,6 +111,7 @@ export class ApiRequestView {
             <div class="tabs request-tabs">
                 <span class="tab active" data-tab="query">Query</span>
                 <span class="tab" data-tab="headers">Headers</span>
+                <span class="tab" data-tab="auth">Auth</span>
                 <span class="tab" data-tab="body">Body</span>
             </div>
             <div id="query" class="tab-content request-tab-content active">
@@ -139,8 +142,38 @@ export class ApiRequestView {
                     </tr>
                 </table>
             </div>
+            <div id="auth" class="tab-content request-tab-content">
+                <!-- Add authentication options here -->
+                <select id="auth-type" style="margin-bottom: 10px;">
+                    <option value="none">No Auth</option>
+                    <option value="basic">Basic Auth</option>
+                    <option value="bearer">Bearer Token</option>
+                </select>
+                <div id="basic-auth" style="display: none;">
+                    <input type="text" id="username" placeholder="Username" style="width: 100%; margin-bottom: 5px;">
+                    <input type="password" id="password" placeholder="Password" style="width: 100%;">
+                </div>
+                <div id="bearer-auth" style="display: none;">
+                    <input type="text" id="token" placeholder="Token" style="width: 100%;">
+                </div>
+            </div>
             <div id="body" class="tab-content request-tab-content">
                 <textarea id="body-content" rows="10" style="width: 100%;"></textarea>
+                <div class="params-section">
+                    <h3>Form Data</h3>
+                    <table class="params-table" id="form-data">
+                        <tr>
+                            <th>Key</th>
+                            <th>Value</th>
+                            <th>Actions</th>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="Key"></td>
+                            <td><input type="text" placeholder="Value"></td>
+                            <td><button onclick="addRow(this, 'form-data')">+</button></td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
         <div class="response-panel">
@@ -213,13 +246,34 @@ export class ApiRequestView {
             return data;
         }
 
-        // Send request
+        // Auth type selection
+        document.getElementById('auth-type').addEventListener('change', function() {
+            document.getElementById('basic-auth').style.display = this.value === 'basic' ? 'block' : 'none';
+            document.getElementById('bearer-auth').style.display = this.value === 'bearer' ? 'block' : 'none';
+        });
+
+        // Modify the send request function to include auth and form data
         document.getElementById('send').addEventListener('click', () => {
             const method = document.getElementById('method').value;
             const url = document.getElementById('url').value;
             const headers = collectTableData('headers-table');
             const queryParams = collectTableData('query-params');
+            const formData = collectTableData('form-data');
             const body = document.getElementById('body-content').value;
+            
+            // Collect auth data
+            const authType = document.getElementById('auth-type').value;
+            let authData = {};
+            if (authType === 'basic') {
+                authData = {
+                    username: document.getElementById('username').value,
+                    password: document.getElementById('password').value
+                };
+            } else if (authType === 'bearer') {
+                authData = {
+                    token: document.getElementById('token').value
+                };
+            }
             
             document.getElementById('response-placeholder').style.display = 'none';
             document.getElementById('response-content').style.display = 'flex';
@@ -231,7 +285,12 @@ export class ApiRequestView {
                 url, 
                 headers, 
                 queryParams,
-                body 
+                formData,
+                body,
+                auth: {
+                    type: authType,
+                    data: authData
+                }
             });
         });
 
