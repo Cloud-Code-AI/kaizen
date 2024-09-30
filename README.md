@@ -75,7 +75,7 @@ Kaizen revolutionizes your development workflow with AI-powered automation:
 ## See Kaizen in Action
 
 <p align="center">
-  <a href="https://www.youtube.com/watch?v=280CfSQs2ss">
+  <a href="https://youtu.be/oIRQXnj2ZCE?si=bG6MHgskpYbpdoKv">
     <img src="https://img.youtube.com/vi/280CfSQs2ss/0.jpg" alt="Kaizen Introduction">
   </a>
 </p>
@@ -85,8 +85,11 @@ Kaizen revolutionizes your development workflow with AI-powered automation:
 Help us redefine what's possible in software development:
 
 ⭐ **Star the Repository**: Show your support and help us reach more developers.
+
 🤝 **Contribute**: Check out our [Contributing Guide](CONTRIBUTING.md) to get started.
-💬 **Join Discord**: Connect with us and fellow developers on our [Discord server](your-discord-link).
+
+💬 **Join Discord**: Connect with us and fellow developers on our [Discord server](https://discord.gg/W33Hh5yWpj).
+
 📣 **Spread the Word**: Share Kaizen with others who could benefit!
 
 Together, let's build the future of coding!
