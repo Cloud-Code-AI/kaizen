@@ -105,8 +105,17 @@ export class ApiRequestView {
             background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
             background-repeat: no-repeat;
             background-position: right 8px center;
-            padding-right: 30px; /* Increased padding on the right side */
+            padding-right: 30px;
+            font-weight: bold;
         }
+        .method-select option {
+            font-weight: bold;
+        }
+        .method-GET { color: #4CAF50; }
+        .method-POST { color: #FF9800; }
+        .method-PUT { color: #2196F3; }
+        .method-DELETE { color: #F44336; }
+        .method-PATCH { color: #9C27B0; }
         .url-input {
             flex-grow: 1;
             padding: 8px 12px;
@@ -145,11 +154,11 @@ export class ApiRequestView {
         <div class="request-panel">
             <div class="request-bar">
                 <select id="method" class="method-select">
-                    <option value="GET">GET</option>
-                    <option value="POST">POST</option>
-                    <option value="PUT">PUT</option>
-                    <option value="DELETE">DELETE</option>
-                    <option value="PATCH">PATCH</option>
+                    <option value="GET" class="method-GET">GET</option>
+                    <option value="POST" class="method-POST">POST</option>
+                    <option value="PUT" class="method-PUT">PUT</option>
+                    <option value="DELETE" class="method-DELETE">DELETE</option>
+                    <option value="PATCH" class="method-PATCH">PATCH</option>
                 </select>
                 <input type="text" id="url" class="url-input" placeholder="Enter URL">
                 <button id="send" class="send-button">Send</button>
@@ -242,6 +251,13 @@ export class ApiRequestView {
 
     <script>
         const vscode = acquireVsCodeApi();
+
+        const methodSelect = document.getElementById('method');
+        methodSelect.addEventListener('change', function() {
+            this.className = 'method-select method-' + this.value;
+        });
+        // Initialize the color
+        methodSelect.className = 'method-select method-' + methodSelect.value;
         
         // Tab switching for request panel
         document.querySelectorAll('.request-tabs .tab').forEach(tab => {
