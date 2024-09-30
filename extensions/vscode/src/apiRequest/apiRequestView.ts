@@ -110,12 +110,12 @@ export class ApiRequestView {
                 <input type="text" id="url" class="url-input" placeholder="Enter URL">
                 <button id="send" class="send-button">Send</button>
             </div>
-            <div class="tabs">
+            <div class="tabs request-tabs">
                 <span class="tab active" data-tab="query">Query</span>
                 <span class="tab" data-tab="headers">Headers</span>
                 <span class="tab" data-tab="body">Body</span>
             </div>
-            <div id="query" class="tab-content active">
+            <div id="query" class="tab-content request-tab-content active">
                 <table class="params-table" id="query-params">
                     <tr>
                         <th>Key</th>
@@ -129,7 +129,7 @@ export class ApiRequestView {
                     </tr>
                 </table>
             </div>
-            <div id="headers" class="tab-content">
+            <div id="headers" class="tab-content request-tab-content">
                 <table class="params-table" id="headers-table">
                     <tr>
                         <th>Key</th>
@@ -143,7 +143,7 @@ export class ApiRequestView {
                     </tr>
                 </table>
             </div>
-            <div id="body" class="tab-content">
+            <div id="body" class="tab-content request-tab-content">
                 <textarea id="body-content" rows="10" style="width: 100%;"></textarea>
             </div>
         </div>
@@ -153,23 +153,33 @@ export class ApiRequestView {
                 <span id="response-time"></span>
                 <span id="response-size"></span>
             </div>
-            <div class="tabs">
+            <div class="tabs response-tabs">
                 <span class="tab active" data-tab="response">Response</span>
                 <span class="tab" data-tab="response-headers">Headers</span>
             </div>
-            <div id="response" class="tab-content active"></div>
-            <div id="response-headers" class="tab-content"></div>
+            <div id="response" class="tab-content response-tab-content active"></div>
+            <div id="response-headers" class="tab-content response-tab-content"></div>
         </div>
     </div>
 
     <script>
         const vscode = acquireVsCodeApi();
         
-        // Tab switching
-        document.querySelectorAll('.tab').forEach(tab => {
+        // Tab switching for request panel
+        document.querySelectorAll('.request-tabs .tab').forEach(tab => {
             tab.addEventListener('click', () => {
                 const tabName = tab.getAttribute('data-tab');
-                document.querySelectorAll('.tab, .tab-content').forEach(el => el.classList.remove('active'));
+                document.querySelectorAll('.request-tabs .tab, .request-tab-content').forEach(el => el.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tabName).classList.add('active');
+            });
+        });
+
+        // Tab switching for response panel
+        document.querySelectorAll('.response-tabs .tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.getAttribute('data-tab');
+                document.querySelectorAll('.response-tabs .tab, .response-tab-content').forEach(el => el.classList.remove('active'));
                 tab.classList.add('active');
                 document.getElementById(tabName).classList.add('active');
             });
