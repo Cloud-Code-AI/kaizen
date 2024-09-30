@@ -1,12 +1,21 @@
 import * as vscode from 'vscode';
 import { ApiRequestProvider } from './apiRequest/apiRequestProvider';
 import { log } from './extension';
-
+import { ApiEndpoint } from './types';
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
   _doc?: vscode.TextDocument;
   private apiRequestProvider: ApiRequestProvider;
+  private apiEndpoints: ApiEndpoint[] = [
+    { method: 'GET', name: 'Welcome', lastUsed: '21 hours ago' },
+    { method: 'POST', name: 'Customer', lastUsed: '3 months ago' },
+    { method: 'GET', name: 'Update Account', lastUsed: '5 months ago' },
+    { method: 'POST', name: 'Get Orders', lastUsed: '4 months ago' },
+    { method: 'POST', name: 'Create Order', lastUsed: '5 months ago' },
+    { method: 'DELETE', name: 'Delete Order', lastUsed: '5 months ago' },
+  ];
+  private showEndpoints: boolean = false;
 
   constructor(private readonly _extensionUri: vscode.Uri, context: vscode.ExtensionContext) {
     this.apiRequestProvider = new ApiRequestProvider(context);
@@ -46,12 +55,19 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           break;
         }
         case "openApiManagement": {
-          log("Received openWebview event");
           if (!data.value) {
-            log("No value provided for openWebview");
             return;
           }
           this.openWebview(data.value);
+          break;
+        }
+        case "backButton": {
+          this.showEndpoints = false;
+          this.refresh();
+          break;
+        }
+        case "newRequest": {
+          this.openApiRequestView();
           break;
         }
       }
@@ -93,22 +109,40 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         <link href="${styleSidebarUri}" rel="stylesheet">
     </head>
     <body>
-      <div id="buttons">
-        <button class="webview-button" data-webview="apiManagement">API Management</button>
-        <button class="webview-button" data-webview="apiRequest">API Request</button>
-        <button class="webview-button" data-webview="chatRepo">Chat Repo</button>
-        <button class="webview-button" data-webview="documentation">Documentation</button>
-        <button class="webview-button" data-webview="testCase">Test Case</button>
-      </div>
-      <script nonce="${nonce}" src="${scriptUri}"></script>
-      <script nonce="${nonce}">
-        console.log('Script after sidebar.js');
-        window.onerror = function(message, source, lineno, colno, error) {
-          console.error('An error occurred:', message, 'at', source, lineno, colno, error);
-        };
-      </script>
+    ${this.showEndpoints 
+      ? `<button id="back-button">Back</button>${this.getEndpointsHtml()}`
+      : `<div id="buttons">
+           <button class="webview-button" data-webview="apiManagement">API Management</button>
+           <button class="webview-button" data-webview="apiRequest">API Request</button>
+           <button class="webview-button" data-webview="chatRepo">Chat Repo</button>
+           <button class="webview-button" data-webview="documentation">Documentation</button>
+           <button class="webview-button" data-webview="testCase">Test Case</button>
+         </div>`
+    }
+    <script nonce="${nonce}" src="${scriptUri}"></script>
     </body>
     </html>`;
+  }
+
+  private getEndpointsHtml() {
+    return `
+      <div id="sidebar-container">
+        <div id="collections-header">
+          <h3>Collections</h3>
+          <button id="new-request-btn">New Request</button>
+        </div>
+        <input type="text" id="filter-collections" placeholder="Filter collections">
+        <ul id="api-endpoints">
+          ${this.apiEndpoints.map(endpoint => `
+            <li class="api-endpoint ${endpoint.method.toLowerCase()}">
+              <span class="method">${endpoint.method}</span>
+              <span class="name">${endpoint.name}</span>
+              <span class="last-used">${endpoint.lastUsed}</span>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+    `;
   }
 
   private async openWebview(webviewType: string) {
@@ -116,6 +150,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       if (this.apiRequestProvider) {
         console.log("Opening API Request View");
         this.apiRequestProvider.openApiRequestView();
+        this.showEndpoints = true;
+        this.refresh();
       } else {
         console.error("apiRequestProvider is not initialized");
         vscode.window.showErrorMessage("API Management is not available");
@@ -132,6 +168,16 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       );
 
       panel.webview.html = await this.getWebviewContent(webviewType);
+    }
+  }
+
+  private openApiRequestView() {
+    if (this.apiRequestProvider) {
+      console.log("Opening API Request View");
+      this.apiRequestProvider.openApiRequestView();
+    } else {
+      console.error("apiRequestProvider is not initialized");
+      vscode.window.showErrorMessage("API Request is not available");
     }
   }
 

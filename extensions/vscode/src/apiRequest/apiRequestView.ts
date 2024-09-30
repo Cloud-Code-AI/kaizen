@@ -67,7 +67,7 @@ export class ApiRequestView {
 
     private getWebviewContent() {
         return `
-       <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -94,6 +94,27 @@ export class ApiRequestView {
         .params-table th, .params-table td { border: 1px solid #555; padding: 5px; }
         .params-table input { width: 100%; box-sizing: border-box; }
         .params-section { margin-bottom: 10px; }
+        .main-container {
+            display: flex;
+            height: 100vh;
+        }
+        .request-panel {
+            flex: 1;
+            padding: 20px;
+            border-right: 1px solid var(--border-color);
+        }
+        .response-panel {
+            flex: 1;
+            padding: 20px;
+        }
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: var(--tab-active);
+            border-bottom: 1px solid var(--border-color);
+        }
     </style>
 </head>
 <body>
@@ -106,85 +127,68 @@ export class ApiRequestView {
             <div id="collection-list"></div>
         </div>
     </div>
-    <div class="main">
-        <div class="request-bar">
-            <select id="method">
-                <option value="GET">GET</option>
-                <option value="POST">POST</option>
-                <option value="PUT">PUT</option>
-                <option value="DELETE">DELETE</option>
-                <option value="PATCH">PATCH</option>
-            </select>
-            <input type="text" id="url" placeholder="Enter URL" style="flex-grow: 1;">
-            <button id="send">Send</button>
+    <div class="main-container">
+        <div class="request-panel">
+            <div class="request-bar">
+                <select id="method" class="method-select">
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="DELETE">DELETE</option>
+                    <option value="PATCH">PATCH</option>
+                </select>
+                <input type="text" id="url" class="url-input" placeholder="Enter URL">
+                <button id="send" class="send-button">Send</button>
+            </div>
+            <div class="tabs">
+                <span class="tab active" data-tab="query">Query</span>
+                <span class="tab" data-tab="headers">Headers</span>
+                <span class="tab" data-tab="body">Body</span>
+            </div>
+            <div id="query" class="tab-content active">
+                <table class="params-table" id="query-params">
+                    <tr>
+                        <th>Key</th>
+                        <th>Value</th>
+                        <th>Actions</th>
+                    </tr>
+                    <tr>
+                        <td><input type="text" placeholder="Key"></td>
+                        <td><input type="text" placeholder="Value"></td>
+                        <td><button onclick="addRow(this, 'query-params')">+</button></td>
+                    </tr>
+                </table>
+            </div>
+            <div id="headers" class="tab-content">
+                <table class="params-table" id="headers-table">
+                    <tr>
+                        <th>Key</th>
+                        <th>Value</th>
+                        <th>Actions</th>
+                    </tr>
+                    <tr>
+                        <td><input type="text" placeholder="Key"></td>
+                        <td><input type="text" placeholder="Value"></td>
+                        <td><button onclick="addRow(this, 'headers-table')">+</button></td>
+                    </tr>
+                </table>
+            </div>
+            <div id="body" class="tab-content">
+                <textarea id="body-content" rows="10" style="width: 100%;"></textarea>
+            </div>
         </div>
-        <div class="content">
-            <div class="request-panel">
-                <div class="params-section">
-                    <h3>Query Params</h3>
-                    <table class="params-table" id="query-params">
-                        <tr>
-                            <th>Key</th>
-                            <th>Value</th>
-                            <th>Actions</th>
-                        </tr>
-                        <tr>
-                            <td><input type="text" placeholder="Key"></td>
-                            <td><input type="text" placeholder="Value"></td>
-                            <td><button onclick="addRow(this, 'query-params')">+</button></td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="tabs">
-                    <span class="tab active" data-tab="headers">Headers</span>
-                    <span class="tab" data-tab="body">Body</span>
-                    <span class="tab" data-tab="auth">Auth</span>
-                </div>
-                <div id="headers" class="tab-content active">
-                    <table class="params-table" id="headers-table">
-                        <tr>
-                            <th>Key</th>
-                            <th>Value</th>
-                            <th>Actions</th>
-                        </tr>
-                        <tr>
-                            <td><input type="text" placeholder="Key"></td>
-                            <td><input type="text" placeholder="Value"></td>
-                            <td><button onclick="addRow(this, 'headers-table')">+</button></td>
-                        </tr>
-                    </table>
-                </div>
-                <div id="body" class="tab-content">
-                    <textarea id="body-content" rows="10" style="width: 100%;"></textarea>
-                </div>
-                <div id="auth" class="tab-content">
-                    <!-- Add authentication options here -->
-                </div>
-                <div class="params-section">
-                    <h3>Form Data</h3>
-                    <table class="params-table" id="form-data">
-                        <tr>
-                            <th>Key</th>
-                            <th>Value</th>
-                            <th>Actions</th>
-                        </tr>
-                        <tr>
-                            <td><input type="text" placeholder="Key"></td>
-                            <td><input type="text" placeholder="Value"></td>
-                            <td><button onclick="addRow(this, 'form-data')">+</button></td>
-                        </tr>
-                    </table>
-                </div>
+        <div class="response-panel">
+            <div class="status-bar">
+                <span id="response-status"></span>
+                <span id="response-time"></span>
+                <span id="response-size"></span>
             </div>
-            <div class="response-panel">
-                <div id="response-stats"></div>
-                <div class="tabs">
-                    <span class="tab active" data-tab="response">Response</span>
-                    <span class="tab" data-tab="response-headers">Headers</span>
-                </div>
-                <div id="response" class="tab-content active"></div>
-                <div id="response-headers" class="tab-content"></div>
+            <div class="tabs">
+                <span class="tab active" data-tab="response">Response</span>
+                <span class="tab" data-tab="response-headers">Headers</span>
             </div>
+            <div id="response" class="tab-content active"></div>
+            <div id="response-headers" class="tab-content"></div>
         </div>
     </div>
 
