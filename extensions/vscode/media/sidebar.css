@@ -1,27 +1,155 @@
-#buttons {
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    margin: 0;
+    padding: 10px 0; /* Added top and bottom padding */
+    color: var(--vscode-foreground);
+    background-color: var(--vscode-sideBar-background);
+}
+
+#sidebar-container {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 10px;
-  }
-  
-  .webview-button {
-    width: 100%;
-    padding: 8px 12px;
-    text-align: left;
+    height: 100vh;
+}
+
+#collections-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background-color: var(--vscode-sideBarSectionHeader-background);
+    border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
+}
+
+#collections-header h3 {
+    margin: 0;
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--vscode-sideBarSectionHeader-foreground);
+}
+
+#new-request-btn {
     background-color: var(--vscode-button-background);
     color: var(--vscode-button-foreground);
     border: none;
-    border-radius: 2px;
+    border-radius: 3px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 500;
     cursor: pointer;
-    font-size: 14px;
+    display: flex;
+    align-items: center;
     transition: background-color 0.2s ease;
-  }
-  
-  .webview-button:hover {
+}
+
+#new-request-btn:hover {
     background-color: var(--vscode-button-hoverBackground);
-  }
-  
-  .webview-button:active {
-    background-color: var(--vscode-button-activeBackground);
-  }
+}
+
+#new-request-btn::before {
+    content: '+';
+    margin-right: 5px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+#filter-collections {
+    margin: 10px 16px; /* Increased margin */
+    padding: 6px 10px; /* Increased padding */
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border);
+    font-size: 12px;
+    width: calc(100% - 32px); /* Adjusted for increased margin */
+    box-sizing: border-box;
+}
+
+#api-endpoints {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+}
+
+.api-endpoint {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px; /* Increased padding */
+    cursor: pointer;
+}
+
+.api-endpoint:hover {
+    background-color: var(--vscode-list-hoverBackground);
+}
+
+.api-endpoint .method {
+    font-weight: bold;
+    margin-right: 10px; /* Increased margin */
+    font-size: 11px;
+    padding: 2px 6px; /* Increased padding */
+    border-radius: 3px;
+}
+
+.api-endpoint.get .method { background-color: #61affe; color: #fff; }
+.api-endpoint.post .method { background-color: #49cc90; color: #fff; }
+.api-endpoint.put .method { background-color: #fca130; color: #fff; }
+.api-endpoint.delete .method { background-color: #f93e3e; color: #fff; }
+.api-endpoint.patch .method { background-color: #50e3c2; color: #fff; }
+
+.api-endpoint .name {
+    flex-grow: 1;
+    font-size: 13px;
+    font-weight: 500; /* Made text slightly bolder */
+}
+
+.api-endpoint .last-used {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+}
+
+#buttons {
+    display: flex;
+    flex-direction: column;
+}
+
+.webview-button, #back-button {
+    background-color: transparent;
+    color: var(--vscode-sideBarTitle-foreground);
+    border: none;
+    padding: 10px 16px; /* Increased padding */
+    font-size: 13px;
+    font-weight: 500; /* Made text slightly bolder */
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color 0.2s ease;
+}
+
+.webview-button:hover, #back-button:hover {
+    background-color: var(--vscode-list-hoverBackground);
+}
+
+.webview-button:focus, #back-button:focus {
+    outline: none;
+    background-color: var(--vscode-list-focusBackground);
+}
+
+.webview-button.active {
+    background-color: var(--vscode-list-activeSelectionBackground);
+    color: var(--vscode-list-activeSelectionForeground);
+    font-weight: 600; /* Made active button text even bolder */
+}
+
+#back-button {
+    font-weight: 600; /* Made back button text bolder */
+    margin-bottom: 8px;
+    /* Removed border-bottom */
+}
+
+#back-button::before {
+    content: '←';
+    margin-right: 8px;
+}
