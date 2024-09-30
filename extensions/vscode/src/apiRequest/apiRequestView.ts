@@ -278,6 +278,17 @@ export class ApiRequestView {
             overflow-y: auto;
             border-left: 1px solid var(--vscode-panel-border); 
         }
+        /* Add these new styles for JSON formatting */
+        .json-formatter {
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .json-formatter .json-key { color: #7c7cbe; }
+        .json-formatter .json-string { color: #6a8759; }
+        .json-formatter .json-number { color: #6897bb; }
+        .json-formatter .json-boolean { color: #cc7832; }
+        .json-formatter .json-null { color: #cc7832; }
     </style>
 </head>
 <body>
@@ -506,7 +517,30 @@ export class ApiRequestView {
             });
         });
 
-        // Receive response
+        // Add this new function to format JSON
+        function formatJSON(json) {
+            if (typeof json !== 'string') {
+                json = JSON.stringify(json, null, 2);
+            }
+            return json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                    let cls = 'json-number';
+                    if (/^"/.test(match)) {
+                        if (/:$/.test(match)) {
+                            cls = 'json-key';
+                        } else {
+                            cls = 'json-string';
+                        }
+                    } else if (/true|false/.test(match)) {
+                        cls = 'json-boolean';
+                    } else if (/null/.test(match)) {
+                        cls = 'json-null';
+                    }
+                    return '<span class="' + cls + '">' + match + '</span>';
+                });
+        }
+
+        // Modify the receive response event listener
         window.addEventListener('message', event => {
             const message = event.data;
             switch (message.command) {
@@ -514,8 +548,18 @@ export class ApiRequestView {
                     document.getElementById('response-status').textContent = \`Status: \${message.response.status}\`;
                     document.getElementById('response-time').textContent = \`Time: \${message.time} ms\`;
                     document.getElementById('response-size').textContent = \`Size: \${message.size} Bytes\`;
-                    document.getElementById('response').textContent = message.response.body;
-                    document.getElementById('response-headers').textContent = JSON.stringify(message.response.headers, null, 2);
+                    
+                    // Format the response body if it's JSON
+                    let formattedBody = message.response.body;
+                    try {
+                        const jsonBody = JSON.parse(message.response.body);
+                        formattedBody = formatJSON(JSON.stringify(jsonBody, null, 2));
+                    } catch (e) {
+                        // If parsing fails, it's not JSON, so we'll display it as is
+                    }
+                    document.getElementById('response').innerHTML = \`<pre class="json-formatter">\${formattedBody}</pre>\`;
+                    
+                    document.getElementById('response-headers').innerHTML = \`<pre class="json-formatter">\${formatJSON(JSON.stringify(message.response.headers, null, 2))}</pre>\`;
                     break;
             }
         });
