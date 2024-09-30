@@ -263,6 +263,26 @@ export class ApiRequestView {
             border: 1px solid var(--vscode-input-border);
             border-radius: 3px;
         }
+        .main-container { 
+            display: flex; 
+            width: 100%; 
+            height: 100vh; 
+        }
+        .request-panel { 
+            flex: 3;  // Changed from 1 to 3
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            overflow-y: auto;
+        }
+        .response-panel { 
+            flex: 2;  // Changed from 1 to 2
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            overflow-y: auto;
+            border-left: 1px solid var(--vscode-panel-border); 
+        }
     </style>
 </head>
 <body>
