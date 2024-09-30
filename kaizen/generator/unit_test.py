@@ -30,6 +30,7 @@ class UnitTestOutput:
     usage: Dict[str, int]
     model_name: str
     cost: Dict[str, float]
+    scenarios: int
 
 
 class UnitTestGenerator:
@@ -64,6 +65,7 @@ class UnitTestGenerator:
         self.log_dir = "./.kaizen/logs"
         self.max_critique = 3
         self.enable_critique = False
+        self.test_scenarios = 0
         self._setup_directories()
 
     def _setup_directories(self):
@@ -115,6 +117,7 @@ class UnitTestGenerator:
             usage=self.total_usage,
             model_name=self.provider.model,
             cost={"prompt_cost": prompt_cost, "completion_cost": completion_cost},
+            scenarios=self.test_scenarios
         )
 
     def generate_tests(
@@ -228,6 +231,8 @@ class UnitTestGenerator:
         self.log_step(
             "Generated Test Scenario", f"Generated Test Scenario:\n{plan_response}"
         )
+        for _, v in plan_response.items():
+            self.test_scenarios += len(v)
         test_scenarios, count = self.format_test_scenarios(plan_response)
         print("• Generating AI tests...")
 
@@ -287,6 +292,7 @@ class UnitTestGenerator:
             NODE_TYPE=item["type"],
             NODE_NAME=item["name"],
             FULL_FILE_PATH=item["full_path"],
+            GLOBAL_DATA=item["imports"],
             TEST_SCENARIOS=test_scenarios,
         )
         return self.provider.chat_completion_with_retry(prompt, model="best")
