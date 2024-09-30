@@ -1,37 +1,40 @@
 import logging
 import pytest
-from unittest.mock import patch
 
-# Import the function to be tested
+# Assuming the function is in the module kaizen/llms/provider.py
 from kaizen.llms.provider import set_all_loggers_to_ERROR
 
 @pytest.fixture
 def setup_loggers():
-    # Setup a test environment with mock loggers
-    logger_names = ['test_logger_1', 'test_logger_2', 'test_placeholder']
-    loggers = {}
+    # Setup: Create some loggers with different levels
+    loggers = {
+        'logger1': logging.getLogger('logger1'),
+        'logger2': logging.getLogger('logger2'),
+        'logger3': logging.getLogger('logger3')
+    }
+    loggers['logger1'].setLevel(logging.DEBUG)
+    loggers['logger2'].setLevel(logging.INFO)
+    loggers['logger3'].setLevel(logging.WARNING)
     
-    for name in logger_names:
-        if name == 'test_placeholder':
-            loggers[name] = logging.PlaceHolder(name)
-        else:
-            loggers[name] = logging.getLogger(name)
-            loggers[name].setLevel(logging.INFO)  # Set initial level to INFO
+    yield loggers
     
-    return loggers
+    # Teardown: Reset loggers to default level (WARNING)
+    for logger in loggers.values():
+        logger.setLevel(logging.WARNING)
 
 def test_set_all_loggers_to_ERROR(setup_loggers):
-    with patch.dict(logging.Logger.manager.loggerDict, setup_loggers, clear=True):
-        set_all_loggers_to_ERROR()
-        
-        # Verify that all actual loggers are set to ERROR level
-        for name, logger in setup_loggers.items():
-            if isinstance(logger, logging.Logger):
-                assert logger.level == logging.ERROR, f"Logger {name} was not set to ERROR level"
-            else:
-                # Ensure PlaceHolder objects are not modified
-                assert isinstance(logger, logging.PlaceHolder), f"{name} should be a PlaceHolder"
+    # Test: Verify all existing loggers are set to ERROR level
+    set_all_loggers_to_ERROR()
+    
+    for name, logger in setup_loggers.items():
+        assert logger.level == logging.ERROR, f"Logger {name} not set to ERROR level"
 
-# Run the tests using pytest
-if __name__ == "__main__":
-    pytest.main()
+def test_no_loggers_present(monkeypatch):
+    # Edge Case: Handle scenario where no loggers are present
+    # Mock the loggerDict to simulate no loggers
+    monkeypatch.setattr(logging.Logger.manager, 'loggerDict', {})
+    
+    set_all_loggers_to_ERROR()
+    
+    # Verify no errors occur and loggerDict is still empty
+    assert logging.Logger.manager.loggerDict == {}, "LoggerDict should be empty"
