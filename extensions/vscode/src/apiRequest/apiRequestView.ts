@@ -76,16 +76,17 @@ export class ApiRequestView {
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; display: flex; height: 100vh; color: var(--vscode-foreground); background-color: var(--vscode-editor-background); }
         .main-container { display: flex; width: 100%; height: 100vh; }
-        .request-panel { 
-            flex: 2; 
-            padding: 10px; 
+        .request-panel, .response-panel { 
+            flex: 1; 
+            padding: 20px; 
             display: flex; 
             flex-direction: column; 
+            overflow-y: auto;
         }
-        .response-panel { flex: 1; padding: 20px; border-left: 1px solid var(--vscode-panel-border); display: flex; flex-direction: column; }
+        .response-panel { border-left: 1px solid var(--vscode-panel-border); }
         .request-bar { 
             display: flex; 
-            margin-bottom: 10px;
+            margin-bottom: 20px;
             background-color: var(--vscode-input-background);
             border: 1px solid var(--vscode-input-border);
             border-radius: 3px;
@@ -140,13 +141,128 @@ export class ApiRequestView {
         .tab-content { display: none; overflow-y: auto; flex-grow: 1; }
         .tab-content.active { display: block; }
         #response, #response-headers { white-space: pre-wrap; }
-        .params-table { width: 100%; border-collapse: collapse; }
-        .params-table th, .params-table td { border: 1px solid var(--vscode-panel-border); padding: 5px; }
-        .params-table input { width: 100%; box-sizing: border-box; }
-        .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px; background-color: var(--vscode-statusBar-background); border-bottom: 1px solid var(--vscode-panel-border); }
+        .params-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 12px;
+        }
+        .params-table th {
+            text-align: left;
+            padding: 8px 0;
+            color: var(--vscode-foreground);
+            opacity: 0.7;
+        }
+        .params-table td {
+            padding: 0;
+        }
+        .params-table input {
+            width: 100%;
+            padding: 8px;
+            background-color: var(--vscode-input-background);
+            color: var(--vscode-input-foreground);
+            border: none;
+            border-bottom: 1px solid var(--vscode-input-border);
+        }
+        .params-table input:focus {
+            outline: none;
+            border-bottom: 1px solid var(--vscode-focusBorder);
+        }
+        .action-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--vscode-button-foreground);
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+            width: 100%;
+            text-align: center;
+        }
+        .action-button:hover {
+            opacity: 1;
+        }
+        #auth-type {
+            width: 100%;
+            padding: 8px 12px;
+            margin-bottom: 15px;
+            background-color: var(--vscode-dropdown-background);
+            color: var(--vscode-dropdown-foreground);
+            border: none;
+            border-bottom: 1px solid var(--vscode-dropdown-border);
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            padding-right: 30px;
+        }
+        #basic-auth input, #bearer-auth input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            background-color: var(--vscode-input-background);
+            color: var(--vscode-input-foreground);
+            border: none;
+            border-bottom: 1px solid var(--vscode-input-border);
+        }
+        #basic-auth input:focus, #bearer-auth input:focus {
+            outline: none;
+            border-bottom: 1px solid var(--vscode-focusBorder);
+        }
+        .status-bar { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 10px 0; 
+            margin-bottom: 20px; 
+            border-bottom: 1px solid var(--vscode-panel-border); 
+        }
         .placeholder { display: flex; justify-content: center; align-items: center; height: 100%; color: var(--vscode-descriptionForeground); }
         .params-section { margin-top: 20px; }
         .params-section h3 { margin-bottom: 10px; }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--vscode-panel-border);
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 8px 16px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .tab:hover {
+            background-color: var(--vscode-list-hoverBackground);
+        }
+        .tab.active {
+            border-bottom: 2px solid var(--vscode-focusBorder);
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+            padding: 0 0 20px 0;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        #body-content {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            background-color: var(--vscode-input-background);
+            color: var(--vscode-input-foreground);
+            border: none;
+            border-bottom: 1px solid var(--vscode-input-border);
+            resize: vertical;
+        }
+        #response, #response-headers { 
+            white-space: pre-wrap; 
+            padding: 10px; 
+            background-color: var(--vscode-input-background);
+            border: 1px solid var(--vscode-input-border);
+            border-radius: 3px;
+        }
     </style>
 </head>
 <body>
@@ -172,63 +288,60 @@ export class ApiRequestView {
             <div id="query" class="tab-content request-tab-content active">
                 <table class="params-table" id="query-params">
                     <tr>
-                        <th>Key</th>
-                        <th>Value</th>
-                        <th>Actions</th>
+                        <th style="padding-left: 8px;">Key</th>
+                        <th style="padding-left: 8px;">Value</th>
+                        <th style="width: 30px;"></th>
                     </tr>
                     <tr>
                         <td><input type="text" placeholder="Key"></td>
                         <td><input type="text" placeholder="Value"></td>
-                        <td><button onclick="addRow(this, 'query-params')">+</button></td>
+                        <td><button class="action-button" onclick="addRow(this, 'query-params')">+</button></td>
                     </tr>
                 </table>
             </div>
             <div id="headers" class="tab-content request-tab-content">
                 <table class="params-table" id="headers-table">
                     <tr>
-                        <th>Key</th>
-                        <th>Value</th>
-                        <th>Actions</th>
+                        <th style="padding-left: 8px;">Key</th>
+                        <th style="padding-left: 8px;">Value</th>
+                        <th style="width: 30px;"></th>
                     </tr>
                     <tr>
                         <td><input type="text" placeholder="Key"></td>
                         <td><input type="text" placeholder="Value"></td>
-                        <td><button onclick="addRow(this, 'headers-table')">+</button></td>
+                        <td><button class="action-button" onclick="addRow(this, 'headers-table')">+</button></td>
                     </tr>
                 </table>
             </div>
             <div id="auth" class="tab-content request-tab-content">
-                <!-- Add authentication options here -->
-                <select id="auth-type" style="margin-bottom: 10px;">
+                <select id="auth-type">
                     <option value="none">No Auth</option>
                     <option value="basic">Basic Auth</option>
                     <option value="bearer">Bearer Token</option>
                 </select>
                 <div id="basic-auth" style="display: none;">
-                    <input type="text" id="username" placeholder="Username" style="width: 100%; margin-bottom: 5px;">
-                    <input type="password" id="password" placeholder="Password" style="width: 100%;">
+                    <input type="text" id="username" placeholder="Username">
+                    <input type="password" id="password" placeholder="Password">
                 </div>
                 <div id="bearer-auth" style="display: none;">
-                    <input type="text" id="token" placeholder="Token" style="width: 100%;">
+                    <input type="text" id="token" placeholder="Token">
                 </div>
             </div>
             <div id="body" class="tab-content request-tab-content">
-                <textarea id="body-content" rows="10" style="width: 100%;"></textarea>
-                <div class="params-section">
-                    <h3>Form Data</h3>
-                    <table class="params-table" id="form-data">
-                        <tr>
-                            <th>Key</th>
-                            <th>Value</th>
-                            <th>Actions</th>
-                        </tr>
-                        <tr>
-                            <td><input type="text" placeholder="Key"></td>
-                            <td><input type="text" placeholder="Value"></td>
-                            <td><button onclick="addRow(this, 'form-data')">+</button></td>
-                        </tr>
-                    </table>
-                </div>
+                <textarea id="body-content" rows="10"></textarea>
+                <h3>Form Data</h3>
+                <table class="params-table" id="form-data">
+                    <tr>
+                        <th style="padding-left: 8px;">Key</th>
+                        <th style="padding-left: 8px;">Value</th>
+                        <th style="width: 30px;"></th>
+                    </tr>
+                    <tr>
+                        <td><input type="text" placeholder="Key"></td>
+                        <td><input type="text" placeholder="Value"></td>
+                        <td><button class="action-button" onclick="addRow(this, 'form-data')">+</button></td>
+                    </tr>
+                </table>
             </div>
         </div>
         <div class="response-panel">
@@ -279,18 +392,19 @@ export class ApiRequestView {
             });
         });
 
-        // Add row to table
+        // Modify addRow function
         function addRow(button, tableId) {
             const table = document.getElementById(tableId);
             const row = button.closest('tr');
             const newRow = row.cloneNode(true);
             newRow.querySelectorAll('input').forEach(input => input.value = '');
+            const actionButton = newRow.querySelector('.action-button');
+            actionButton.textContent = '-';
+            actionButton.onclick = function() { removeRow(this); };
             table.appendChild(newRow);
-            button.textContent = '-';
-            button.onclick = function() { removeRow(this); };
         }
 
-        // Remove row from table
+        // Modify removeRow function
         function removeRow(button) {
             button.closest('tr').remove();
         }
