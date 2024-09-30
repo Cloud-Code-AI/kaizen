@@ -287,6 +287,7 @@ class UnitTestGenerator:
             NODE_TYPE=item["type"],
             NODE_NAME=item["name"],
             FULL_FILE_PATH=item["full_path"],
+            GLOBAL_DATA=item["imports"],
             TEST_SCENARIOS=test_scenarios,
         )
         return self.provider.chat_completion_with_retry(prompt, model="best")
