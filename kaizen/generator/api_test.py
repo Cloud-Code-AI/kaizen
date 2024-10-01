@@ -196,3 +196,4 @@ class APITestGenerator:
     def update_usage(self, usage):
         self.total_usage = self.provider.update_usage(self.total_usage, usage)
         print(f"@ Token usage: current_step: {usage}, total: {self.total_usage}")
+        
