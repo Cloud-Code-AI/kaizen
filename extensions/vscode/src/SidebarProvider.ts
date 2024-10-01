@@ -7,7 +7,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
   _doc?: vscode.TextDocument;
   private apiRequestProvider: ApiRequestProvider;
-  private apiEndpoints: ApiEndpoint[] = [
+  private apiHistory: ApiEndpoint[] = [
     { method: 'GET', name: 'Welcome', lastUsed: '21 hours ago' },
     { method: 'POST', name: 'Customer', lastUsed: '3 months ago' },
     { method: 'GET', name: 'Update Account', lastUsed: '5 months ago' },
@@ -15,7 +15,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     { method: 'POST', name: 'Create Order', lastUsed: '5 months ago' },
     { method: 'DELETE', name: 'Delete Order', lastUsed: '5 months ago' },
   ];
-  private showEndpoints: boolean = false;
+  private showHistory: boolean = false;
 
   constructor(private readonly _extensionUri: vscode.Uri, context: vscode.ExtensionContext) {
     this.apiRequestProvider = new ApiRequestProvider(context);
@@ -62,7 +62,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           break;
         }
         case "backButton": {
-          this.showEndpoints = false;
+          this.showHistory = false;
           this.refresh();
           break;
         }
@@ -109,8 +109,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         <link href="${styleSidebarUri}" rel="stylesheet">
     </head>
     <body>
-    ${this.showEndpoints 
-      ? `<button id="back-button">Back</button>${this.getEndpointsHtml()}`
+    ${this.showHistory 
+      ? `<button id="back-button">Back</button>${this.getHistoryHtml()}`
       : `<div id="buttons">
            <button class="webview-button" data-webview="apiManagement">API Management</button>
            <button class="webview-button" data-webview="apiRequest">API Request</button>
@@ -124,16 +124,16 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     </html>`;
   }
 
-  private getEndpointsHtml() {
+  private getHistoryHtml() {
     return `
       <div id="sidebar-container">
-        <div id="collections-header">
-          <h3>Collections</h3>
+        <div id="history-header">
+          <h3>API History</h3>
           <button id="new-request-btn">New Request</button>
         </div>
-        <input type="text" id="filter-collections" placeholder="Filter collections">
-        <ul id="api-endpoints">
-          ${this.apiEndpoints.map(endpoint => `
+        <input type="text" id="filter-history" placeholder="Filter history">
+        <ul id="api-history">
+          ${this.apiHistory.map(endpoint => `
             <li class="api-endpoint ${endpoint.method.toLowerCase()}">
               <span class="method">${endpoint.method}</span>
               <span class="name">${endpoint.name}</span>
@@ -150,7 +150,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       if (this.apiRequestProvider) {
         console.log("Opening API Request View");
         this.apiRequestProvider.openApiRequestView();
-        this.showEndpoints = true;
+        this.showHistory = true;
         this.refresh();
       } else {
         console.error("apiRequestProvider is not initialized");

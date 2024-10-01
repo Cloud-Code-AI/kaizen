@@ -289,6 +289,48 @@ export class ApiRequestView {
         .json-formatter .json-number { color: #6897bb; }
         .json-formatter .json-boolean { color: #cc7832; }
         .json-formatter .json-null { color: #cc7832; }
+        .history-panel {
+            flex: 1;
+            padding: 20px;
+            border-right: 1px solid var(--vscode-panel-border);
+            overflow-y: auto;
+        }
+        #history-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .history-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            cursor: pointer;
+            border-bottom: 1px solid var(--vscode-panel-border);
+        }
+        .history-item:hover {
+            background-color: var(--vscode-list-hoverBackground);
+        }
+        .history-item .method {
+            font-weight: bold;
+            margin-right: 10px;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        .history-item .url {
+            flex-grow: 1;
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .history-item .status {
+            margin-right: 10px;
+            font-size: 12px;
+        }
+        .history-item .time {
+            font-size: 11px;
+            color: var(--vscode-descriptionForeground);
+        }
     </style>
 </head>
 <body>
@@ -376,6 +418,10 @@ export class ApiRequestView {
                     </table>
                 </div>
             </div>
+        </div>
+        <div class="history-panel">
+            <h3>Request History</h3>
+            <ul id="history-list"></ul>
         </div>
         <div class="response-panel">
             <div id="response-placeholder" class="placeholder">Send a request to see the response</div>
@@ -540,7 +586,45 @@ export class ApiRequestView {
                 });
         }
 
-        // Modify the receive response event listenerz
+        // Add this new function to update the history list
+        function updateHistory(history) {
+            const historyList = document.getElementById('history-list');
+            historyList.innerHTML = '';
+            history.forEach(run => {
+                const li = document.createElement('li');
+                li.className = 'history-item';
+
+                const methodSpan = document.createElement('span');
+                methodSpan.className = 'method ' + run.method.toLowerCase();
+                methodSpan.textContent = run.method;
+                li.appendChild(methodSpan);
+
+                const urlSpan = document.createElement('span');
+                urlSpan.className = 'url';
+                urlSpan.textContent = run.url;
+                li.appendChild(urlSpan);
+
+                const statusSpan = document.createElement('span');
+                statusSpan.className = 'status';
+                statusSpan.textContent = run.responseStatus.toString();
+                li.appendChild(statusSpan);
+
+                const timeSpan = document.createElement('span');
+                timeSpan.className = 'time';
+                timeSpan.textContent = new Date(run.timestamp).toLocaleString();
+                li.appendChild(timeSpan);
+
+                li.addEventListener('click', () => {
+                    // Fill the request form with the historical data
+                    document.getElementById('method').value = run.method;
+                    document.getElementById('url').value = run.url;
+                    // ... (fill other fields as needed)
+                });
+                historyList.appendChild(li);
+            });
+        }
+
+        // Modify the receive message event listener
         window.addEventListener('message', event => {
             const message = event.data;
             switch (message.command) {
@@ -560,6 +644,9 @@ export class ApiRequestView {
                     document.getElementById('response').innerHTML = \`<pre class="json-formatter">\${formattedBody}</pre>\`;
                     
                     document.getElementById('response-headers').innerHTML = \`<pre class="json-formatter">\${formatJSON(JSON.stringify(message.response.headers, null, 2))}</pre>\`;
+                    break;
+                case 'updateHistory':
+                    updateHistory(message.history);
                     break;
             }
         });

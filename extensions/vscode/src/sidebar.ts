@@ -22,7 +22,7 @@
     // Add filter functionality
     document.addEventListener('input', (event: Event) => {
         const target = event.target as HTMLInputElement;
-        if (target.id === 'filter-collections') {
+        if (target.id === 'filter-history') {
             const filter = target.value.toLowerCase();
             document.querySelectorAll('.api-endpoint').forEach((endpoint: Element) => {
                 const name = (endpoint.querySelector('.name') as HTMLElement)?.textContent?.toLowerCase();
