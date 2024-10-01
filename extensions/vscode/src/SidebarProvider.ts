@@ -139,10 +139,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         <ul id="api-history">
           ${this.apiHistory.map(endpoint => `
             <li class="api-endpoint ${endpoint.method.toLowerCase()}">
-              <button class="delete-btn" data-name="${endpoint.name}" data-method="${endpoint.method}">X</button>
               <span class="method">${endpoint.method}</span>
               <span class="name">${endpoint.name}</span>
               <span class="last-used">${new Date(endpoint.lastUsed).toLocaleString()}</span>
+              <button class="delete-btn" data-name="${endpoint.name}" data-method="${endpoint.method}">X</button>
             </li>
           `).join('')}
         </ul>
