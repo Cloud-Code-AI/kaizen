@@ -70,6 +70,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           this.openApiRequestView();
           break;
         }
+        case "deleteEndpoint": {
+          this.deleteEndpoint(data.name, data.method);
+          break;
+        }
       }
     });
   }
@@ -135,6 +139,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         <ul id="api-history">
           ${this.apiHistory.map(endpoint => `
             <li class="api-endpoint ${endpoint.method.toLowerCase()}">
+              <button class="delete-btn" data-name="${endpoint.name}" data-method="${endpoint.method}">X</button>
               <span class="method">${endpoint.method}</span>
               <span class="name">${endpoint.name}</span>
               <span class="last-used">${new Date(endpoint.lastUsed).toLocaleString()}</span>
@@ -224,6 +229,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     }
 
     // Refresh the webview to show the updated history
+    this.refresh();
+  }
+
+  private deleteEndpoint(name: string, method: string) {
+    this.apiHistory = this.apiHistory.filter(
+      endpoint => !(endpoint.name === name && endpoint.method === method)
+    );
     this.refresh();
   }
 }

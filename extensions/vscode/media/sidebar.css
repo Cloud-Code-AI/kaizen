@@ -75,8 +75,8 @@ body {
 .api-endpoint {
     display: flex;
     align-items: center;
-    padding: 8px 16px; /* Increased padding */
-    cursor: pointer;
+    justify-content: space-between;
+    padding: 5px;
 }
 
 .api-endpoint:hover {
@@ -237,4 +237,30 @@ body {
 .history-item .time {
     font-size: 11px;
     color: var(--vscode-descriptionForeground);
+}
+
+.delete-btn {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.delete-btn:hover {
+    background-color: #ff1a1a;
+}
+
+.delete-btn .codicon {
+    font-size: 16px;
+}
+
+.api-endpoint {
+    display: flex;
+    align-items: center;
 }
