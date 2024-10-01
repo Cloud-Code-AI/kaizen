@@ -78,9 +78,14 @@ export class ApiRequestView {
             overflow-y: auto;
         }
         .response-panel { border-left: 1px solid var(--vscode-panel-border); }
-        .request-bar { 
-            display: flex; 
+        .request-container {
+            display: flex;
+            align-items: center;
             margin-bottom: 20px;
+        }
+        .request-bar {
+            display: flex;
+            flex-grow: 1;
             background-color: var(--vscode-input-background);
             border: 1px solid var(--vscode-input-border);
             border-radius: 3px;
@@ -129,6 +134,27 @@ export class ApiRequestView {
         }
         .send-button:hover {
             background-color: var(--vscode-button-hoverBackground);
+        }
+        .save-button {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            border: 1px solid var(--vscode-button-border);
+            border-radius: 3px;
+            background-color: var(--vscode-button-secondaryBackground);
+            color: var(--vscode-button-secondaryForeground);
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .save-button:hover {
+            background-color: var(--vscode-button-secondaryHoverBackground);
+        }
+        .save-button svg {
+            margin-right: 6px;
+            fill: currentColor;
+            width: 12px;  /* Smaller icon size */
+            height: 12px;  /* Smaller icon size */
         }
         .tab { display: inline-block; padding: 5px 10px; cursor: pointer; }
         .tab.active { border-bottom: 2px solid var(--vscode-focusBorder); }
@@ -300,16 +326,24 @@ export class ApiRequestView {
 <body>
     <div class="main-container">
         <div class="request-panel">
-            <div class="request-bar">
-                <select id="method" class="method-select">
-                    <option value="GET" class="method-GET">GET</option>
-                    <option value="POST" class="method-POST">POST</option>
-                    <option value="PUT" class="method-PUT">PUT</option>
-                    <option value="DELETE" class="method-DELETE">DELETE</option>
-                    <option value="PATCH" class="method-PATCH">PATCH</option>
-                </select>
-                <input type="text" id="url" class="url-input" placeholder="Enter URL">
-                <button id="send" class="send-button">Send</button>
+            <div class="request-container">
+                <div class="request-bar">
+                    <select id="method" class="method-select">
+                        <option value="GET" class="method-GET">GET</option>
+                        <option value="POST" class="method-POST">POST</option>
+                        <option value="PUT" class="method-PUT">PUT</option>
+                        <option value="DELETE" class="method-DELETE">DELETE</option>
+                        <option value="PATCH" class="method-PATCH">PATCH</option>
+                    </select>
+                    <input type="text" id="url" class="url-input" placeholder="Enter URL">
+                    <button id="send" class="send-button">Send</button>
+                </div>
+                <button id="save" class="save-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 16 16">
+                        <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5V2zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z"/>
+                    </svg>
+                    Save
+                </button>
             </div>
             <div class="tabs request-tabs">
                 <span class="tab active" data-tab="query">Query</span>
