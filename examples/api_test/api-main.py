@@ -21,3 +21,4 @@ for file_path, result in test_results.items():
         print(f"  Failures: {result.get('failures', 'N/A')}")
         print(f"  Errors: {result.get('errors', 'N/A')}")
     print()
+    
