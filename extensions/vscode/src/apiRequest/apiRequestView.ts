@@ -614,7 +614,14 @@ export class ApiRequestView {
 
                 const urlSpan = document.createElement('span');
                 urlSpan.className = 'url';
-                urlSpan.textContent = run.url;
+                urlSpan.textContent = sanitizeHTML(run.url);
+                // ... apply sanitization to other user-provided data
+
+                function sanitizeHTML(str){
+                    const temp = document.createElement('div');
+                    temp.textContent = str;
+                    return temp.innerHTML;
+                }
                 li.appendChild(urlSpan);
 
                 const statusSpan = document.createElement('span');
