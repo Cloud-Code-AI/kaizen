@@ -75,8 +75,9 @@ body {
 .api-endpoint {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 5px;
+    justify-content: flex-start;
+    padding: 5px 10px;
+    position: relative;
 }
 
 .api-endpoint:hover {
@@ -84,10 +85,9 @@ body {
 }
 
 .api-endpoint .method {
+    margin-right: 10px;
     font-weight: bold;
-    margin-right: 10px; /* Increased margin */
-    font-size: 11px;
-    padding: 2px 6px; /* Increased padding */
+    padding: 2px 6px;
     border-radius: 3px;
 }
 
@@ -104,6 +104,7 @@ body {
 }
 
 .api-endpoint .last-used {
+    margin-right: 25px; /* Add space for the delete button */
     font-size: 11px;
     color: var(--vscode-descriptionForeground);
 }
@@ -244,12 +245,20 @@ body {
     color: white;
     border: none;
     border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    font-size: 12px;
+    width: 14px;
+    height: 14px;
+    font-size: 8px;
     line-height: 1;
     cursor: pointer;
-    margin-right: 5px;
+    opacity: 0.6;
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s ease;
 }
 
 .delete-btn:hover {
