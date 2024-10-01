@@ -134,8 +134,7 @@ class APITestGenerator:
         self.update_usage(usage)
         test_code = extract_code_from_markdown(response)
         print(f"  ✓ AI tests generated successfully for {method.upper()} {path}")
-        self.log_step("Generate AI tests", f"Generated test code:\n{response}")        
-        #generating only one set of tests per method
+        self.log_step("Generate AI tests", f"Generated test code:\n{response}")
         return test_code, 1  
 
     def run_tests(self, test_file=None):
