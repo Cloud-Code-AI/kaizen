@@ -33,6 +33,7 @@ LOGLEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()
 logging.basicConfig(
     level=LOGLEVEL, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
+logger = logging.getLogger(__name__)
 
 
 class LLMProvider:
@@ -204,6 +205,7 @@ class LLMProvider:
             custom_model=custom_model,
             messages=messages,
         )
+        # logger.info(f"completiong response: {response}")
         response = extract_json(response)
         return response, usage
 
