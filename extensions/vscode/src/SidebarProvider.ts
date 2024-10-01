@@ -223,9 +223,27 @@ private updateApiHistory(endpoint: ApiEndpoint){
       this.apiHistory.splice(existingIndex, 1);
 }else{
       updatedEndpoint = endpoint;
-      // Limit the history to the last 10 items
-      if (this.apiHistory.length >= 10){
-        this.apiHistory.pop();
+      // Using a circular buffer implementation
+      class CircularBuffer<T>{
+          private buffer: T[];
+          private pointer: number = 0;
+          constructor(private capacity: number){
+              this.buffer = new Array<T>(capacity);
+      }
+          push(item: T): void{
+              this.buffer[this.pointer] = item;
+              this.pointer = (this.pointer + 1) % this.capacity;
+      }
+          getItems(): T[]{
+              return[...this.buffer.slice(this.pointer), ...this.buffer.slice(0, this.pointer)];
+      }
+      }
+
+      // Usage
+      private apiHistory = new CircularBuffer<ApiEndpoint>(10);
+
+      // In updateApiHistory method
+      this.apiHistory.push(endpoint);
 }
 }
 
