@@ -205,11 +205,23 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   }
 
   private updateApiHistory(endpoint: ApiEndpoint) {
-    // Add the new endpoint to the beginning of the array
-    this.apiHistory.unshift(endpoint);
+    // Check if an endpoint with the same name and method already exists
+    const existingIndex = this.apiHistory.findIndex(
+      e => e.name === endpoint.name && e.method === endpoint.method
+    );
 
-    // Limit the history to the last 10 items
-    this.apiHistory = this.apiHistory.slice(0, 10);
+    if (existingIndex !== -1) {
+      // If it exists, update the lastUsed time
+      this.apiHistory[existingIndex].lastUsed = endpoint.lastUsed;
+      // Move this item to the beginning of the array
+      const [updatedEndpoint] = this.apiHistory.splice(existingIndex, 1);
+      this.apiHistory.unshift(updatedEndpoint);
+    } else {
+      // If it doesn't exist, add the new endpoint to the beginning of the array
+      this.apiHistory.unshift(endpoint);
+      // Limit the history to the last 10 items
+      this.apiHistory = this.apiHistory.slice(0, 10);
+    }
 
     // Refresh the webview to show the updated history
     this.refresh();
