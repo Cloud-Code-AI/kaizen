@@ -7,14 +7,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
   _doc?: vscode.TextDocument;
   private apiRequestProvider: ApiRequestProvider;
-  private apiHistory: ApiEndpoint[] = [
-    { method: 'GET', name: 'Welcome', lastUsed: '21 hours ago' },
-    { method: 'POST', name: 'Customer', lastUsed: '3 months ago' },
-    { method: 'GET', name: 'Update Account', lastUsed: '5 months ago' },
-    { method: 'POST', name: 'Get Orders', lastUsed: '4 months ago' },
-    { method: 'POST', name: 'Create Order', lastUsed: '5 months ago' },
-    { method: 'DELETE', name: 'Delete Order', lastUsed: '5 months ago' },
-  ];
+  private apiHistory: ApiEndpoint[] = [];
   private showHistory: boolean = false;
 
   constructor(private readonly _extensionUri: vscode.Uri, context: vscode.ExtensionContext) {

@@ -295,42 +295,6 @@ export class ApiRequestView {
             border-right: 1px solid var(--vscode-panel-border);
             overflow-y: auto;
         }
-        #history-list {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-        .history-item {
-            display: flex;
-            align-items: center;
-            padding: 8px 0;
-            cursor: pointer;
-            border-bottom: 1px solid var(--vscode-panel-border);
-        }
-        .history-item:hover {
-            background-color: var(--vscode-list-hoverBackground);
-        }
-        .history-item .method {
-            font-weight: bold;
-            margin-right: 10px;
-            padding: 2px 6px;
-            border-radius: 3px;
-        }
-        .history-item .url {
-            flex-grow: 1;
-            font-size: 12px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .history-item .status {
-            margin-right: 10px;
-            font-size: 12px;
-        }
-        .history-item .time {
-            font-size: 11px;
-            color: var(--vscode-descriptionForeground);
-        }
     </style>
 </head>
 <body>
@@ -418,10 +382,6 @@ export class ApiRequestView {
                     </table>
                 </div>
             </div>
-        </div>
-        <div class="history-panel">
-            <h3>Request History</h3>
-            <ul id="history-list"></ul>
         </div>
         <div class="response-panel">
             <div id="response-placeholder" class="placeholder">Send a request to see the response</div>
