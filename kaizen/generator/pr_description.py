@@ -129,10 +129,16 @@ class PRDescriptionGenerator:
                 filename.split(".")[-1] not in parser.EXCLUDED_FILETYPES
                 and patch_details is not None
             ):
-                
-                diff_parts.append(f"\n---->\nFile Name: {filename}\nPatch Details: \n{patch_details}")
 
-                if available_tokens - self.provider.get_token_count("".join(diff_parts)) > 0:
+                diff_parts.append(
+                    f"\n---->\nFile Name: {filename}\nPatch Details: \n{patch_details}"
+                )
+
+                if (
+                    available_tokens
+                    - self.provider.get_token_count("".join(diff_parts))
+                    > 0
+                ):
                     combined_diff_data = "".join(diff_parts)
                     continue
 
@@ -142,7 +148,9 @@ class PRDescriptionGenerator:
                     pull_request_desc,
                     user,
                 )
-                diff_parts = [f"\n---->\nFile Name: {filename}\nPatch Details: {patch_details}"]
+                diff_parts = [
+                    f"\n---->\nFile Name: {filename}\nPatch Details: {patch_details}"
+                ]
 
         if diff_parts:
             yield self._process_file_chunk(

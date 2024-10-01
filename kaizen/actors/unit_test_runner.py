@@ -29,15 +29,32 @@ class UnitTestRunner:
     def find_project_root(self, file_path):
         current_dir = os.path.dirname(os.path.abspath(file_path))
         while current_dir != "/":
-            if any(os.path.exists(os.path.join(current_dir, marker)) for marker in 
-                   ["package.json", "Cargo.toml", "pytest.ini", "setup.py", "setup.cfg", "tox.ini", "pyproject.toml"]):
+            if any(
+                os.path.exists(os.path.join(current_dir, marker))
+                for marker in [
+                    "package.json",
+                    "Cargo.toml",
+                    "pytest.ini",
+                    "setup.py",
+                    "setup.cfg",
+                    "tox.ini",
+                    "pyproject.toml",
+                ]
+            ):
                 return current_dir
             current_dir = os.path.dirname(current_dir)
         return None
 
     def run_command(self, command, cwd=None):
         try:
-            result = subprocess.run(command, capture_output=True, text=True, cwd=cwd, shell=False, timeout=300)
+            result = subprocess.run(
+                command,
+                capture_output=True,
+                text=True,
+                cwd=cwd,
+                shell=False,
+                timeout=300,
+            )
             return result.returncode, result.stdout, result.stderr
         except subprocess.TimeoutExpired:
             return 124, "", f"Command timed out after 300 seconds"
@@ -53,35 +70,43 @@ class UnitTestRunner:
         return self._run_tests_in_parallel(test_files)
 
     def _discover_test_files(self, test_file):
-        pattern = os.path.join(self.test_directory, "**", f"test_*.{'py' if test_file else '*'}")
-        return [f for f in glob.glob(pattern, recursive=True) if f.split('.')[-1] in self.supported_extensions]
+        pattern = os.path.join(
+            self.test_directory, "**", f"test_*.{'py' if test_file else '*'}"
+        )
+        return [
+            f
+            for f in glob.glob(pattern, recursive=True)
+            if f.split(".")[-1] in self.supported_extensions
+        ]
 
     def _run_tests_in_parallel(self, test_files):
         results = {}
         with ThreadPoolExecutor() as executor:
-            future_to_file = {executor.submit(self._run_test, file): file for file in test_files}
+            future_to_file = {
+                executor.submit(self._run_test, file): file for file in test_files
+            }
             for future in as_completed(future_to_file):
                 file = future_to_file[future]
                 results[file] = future.result()
         return results
 
     def _run_test(self, file_path):
-        extension = file_path.split('.')[-1]
+        extension = file_path.split(".")[-1]
         return self.supported_extensions[extension](file_path)
 
     def run_python_tests(self, file_path):
         relative_path = os.path.relpath(file_path, self.project_root)
-        
+
         captured_output = io.StringIO()
         sys.stdout = captured_output
         sys.stderr = captured_output
-        
+
         pytest_args = [relative_path, "-v"]
         result = pytest.main(pytest_args)
-        
+
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
-        
+
         output = captured_output.getvalue()
         return self._parse_pytest_output(output, result)
 
@@ -92,7 +117,9 @@ class UnitTestRunner:
         tests_run = len(passed_tests) + len(failed_tests) + len(error_tests)
 
         failure_details = {}
-        for match in re.findall(r"FAILED (.*?) - Failed:(.*?)(?:\n|$)", output, re.MULTILINE):
+        for match in re.findall(
+            r"FAILED (.*?) - Failed:(.*?)(?:\n|$)", output, re.MULTILINE
+        ):
             test_path, reason = match
             file_name = test_path.split("::")[0]
             test_name = test_path.split("::")[-1]
@@ -112,7 +139,9 @@ class UnitTestRunner:
 
     def run_javascript_tests(self, file_path):
         relative_path = os.path.relpath(file_path, self.project_root)
-        code, stdout, stderr = self.run_command(["npx", "jest", relative_path], cwd=self.project_root)
+        code, stdout, stderr = self.run_command(
+            ["npx", "jest", relative_path], cwd=self.project_root
+        )
         return self._parse_jest_output(stdout, stderr, code)
 
     def _parse_jest_output(self, stdout, stderr, code):
@@ -142,7 +171,9 @@ class UnitTestRunner:
 
     def run_rust_tests(self, file_path):
         # relative_path = os.path.relpath(file_path, self.project_root)
-        code, stdout, stderr = self.run_command(["cargo", "test", "--", "--nocapture"], cwd=self.project_root)
+        code, stdout, stderr = self.run_command(
+            ["cargo", "test", "--", "--nocapture"], cwd=self.project_root
+        )
         return self._parse_rust_output(stdout, stderr, code)
 
     def _parse_rust_output(self, stdout, stderr, code):
@@ -150,7 +181,9 @@ class UnitTestRunner:
         failures = stdout.count("FAILED")
         errors = stderr.count("error:")
 
-        failure_details = re.findall(r"---- .*? ----\n.*?\n\nthread.*?panicked.*?\n(.*?)\n\n", stdout, re.DOTALL)
+        failure_details = re.findall(
+            r"---- .*? ----\n.*?\n\nthread.*?panicked.*?\n(.*?)\n\n", stdout, re.DOTALL
+        )
         error_details = re.findall(r"error:.*?\n(.*?)\n\n", stderr, re.DOTALL)
 
         return {

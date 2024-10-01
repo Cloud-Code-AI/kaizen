@@ -57,7 +57,7 @@ Provide the output in json format only as shown below:
 {{
 "issues": [ {{
       "severity": "critical|high|medium|low",
-      "category": "security|performance|quality|bug",
+      "category": "general|performance|security|refactoring|best_practices|duplication|maintainability|scalability|error_handling|resource_management|concurrency|dependencies|compatibility|accessibility|localization|efficiency|readability|naming",
       "description": "Brief description of the issue",
       "location": {{
         "line_start": 1,
@@ -100,7 +100,7 @@ Provide the output in the same JSON format as the initial findings:
 "issues": [
     {{
       "severity": "critical|high|medium|low",
-      "category": "security|performance|quality|bug",
+      "category": "general|performance|security|refactoring|best_practices|duplication|maintainability|scalability|error_handling|resource_management|concurrency|dependencies|compatibility|accessibility|localization|efficiency|readability|naming",
       "description": "Brief description of the issue",
       "location": {{
         "line_start": 1,
