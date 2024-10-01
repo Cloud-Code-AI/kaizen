@@ -75,8 +75,9 @@ body {
 .api-endpoint {
     display: flex;
     align-items: center;
-    padding: 8px 16px; /* Increased padding */
-    cursor: pointer;
+    justify-content: flex-start;
+    padding: 5px 10px;
+    position: relative;
 }
 
 .api-endpoint:hover {
@@ -84,10 +85,9 @@ body {
 }
 
 .api-endpoint .method {
+    margin-right: 10px;
     font-weight: bold;
-    margin-right: 10px; /* Increased margin */
-    font-size: 11px;
-    padding: 2px 6px; /* Increased padding */
+    padding: 2px 6px;
     border-radius: 3px;
 }
 
@@ -100,12 +100,18 @@ body {
 .api-endpoint .name {
     flex-grow: 1;
     font-size: 13px;
-    font-weight: 500; /* Made text slightly bolder */
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 10px;
 }
 
 .api-endpoint .last-used {
     font-size: 11px;
     color: var(--vscode-descriptionForeground);
+    margin-right: 10px;
+    white-space: nowrap;
 }
 
 #buttons {
@@ -152,4 +158,120 @@ body {
 #back-button::before {
     content: '←';
     margin-right: 8px;
+}
+
+#history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background-color: var(--vscode-sideBarSectionHeader-background);
+    border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
+}
+
+#history-header h3 {
+    margin: 0;
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--vscode-sideBarSectionHeader-foreground);
+}
+
+#filter-history {
+    margin: 10px 16px;
+    padding: 6px 10px;
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border);
+    font-size: 12px;
+    width: calc(100% - 32px);
+    box-sizing: border-box;
+}
+
+#api-history {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+}
+
+.history-panel {
+    flex: 1;
+    padding: 20px;
+    border-right: 1px solid var(--vscode-panel-border);
+    overflow-y: auto;
+}
+
+#history-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    cursor: pointer;
+    border-bottom: 1px solid var(--vscode-panel-border);
+}
+
+.history-item:hover {
+    background-color: var(--vscode-list-hoverBackground);
+}
+
+.history-item .method {
+    font-weight: bold;
+    margin-right: 10px;
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+
+.history-item .url {
+    flex-grow: 1;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.history-item .status {
+    margin-right: 10px;
+    font-size: 12px;
+}
+
+.history-item .time {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+}
+
+.delete-btn {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0.6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s ease;
+    flex-shrink: 0;
+}
+
+.delete-btn:hover {
+    background-color: #ff1a1a;
+}
+
+.delete-btn .codicon {
+    font-size: 16px;
+}
+
+.api-endpoint {
+    display: flex;
+    align-items: center;
 }

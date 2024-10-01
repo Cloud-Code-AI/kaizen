@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { ApiEndpoint } from '../types';
 
 // Update the type definition for the callback
 type ApiRequestCallback = (
@@ -43,6 +44,9 @@ export class ApiRequestView {
                         case 'sendRequest':
                             this.apiRequestCallback(message.method, message.url, message.headers,message.queryParams, message.formData, message.body, message.bodyType);
                             return;
+                        case 'saveEndpoint':
+                            this.saveEndpoint(message.method, message.url);
+                            return;
                     }
                 },
                 undefined,
@@ -57,6 +61,21 @@ export class ApiRequestView {
 
     public postMessage(message: any) {
         this.panel?.webview.postMessage(message);
+    }
+    private saveEndpoint(method: string, url: string) {
+        // Check if the URL is blank
+        if (!url.trim()) {
+            vscode.window.showErrorMessage("URL is blank. Cannot save endpoint.");
+            return;
+        }
+
+        const endpoint: ApiEndpoint = {
+            method: method,
+            name: url,
+            lastUsed: new Date().toISOString()
+        };
+
+        vscode.commands.executeCommand('vscode-api-client.updateApiHistory', endpoint);
     }
 
     private getWebviewContent() {
@@ -78,9 +97,14 @@ export class ApiRequestView {
             overflow-y: auto;
         }
         .response-panel { border-left: 1px solid var(--vscode-panel-border); }
-        .request-bar { 
-            display: flex; 
+        .request-container {
+            display: flex;
+            align-items: center;
             margin-bottom: 20px;
+        }
+        .request-bar {
+            display: flex;
+            flex-grow: 1;
             background-color: var(--vscode-input-background);
             border: 1px solid var(--vscode-input-border);
             border-radius: 3px;
@@ -129,6 +153,27 @@ export class ApiRequestView {
         }
         .send-button:hover {
             background-color: var(--vscode-button-hoverBackground);
+        }
+        .save-button {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            border: 1px solid var(--vscode-button-border);
+            border-radius: 3px;
+            background-color: var(--vscode-button-secondaryBackground);
+            color: var(--vscode-button-secondaryForeground);
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .save-button:hover {
+            background-color: var(--vscode-button-secondaryHoverBackground);
+        }
+        .save-button svg {
+            margin-right: 6px;
+            fill: currentColor;
+            width: 12px;  /* Smaller icon size */
+            height: 12px;  /* Smaller icon size */
         }
         .tab { display: inline-block; padding: 5px 10px; cursor: pointer; }
         .tab.active { border-bottom: 2px solid var(--vscode-focusBorder); }
@@ -289,21 +334,35 @@ export class ApiRequestView {
         .json-formatter .json-number { color: #6897bb; }
         .json-formatter .json-boolean { color: #cc7832; }
         .json-formatter .json-null { color: #cc7832; }
+        .history-panel {
+            flex: 1;
+            padding: 20px;
+            border-right: 1px solid var(--vscode-panel-border);
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body>
     <div class="main-container">
         <div class="request-panel">
-            <div class="request-bar">
-                <select id="method" class="method-select">
-                    <option value="GET" class="method-GET">GET</option>
-                    <option value="POST" class="method-POST">POST</option>
-                    <option value="PUT" class="method-PUT">PUT</option>
-                    <option value="DELETE" class="method-DELETE">DELETE</option>
-                    <option value="PATCH" class="method-PATCH">PATCH</option>
-                </select>
-                <input type="text" id="url" class="url-input" placeholder="Enter URL">
-                <button id="send" class="send-button">Send</button>
+            <div class="request-container">
+                <div class="request-bar">
+                    <select id="method" class="method-select">
+                        <option value="GET" class="method-GET">GET</option>
+                        <option value="POST" class="method-POST">POST</option>
+                        <option value="PUT" class="method-PUT">PUT</option>
+                        <option value="DELETE" class="method-DELETE">DELETE</option>
+                        <option value="PATCH" class="method-PATCH">PATCH</option>
+                    </select>
+                    <input type="text" id="url" class="url-input" placeholder="Enter URL">
+                    <button id="send" class="send-button">Send</button>
+                </div>
+                <button id="save" class="save-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 16 16">
+                        <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5V2zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z"/>
+                    </svg>
+                    Save
+                </button>
             </div>
             <div class="tabs request-tabs">
                 <span class="tab active" data-tab="query">Query</span>
@@ -357,7 +416,7 @@ export class ApiRequestView {
                 <div class="body-type-selector">
                     <label><input type="radio" name="body-type" value="none" checked> None</label>
                     <label><input type="radio" name="body-type" value="form-data"> Form Data</label>
-                    <label><input type="radio" name="body-type" value="raw"> Raw</label>
+                    <label><input type="radio" name="body-type" value="raw"> Raw JSON</label>
                 </div>
                 <textarea id="body-content" rows="10" style="display: none;"></textarea>
                 <div id="form-data-container" style="display: none;">
@@ -540,7 +599,47 @@ export class ApiRequestView {
                 });
         }
 
-        // Modify the receive response event listener
+        // Add this new function to update the history list
+        function updateHistory(history) {
+            const historyList = document.getElementById('history-list');
+            historyList.innerHTML = '';
+            history.forEach(run => {
+                const li = document.createElement('li');
+                li.className = 'history-item';
+
+                const methodSpan = document.createElement('span');
+                methodSpan.className = 'method ' + run.method.toLowerCase();
+                methodSpan.textContent = run.method;
+                li.appendChild(methodSpan);
+
+                const urlSpan = document.createElement('span');
+                urlSpan.className = 'url';
+                urlSpan.textContent = run.url; // textContent automatically escapes HTML
+
+                // Remove the sanitizeHTML function as it's not needed when using textContent
+                li.appendChild(urlSpan);
+
+                const statusSpan = document.createElement('span');
+                statusSpan.className = 'status';
+                statusSpan.textContent = run.responseStatus.toString();
+                li.appendChild(statusSpan);
+
+                const timeSpan = document.createElement('span');
+                timeSpan.className = 'time';
+                timeSpan.textContent = new Date(run.timestamp).toLocaleString();
+                li.appendChild(timeSpan);
+
+                li.addEventListener('click', () => {
+                    // Fill the request form with the historical data
+                    document.getElementById('method').value = run.method;
+                    document.getElementById('url').value = run.url;
+                    // ... (fill other fields as needed)
+                });
+                historyList.appendChild(li);
+            });
+        }
+
+        // Modify the receive message event listener
         window.addEventListener('message', event => {
             const message = event.data;
             switch (message.command) {
@@ -561,7 +660,21 @@ export class ApiRequestView {
                     
                     document.getElementById('response-headers').innerHTML = \`<pre class="json-formatter">\${formatJSON(JSON.stringify(message.response.headers, null, 2))}</pre>\`;
                     break;
+                case 'updateHistory':
+                    updateHistory(message.history);
+                    break;
             }
+        });
+
+        document.getElementById('save').addEventListener('click', () => {
+            const method = document.getElementById('method').value;
+            const url = document.getElementById('url').value.trim();
+            
+            vscode.postMessage({ 
+                command: 'saveEndpoint', 
+                method, 
+                url
+            });
         });
     </script>
 </body>
