@@ -357,7 +357,7 @@ export class ApiRequestView {
                 <div class="body-type-selector">
                     <label><input type="radio" name="body-type" value="none" checked> None</label>
                     <label><input type="radio" name="body-type" value="form-data"> Form Data</label>
-                    <label><input type="radio" name="body-type" value="raw"> Raw</label>
+                    <label><input type="radio" name="body-type" value="raw"> Raw JSON</label>
                 </div>
                 <textarea id="body-content" rows="10" style="display: none;"></textarea>
                 <div id="form-data-container" style="display: none;">
@@ -540,7 +540,7 @@ export class ApiRequestView {
                 });
         }
 
-        // Modify the receive response event listener
+        // Modify the receive response event listenerz
         window.addEventListener('message', event => {
             const message = event.data;
             switch (message.command) {
