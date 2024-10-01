@@ -182,7 +182,7 @@ class CodeReviewer:
             issues=reviews,
             code_quality=code_quality,
             cost={"prompt_cost": prompt_cost, "completion_cost": completion_cost},
-            file_count=self.files_processed
+            file_count=self.files_processed,
         )
 
     def _process_full_diff(
@@ -246,14 +246,17 @@ class CodeReviewer:
             patch_details = file.get("patch")
             filename = file.get("filename", "").replace(" ", "")
 
-            if (
-                not parser.should_ignore_file(filename)
-                and patch_details is not None
-            ):
+            if not parser.should_ignore_file(filename) and patch_details is not None:
                 self.files_processed += 1
-                diff_parts.append(f"\n---->\nFile Name: {filename}\nPatch Details:\n{parser.patch_to_combined_chunks(patch_details, self.ignore_deletions)}")
+                diff_parts.append(
+                    f"\n---->\nFile Name: {filename}\nPatch Details:\n{parser.patch_to_combined_chunks(patch_details, self.ignore_deletions)}"
+                )
 
-                if available_tokens - self.provider.get_token_count("".join(diff_parts)) > 0:
+                if (
+                    available_tokens
+                    - self.provider.get_token_count("".join(diff_parts))
+                    > 0
+                ):
                     combined_diff_data = "".join(diff_parts)
                     continue
 
@@ -265,7 +268,9 @@ class CodeReviewer:
                     reeval_response,
                     custom_context,
                 )
-                diff_parts = [f"\n---->\nFile Name: {filename}\nPatch Details: {parser.patch_to_combined_chunks(patch_details,  self.ignore_deletions)}"]
+                diff_parts = [
+                    f"\n---->\nFile Name: {filename}\nPatch Details: {parser.patch_to_combined_chunks(patch_details,  self.ignore_deletions)}"
+                ]
 
         if diff_parts:
             yield self._process_file_chunk(

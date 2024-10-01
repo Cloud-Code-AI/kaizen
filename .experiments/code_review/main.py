@@ -87,8 +87,8 @@ def save_review(pr_number, review_desc, comments, issues, folder, combined_diff_
 
     with open(issues_file, "w") as f:
         json.dump(issues, f, indent=2)
-    
-    with open(combined_diff, 'w') as f:
+
+    with open(combined_diff, "w") as f:
         f.write(combined_diff_data)
 
     logger.info(f"Saved review files for PR {pr_number}")
@@ -111,8 +111,12 @@ def main(pr_urls):
         logger.info(f"Starting to process PR {pr_number}")
 
         # Without re-evaluation
-        review_desc, comments, issues, combined_diff_data = process_pr(pr_url, reeval_response=False)
-        save_review(pr_number, review_desc, comments, issues, no_eval_folder, combined_diff_data)
+        review_desc, comments, issues, combined_diff_data = process_pr(
+            pr_url, reeval_response=False
+        )
+        save_review(
+            pr_number, review_desc, comments, issues, no_eval_folder, combined_diff_data
+        )
 
         # # With re-evaluation
         # review_desc, comments, topics = process_pr(pr_url, reeval_response=True)
