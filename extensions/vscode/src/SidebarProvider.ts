@@ -12,6 +12,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
   constructor(private readonly _extensionUri: vscode.Uri, context: vscode.ExtensionContext) {
     this.apiRequestProvider = new ApiRequestProvider(context);
+
+    // Register command to update API history
+    context.subscriptions.push(
+      vscode.commands.registerCommand('vscode-api-client.updateApiHistory', (endpoint: ApiEndpoint) => {
+        this.updateApiHistory(endpoint);
+      })
+    );
   }
 
   public refresh() {
@@ -130,7 +137,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             <li class="api-endpoint ${endpoint.method.toLowerCase()}">
               <span class="method">${endpoint.method}</span>
               <span class="name">${endpoint.name}</span>
-              <span class="last-used">${endpoint.lastUsed}</span>
+              <span class="last-used">${new Date(endpoint.lastUsed).toLocaleString()}</span>
             </li>
           `).join('')}
         </ul>
@@ -195,6 +202,17 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     const filePath = vscode.Uri.joinPath(this._extensionUri, webviewType, 'index.html');
     const fileContent = await vscode.workspace.fs.readFile(filePath);
     return fileContent.toString();
+  }
+
+  private updateApiHistory(endpoint: ApiEndpoint) {
+    // Add the new endpoint to the beginning of the array
+    this.apiHistory.unshift(endpoint);
+
+    // Limit the history to the last 10 items
+    this.apiHistory = this.apiHistory.slice(0, 10);
+
+    // Refresh the webview to show the updated history
+    this.refresh();
   }
 }
 

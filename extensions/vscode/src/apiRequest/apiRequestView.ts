@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { ApiEndpoint } from '../types';
 
 // Update the type definition for the callback
 type ApiRequestCallback = (
@@ -43,6 +44,9 @@ export class ApiRequestView {
                         case 'sendRequest':
                             this.apiRequestCallback(message.method, message.url, message.headers,message.queryParams, message.formData, message.body, message.bodyType);
                             return;
+                        case 'saveEndpoint':
+                            this.saveEndpoint(message.method, message.url);
+                            return;
                     }
                 },
                 undefined,
@@ -57,6 +61,15 @@ export class ApiRequestView {
 
     public postMessage(message: any) {
         this.panel?.webview.postMessage(message);
+    }
+    private saveEndpoint(method: string, url: string) {
+        const endpoint: ApiEndpoint = {
+            method: method,
+            name: url,
+            lastUsed: new Date().toISOString()
+        };
+
+        vscode.commands.executeCommand('vscode-api-client.updateApiHistory', endpoint);
     }
 
     private getWebviewContent() {
@@ -643,6 +656,17 @@ export class ApiRequestView {
                     updateHistory(message.history);
                     break;
             }
+        });
+
+        document.getElementById('save').addEventListener('click', () => {
+            const method = document.getElementById('method').value;
+            const url = document.getElementById('url').value;
+            
+            vscode.postMessage({ 
+                command: 'saveEndpoint', 
+                method, 
+                url
+            });
         });
     </script>
 </body>
