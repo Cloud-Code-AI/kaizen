@@ -117,7 +117,7 @@ class UnitTestGenerator:
             usage=self.total_usage,
             model_name=self.provider.model,
             cost={"prompt_cost": prompt_cost, "completion_cost": completion_cost},
-            scenarios=self.test_scenarios
+            scenarios=self.test_scenarios,
         )
 
     def generate_tests(

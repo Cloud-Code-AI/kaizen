@@ -4,24 +4,54 @@ import os
 
 EXCLUDED_FILETYPES = [
     # Compiled output
-    "class", "o", "obj", "exe", "dll", "pyc", "pyo",
+    "class",
+    "o",
+    "obj",
+    "exe",
+    "dll",
+    "pyc",
+    "pyo",
     # Package manager files
     "lock",  # Covers package-lock.json, yarn.lock, Gemfile.lock, composer.lock
     # IDE configurations
-    "idea", "vscode", "project", "classpath",
+    "idea",
+    "vscode",
+    "project",
+    "classpath",
     # Binary and large files
-    "zip", "tar", "gz", "rar", "pdf", "doc", "docx", "xls", "xlsx",
-    "jpg", "jpeg", "png", "gif", "bmp", "ico", "mp3", "mp4", "avi", "mov",
+    "zip",
+    "tar",
+    "gz",
+    "rar",
+    "pdf",
+    "doc",
+    "docx",
+    "xls",
+    "xlsx",
+    "jpg",
+    "jpeg",
+    "png",
+    "gif",
+    "bmp",
+    "ico",
+    "mp3",
+    "mp4",
+    "avi",
+    "mov",
     # Log files
     "log",
     # Database files
-    "db", "sqlite",
+    "db",
+    "sqlite",
     # Temporary files
-    "tmp", "temp",
+    "tmp",
+    "temp",
     # OS-specific files
-    "DS_Store", "Thumbs.db",
+    "DS_Store",
+    "Thumbs.db",
     # Configuration files
-    "gitignore", "dockerignore",
+    "gitignore",
+    "dockerignore",
     # Add any other specific extensions you want to exclude
 ]
 
@@ -42,14 +72,14 @@ EXCLUDED_FOLDERS = [
 def should_ignore_file(filepath):
     """
     Check if a file should be ignored based on its path, name, or extension.
-    
+
     :param filepath: The full path of the file to check
     :return: True if the file should be ignored, False otherwise
     """
     # Get the file name and extension
     filename = os.path.basename(filepath)
     _, extension = os.path.splitext(filename)
-    extension = extension.lstrip('.')  # Remove the leading dot
+    extension = extension.lstrip(".")  # Remove the leading dot
 
     # Check if the file is in an excluded folder
     for folder in EXCLUDED_FOLDERS:
@@ -61,7 +91,14 @@ def should_ignore_file(filepath):
         return True
 
     # Check for specific filenames
-    if filename in ["package-lock.json", "yarn.lock", "Gemfile.lock", "composer.lock", ".DS_Store", "Thumbs.db"]:
+    if filename in [
+        "package-lock.json",
+        "yarn.lock",
+        "Gemfile.lock",
+        "composer.lock",
+        ".DS_Store",
+        "Thumbs.db",
+    ]:
         return True
 
     return False
