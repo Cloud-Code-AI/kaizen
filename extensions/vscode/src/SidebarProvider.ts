@@ -209,28 +209,36 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     return fileContent.toString();
   }
 
-  private updateApiHistory(endpoint: ApiEndpoint) {
+private updateApiHistory(endpoint: ApiEndpoint){
     // Check if an endpoint with the same name and method already exists
     const existingIndex = this.apiHistory.findIndex(
       e => e.name === endpoint.name && e.method === endpoint.method
     );
 
-    if (existingIndex !== -1) {
-      // If it exists, update the lastUsed time
-      this.apiHistory[existingIndex].lastUsed = endpoint.lastUsed;
-      // Move this item to the beginning of the array
-      const [updatedEndpoint] = this.apiHistory.splice(existingIndex, 1);
-      this.apiHistory.unshift(updatedEndpoint);
-    } else {
-      // If it doesn't exist, add the new endpoint to the beginning of the array
-      this.apiHistory.unshift(endpoint);
-      // Limit the history to the last 10 items
-      this.apiHistory = this.apiHistory.slice(0, 10);
-    }
+    let updatedEndpoint: ApiEndpoint;
 
-    // Refresh the webview to show the updated history
-    this.refresh();
-  }
+    if (existingIndex !== -1){
+      // If it exists, update the lastUsed time
+      updatedEndpoint ={...this.apiHistory[existingIndex], lastUsed: endpoint.lastUsed};
+      this.apiHistory.splice(existingIndex, 1);
+}else{
+      updatedEndpoint = endpoint;
+      // Limit the history to the last 10 items
+      if (this.apiHistory.length >= 10){
+        this.apiHistory.pop();
+}
+}
+
+    // Add the updated/new endpoint to the beginning of the array
+    this.apiHistory.unshift(updatedEndpoint);
+
+    // Send only the updated history item to the webview
+    this._view?.webview.postMessage({
+      type: 'updateHistoryItem', 
+      endpoint: updatedEndpoint,
+      action: existingIndex !== -1 ? 'update' : 'add'
+});
+}
 
   private deleteEndpoint(name: string, method: string) {
     this.apiHistory = this.apiHistory.filter(
