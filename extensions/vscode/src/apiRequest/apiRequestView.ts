@@ -63,6 +63,12 @@ export class ApiRequestView {
         this.panel?.webview.postMessage(message);
     }
     private saveEndpoint(method: string, url: string) {
+        // Check if the URL is blank
+        if (!url.trim()) {
+            vscode.window.showErrorMessage("URL is blank. Cannot save endpoint.");
+            return;
+        }
+
         const endpoint: ApiEndpoint = {
             method: method,
             name: url,
@@ -660,7 +666,7 @@ export class ApiRequestView {
 
         document.getElementById('save').addEventListener('click', () => {
             const method = document.getElementById('method').value;
-            const url = document.getElementById('url').value;
+            const url = document.getElementById('url').value.trim();
             
             vscode.postMessage({ 
                 command: 'saveEndpoint', 
