@@ -3,6 +3,8 @@ import { ApiRequestProvider } from './apiRequest/apiRequestProvider';
 import { log } from './extension';
 import { ApiEndpoint } from './types';
 import { inspect } from 'util';
+import { ApiRequestView } from './apiRequest/apiRequestView';
+import { HttpClient } from './utils/httpClient';
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -11,12 +13,15 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   private apiHistory: ApiEndpoint[] = [];
   private showHistory: boolean = false;
   private context: vscode.ExtensionContext;
-
+  private apiRequestView: ApiRequestView;
+  private httpClient: HttpClient;
 
   constructor(private readonly _extensionUri: vscode.Uri, context: vscode.ExtensionContext) {
     this.apiRequestProvider = new ApiRequestProvider(context);
     this.context = context;
     this.loadApiHistory();
+    this.httpClient = new HttpClient();
+    this.apiRequestView = new ApiRequestView(context, this.httpClient.sendRequest.bind(this.httpClient));
 
     // Add these lines to the constructor
     this.inspectApiHistory();
@@ -99,6 +104,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         }
         case "deleteEndpoint": {
           this.deleteEndpoint(data.name, data.method);
+          break;
+        }
+        case "selectEndpoint": {
+          this.loadEndpoint(data.value);
           break;
         }
       }
@@ -244,16 +253,16 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   }
   private updateApiHistory(endpoint: ApiEndpoint) {
     const existingIndex = this.apiHistory.findIndex(
-      e => e.name === endpoint.name && e.method === endpoint.method
+        e => e.name === endpoint.name && e.method === endpoint.method
     );
 
     if (existingIndex !== -1) {
-      this.apiHistory[existingIndex].lastUsed = endpoint.lastUsed;
-      const [updatedEndpoint] = this.apiHistory.splice(existingIndex, 1);
-      this.apiHistory.unshift(updatedEndpoint);
+        this.apiHistory[existingIndex] = { ...endpoint, lastUsed: new Date().toISOString() };
+        const [updatedEndpoint] = this.apiHistory.splice(existingIndex, 1);
+        this.apiHistory.unshift(updatedEndpoint);
     } else {
-      this.apiHistory.unshift(endpoint);
-      this.apiHistory = this.apiHistory.slice(0, 10);
+        this.apiHistory.unshift({ ...endpoint, lastUsed: new Date().toISOString() });
+        this.apiHistory = this.apiHistory.slice(0, 10);
     }
 
     this.saveApiHistory();
@@ -301,6 +310,14 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       this.refresh();
     } else {
       console.log('No invalid items found in API history.');
+    }
+  }
+
+  private loadEndpoint(endpoint: { method: string, name: string }) {
+    const savedEndpoint = this.apiHistory.find(e => e.method === endpoint.method && e.name === endpoint.name);
+    if (savedEndpoint) {
+      this.apiRequestView.show();
+      this.apiRequestView.loadEndpoint(savedEndpoint);
     }
   }
 }
