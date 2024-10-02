@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { ApiRequestProvider } from './apiRequest/apiRequestProvider';
 import { log } from './extension';
 import { ApiEndpoint } from './types';
+import { TestManagementProvider } from './testManagement/testManagementProvider';
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -10,12 +11,15 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   private apiHistory: ApiEndpoint[] = [];
   private showHistory: boolean = false;
   private context: vscode.ExtensionContext;
+  private testManagementProvider: TestManagementProvider;
 
 
   constructor(private readonly _extensionUri: vscode.Uri, context: vscode.ExtensionContext) {
     this.apiRequestProvider = new ApiRequestProvider(context);
     this.context = context;
     this.loadApiHistory();
+    this.testManagementProvider = new TestManagementProvider(context);
+
 
 
     // Register command to update API history
@@ -142,7 +146,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
            <button class="webview-button" data-webview="apiManagement">API Management</button>
            <button class="webview-button" data-webview="apiRequest">API Documentation [Coming Soon]</button>
            <button class="webview-button" data-webview="documentation">Documentation [Coming Soon]</button>
-           <button class="webview-button" data-webview="testCase">Test Management [Coming Soon]</button>
+           <button class="webview-button" data-webview="testManagement">Test Management [Coming Soon]</button>
            <button class="webview-button" data-webview="codeReview">Code Review [Coming Soon]</button>
          </div>`
       }
@@ -184,7 +188,15 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         console.error("apiRequestProvider is not initialized");
         vscode.window.showErrorMessage("API Management is not available");
       }
-    } else {
+    } else if (webviewType === 'testManagement') {
+      if (this.testManagementProvider) {
+          console.log("Opening Test Management View");
+          await this.testManagementProvider.openTestManagementView();
+      } else {
+          console.error("testManagementProvider is not initialized");
+          vscode.window.showErrorMessage("Test Management is not available");
+      }
+  } else {
       const panel = vscode.window.createWebviewPanel(
         webviewType,
         this.getWebviewTitle(webviewType),
@@ -221,7 +233,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         return 'Documentation';
       case 'codeReview':
         return 'Code Review';
-      case 'testCase':
+      case 'testManagement':
         return 'Test Case';
       default:
         return 'Webview';
