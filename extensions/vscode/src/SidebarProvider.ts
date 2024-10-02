@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { ApiRequestProvider } from './apiRequest/apiRequestProvider';
 import { log } from './extension';
 import { ApiEndpoint } from './types';
+import { inspect } from 'util';
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -17,6 +18,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     this.context = context;
     this.loadApiHistory();
 
+    // Add these lines to the constructor
+    this.inspectApiHistory();
+    this.cleanupApiHistory();
 
     // Register command to update API history
     context.subscriptions.push(
@@ -160,14 +164,19 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         </div>
         <input type="text" id="filter-history" placeholder="Filter history">
         <ul id="api-history">
-          ${this.apiHistory.map(endpoint => `
-            <li class="api-endpoint ${endpoint.method.toLowerCase()}">
-              <span class="method">${endpoint.method}</span>
-              <span class="name">${endpoint.name}</span>
-              <span class="last-used">${new Date(endpoint.lastUsed).toLocaleString()}</span>
-              <button class="delete-btn" data-name="${endpoint.name}" data-method="${endpoint.method}">X</button>
-            </li>
-          `).join('')}
+          ${this.apiHistory.map(endpoint => {
+            if (!endpoint || !endpoint.method || !endpoint.name || !endpoint.lastUsed) {
+              return ''; // Skip invalid entries
+            }
+            return `
+              <li class="api-endpoint ${endpoint.method.toLowerCase()}">
+                <span class="method">${endpoint.method}</span>
+                <span class="name">${endpoint.name}</span>
+                <span class="last-used">${new Date(endpoint.lastUsed).toLocaleString()}</span>
+                <button class="delete-btn" data-name="${endpoint.name}" data-method="${endpoint.method}">X</button>
+              </li>
+            `;
+          }).join('')}
         </ul>
       </div>
     `;
@@ -252,11 +261,47 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   }
 
   private deleteEndpoint(name: string, method: string) {
+    const initialLength = this.apiHistory.length;
     this.apiHistory = this.apiHistory.filter(
-      endpoint => !(endpoint.name === name && endpoint.method === method)
+      endpoint => endpoint && endpoint.name && endpoint.method &&
+      !(endpoint.name === name && endpoint.method === method)
     );
-    this.saveApiHistory();
-    this.refresh();
+    
+    if (this.apiHistory.length < initialLength) {
+      this.saveApiHistory();
+      this.refresh();
+      vscode.window.showInformationMessage(`Endpoint ${method} ${name} deleted successfully.`);
+    } else {
+      vscode.window.showWarningMessage(`Failed to delete endpoint ${method} ${name}. It may not exist or be invalid.`);
+    }
+  }
+
+  private inspectApiHistory() {
+    console.log('Inspecting API History:');
+    this.apiHistory.forEach((item, index) => {
+      console.log(`Item ${index}:`, inspect(item, { depth: null, colors: true }));
+    });
+  }
+
+  private cleanupApiHistory() {
+    const initialLength = this.apiHistory.length;
+    this.apiHistory = this.apiHistory.filter(endpoint => 
+      endpoint && 
+      typeof endpoint === 'object' &&
+      typeof endpoint.method === 'string' &&
+      typeof endpoint.name === 'string' &&
+      typeof endpoint.lastUsed === 'string' &&
+      !isNaN(Date.parse(endpoint.lastUsed))
+    );
+
+    const removedCount = initialLength - this.apiHistory.length;
+    if (removedCount > 0) {
+      console.log(`Removed ${removedCount} invalid items from API history.`);
+      this.saveApiHistory();
+      this.refresh();
+    } else {
+      console.log('No invalid items found in API history.');
+    }
   }
 }
 function getNonce() {
