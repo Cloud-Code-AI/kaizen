@@ -2,7 +2,7 @@
   "name": "kaizen-cloudcode",
   "displayName": "kaizen-cloudcode",
   "description": "AI powered tool to automate your day to day development tasks",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "CloudCodeAI",
   "repository": {
     "type": "git",
