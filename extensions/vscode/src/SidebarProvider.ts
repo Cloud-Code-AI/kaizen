@@ -9,9 +9,14 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   private apiRequestProvider: ApiRequestProvider;
   private apiHistory: ApiEndpoint[] = [];
   private showHistory: boolean = false;
+  private context: vscode.ExtensionContext;
+
 
   constructor(private readonly _extensionUri: vscode.Uri, context: vscode.ExtensionContext) {
     this.apiRequestProvider = new ApiRequestProvider(context);
+    this.context = context;
+    this.loadApiHistory();
+
 
     // Register command to update API history
     context.subscriptions.push(
@@ -19,6 +24,24 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         this.updateApiHistory(endpoint);
       })
     );
+  }
+  private loadApiHistory() {
+    try {
+      const history = this.context.globalState.get<ApiEndpoint[]>('apiHistory', []);
+      this.apiHistory = history;
+    } catch (error) {
+      console.error('Error loading API history:', error);
+      this.apiHistory = [];
+    }
+  }
+
+  private saveApiHistory() {
+    try {
+      this.context.globalState.update('apiHistory', this.apiHistory);
+    } catch (error) {
+      console.error('Error saving API history:', error);
+      vscode.window.showErrorMessage('Failed to save API history. Please try again.');
+    }
   }
 
   public refresh() {
@@ -84,7 +107,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
   private _getHtmlForWebview(webview: vscode.Webview) {
     log("HTML Web View Loaded");
-    
+
     const scriptUri = webview.asWebviewUri(
       vscode.Uri.joinPath(this._extensionUri, "out", "sidebar.js")
     );
@@ -93,7 +116,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       vscode.Uri.joinPath(this._extensionUri, "media", "sidebar.css")
     );
 
-  
+
     const nonce = getNonce();
 
     const csp = `
@@ -103,7 +126,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       img-src ${webview.cspSource} https:;
       font-src ${webview.cspSource};
     `;
-  
+
     return `<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -113,16 +136,16 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         <link href="${styleSidebarUri}" rel="stylesheet">
     </head>
     <body>
-    ${this.showHistory 
-      ? `<button id="back-button">Back</button>${this.getHistoryHtml()}`
-      : `<div id="buttons">
+    ${this.showHistory
+        ? `<button id="back-button">Back</button>${this.getHistoryHtml()}`
+        : `<div id="buttons">
            <button class="webview-button" data-webview="apiManagement">API Management</button>
-           <button class="webview-button" data-webview="apiRequest">API Request</button>
-           <button class="webview-button" data-webview="chatRepo">Chat Repo</button>
-           <button class="webview-button" data-webview="documentation">Documentation</button>
-           <button class="webview-button" data-webview="testCase">Test Case</button>
+           <button class="webview-button" data-webview="apiRequest">API Documentation [Coming Soon]</button>
+           <button class="webview-button" data-webview="documentation">Documentation [Coming Soon]</button>
+           <button class="webview-button" data-webview="testCase">Test Management [Coming Soon]</button>
+           <button class="webview-button" data-webview="codeReview">Code Review [Coming Soon]</button>
          </div>`
-    }
+      }
     <script nonce="${nonce}" src="${scriptUri}"></script>
     </body>
     </html>`;
@@ -196,6 +219,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         return 'Chat Repo';
       case 'documentation':
         return 'Documentation';
+      case 'codeReview':
+        return 'Code Review';
       case 'testCase':
         return 'Test Case';
       default:
@@ -208,64 +233,32 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     const fileContent = await vscode.workspace.fs.readFile(filePath);
     return fileContent.toString();
   }
-
-private updateApiHistory(endpoint: ApiEndpoint){
-    // Check if an endpoint with the same name and method already exists
+  private updateApiHistory(endpoint: ApiEndpoint) {
     const existingIndex = this.apiHistory.findIndex(
       e => e.name === endpoint.name && e.method === endpoint.method
     );
 
-    let updatedEndpoint: ApiEndpoint;
+    if (existingIndex !== -1) {
+      this.apiHistory[existingIndex].lastUsed = endpoint.lastUsed;
+      const [updatedEndpoint] = this.apiHistory.splice(existingIndex, 1);
+      this.apiHistory.unshift(updatedEndpoint);
+    } else {
+      this.apiHistory.unshift(endpoint);
+      this.apiHistory = this.apiHistory.slice(0, 10);
+    }
 
-    if (existingIndex !== -1){
-      // If it exists, update the lastUsed time
-      updatedEndpoint ={...this.apiHistory[existingIndex], lastUsed: endpoint.lastUsed};
-      this.apiHistory.splice(existingIndex, 1);
-}else{
-      updatedEndpoint = endpoint;
-      // Using a circular buffer implementation
-      class CircularBuffer<T>{
-          private buffer: T[];
-          private pointer: number = 0;
-          constructor(private capacity: number){
-              this.buffer = new Array<T>(capacity);
-      }
-          push(item: T): void{
-              this.buffer[this.pointer] = item;
-              this.pointer = (this.pointer + 1) % this.capacity;
-      }
-          getItems(): T[]{
-              return[...this.buffer.slice(this.pointer), ...this.buffer.slice(0, this.pointer)];
-      }
-      }
-
-      // Usage
-      private apiHistory = new CircularBuffer<ApiEndpoint>(10);
-
-      // In updateApiHistory method
-      this.apiHistory.push(endpoint);
-}
-}
-
-    // Add the updated/new endpoint to the beginning of the array
-    this.apiHistory.unshift(updatedEndpoint);
-
-    // Send only the updated history item to the webview
-    this._view?.webview.postMessage({
-      type: 'updateHistoryItem', 
-      endpoint: updatedEndpoint,
-      action: existingIndex !== -1 ? 'update' : 'add'
-});
-}
+    this.saveApiHistory();
+    this.refresh();
+  }
 
   private deleteEndpoint(name: string, method: string) {
     this.apiHistory = this.apiHistory.filter(
       endpoint => !(endpoint.name === name && endpoint.method === method)
     );
+    this.saveApiHistory();
     this.refresh();
   }
 }
-
 function getNonce() {
   let text = '';
   const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
