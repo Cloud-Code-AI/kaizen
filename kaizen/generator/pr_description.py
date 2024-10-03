@@ -95,15 +95,15 @@ class PRDescriptionGenerator:
             pull_request_desc,
             user,
         ):
-            file_descs.extend(file_review)
+            file_descs.append(file_review)
 
         if len(file_descs) > 1:
             prompt = MERGE_PR_DESCRIPTION_PROMPT.format(DESCS=json.dumps(file_descs))
             resp, usage = self.provider.chat_completion(prompt, user=user)
+            self.total_usage = self.provider.update_usage(self.total_usage, usage)
             desc = parser.extract_code_from_markdown(resp)
         else:
             desc = parser.extract_code_from_markdown(file_descs[0])
-        self.total_usage = self.provider.update_usage(self.total_usage, usage)
 
         return desc
 

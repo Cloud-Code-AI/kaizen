@@ -5,7 +5,6 @@ from kaizen.helpers import parser
 from kaizen.llms.provider import LLMProvider
 from kaizen.llms.prompts.code_review_prompts import (
     CODE_REVIEW_PROMPT,
-    FILE_CODE_REVIEW_PROMPT,
     PR_REVIEW_EVALUATION_PROMPT,
     CODE_REVIEW_SYSTEM_PROMPT,
 )
@@ -99,7 +98,7 @@ class CodeReviewer:
     def __init__(self, llm_provider: LLMProvider, default_model="default"):
         self.logger = logging.getLogger(__name__)
         self.provider = llm_provider
-        self.provider.system_prompt = CODE_REVIEW_SYSTEM_PROMPT
+        self.provider.set_system_prompt(CODE_REVIEW_SYSTEM_PROMPT)
         self.default_model = default_model
         self.total_usage = {
             "prompt_tokens": 0,
@@ -120,6 +119,7 @@ class CodeReviewer:
             CODE_DIFF=parser.patch_to_combined_chunks(
                 diff_text, ignore_deletions=self.ignore_deletions
             ),
+            CODE_REVIEW_PROMPT=self.custom_rules,
         )
         return self.provider.is_inside_token_limit(PROMPT=prompt)
 
@@ -139,16 +139,14 @@ class CodeReviewer:
     ) -> ReviewOutput:
         self.ignore_deletions = ignore_deletions
         self.files_processed = 0
-        self.provider.system_prompt = (
-            CODE_REVIEW_SYSTEM_PROMPT
-            + "\nAlways mark the issues which following rule at high and above with 8+ severity.\n"
-            + custom_rules
-        )
+        self.custom_rules = custom_rules
         prompt = (
             CODE_REVIEW_PROMPT.format(
                 CODE_DIFF=parser.patch_to_combined_chunks(
                     diff_text, self.ignore_deletions
                 ),
+                CUSTOM_RULES="Always mark issues that violate the following rules with a severity of 8 or higher (high and above):"
+                + self.custom_rules,
             )
             + custom_context
         )
@@ -246,7 +244,7 @@ class CodeReviewer:
         custom_context: str,
     ) -> Generator[Optional[Tuple[List[Dict], Optional[float]]], None, None]:
         combined_diff_data = ""
-        available_tokens = self.provider.available_tokens(FILE_CODE_REVIEW_PROMPT)
+        available_tokens = self.provider.available_tokens(CODE_REVIEW_PROMPT)
         diff_parts = []
         for file in pull_request_files:
             patch_details = file.get("patch")
@@ -302,8 +300,10 @@ class CodeReviewer:
         if not diff_data:
             return None
         prompt = (
-            FILE_CODE_REVIEW_PROMPT.format(
-                FILE_PATCH=diff_data,
+            CODE_REVIEW_PROMPT.format(
+                CODE_DIFF=diff_data,
+                CUSTOM_RULES="Always mark issues that violate the following rules with a severity of 8 or higher (high and above):"
+                + self.custom_rules,
             )
             + custom_context
         )

@@ -79,6 +79,9 @@ class LLMProvider:
                 }
             ]
 
+    def set_system_prompt(self, system_prompt):
+        self.system_prompt = system_prompt
+
     def _setup_provider(self) -> None:
         provider_kwargs = {
             "model_list": self.models,
@@ -156,7 +159,6 @@ class LLMProvider:
             custom_model = {"model": model}
         if "temperature" not in custom_model:
             custom_model["temperature"] = self.default_temperature
-
         response = self.provider.completion(
             messages=messages, user=user, **custom_model
         )
