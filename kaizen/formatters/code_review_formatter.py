@@ -1,6 +1,67 @@
 from typing import Dict, List
 
 
+def calculate_score(issue):
+    score = 0
+
+    # Impact score
+    impact_scores = {"critical": 5, "high": 4, "medium": 3, "low": 2, "trivial": 1}
+    score += impact_scores.get(issue["impact"], 0)
+
+    # Severity score
+    score += issue.get("severity", 0)
+
+    # Type score
+    critical_types = ["security", "performance", "error_handling", "concurrency"]
+    important_types = [
+        "best_practices",
+        "maintainability",
+        "scalability",
+        "resource_management",
+    ]
+    if issue.get("type", "") in critical_types:
+        score += 5
+    elif issue.get("type", "") in important_types:
+        score += 3
+
+    if issue.get("line_prefix", "").replace("|", "") != "UPDATED":
+        score = -5
+
+    # Sentiment score
+    sentiment_scores = {"negative": 2, "neutral": 1, "positive": 0}
+    score += sentiment_scores.get(issue["sentiment"], 0)
+    return score
+
+
+def categorize_issue(issue):
+    score = calculate_score(issue)
+    if score >= 15:
+        return "critical"
+    elif score >= 10:
+        return "important"
+    else:
+        return "can ignore"
+
+
+def filter_and_categorize_issues(data, ignore_list=["error_handling"], pr_files=[]):
+    is_critical = False
+    issues = []
+    critical_issues = []
+    for issue in data:
+        if issue.get("type") in ignore_list:
+            continue
+        category = categorize_issue(issue)
+        if category == "critical":
+            is_critical = True
+            issue["impact"] = "critical"
+            critical_issues.append(issue)
+            issues.append(issue)
+        elif category == "important":
+            issue["impact"] = "important"
+            issues.append(issue)
+    return critical_issues, issues, is_critical
+
+
 def create_pr_review_text(
     reviews: List[Dict], code_quality: float, tests: List = None
 ) -> str:
