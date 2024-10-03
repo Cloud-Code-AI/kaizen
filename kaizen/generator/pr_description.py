@@ -129,7 +129,6 @@ class PRDescriptionGenerator:
                 filename.split(".")[-1] not in parser.EXCLUDED_FILETYPES
                 and patch_details is not None
             ):
-
                 diff_parts.append(
                     f"\n---->\nFile Name: {filename}\nPatch Details: \n{patch_details}"
                 )

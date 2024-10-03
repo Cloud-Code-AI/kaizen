@@ -135,9 +135,15 @@ class CodeReviewer:
         ignore_deletions=False,
         custom_context: str = "",
         check_sensetive: bool = False,
+        custom_rules: str = "",
     ) -> ReviewOutput:
         self.ignore_deletions = ignore_deletions
         self.files_processed = 0
+        self.provider.system_prompt = (
+            CODE_REVIEW_SYSTEM_PROMPT
+            + "\nAlways mark the issues which following rule at high and above with 8+ severity.\n"
+            + custom_rules
+        )
         prompt = (
             CODE_REVIEW_PROMPT.format(
                 CODE_DIFF=parser.patch_to_combined_chunks(

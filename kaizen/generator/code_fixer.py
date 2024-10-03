@@ -38,9 +38,7 @@ class CodeFixer:
         )
 
         if not self.provider.is_inside_token_limit(PROMPT=fix_prompt):
-            self.logger.warning(
-                f"Fix prompt for issue exceeds token limit. Skipping."
-            )
+            self.logger.warning(f"Fix prompt for issue exceeds token limit. Skipping.")
             raise Exception("File Size too big!")
 
         resp, usage = self.provider.chat_completion_with_json(

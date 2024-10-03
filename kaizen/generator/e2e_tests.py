@@ -141,7 +141,6 @@ class E2ETestGenerator:
         return ui_tests, self.total_usage
 
     def store_tests_files(self, json_tests: list, folder_path: str = ""):
-
         if not folder_path:
             folder_path = output.get_parent_folder()
 
@@ -151,7 +150,6 @@ class E2ETestGenerator:
         self.logger.info("Successfully store the files")
 
     def store_module_files(self, module_data: list, folder_path: str = ""):
-
         if not folder_path:
             folder_path = output.get_parent_folder()
 
