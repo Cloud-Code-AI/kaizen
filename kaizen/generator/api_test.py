@@ -10,7 +10,7 @@ from kaizen.helpers.parser import extract_code_from_markdown
 from kaizen.actors.api_test_runner import APITestRunner
 from kaizen.llms.prompts.API_tests_prompts import (
     API_TEST_SYSTEM_PROMPT,
-    API_METHOD_PROMPT
+    API_METHOD_PROMPT,
 )
 
 
@@ -73,7 +73,7 @@ class APITestGenerator:
 
     def _read_file_content(self, file_path):
         try:
-            with open(file_path, 'r') as file:
+            with open(file_path, "r") as file:
                 api_schema = json.load(file)
         except UnicodeDecodeError:
             print(f"Error reading file: {file_path}")
@@ -83,15 +83,17 @@ class APITestGenerator:
         folder_path = "/".join(file_path.split("/")[:-1])
         test_files = {}
         actions_used = 0
-        for path, path_item in tqdm(file_data['paths'].items(), desc="Processing Endpoints(Paths)", unit="paths"):
+        for path, path_item in tqdm(
+            file_data["paths"].items(), desc="Processing Endpoints(Paths)", unit="paths"
+        ):
             try:
-                test_code, count = self._process_item(
-                    path, path_item, folder_path
-                )
+                test_code, count = self._process_item(path, path_item, folder_path)
                 test_files[file_path] = test_code
                 actions_used += count
             except Exception as e:
-                self.logger.error(f"Failed to generate test case for item: {path}. Error: {str(e)}")
+                self.logger.error(
+                    f"Failed to generate test case for item: {path}. Error: {str(e)}"
+                )
                 break
 
         print(
@@ -101,13 +103,15 @@ class APITestGenerator:
 
     def _process_item(self, path, path_item, folder_path):
         print(f"\n{'=' * 50}\nProcessing Item: {path}\n{'=' * 50}")
-        file_path = path.replace('/', '_').replace('{', '').replace('}', '')
+        file_path = path.replace("/", "_").replace("{", "").replace("}", "")
         test_file_path = self._prepare_test_file_path(file_path, folder_path)
         test_code = ""
         totalcount = 0
         for method, method_code in path_item.items():
             print("Processing method:", method)
-            individual_test_code, count = self.generate_ai_tests(path, method, method_code)
+            individual_test_code, count = self.generate_ai_tests(
+                path, method, method_code
+            )
             test_code += individual_test_code
             totalcount += count
 
@@ -128,14 +132,18 @@ class APITestGenerator:
         return test_file_path
 
     def generate_ai_tests(self, path, method, method_code):
-        print(f"• Generating AI tests for {method.upper()} {path} ...")     
-        test_generation_prompt = API_METHOD_PROMPT.format(path=path, method=method, method_code=method_code, base_url=self.base_url)
-        response, usage = self.provider.chat_completion_with_json(test_generation_prompt, model="default")
+        print(f"• Generating AI tests for {method.upper()} {path} ...")
+        test_generation_prompt = API_METHOD_PROMPT.format(
+            path=path, method=method, method_code=method_code, base_url=self.base_url
+        )
+        response, usage = self.provider.chat_completion_with_json(
+            test_generation_prompt, model="default"
+        )
         self.update_usage(usage)
         test_code = extract_code_from_markdown(response)
         print(f"  ✓ AI tests generated successfully for {method.upper()} {path}")
         self.log_step("Generate AI tests", f"Generated test code:\n{response}")
-        return test_code, 1  
+        return test_code, 1
 
     def run_tests(self, test_file=None):
         runner = APITestRunner(self.output_folder)
@@ -185,7 +193,7 @@ class APITestGenerator:
 
     def _write_test_file(self, test_file_path, test_code):
         print("• Writing test file...")
-        try: 
+        try:
             with open(test_file_path, "w") as test_file:
                 test_file.write(test_code)
             print("  ✓ Test file written successfully")
@@ -196,4 +204,3 @@ class APITestGenerator:
     def update_usage(self, usage):
         self.total_usage = self.provider.update_usage(self.total_usage, usage)
         print(f"@ Token usage: current_step: {usage}, total: {self.total_usage}")
-        
