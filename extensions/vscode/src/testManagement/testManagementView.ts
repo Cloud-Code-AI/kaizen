@@ -44,6 +44,7 @@ export class TestManagementView {
 
     private async getWebviewContent(): Promise<string> {
         const htmlPath = vscode.Uri.joinPath(this.context.extensionUri, 'webview', 'testManagement', 'index.html');
+        console.log("Loading HTML from:", htmlPath.toString());
         const htmlContent = await vscode.workspace.fs.readFile(htmlPath);
         return htmlContent.toString();
     }
