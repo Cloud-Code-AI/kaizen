@@ -1,0 +1,57 @@
+[
+  {
+    "method": "GET",
+    "name": "https://jsonplaceholder.typicode.com/posts",
+    "lastUsed": "2024-10-16T16:18:51.817Z"
+  },
+  {
+    "method": "GET",
+    "name": "http://localhost:8000/github-webhook",
+    "lastUsed": "2024-10-16T12:08:14.848Z"
+  },
+  {
+    "method": "PATCH",
+    "name": "http://localhost:8000/github-webhook",
+    "lastUsed": "2024-10-16T12:03:42.401Z"
+  },
+  {
+    "method": "POST",
+    "name": "http://localhost:8000/github-webhook",
+    "lastUsed": "2024-10-16T12:01:18.314Z"
+  },
+  {
+    "name": "GET https://jsonplaceholder.typicode.com/posts",
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/posts",
+    "headers": {},
+    "body": ""
+  },
+  {
+    "name": "GET https://jsonplaceholder.typicode.com/posts",
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/posts",
+    "headers": {},
+    "body": ""
+  },
+  {
+    "name": "GET https://jsonplaceholder.typicode.com/posts",
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/posts",
+    "headers": {},
+    "body": ""
+  },
+  {
+    "name": "GET https://jsonplaceholder.typicode.com/posts",
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/posts",
+    "headers": {},
+    "body": ""
+  },
+  {
+    "name": "GET https://jsonplaceholder.typicode.com/posts",
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/posts",
+    "headers": {},
+    "body": ""
+  }
+]
