@@ -4,6 +4,12 @@ Read this code and design comprehensive tests to test the UI of this HTML.
 Break it down into 5-10 separate modules and identify the possible things to test for each module. 
 For each module, also identify which tests should be checked repeatedly (e.g., after every code change, every build, etc.).
 
+Ensure the following are considered:
+- Input validation is thoroughly tested.
+- Avoid using if-else steps in the test design.
+- Consider session timeouts and their handling.
+- Test all actionable items (e.g., buttons, links).
+
 Return the output as JSON with the following keys:
 {{"tests": {{
     "id": "serial number to identify module",
@@ -51,6 +57,10 @@ When given requirements or specifications, you should:
 5. Incorporate data-driven testing and parallelization strategies.
 6. Ensure compatibility with the CI/CD pipeline and provide clear documentation.
 7. Continuously maintain and improve the test scripts as the application evolves.
+8. Ensure input validation is tested.
+9. Avoid using if-else steps in the test scripts.
+10. Consider session timeouts and their handling.
+11. Test all actionable items (e.g., buttons, links).
 
 Prioritize code quality, maintainability, and adherence to best practices in test automation. Collaborate with developers and stakeholders for seamless integration into the software development lifecycle.
 
