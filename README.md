@@ -23,8 +23,6 @@
   <a href="https://cloudcode.ai/kaizen/docs"><img src="https://img.shields.io/badge/docs-view%20Kaizen%20Docs" alt="Kaizen Docs"></a>
 </p>
 
-## 🚀 Kaizen: Automating Development Workflows with AI
-
 ## Table of Contents
 - [Introduction](#introduction)
 - [Key Features](#key-features)
