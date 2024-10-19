@@ -23,6 +23,9 @@ CODE_REVIEW_PROMPT = """
 Provide a concise, actionable code review for the given pull request. Generate a JSON object with the following structure:
 {{
   "code_quality_percentage": <0_TO_100>,
+  "security_score": <0_TO_100>,
+  "compliance_score": <0_TO_100>,
+  "performance_score": <0_TO_100>,
   "review": [
     {{
       "category": "<ISSUE_CATEGORY>",
@@ -58,6 +61,12 @@ When reviewing code and calculating the code quality percentage, consider:
 8. Error handling: Are errors and edge cases properly managed?
 9. Modularity: Is the code organized into logical, reusable components?
 10. Scalability: Can the code handle increased load or data volume?
+11. Compliance: Does the code adhere to relevant standards and regulations?
+12. Container and infrastructure best practices: If applicable, are container and IaC files following best practices?
+13. AI/ML considerations: If applicable, are there concerns about bias, fairness, or explainability?
+14. Accessibility: Does the code consider accessibility standards?
+15. Internationalization: Is the code prepared for multiple languages and locales?
+
 
 Score each parameter 1-10, then calculate the overall percentage.
 
@@ -65,6 +74,7 @@ Score each parameter 1-10, then calculate the overall percentage.
 - Provide specific feedback with file paths and line numbers
 - Use markdown for code snippets. Make sure all code is following the original indentations.
 - Merge duplicate feedback
+- Check for OWASP Top 10 vulnerabilities.
 - Examine: syntax/logic errors, resource leaks, race conditions, security vulnerabilities, performance issues, scalability concerns, refactoring opportunities, and code duplication
 - If no issues found: {{"review": []}}
 
@@ -101,6 +111,9 @@ Example:
 - Potential performance implications
 - Security vulnerabilities introduced by changes
 - Opportunities for code reuse and design pattern application
+- Compliance with relevant standards and regulations
+- Container and infrastructure best practices (if applicable)
+- Accessibility and internationalization issues
 
 Provide concrete examples or code snippets when suggesting improvements.
 
@@ -156,6 +169,7 @@ Score each parameter 1-10, then calculate the overall percentage.
 - Provide specific feedback with file paths and line numbers
 - Use markdown for code snippets. Make sure all code is following the original indentations.
 - Merge duplicate feedback
+- Check for OWASP Top 10 vulnerabilities.
 - Examine: syntax/logic errors, resource leaks, race conditions, security vulnerabilities, performance issues, scalability concerns, refactoring opportunities, and code duplication
 - If no issues found: {{"review": []}}
 
