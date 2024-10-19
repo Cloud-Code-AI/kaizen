@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="/assets/logo.png" alt="Kaizen Logo" width="200"/>
+  <img src="/docs/public/logo.png" alt="Kaizen Logo" width="200"/>
 </p>
 
 <h1 align="center">🚀 Kaizen: Automating Development Workflows with AI</h1>
@@ -29,7 +29,7 @@
 - [Why Choose Kaizen?](#why-choose-kaizen)
 - [Getting Started](#getting-started)
 - [Usage Examples](#usage-examples)
-- [Contributing](https://cloudcode.ai/kaizen/docs/sdk_reference/code_review)
+- [Contributing](https://github.com/Cloud-Code-AI/kaizen/blob/main/CONTRIBUTING.md)
 - [Join the Kaizen Community!](#join-the-kaizen-community)
 
 ## Introduction
