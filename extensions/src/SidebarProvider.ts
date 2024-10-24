@@ -72,7 +72,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         console.error('Error saving API history:', error);
         vscode.window.showErrorMessage(`Failed to save API history: ${error.message}`);
     }
-}
+  } 
 
   public refresh() {
     if (this._view) {
