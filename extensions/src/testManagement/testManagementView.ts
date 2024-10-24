@@ -26,13 +26,7 @@ export class TestManagementView {
                 }
             );
 
-            try {
-                // Load the webview content asynchronously
-                this.panel.webview.html = await this.getWebviewContent();
-            } catch (error) {
-                console.error("Failed to load webview content:", error);
-                this.panel.webview.html = "<h1>Error loading content</h1>"; // Fallback content
-            }
+            this.panel.webview.html = await this.getWebviewContent();
 
             this.panel.webview.onDidReceiveMessage(
                 message => {
@@ -50,17 +44,7 @@ export class TestManagementView {
 
     private async getWebviewContent(): Promise<string> {
         const htmlPath = vscode.Uri.joinPath(this.context.extensionUri, 'webview', 'testManagement', 'index.html');
-        console.log("Loading HTML from:", htmlPath.toString());
-        
-        try {
-            // Read the HTML file
-            const htmlContentBuffer = await vscode.workspace.fs.readFile(htmlPath);
-            
-            // Convert the buffer to a string using TextDecoder for proper encoding
-            return new TextDecoder('utf-8').decode(htmlContentBuffer);
-        } catch (error) {
-            console.error("Error loading HTML:", error);
-            throw error; // Re-throw the error to handle it in show()
-        }
+        const htmlContent = await vscode.workspace.fs.readFile(htmlPath);
+        return htmlContent.toString();
     }
 }

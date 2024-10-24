@@ -33,6 +33,8 @@
             const method = endpoint.querySelector('.method')?.textContent;
             const name = endpoint.querySelector('.name')?.textContent;
             vscode.postMessage({ type: 'selectEndpoint', value: { method, name } });
+        } else if (target.id === 'export-history-btn') {
+            vscode.postMessage({ type : 'exportApiHistory'});
         }
     });
 

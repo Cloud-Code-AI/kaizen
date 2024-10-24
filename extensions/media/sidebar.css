@@ -54,6 +54,31 @@ body {
     font-weight: bold;
 }
 
+#export-history-btn {
+    background-color: white;
+    color: black;
+    border: none;
+    border-radius: 3px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s ease;
+}
+
+#export-history-btn:hover {
+    background-color: rgb(206, 206, 206);
+}
+
+#export-history-btn::before {
+    margin-right: 5px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+
 #filter-collections {
     margin: 10px 16px; /* Increased margin */
     padding: 6px 10px; /* Increased padding */
