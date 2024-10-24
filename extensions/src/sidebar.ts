@@ -28,13 +28,13 @@
             vscode.postMessage({ type: 'backButton' });
         } else if (target.id === 'new-request-btn') {
             vscode.postMessage({ type: 'newRequest' });
+        } else if (target.id === 'export-history-btn') {
+            vscode.postMessage({type: 'exportHistory'});
         } else if (target.closest('.api-endpoint')) {
             const endpoint = target.closest('.api-endpoint') as HTMLElement;
             const method = endpoint.querySelector('.method')?.textContent;
             const name = endpoint.querySelector('.name')?.textContent;
             vscode.postMessage({ type: 'selectEndpoint', value: { method, name } });
-        } else if (target.id === 'export-history-btn') {
-            vscode.postMessage({ type : 'exportApiHistory'});
         }
     });
 

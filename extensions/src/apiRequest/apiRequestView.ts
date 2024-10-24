@@ -663,6 +663,9 @@ export class ApiRequestView {
                 case 'updateHistory':
                     updateHistory(message.history);
                     break;
+                case 'loadEndpoint':
+                    loadEndpoint(message.endpoint);
+                    break;
             }
         });
 
@@ -676,9 +679,26 @@ export class ApiRequestView {
                 url
             });
         });
+
+        function loadEndpoint(endpoint) {
+            document.getElementById('method').value = endpoint.method;
+            document.getElementById('url').value = endpoint.name;
+            // You might need to add more logic here to load other endpoint details
+            // such as headers, query params, body, etc., depending on what data
+            // you're storing in the ApiEndpoint object
+        }
     </script>
 </body>
 </html>`;
+    }
+
+    public loadEndpoint(endpoint: ApiEndpoint) {
+        if (this.panel) {
+            this.panel.webview.postMessage({
+                command: 'loadEndpoint',
+                endpoint: endpoint
+            });
+        }
     }
 
 }
