@@ -31,7 +31,7 @@ export class ApiRequestProvider {
     }
 
     public openApiRequestView() {
-        // console.log("API Request View : This is the request view");
+        console.log("API Request View : This is the request view");
         // if (!this.view) {
         //     this.view = new ApiRequestView(this.context, this.handleApiRequest);
         // }

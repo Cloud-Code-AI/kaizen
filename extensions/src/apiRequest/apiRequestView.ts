@@ -21,9 +21,57 @@ export class ApiRequestView {
         this.context = context;
         this.apiRequestCallback = apiRequestCallback;
     }
-
+    // public show(method?: string, url?: string, headers?: Record<string, string>, body?: string) {
+    //     console.log("Show from View");
+    
+    //     // Create a new panel every time this method is called
+    //     const newPanel = vscode.window.createWebviewPanel(
+    //         'apiRequest',
+    //         'API Request',
+    //         vscode.ViewColumn.One,
+    //         {
+    //             enableScripts: true,
+    //             retainContextWhenHidden: true,
+    //         }
+    //     );
+    
+    //     // Set up webview content
+    //     newPanel.webview.html = this.getWebviewContent();
+    
+    //     // Populate fields if provided
+    //     if (method && url) {
+    //         newPanel.webview.postMessage({
+    //             command: 'populateFields',
+    //             method: method,
+    //             url: url,
+    //             headers: headers || {},
+    //             body: body || ''
+    //         });
+    //     }
+    
+    //     // Handle messages from the webview
+    //     newPanel.webview.onDidReceiveMessage(
+    //         message => {
+    //             switch (message.command) {
+    //                 case 'sendRequest':
+    //                     this.apiRequestCallback(message.method, message.url, message.headers, message.queryParams, message.formData, message.body, message.bodyType);
+    //                     return;
+    //                 case 'saveEndpoint':
+    //                     this.saveEndpoint(message.method, message.url);
+    //                     return;
+    //             }
+    //         },
+    //         undefined,
+    //         this.context.subscriptions
+    //     );
+    
+    //     // Clean up when the panel is disposed
+    //     newPanel.onDidDispose(() => {
+    //         // Optionally handle any cleanup or state management here
+    //     });
+    // }
     public show() {
-        // console.log("Show from View");
+        console.log("Show from View");
         // if (this.panel) {
         //     console.log("Show from View : if condition");
         //     this.panel.reveal();
