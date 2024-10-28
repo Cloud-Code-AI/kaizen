@@ -60,8 +60,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         console.log("Exporting API history...");
         
         const downloadsFolder = process.platform === 'darwin' 
-            ? path.join(process.env.HOME, 'Downloads') // macOS
-            : path.join(process.env.USERPROFILE, 'Downloads'); // Windows/Linux
+            ? path.join(process.env.HOME, 'Downloads') 
+            : path.join(process.env.USERPROFILE, 'Downloads');
 
         const filePath = path.join(downloadsFolder, 'history.msgpack');
         const packedData = msgpack.encode(this.apiHistory); 
@@ -108,6 +108,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           break;
         }
         case "openApiManagement": {
+          console.log("API MANAGEMENT CASE");
           if (!data.value) {
             return;
           }
@@ -115,6 +116,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           break;
         }
         case "backButton": {
+          console.log("Going Back");
           this.showHistory = false;
           this.refresh();
           break;
@@ -125,14 +127,17 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           break;
         }
         case "deleteEndpoint": {
+          console.log("Deleting endpoint");
           this.deleteEndpoint(data.name, data.method);
           break;
         }
         case "selectEndpoint": {
+          console.log("Selection endpoint");
           this.loadEndpoint(data.value);
           break;
         }
         case "exportHistory": {
+          console.log("Export history");
           this.exportHistory();
           break;
         }

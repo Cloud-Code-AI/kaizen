@@ -23,9 +23,12 @@ export class ApiRequestView {
     }
 
     public show() {
-        if (this.panel) {
-            this.panel.reveal();
-        } else {
+        // console.log("Show from View");
+        // if (this.panel) {
+        //     console.log("Show from View : if condition");
+        //     this.panel.reveal();
+        // } else {
+        //     console.log("Show from View : else condition");
             this.panel = vscode.window.createWebviewPanel(
                 'apiRequest',
                 'API Request',
@@ -56,14 +59,13 @@ export class ApiRequestView {
             this.panel.onDidDispose(() => {
                 this.panel = undefined;
             });
-        }
+        // }
     }
 
     public postMessage(message: any) {
         this.panel?.webview.postMessage(message);
     }
     private saveEndpoint(method: string, url: string) {
-        // Check if the URL is blank
         if (!url.trim()) {
             vscode.window.showErrorMessage("URL is blank. Cannot save endpoint.");
             return;
