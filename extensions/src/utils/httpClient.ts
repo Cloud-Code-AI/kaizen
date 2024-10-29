@@ -1,5 +1,6 @@
 export class HttpClient {
     public async sendRequest(url: string, method: string, headers: Record<string, string>, body?: string | FormData) {
+        console.log("Request sent from https client");
         try {
             const options: RequestInit = {
                 method,

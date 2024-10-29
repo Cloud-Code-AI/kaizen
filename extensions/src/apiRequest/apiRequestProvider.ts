@@ -31,10 +31,11 @@ export class ApiRequestProvider {
     }
 
     public openApiRequestView() {
-        console.log("This is the request view");
-        if (!this.view) {
-            this.view = new ApiRequestView(this.context, this.handleApiRequest);
-        }
+        console.log("API Request View : This is the request view");
+        // if (!this.view) {
+        //     this.view = new ApiRequestView(this.context, this.handleApiRequest);
+        // }
+        this.view = new ApiRequestView(this.context, this.handleApiRequest);
         this.view.show();
         this.updateCollectionsView();
     }
@@ -48,6 +49,7 @@ export class ApiRequestProvider {
         body: string,
         bodyType: string
     ): Promise<void> {
+        console.log("Handle API Request called");
         try {
             // Append query params to URL
             const urlObj = new URL(url);
@@ -93,12 +95,14 @@ export class ApiRequestProvider {
     }
 
     public addCollection(name: string) {
+        console.log("api Request view : AddCollections called");
         this.collections.push({ name, requests: [] });
         this.saveCollections();
         this.updateCollectionsView();
     }
 
     public addRequestToCollection(collectionName: string, request: ApiRequest) {
+        console.log("api Request view : AddRequestToCollections called");
         const collection = this.collections.find(c => c.name === collectionName);
         if (collection) {
             collection.requests.push(request);
