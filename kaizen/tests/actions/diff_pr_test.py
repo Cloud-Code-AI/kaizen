@@ -14,15 +14,18 @@ headers = {
     "Accept": "application/vnd.github.v3+json",
 }
 
+
 # Pydantic model for validating inputs
 class PRRequestModel(BaseModel):
     owner: constr(regex=r"^[a-zA-Z0-9-]{1,39}$")
     repo: constr(regex=r"^[a-zA-Z0-9_.-]{1,100}$")
     pr_number: conint(gt=0)
 
+
 # Wrapper function to validate inputs
 def validate_pr_request(owner, repo, pr_number):
     return PRRequestModel(owner=owner, repo=repo, pr_number=pr_number)
+
 
 def get_pr_info(owner, repo, pr_number):
     validated_data = validate_pr_request(owner, repo, pr_number)
@@ -31,12 +34,14 @@ def get_pr_info(owner, repo, pr_number):
     response.raise_for_status()
     return response.json()
 
+
 def get_pr_files(owner, repo, pr_number):
     validated_data = validate_pr_request(owner, repo, pr_number)
     url = f"{GITHUB_API}/repos/{validated_data.owner}/{validated_data.repo}/pulls/{validated_data.pr_number}/files"
     response = requests.get(url, headers=headers)
     response.raise_for_status()
     return response.json()
+
 
 def get_diff(url):
     headers = {
@@ -45,6 +50,7 @@ def get_diff(url):
     }
     response = requests.get(url, headers=headers)
     return response.text
+
 
 def main(owner, repo, pr_number):
     try:
@@ -88,6 +94,7 @@ def main(owner, repo, pr_number):
         print("Input validation error:", e.json())
     except requests.exceptions.HTTPError as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     main("Cloud-Code-AI", "kaizen", 252)
