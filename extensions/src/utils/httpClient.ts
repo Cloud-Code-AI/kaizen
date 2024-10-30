@@ -1,7 +1,7 @@
 export class HttpClient {
     public async sendRequest(url: string, method: string, headers: Record<string, string>, body?: string | FormData) {
         console.log("Request sent from https client");
-        console.log("Sending Request:", { url, method, headers, body });
+console.log('Sending Request:',{url, method}); // Exclude headers and body from logs
 
         try {
             const options: RequestInit = {
