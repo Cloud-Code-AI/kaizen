@@ -1,4 +1,4 @@
-from pydantic import BaseModel, constr, conint, ValidationError
+from pydantic import BaseModel, Field, ValidationError
 import requests
 from kaizen.reviewer.code_review import CodeReviewer
 from kaizen.llms.provider import LLMProvider
@@ -17,9 +17,9 @@ headers = {
 
 # Pydantic model for validating inputs
 class PRRequestModel(BaseModel):
-    owner: constr(regex=r"^[a-zA-Z0-9-]{1,39}$")
-    repo: constr(regex=r"^[a-zA-Z0-9_.-]{1,100}$")
-    pr_number: conint(gt=0)
+    owner: str = Field(..., regex=r"^[a-zA-Z0-9-]{1,39}$")
+    repo: str = Field(..., regex=r"^[a-zA-Z0-9_.-]{1,100}$")
+    pr_number: int = Field(..., gt=0)
 
 
 # Wrapper function to validate inputs
@@ -59,7 +59,7 @@ def main(owner, repo, pr_number):
         print(f"\nDiff URL: {pr_info['diff_url']}")
         diff_text = get_diff(pr_info["diff_url"])
         print(f"Diff: \n{diff_text}\n")
-        
+
         code_reviewer = CodeReviewer(llm_provider=LLMProvider())
         reviews = code_reviewer.review_pull_request(
             pull_request_title=pr_info["title"],
@@ -68,14 +68,14 @@ def main(owner, repo, pr_number):
             pull_request_files=pr_files,
             user="local_test",
         )
-        
+
         print(json.dumps(reviews.topics, indent=2))
         print("Processing Reviews ....")
-        
+
         topics = clean_keys(reviews.topics, "moderate")
         review_desc = create_pr_review_text(topics)
         comments, topics = create_review_comments(topics)
-        
+
         print(f"\n Review Desc: \n {review_desc}")
         print(f"\nComments: \n{json.dumps(comments)}")
 
