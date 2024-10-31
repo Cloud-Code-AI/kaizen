@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, Field, ValidationError, StrictStr
 import requests
 from kaizen.reviewer.code_review import CodeReviewer
 from kaizen.llms.provider import LLMProvider
@@ -17,8 +17,10 @@ headers = {
 
 # Pydantic model for validating inputs
 class PRRequestModel(BaseModel):
-    owner: str = Field(..., regex=r"^[a-zA-Z0-9-]{1,39}$")
-    repo: str = Field(..., regex=r"^[a-zA-Z0-9_.-]{1,100}$")
+    owner: StrictStr = Field(..., min_length=1, max_length=39, regex=r"^[a-zA-Z0-9-]+$")
+    repo: StrictStr = Field(
+        ..., min_length=1, max_length=100, regex=r"^[a-zA-Z0-9_.-]+$"
+    )
     pr_number: int = Field(..., gt=0)
 
 
