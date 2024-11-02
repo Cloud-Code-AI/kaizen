@@ -1,3 +1,4 @@
+from pydantic import BaseModel, Field, ValidationError, StrictStr
 import requests
 from kaizen.reviewer.code_review import CodeReviewer
 from kaizen.llms.provider import LLMProvider
@@ -14,15 +15,31 @@ headers = {
 }
 
 
+# Pydantic model for validating inputs
+class PRRequestModel(BaseModel):
+    owner: StrictStr = Field(..., min_length=1, max_length=39, regex=r"^[a-zA-Z0-9-]+$")
+    repo: StrictStr = Field(
+        ..., min_length=1, max_length=100, regex=r"^[a-zA-Z0-9_.-]+$"
+    )
+    pr_number: int = Field(..., gt=0)
+
+
+# Wrapper function to validate inputs
+def validate_pr_request(owner, repo, pr_number):
+    return PRRequestModel(owner=owner, repo=repo, pr_number=pr_number)
+
+
 def get_pr_info(owner, repo, pr_number):
-    url = f"{GITHUB_API}/repos/{owner}/{repo}/pulls/{pr_number}"
+    validated_data = validate_pr_request(owner, repo, pr_number)
+    url = f"{GITHUB_API}/repos/{validated_data.owner}/{validated_data.repo}/pulls/{validated_data.pr_number}"
     response = requests.get(url, headers=headers)
     response.raise_for_status()
     return response.json()
 
 
 def get_pr_files(owner, repo, pr_number):
-    url = f"{GITHUB_API}/repos/{owner}/{repo}/pulls/{pr_number}/files"
+    validated_data = validate_pr_request(owner, repo, pr_number)
+    url = f"{GITHUB_API}/repos/{validated_data.owner}/{validated_data.repo}/pulls/{validated_data.pr_number}/files"
     response = requests.get(url, headers=headers)
     response.raise_for_status()
     return response.json()
@@ -44,6 +61,7 @@ def main(owner, repo, pr_number):
         print(f"\nDiff URL: {pr_info['diff_url']}")
         diff_text = get_diff(pr_info["diff_url"])
         print(f"Diff: \n{diff_text}\n")
+
         code_reviewer = CodeReviewer(llm_provider=LLMProvider())
         reviews = code_reviewer.review_pull_request(
             pull_request_title=pr_info["title"],
@@ -52,18 +70,17 @@ def main(owner, repo, pr_number):
             pull_request_files=pr_files,
             user="local_test",
         )
-        print(json.dumps(reviews.topics, indent=2))
 
+        print(json.dumps(reviews.topics, indent=2))
         print("Processing Reviews ....")
+
         topics = clean_keys(reviews.topics, "moderate")
         review_desc = create_pr_review_text(topics)
         comments, topics = create_review_comments(topics)
 
         print(f"\n Review Desc: \n {review_desc}")
-
         print(f"\nComments: \n{json.dumps(comments)}")
 
-        print("################### CODE DESC")
         desc_generator = PRDescriptionGenerator(llm_provider=LLMProvider())
         description = desc_generator.generate_pull_request_desc(
             pull_request_title=pr_info["title"],
@@ -75,12 +92,13 @@ def main(owner, repo, pr_number):
 
         print("Description: \n", description.desc)
 
+    except ValidationError as e:
+        print("Input validation error:", e.json())
     except requests.exceptions.HTTPError as e:
         print(f"Error: {e}")
 
 
 if __name__ == "__main__":
     main("Cloud-Code-AI", "kaizen", 252)
-
     print("------------------- Multi File -------------------")
     main("Cloud-Code-AI", "kaizen", 222)
