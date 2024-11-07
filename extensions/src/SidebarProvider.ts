@@ -16,7 +16,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   private apiHistory: ApiEndpoint[] = [];
   private showHistory: boolean = false;
   private context: vscode.ExtensionContext;
-  private apiRequestView: ApiRequestView;
   private httpClient: HttpClient;
 
   constructor(private readonly _extensionUri: vscode.Uri, context: vscode.ExtensionContext) {
@@ -24,7 +23,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     this.context = context;
     this.loadApiHistory();
     this.httpClient = new HttpClient();
-    this.apiRequestView = new ApiRequestView(context, this.httpClient.sendRequest.bind(this.httpClient));
 
     // Add these lines to the constructor
     this.inspectApiHistory();
@@ -108,7 +106,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           break;
         }
         case "openApiManagement": {
-          console.log("API MANAGEMENT CASE");
+
           if (!data.value) {
             return;
           }
@@ -116,28 +114,23 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           break;
         }
         case "backButton": {
-          console.log("Going Back");
           this.showHistory = false;
           this.refresh();
           break;
         }
         case "newRequest": {
-          console.log("New request log");
           this.openApiRequestView();
           break;
         }
         case "deleteEndpoint": {
-          console.log("Deleting endpoint");
           this.deleteEndpoint(data.name, data.method);
           break;
         }
         case "selectEndpoint": {
-          console.log("Selection endpoint");
           this.loadEndpoint(data.value);
           break;
         }
         case "exportHistory": {
-          console.log("Export history");
           this.exportHistory();
           break;
         }
@@ -226,7 +219,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   private async openWebview(webviewType: string) {
     if (webviewType === 'apiManagement') {
       if (this.apiRequestProvider) {
-        console.log("Opening API Request View");
         this.apiRequestProvider.openApiRequestView();
         this.showHistory = true;
         this.refresh();
@@ -251,7 +243,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
   private openApiRequestView() {
     if (this.apiRequestProvider) {
-      console.log("Opening API Request View");
       this.apiRequestProvider.openApiRequestView();
     } else {
       console.error("apiRequestProvider is not initialized");
@@ -348,8 +339,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   private loadEndpoint(endpoint: { method: string, name: string }) {
     const savedEndpoint = this.apiHistory.find(e => e.method === endpoint.method && e.name === endpoint.name);
     if (savedEndpoint) {
-      this.apiRequestView.show();
-      this.apiRequestView.loadEndpoint(savedEndpoint);
+      this.apiRequestProvider.openApiRequestView();
+      this.apiRequestProvider.loadEndpoint(savedEndpoint);
     }
   }
 }

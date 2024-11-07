@@ -25,7 +25,6 @@ export class ApiRequestView {
     }
     
     public async show() {
-        console.log("Show from View");
             this.panel = vscode.window.createWebviewPanel(
                 'apiRequest',
                 'API Request',
@@ -36,7 +35,6 @@ export class ApiRequestView {
                 }
             );
             const content = await this.getWebviewContent();
-            console.log("Webview Content:", content);
             this.panel.webview.html = content;
 
             this.panel.webview.onDidReceiveMessage(
@@ -95,13 +93,11 @@ export class ApiRequestView {
     }
 
     public loadEndpoint(endpoint: ApiEndpoint) {
-        console.log("Loading Endpoint");
         if (this.panel) {
             this.panel.webview.postMessage({
                 command: 'loadEndpoint',
                 endpoint: endpoint
             });
-            console.log(this.panel.webview.postMessage);
         }
     }
 

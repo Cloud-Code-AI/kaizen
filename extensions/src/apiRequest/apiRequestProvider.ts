@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { ApiRequestView } from "./apiRequestView";
 import { HttpClient } from "../utils/httpClient";
+import { ApiEndpoint } from "../types";
 
 interface Collection {
   name: string;
@@ -31,7 +32,6 @@ export class ApiRequestProvider {
   }
 
   public openApiRequestView() {
-    console.log("API Request View : This is the request view");
     this.view = new ApiRequestView(this.context, this.handleApiRequest);
     this.view.show();
     this.updateCollectionsView();
@@ -46,18 +46,6 @@ export class ApiRequestProvider {
     body: string,
     bodyType: string
   ): Promise<void> {
-    console.log("Handle API Request called");
-
-    // Log the incoming parameters
-    console.log("Parameters:", {
-      method,
-      url,
-      headers,
-      queryParams,
-      formData,
-      body,
-      bodyType,
-    });
 
     let urlObj: URL;
 
@@ -96,13 +84,6 @@ export class ApiRequestProvider {
     } else if (bodyType === "raw" && body) {
       requestBody = body;
     }
-
-    console.log("Final Request:", {
-      url: urlObj.toString(),
-      method,
-      headers,
-      requestBody,
-    });
 
     const startTime = Date.now();
 
@@ -180,5 +161,11 @@ export class ApiRequestProvider {
 
   private saveEnvironment() {
     this.context.globalState.update("apiEnvironment", this.environment);
+  }
+
+  public loadEndpoint(endpoint: ApiEndpoint) {
+    if (this.view) {
+      this.view.loadEndpoint(endpoint);
+    }
   }
 }
