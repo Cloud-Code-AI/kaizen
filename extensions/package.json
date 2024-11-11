@@ -6,7 +6,7 @@
   "publisher": "CloudCodeAI",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Clouod-Code-AI/kaizen.git"
+    "url": "https://github.com/Cloud-Code-AI/kaizen.git"
   },
   "engines": {
     "vscode": "^1.93.0"
