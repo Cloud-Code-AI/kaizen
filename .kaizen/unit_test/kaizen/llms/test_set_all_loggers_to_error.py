@@ -1,43 +1,47 @@
 import logging
 import pytest
 
-# Assuming the function is in the module kaizen/llms/provider.py
+# Import the function from the specified path
 from kaizen.llms.provider import set_all_loggers_to_ERROR
-
 
 @pytest.fixture
 def setup_loggers():
-    # Setup: Create some loggers with different levels
-    loggers = {
-        "logger1": logging.getLogger("logger1"),
-        "logger2": logging.getLogger("logger2"),
-        "logger3": logging.getLogger("logger3"),
-    }
-    loggers["logger1"].setLevel(logging.DEBUG)
-    loggers["logger2"].setLevel(logging.INFO)
-    loggers["logger3"].setLevel(logging.WARNING)
-
-    yield loggers
-
-    # Teardown: Reset loggers to default level (WARNING)
+    # Create a few loggers for testing
+    logger_names = ['test_logger_1', 'test_logger_2', 'test_placeholder']
+    loggers = {name: logging.getLogger(name) for name in logger_names}
+    
+    # Set initial levels to something other than ERROR
     for logger in loggers.values():
-        logger.setLevel(logging.WARNING)
-
+        logger.setLevel(logging.INFO)
+    
+    # Add a placeholder logger
+    logging.Logger.manager.loggerDict['test_placeholder'] = logging.PlaceHolder(None)
+    
+    yield loggers
+    
+    # Cleanup: Remove the loggers after the test
+    for name in logger_names:
+        logging.Logger.manager.loggerDict.pop(name, None)
 
 def test_set_all_loggers_to_ERROR(setup_loggers):
-    # Test: Verify all existing loggers are set to ERROR level
+    # Run the function to set all loggers to ERROR
     set_all_loggers_to_ERROR()
-
+    
+    # Check that all real loggers are set to ERROR
     for name, logger in setup_loggers.items():
-        assert logger.level == logging.ERROR, f"Logger {name} not set to ERROR level"
+        if isinstance(logger, logging.Logger):
+            assert logger.level == logging.ERROR, f"Logger {name} is not set to ERROR"
+        else:
+            # Ensure placeholders are not affected
+            assert isinstance(logger, logging.PlaceHolder), f"Logger {name} should be a placeholder"
 
-
-def test_no_loggers_present(monkeypatch):
-    # Edge Case: Handle scenario where no loggers are present
-    # Mock the loggerDict to simulate no loggers
-    monkeypatch.setattr(logging.Logger.manager, "loggerDict", {})
-
+def test_handle_placeholder_loggers_gracefully():
+    # Add a placeholder logger
+    placeholder_name = 'test_placeholder'
+    logging.Logger.manager.loggerDict[placeholder_name] = logging.PlaceHolder(None)
+    
+    # Run the function
     set_all_loggers_to_ERROR()
-
-    # Verify no errors occur and loggerDict is still empty
-    assert logging.Logger.manager.loggerDict == {}, "LoggerDict should be empty"
+    
+    # Ensure no exceptions are raised and placeholders remain unchanged
+    assert isinstance(logging.Logger.manager.loggerDict[placeholder_name], logging.PlaceHolder), "Placeholder logger should remain unchanged"
